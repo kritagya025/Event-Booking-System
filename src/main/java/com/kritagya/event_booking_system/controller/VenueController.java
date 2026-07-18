@@ -1,5 +1,6 @@
 package com.kritagya.event_booking_system.controller;
 
+import com.kritagya.event_booking_system.dto.VenueResponseDTO;
 import com.kritagya.event_booking_system.entity.Venue;
 import com.kritagya.event_booking_system.service.VenueService;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class VenueController {
     }
 
     @GetMapping("/{id}")
-    public Venue getVenue(@PathVariable Long id){
+    public VenueResponseDTO getVenue(@PathVariable Long id){
         return venueService.getVenue(id);
     }
 }
