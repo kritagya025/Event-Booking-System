@@ -1,6 +1,8 @@
 package com.kritagya.event_booking_system.service;
 
+import com.kritagya.event_booking_system.dto.VenueRequestDTO;
 import com.kritagya.event_booking_system.entity.Venue;
+import com.kritagya.event_booking_system.mapper.VenueMapper;
 import com.kritagya.event_booking_system.repository.VenueRepository;
 import org.springframework.stereotype.Service;
 import com.kritagya.event_booking_system.dto.VenueResponseDTO;
@@ -16,9 +18,11 @@ public class VenueService {
         this.venueRepository=venueRepository;
     }
 
-    public VenueResponseDTO createVenue(Venue venue){
+    public VenueResponseDTO createVenue(VenueRequestDTO request){
+        Venue venue= VenueMapper.toEntity(request);
         validateVenue(venue);
-        return mapToDTO(venueRepository.save(venue));
+        Venue savedVenue=venueRepository.save(venue);
+        return VenueMapper.toDTO(savedVenue);
     }
 
     public List<Venue> getAllVenues(){
@@ -27,23 +31,14 @@ public class VenueService {
 
     public VenueResponseDTO getVenue(Long id){
         Venue venue=venueRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Venue not forund"));
-        return mapToDTO(venue);
+                .orElseThrow(()->new RuntimeException("Venue not found"));
+        return VenueMapper.toDTO(venue);
     }
 
     private void validateVenue(Venue venue){
-        if(venue.getCapacity()<=0){
+        if(venue.getCapacity()==null || venue.getCapacity()<=0){
             throw new IllegalArgumentException("Venue capacity must be greater than 0");
         }
     }
 
-    private VenueResponseDTO mapToDTO(Venue venue){
-        return new VenueResponseDTO(
-                venue.getId(),
-                venue.getName(),
-                venue.getAddress(),
-                venue.getCapacity(),
-                venue.getDescription()
-        );
-    }
 }

@@ -1,5 +1,6 @@
 package com.kritagya.event_booking_system.controller;
 
+import com.kritagya.event_booking_system.dto.VenueRequestDTO;
 import com.kritagya.event_booking_system.dto.VenueResponseDTO;
 import com.kritagya.event_booking_system.entity.Venue;
 import com.kritagya.event_booking_system.service.VenueService;
@@ -18,8 +19,8 @@ public class VenueController {
     }
 
     @PostMapping
-    public Venue createVenue(@RequestBody Venue venue){
-        return venueService.createVenue(venue);
+    public VenueResponseDTO createVenue(@RequestBody VenueRequestDTO request){
+        return venueService.createVenue(request);
     }
 
     @GetMapping
