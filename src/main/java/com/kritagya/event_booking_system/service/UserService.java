@@ -7,6 +7,7 @@ import com.kritagya.event_booking_system.exception.DuplicateEmailException;
 import com.kritagya.event_booking_system.exception.UserNotFoundException;
 import com.kritagya.event_booking_system.mapper.UserMapper;
 import com.kritagya.event_booking_system.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponseDTO createUser(UserRequestDTO request) {
@@ -27,6 +30,7 @@ public class UserService {
         }
 
         User user = UserMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         User savedUser = userRepository.save(user);
         return UserMapper.toDTO(savedUser);
     }
@@ -51,7 +55,7 @@ public class UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setPhone(request.getPhone());
         user.setRole(com.kritagya.event_booking_system.enums.Role.valueOf(request.getRole()));
 
@@ -66,3 +70,4 @@ public class UserService {
         userRepository.deleteById(id);
     }
 }
+
