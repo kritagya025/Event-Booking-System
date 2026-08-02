@@ -6,19 +6,24 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Ticket {
+@Table(name = "ticket", indexes = {
+        @Index(name = "idx_ticket_qrcode", columnList = "qrCode", unique = true)
+})
+public class Ticket extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String qrCode;
+
     private LocalDateTime issueDate;
 
     @Enumerated(EnumType.STRING)
     private TicketStatus ticketStatus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     private Booking booking;
 

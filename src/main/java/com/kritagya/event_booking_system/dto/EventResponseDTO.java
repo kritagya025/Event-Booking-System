@@ -16,8 +16,11 @@ public class EventResponseDTO {
     private String status;
     private BigDecimal ticketPrice;
     private Integer availableSeats;
+    private LocalDate registrationDeadline;
     private Long venueId;
     private String venueName;
+    private Long organizerId;
+    private String organizerName;
 
     public EventResponseDTO() {
 
@@ -25,7 +28,8 @@ public class EventResponseDTO {
 
     public EventResponseDTO(Long id, String name, String description, LocalDate eventDate, LocalTime startTime,
                             LocalTime endTime, String category, String status, BigDecimal ticketPrice,
-                            Integer availableSeats, Long venueId, String venueName) {
+                            Integer availableSeats, LocalDate registrationDeadline, Long venueId, String venueName,
+                            Long organizerId, String organizerName) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -36,8 +40,11 @@ public class EventResponseDTO {
         this.status = status;
         this.ticketPrice = ticketPrice;
         this.availableSeats = availableSeats;
+        this.registrationDeadline = registrationDeadline;
         this.venueId = venueId;
         this.venueName = venueName;
+        this.organizerId = organizerId;
+        this.organizerName = organizerName;
     }
 
     public Long getId() {
@@ -120,6 +127,14 @@ public class EventResponseDTO {
         this.availableSeats = availableSeats;
     }
 
+    public LocalDate getRegistrationDeadline() {
+        return registrationDeadline;
+    }
+
+    public void setRegistrationDeadline(LocalDate registrationDeadline) {
+        this.registrationDeadline = registrationDeadline;
+    }
+
     public Long getVenueId() {
         return venueId;
     }
@@ -134,5 +149,21 @@ public class EventResponseDTO {
 
     public void setVenueName(String venueName) {
         this.venueName = venueName;
+    }
+
+    public Long getOrganizerId() {
+        return organizerId;
+    }
+
+    public void setOrganizerId(Long organizerId) {
+        this.organizerId = organizerId;
+    }
+
+    public String getOrganizerName() {
+        return organizerName;
+    }
+
+    public void setOrganizerName(String organizerName) {
+        this.organizerName = organizerName;
     }
 }

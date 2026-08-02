@@ -1,5 +1,6 @@
 package com.kritagya.event_booking_system.entity;
 
+import com.kritagya.event_booking_system.enums.EventStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -7,7 +8,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-public class Event {
+@Table(name = "event", indexes = {
+        @Index(name = "idx_event_date", columnList = "eventDate"),
+        @Index(name = "idx_event_category", columnList = "category"),
+        @Index(name = "idx_event_status", columnList = "status")
+})
+public class Event extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,20 +25,32 @@ public class Event {
     private LocalTime startTime;
     private LocalTime endTime;
     private String category;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private EventStatus status;
+
     private BigDecimal ticketPrice;
     private Integer availableSeats;
+    private LocalDate registrationDeadline;
+    private boolean deleted = false;
 
-    @ManyToOne
+    @Version
+    private Long version;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "venue_id")
     private Venue venue;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organizer_id")
+    private User organizer;
 
     public Event() {
 
     }
 
     public Event(String name, String description, LocalDate eventDate, LocalTime startTime,
-                 LocalTime endTime, String category, String status, BigDecimal ticketPrice,
+                 LocalTime endTime, String category, EventStatus status, BigDecimal ticketPrice,
                  Integer availableSeats, Venue venue) {
         this.name = name;
         this.description = description;
@@ -98,11 +116,11 @@ public class Event {
         this.category = category;
     }
 
-    public String getStatus() {
+    public EventStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(EventStatus status) {
         this.status = status;
     }
 
@@ -122,11 +140,43 @@ public class Event {
         this.availableSeats = availableSeats;
     }
 
+    public LocalDate getRegistrationDeadline() {
+        return registrationDeadline;
+    }
+
+    public void setRegistrationDeadline(LocalDate registrationDeadline) {
+        this.registrationDeadline = registrationDeadline;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     public Venue getVenue() {
         return venue;
     }
 
     public void setVenue(Venue venue) {
         this.venue = venue;
+    }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(User organizer) {
+        this.organizer = organizer;
     }
 }

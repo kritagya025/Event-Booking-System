@@ -39,6 +39,8 @@ public class EventRequestDTO {
     @NotNull(message = "Venue ID is required")
     private Long venueId;
 
+    private LocalDate registrationDeadline;
+
     public EventRequestDTO() {
 
     }
@@ -136,5 +138,13 @@ public class EventRequestDTO {
 
     public void setVenueId(Long venueId) {
         this.venueId = venueId;
+    }
+
+    public LocalDate getRegistrationDeadline() {
+        return registrationDeadline;
+    }
+
+    public void setRegistrationDeadline(LocalDate registrationDeadline) {
+        this.registrationDeadline = registrationDeadline;
     }
 }
