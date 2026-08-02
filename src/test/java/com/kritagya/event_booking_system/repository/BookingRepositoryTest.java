@@ -48,7 +48,7 @@ class BookingRepositoryTest {
                 LocalTime.of(20, 0), LocalTime.of(22, 0), "COMEDY",
                 EventStatus.PUBLISHED, BigDecimal.valueOf(40), 50, venue));
 
-        Booking booking = bookingRepository.save(new Booking(LocalDateTime.now(), BookingStatus.CONFIRMED, 2,
+        bookingRepository.save(new Booking(LocalDateTime.now(), BookingStatus.CONFIRMED, 2,
                 BigDecimal.valueOf(80), user, event));
 
         List<Booking> bookings = bookingRepository.findByUserId(user.getId());

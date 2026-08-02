@@ -13,7 +13,7 @@ import java.util.List;
 public class EventSpecification {
 
     public static Specification<Event> withFilters(String category, LocalDate dateFrom, LocalDate dateTo,
-                                                    Long venueId, String keyword,
+                                                    Long venueId, String city, String keyword,
                                                     BigDecimal minPrice, BigDecimal maxPrice) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -40,11 +40,17 @@ public class EventSpecification {
                 predicates.add(criteriaBuilder.equal(root.get("venue").get("id"), venueId));
             }
 
+            if (city != null && !city.isBlank()) {
+                String cityPattern = "%" + city.toLowerCase() + "%";
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("venue").get("address")), cityPattern));
+            }
+
             if (keyword != null && !keyword.isBlank()) {
                 String pattern = "%" + keyword.toLowerCase() + "%";
                 Predicate nameLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), pattern);
                 Predicate descLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), pattern);
-                predicates.add(criteriaBuilder.or(nameLike, descLike));
+                Predicate venueLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("venue").get("name")), pattern);
+                predicates.add(criteriaBuilder.or(nameLike, descLike, venueLike));
             }
 
             if (minPrice != null) {

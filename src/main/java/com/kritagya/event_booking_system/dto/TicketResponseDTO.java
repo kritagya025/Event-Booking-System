@@ -7,6 +7,7 @@ public class TicketResponseDTO {
     private Long id;
     private String qrCode;
     private LocalDateTime issueDate;
+    private LocalDateTime checkInTime;
     private String ticketStatus;
     private Long bookingId;
 
@@ -14,11 +15,12 @@ public class TicketResponseDTO {
 
     }
 
-    public TicketResponseDTO(Long id, String qrCode, LocalDateTime issueDate, String ticketStatus,
-                             Long bookingId) {
+    public TicketResponseDTO(Long id, String qrCode, LocalDateTime issueDate, LocalDateTime checkInTime,
+                             String ticketStatus, Long bookingId) {
         this.id = id;
         this.qrCode = qrCode;
         this.issueDate = issueDate;
+        this.checkInTime = checkInTime;
         this.ticketStatus = ticketStatus;
         this.bookingId = bookingId;
     }
@@ -45,6 +47,14 @@ public class TicketResponseDTO {
 
     public void setIssueDate(LocalDateTime issueDate) {
         this.issueDate = issueDate;
+    }
+
+    public LocalDateTime getCheckInTime() {
+        return checkInTime;
+    }
+
+    public void setCheckInTime(LocalDateTime checkInTime) {
+        this.checkInTime = checkInTime;
     }
 
     public String getTicketStatus() {

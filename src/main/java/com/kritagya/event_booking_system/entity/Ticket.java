@@ -19,6 +19,7 @@ public class Ticket extends BaseEntity {
     private String qrCode;
 
     private LocalDateTime issueDate;
+    private LocalDateTime checkInTime;
 
     @Enumerated(EnumType.STRING)
     private TicketStatus ticketStatus;
@@ -56,6 +57,14 @@ public class Ticket extends BaseEntity {
 
     public void setIssueDate(LocalDateTime issueDate) {
         this.issueDate = issueDate;
+    }
+
+    public LocalDateTime getCheckInTime() {
+        return checkInTime;
+    }
+
+    public void setCheckInTime(LocalDateTime checkInTime) {
+        this.checkInTime = checkInTime;
     }
 
     public TicketStatus getTicketStatus() {

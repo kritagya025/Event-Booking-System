@@ -48,6 +48,21 @@ class BookingServiceTest {
     @Mock
     private SeatRepository seatRepository;
 
+    @Mock
+    private EmailService emailService;
+
+    @Mock
+    private com.kritagya.event_booking_system.logging.AuditLogger auditLogger;
+
+    @Mock
+    private WaitlistService waitlistService;
+
+    @Mock
+    private com.kritagya.event_booking_system.websocket.SeatUpdatePublisher seatUpdatePublisher;
+
+    @Mock
+    private CouponService couponService;
+
     @InjectMocks
     private BookingService bookingService;
 
@@ -123,6 +138,7 @@ class BookingServiceTest {
         int seatsBefore = event.getAvailableSeats();
         BookingResponseDTO result = bookingService.cancelBooking(1L);
 
+        assertThat(result).isNotNull();
         assertThat(booking.getBookingStatus()).isEqualTo(BookingStatus.CANCELLED);
         assertThat(event.getAvailableSeats()).isEqualTo(seatsBefore + 2);
     }

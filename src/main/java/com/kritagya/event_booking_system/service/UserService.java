@@ -63,6 +63,24 @@ public class UserService {
         return UserMapper.toDTO(updatedUser);
     }
 
+    public UserResponseDTO getCurrentUserProfile(User user) {
+        return UserMapper.toDTO(user);
+    }
+
+    public UserResponseDTO updateCurrentUserProfile(User currentUser, com.kritagya.event_booking_system.dto.UserProfileUpdateDTO request) {
+        User user = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new UserNotFoundException(currentUser.getId()));
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        if (request.getPhone() != null) {
+            user.setPhone(request.getPhone());
+        }
+
+        User updatedUser = userRepository.save(user);
+        return UserMapper.toDTO(updatedUser);
+    }
+
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(id);

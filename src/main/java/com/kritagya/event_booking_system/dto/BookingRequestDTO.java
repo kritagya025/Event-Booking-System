@@ -18,6 +18,7 @@ public class BookingRequestDTO {
     private Integer quantity;
 
     private List<Long> seatIds;
+    private String couponCode;
 
     public BookingRequestDTO() {
 
@@ -59,6 +60,14 @@ public class BookingRequestDTO {
 
     public void setSeatIds(List<Long> seatIds) {
         this.seatIds = seatIds;
+    }
+
+    public String getCouponCode() {
+        return couponCode;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
     }
 }
 

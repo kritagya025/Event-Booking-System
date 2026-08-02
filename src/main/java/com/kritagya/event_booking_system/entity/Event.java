@@ -33,6 +33,8 @@ public class Event extends BaseEntity {
     private Integer availableSeats;
     private LocalDate registrationDeadline;
     private boolean deleted = false;
+    private Long viewCount = 0L;
+    private String bannerImageUrl;
 
     @Version
     private Long version;
@@ -178,5 +180,21 @@ public class Event extends BaseEntity {
 
     public void setOrganizer(User organizer) {
         this.organizer = organizer;
+    }
+
+    public Long getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Long viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public String getBannerImageUrl() {
+        return bannerImageUrl;
+    }
+
+    public void setBannerImageUrl(String bannerImageUrl) {
+        this.bannerImageUrl = bannerImageUrl;
     }
 }

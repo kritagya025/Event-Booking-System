@@ -2,6 +2,8 @@ package com.kritagya.event_booking_system.config;
 
 import com.kritagya.event_booking_system.entity.User;
 import com.kritagya.event_booking_system.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 @Component
 public class PasswordMigrationRunner implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(PasswordMigrationRunner.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -39,7 +43,7 @@ public class PasswordMigrationRunner implements CommandLineRunner {
         }
 
         if (migrated > 0) {
-            System.out.println("[PasswordMigration] Migrated " + migrated + " user(s) from plain-text to BCrypt.");
+            log.info("[PasswordMigration] Migrated {} user(s) from plain-text to BCrypt.", migrated);
         }
     }
 }

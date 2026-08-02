@@ -109,6 +109,39 @@ public class TicketService {
         }
 
         ticket.setTicketStatus(TicketStatus.USED);
+        ticket.setCheckInTime(LocalDateTime.now());
+        Ticket savedTicket = ticketRepository.save(ticket);
+        return TicketMapper.toDTO(savedTicket);
+    }
+
+    public TicketResponseDTO validateTicketById(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
+
+        if (ticket.getTicketStatus() == TicketStatus.USED) {
+            throw new IllegalArgumentException("Ticket has already been used");
+        }
+        if (ticket.getTicketStatus() == TicketStatus.CANCELLED) {
+            throw new IllegalArgumentException("Ticket has been cancelled");
+        }
+
+        return TicketMapper.toDTO(ticket);
+    }
+
+    @Transactional
+    public TicketResponseDTO checkInById(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
+
+        if (ticket.getTicketStatus() == TicketStatus.USED) {
+            throw new IllegalArgumentException("Ticket has already been used for check-in");
+        }
+        if (ticket.getTicketStatus() == TicketStatus.CANCELLED) {
+            throw new IllegalArgumentException("Cannot check in a cancelled ticket");
+        }
+
+        ticket.setTicketStatus(TicketStatus.USED);
+        ticket.setCheckInTime(LocalDateTime.now());
         Ticket savedTicket = ticketRepository.save(ticket);
         return TicketMapper.toDTO(savedTicket);
     }

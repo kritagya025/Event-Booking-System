@@ -42,6 +42,15 @@ class EventServiceTest {
     @Mock
     private VenueRepository venueRepository;
 
+    @Mock
+    private com.kritagya.event_booking_system.logging.AuditLogger auditLogger;
+
+    @Mock
+    private com.kritagya.event_booking_system.repository.BookingRepository bookingRepository;
+
+    @Mock
+    private com.kritagya.event_booking_system.repository.ReviewRepository reviewRepository;
+
     @InjectMocks
     private EventService eventService;
 
@@ -142,6 +151,7 @@ class EventServiceTest {
 
         EventResponseDTO result = eventService.publishEvent(1L);
 
+        assertThat(result).isNotNull();
         assertThat(event.getStatus()).isEqualTo(EventStatus.PUBLISHED);
     }
 
@@ -154,6 +164,7 @@ class EventServiceTest {
 
         EventResponseDTO result = eventService.unpublishEvent(1L);
 
+        assertThat(result).isNotNull();
         assertThat(event.getStatus()).isEqualTo(EventStatus.DRAFT);
     }
 }

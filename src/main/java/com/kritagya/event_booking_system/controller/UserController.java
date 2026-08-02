@@ -20,6 +20,21 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getCurrentUser(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        UserResponseDTO profile = userService.getCurrentUserProfile(userDetails.getUser());
+        return ResponseEntity.ok(profile);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDTO> updateCurrentUser(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails,
+            @Valid @RequestBody com.kritagya.event_booking_system.dto.UserProfileUpdateDTO request) {
+        UserResponseDTO updatedProfile = userService.updateCurrentUserProfile(userDetails.getUser(), request);
+        return ResponseEntity.ok(updatedProfile);
+    }
+
     @PostMapping
     public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO request) {
         UserResponseDTO response = userService.createUser(request);

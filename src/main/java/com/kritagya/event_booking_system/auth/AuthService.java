@@ -34,6 +34,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final com.kritagya.event_booking_system.service.EmailService emailService;
+    private final com.kritagya.event_booking_system.logging.AuditLogger auditLogger;
 
     @Value("${jwt.refresh-expiration:604800000}")
     private long refreshExpiration;
@@ -45,12 +47,16 @@ public class AuthService {
                        RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder,
                        JwtUtil jwtUtil,
-                       AuthenticationManager authenticationManager) {
+                       AuthenticationManager authenticationManager,
+                       com.kritagya.event_booking_system.service.EmailService emailService,
+                       com.kritagya.event_booking_system.logging.AuditLogger auditLogger) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
+        this.auditLogger = auditLogger;
     }
 
     @Transactional
@@ -74,7 +80,9 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        // Log verification link (in production, send via email)
+        // Send email verification email
+        emailService.sendEmailVerificationEmail(savedUser, verificationToken);
+
         String verificationLink = baseUrl + "/api/auth/verify-email?token=" + verificationToken;
         log.info("Email verification link for {}: {}", savedUser.getEmail(), verificationLink);
 
@@ -91,6 +99,7 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.getEmail()));
 
         if (!user.isEmailVerified()) {
+            auditLogger.logLogin(request.getEmail(), false, "UNVERIFIED_EMAIL");
             throw new DisabledException("Email not verified. Please verify your email before logging in.");
         }
 
@@ -107,6 +116,8 @@ public class AuthService {
         // Revoke old refresh tokens and create a new one
         refreshTokenRepository.revokeAllByUser(userDetails.getUser());
         String refreshToken = createRefreshToken(userDetails.getUser()).getToken();
+
+        auditLogger.logLogin(request.getEmail(), true, "SUCCESS");
 
         return new AuthResponseDTO(
                 accessToken,
@@ -167,7 +178,9 @@ public class AuthService {
         user.setPasswordResetTokenExpiry(LocalDateTime.now().plusHours(1));
         userRepository.save(user);
 
-        // Log reset link (in production, send via email)
+        // Send password reset email
+        emailService.sendPasswordResetEmail(user, resetToken);
+
         String resetLink = baseUrl + "/api/auth/reset-password?token=" + resetToken;
         log.info("Password reset link for {}: {}", user.getEmail(), resetLink);
     }

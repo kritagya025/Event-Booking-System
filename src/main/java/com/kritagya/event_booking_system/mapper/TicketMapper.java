@@ -10,6 +10,7 @@ public class TicketMapper {
                 ticket.getId(),
                 ticket.getQrCode(),
                 ticket.getIssueDate(),
+                ticket.getCheckInTime(),
                 ticket.getTicketStatus().name(),
                 ticket.getBooking().getId()
         );
