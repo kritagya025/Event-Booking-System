@@ -35,6 +35,9 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     @Value("${app.rate-limiting.tokens-per-minute:10}")
     private int tokensPerMinute;
 
+    @Value("${app.rate-limiting.trusted-proxies:127.0.0.1,0:0:0:0:0:0:0:1}")
+    private String trustedProxies;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -77,10 +80,25 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     }
 
     private String getClientIp(HttpServletRequest request) {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null || xfHeader.isEmpty()) {
-            return request.getRemoteAddr();
+        String remoteAddr = request.getRemoteAddr();
+        boolean isTrusted = false;
+        if (trustedProxies != null && !trustedProxies.isBlank()) {
+            for (String proxy : trustedProxies.split(",")) {
+                if (remoteAddr != null && remoteAddr.equalsIgnoreCase(proxy.trim())) {
+                    isTrusted = true;
+                    break;
+                }
+            }
         }
-        return xfHeader.split(",")[0];
+
+        if (!isTrusted) {
+            return remoteAddr;
+        }
+
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null || xfHeader.isBlank()) {
+            return remoteAddr;
+        }
+        return xfHeader.split(",")[0].trim();
     }
 }

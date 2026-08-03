@@ -21,20 +21,26 @@ public class TicketController {
     }
 
     @PostMapping("/booking/{bookingId}")
-    public ResponseEntity<List<TicketResponseDTO>> generateTickets(@PathVariable Long bookingId) {
-        List<TicketResponseDTO> tickets = ticketService.generateTickets(bookingId);
+    public ResponseEntity<List<TicketResponseDTO>> generateTickets(
+            @PathVariable Long bookingId,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        List<TicketResponseDTO> tickets = ticketService.generateTickets(bookingId, userDetails.getUser());
         return new ResponseEntity<>(tickets, HttpStatus.CREATED);
     }
 
     @GetMapping("/booking/{bookingId}")
-    public ResponseEntity<List<TicketResponseDTO>> getTicketsByBooking(@PathVariable Long bookingId) {
-        List<TicketResponseDTO> tickets = ticketService.getTicketsByBooking(bookingId);
+    public ResponseEntity<List<TicketResponseDTO>> getTicketsByBooking(
+            @PathVariable Long bookingId,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        List<TicketResponseDTO> tickets = ticketService.getTicketsByBooking(bookingId, userDetails.getUser());
         return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TicketResponseDTO> getTicket(@PathVariable Long id) {
-        TicketResponseDTO ticket = ticketService.getTicket(id);
+    public ResponseEntity<TicketResponseDTO> getTicket(
+            @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        TicketResponseDTO ticket = ticketService.getTicket(id, userDetails.getUser());
         return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
 
@@ -51,16 +57,20 @@ public class TicketController {
     }
 
     @GetMapping("/{id}/qrcode")
-    public ResponseEntity<byte[]> getTicketQrCode(@PathVariable Long id) {
-        byte[] qrCode = ticketService.generateTicketQrCode(id);
+    public ResponseEntity<byte[]> getTicketQrCode(
+            @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        byte[] qrCode = ticketService.generateTicketQrCode(id, userDetails.getUser());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
         return new ResponseEntity<>(qrCode, headers, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/pdf")
-    public ResponseEntity<byte[]> downloadTicketPdf(@PathVariable Long id) {
-        byte[] pdf = ticketService.generateTicketPdf(id);
+    public ResponseEntity<byte[]> downloadTicketPdf(
+            @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        byte[] pdf = ticketService.generateTicketPdf(id, userDetails.getUser());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "ticket-" + id + ".pdf");
@@ -68,8 +78,10 @@ public class TicketController {
     }
 
     @GetMapping("/booking/{bookingId}/pdf")
-    public ResponseEntity<byte[]> downloadBookingPdf(@PathVariable Long bookingId) {
-        byte[] pdf = ticketService.generateBookingPdf(bookingId);
+    public ResponseEntity<byte[]> downloadBookingPdf(
+            @PathVariable Long bookingId,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        byte[] pdf = ticketService.generateBookingPdf(bookingId, userDetails.getUser());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "booking-" + bookingId + ".pdf");

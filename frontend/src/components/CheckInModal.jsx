@@ -28,7 +28,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-    } catch (err) {
+    } catch (_err) {
       showToast('Camera access unavailable. Using manual entry fallback.', 'info');
       setIsCameraActive(false);
     }

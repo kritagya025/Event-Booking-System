@@ -80,8 +80,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/checkin/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.POST, "/api/tickets/checkin/**").hasAnyRole("ADMIN", "ORGANIZER")
 
-                        // Event management — ADMIN, ORGANIZER, and CUSTOMER
-                        .requestMatchers(HttpMethod.POST, "/api/events").hasAnyRole("ADMIN", "ORGANIZER", "CUSTOMER")
+                        // Event management — ADMIN and ORGANIZER only
+                        .requestMatchers(HttpMethod.POST, "/api/events").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.PUT, "/api/events/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.PATCH, "/api/events/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyRole("ADMIN", "ORGANIZER")

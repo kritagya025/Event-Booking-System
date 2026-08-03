@@ -22,6 +22,11 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     @EntityGraph(attributePaths = {"venue", "organizer"})
     Optional<Event> findByIdAndDeletedFalse(Long id);
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @EntityGraph(attributePaths = {"venue", "organizer"})
+    @org.springframework.data.jpa.repository.Query("SELECT e FROM Event e WHERE e.id = :id AND e.deleted = false")
+    Optional<Event> findByIdAndDeletedFalseWithLock(@org.springframework.data.repository.query.Param("id") Long id);
+
     @EntityGraph(attributePaths = {"venue", "organizer"})
     List<Event> findByEventDateAndDeletedFalse(LocalDate eventDate);
 }

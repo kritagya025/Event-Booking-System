@@ -95,7 +95,7 @@ class BookingServiceTest {
     @DisplayName("Should create booking and decrement available seats")
     void createBooking_Success() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(eventRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdAndDeletedFalseWithLock(1L)).thenReturn(Optional.of(event));
         when(eventRepository.save(any(Event.class))).thenReturn(event);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
@@ -112,7 +112,7 @@ class BookingServiceTest {
     void createBooking_NotEnoughSeats() {
         event.setAvailableSeats(1);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(eventRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdAndDeletedFalseWithLock(1L)).thenReturn(Optional.of(event));
 
         assertThatThrownBy(() -> bookingService.createBooking(requestDTO))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -124,7 +124,7 @@ class BookingServiceTest {
     void createBooking_PastDeadline() {
         event.setRegistrationDeadline(LocalDate.now().minusDays(1));
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(eventRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdAndDeletedFalseWithLock(1L)).thenReturn(Optional.of(event));
 
         assertThatThrownBy(() -> bookingService.createBooking(requestDTO))
                 .isInstanceOf(IllegalArgumentException.class)

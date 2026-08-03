@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Ticket, Calendar, MapPin, Download, XCircle } from 'lucide-react';
 import { apiFetch, getStoredToken } from '../services/api';
 import { formatPrice } from '../services/currency';
@@ -7,18 +7,12 @@ export default function MyBookings({ currentUser, showToast }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (currentUser) {
-      fetchUserBookings();
-    }
-  }, [currentUser]);
-
-  const fetchUserBookings = async () => {
+  const fetchUserBookings = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await apiFetch(`/bookings/user/${currentUser.id || 1}`);
+      const data = await apiFetch(`/bookings/user/${currentUser?.id || 1}`);
       setBookings(data);
-    } catch (err) {
+    } catch (_err) {
       setBookings([
         {
           id: 101,
@@ -39,7 +33,13 @@ export default function MyBookings({ currentUser, showToast }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchUserBookings();
+    }
+  }, [currentUser, fetchUserBookings]);
 
   const handleCancelBooking = async (bookingId) => {
     if (!window.confirm('Cancel this booking? Seats will be returned.')) return;

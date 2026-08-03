@@ -17,6 +17,10 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     List<Seat> findByIdInAndStatus(List<Long> ids, SeatStatus status);
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT s FROM Seat s WHERE s.id = :id")
+    java.util.Optional<Seat> findByIdWithLock(@org.springframework.data.repository.query.Param("id") Long id);
+
     @Modifying
     @Query("UPDATE Seat s SET s.status = 'AVAILABLE', s.lockedUntil = null WHERE s.status = 'LOCKED' AND s.lockedUntil < :now")
     int releaseExpiredLocks(LocalDateTime now);

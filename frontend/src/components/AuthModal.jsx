@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Mail, User, Phone, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { apiFetch, setAuthSession } from '../services/api';
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast }) {
@@ -36,7 +36,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
         onAuthSuccess(response.user || { email: formData.email, firstName: 'User', role: 'CUSTOMER' });
         onClose();
       } else if (mode === 'register') {
-        const response = await apiFetch('/auth/register', {
+        await apiFetch('/auth/register', {
           method: 'POST',
           body: JSON.stringify(formData)
         });

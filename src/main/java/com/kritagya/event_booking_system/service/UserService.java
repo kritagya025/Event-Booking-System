@@ -87,5 +87,13 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+    public UserResponseDTO updateUserRole(Long id, com.kritagya.event_booking_system.enums.Role role) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        user.setRole(role);
+        User updatedUser = userRepository.save(user);
+        return UserMapper.toDTO(updatedUser);
+    }
 }
 

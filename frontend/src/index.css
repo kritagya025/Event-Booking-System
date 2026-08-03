@@ -302,6 +302,7 @@ button {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   display: flex;
   align-items: center;
@@ -543,7 +544,6 @@ button {
   .seat-map-container {
     overflow-x: auto;
     padding: 12px 4px;
-    -webkit-overflow-scrolling: touch;
   }
 
   .seats-grid {

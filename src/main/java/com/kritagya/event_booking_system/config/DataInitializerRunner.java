@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 @Component
+@org.springframework.context.annotation.Profile("dev")
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name = "app.seed-data", havingValue = "true")
 public class DataInitializerRunner implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializerRunner.class);

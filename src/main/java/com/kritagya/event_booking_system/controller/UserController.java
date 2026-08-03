@@ -36,31 +36,53 @@ public class UserController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO request) {
         UserResponseDTO response = userService.createUser(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<UserResponseDTO> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> getUser(
+            @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        if (!userDetails.getUser().getId().equals(id) && userDetails.getUser().getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to view this user profile.");
+        }
         UserResponseDTO user = userService.getUser(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id,
-                                                      @Valid @RequestBody UserRequestDTO request) {
+    public ResponseEntity<UserResponseDTO> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UserRequestDTO request,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        if (!userDetails.getUser().getId().equals(id) && userDetails.getUser().getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to update this user profile.");
+        }
         UserResponseDTO user = userService.updateUser(id, request);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PutMapping("/{id}/role")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponseDTO> updateUserRole(
+            @PathVariable Long id,
+            @RequestParam com.kritagya.event_booking_system.enums.Role role) {
+        UserResponseDTO updatedUser = userService.updateUserRole(id, role);
+        return ResponseEntity.ok(updatedUser);
+    }
+
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -66,15 +66,13 @@ public class AuthService {
             throw new DuplicateEmailException(request.getEmail());
         }
 
-        Role assignedRole = request.getRole() != null ? request.getRole() : Role.CUSTOMER;
-
         User user = new User(
                 request.getFirstName(),
                 request.getLastName(),
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
                 request.getPhone(),
-                assignedRole);
+                Role.CUSTOMER);
         // TEMPORARY: enable this verification flow when email delivery is configured.
         // String verificationToken = UUID.randomUUID().toString();
         user.setEmailVerified(true);

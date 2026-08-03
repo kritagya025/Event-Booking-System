@@ -20,25 +20,59 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody RegisterRequestDTO request) {
         AuthResponseDTO response = authService.register(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        org.springframework.http.ResponseCookie accessCookie = createCookie("accessToken", response.getToken(), 86400);
+        org.springframework.http.ResponseCookie refreshCookie = createCookie("refreshToken", response.getRefreshToken(), 604800);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         AuthResponseDTO response = authService.login(request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        org.springframework.http.ResponseCookie accessCookie = createCookie("accessToken", response.getToken(), 86400);
+        org.springframework.http.ResponseCookie refreshCookie = createCookie("refreshToken", response.getRefreshToken(), 604800);
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(response);
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponseDTO> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
         AuthResponseDTO response = authService.refreshToken(request);
-        return ResponseEntity.ok(response);
+        org.springframework.http.ResponseCookie accessCookie = createCookie("accessToken", response.getToken(), 86400);
+        org.springframework.http.ResponseCookie refreshCookie = createCookie("refreshToken", response.getRefreshToken(), 604800);
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(@Valid @RequestBody RefreshTokenRequestDTO request) {
-        authService.logout(request);
-        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    public ResponseEntity<Map<String, String>> logout(@Valid @RequestBody(required = false) RefreshTokenRequestDTO request) {
+        if (request != null && request.getRefreshToken() != null) {
+            try {
+                authService.logout(request);
+            } catch (Exception ignored) {}
+        }
+        org.springframework.http.ResponseCookie cleanAccess = createCookie("accessToken", "", 0);
+        org.springframework.http.ResponseCookie cleanRefresh = createCookie("refreshToken", "", 0);
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, cleanAccess.toString())
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, cleanRefresh.toString())
+                .body(Map.of("message", "Logged out successfully"));
+    }
+
+    private org.springframework.http.ResponseCookie createCookie(String name, String value, long maxAge) {
+        return org.springframework.http.ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(maxAge)
+                .build();
     }
 
     @PostMapping("/forgot-password")

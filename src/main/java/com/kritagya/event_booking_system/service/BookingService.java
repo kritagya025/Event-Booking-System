@@ -77,7 +77,7 @@ public class BookingService {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(request.getUserId()));
 
-        Event event = eventRepository.findByIdAndDeletedFalse(request.getEventId())
+        Event event = eventRepository.findByIdAndDeletedFalseWithLock(request.getEventId())
                 .orElseThrow(() -> new EventNotFoundException(request.getEventId()));
 
         if (event.getRegistrationDeadline() != null && LocalDate.now().isAfter(event.getRegistrationDeadline())) {
@@ -112,7 +112,7 @@ public class BookingService {
         if (request.getSeatIds() != null && !request.getSeatIds().isEmpty()) {
             List<Seat> seatsToBook = new ArrayList<>();
             for (Long seatId : request.getSeatIds()) {
-                Seat seat = seatRepository.findById(seatId).orElseGet(() -> {
+                Seat seat = seatRepository.findByIdWithLock(seatId).orElseGet(() -> {
                     long idVal = seatId != null ? seatId : 1L;
                     String row = String.valueOf((char) ('A' + (int) ((idVal - 1) / 8 % 26)));
                     int num = (int) ((idVal - 1) % 8 + 1);
@@ -167,8 +167,15 @@ public class BookingService {
     }
 
     public BookingResponseDTO getBooking(Long id) {
+        return getBooking(id, null);
+    }
+
+    public BookingResponseDTO getBooking(Long id, User currentUser) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException(id));
+        if (currentUser != null && !booking.getUser().getId().equals(currentUser.getId()) && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to access this booking.");
+        }
         return BookingMapper.toDTO(booking);
     }
 
@@ -184,8 +191,17 @@ public class BookingService {
 
     @Transactional
     public BookingResponseDTO cancelBooking(Long id) {
+        return cancelBooking(id, null);
+    }
+
+    @Transactional
+    public BookingResponseDTO cancelBooking(Long id, User currentUser) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException(id));
+
+        if (currentUser != null && !booking.getUser().getId().equals(currentUser.getId()) && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to cancel this booking.");
+        }
 
         if (booking.getBookingStatus() == BookingStatus.CANCELLED) {
             throw new IllegalArgumentException("Booking is already cancelled");

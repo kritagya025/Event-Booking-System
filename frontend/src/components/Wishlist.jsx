@@ -3,7 +3,7 @@ import { Heart, Calendar, MapPin, Trash2, ArrowRight } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
 
-export default function Wishlist({ currentUser, onSelectEvent, showToast }) {
+export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +16,7 @@ export default function Wishlist({ currentUser, onSelectEvent, showToast }) {
     try {
       const data = await apiFetch('/wishlist');
       setWishlistItems(data);
-    } catch (err) {
+    } catch (_err) {
       setWishlistItems([
         {
           id: 1,

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Ticket, Search, Heart, User, LogOut, ShieldCheck, QrCode, PlusCircle, Compass, Globe, Menu, X } from 'lucide-react';
+import { Ticket, Heart, User, LogOut, ShieldCheck, QrCode, PlusCircle, Compass, Globe, Menu, X } from 'lucide-react';
 import { getActiveCurrency, setActiveCurrency, getAvailableCurrencies, subscribeCurrencyChange } from '../services/currency';
 
-export default function Navbar({ currentUser, onNavigate, activeTab, onOpenAuthModal, onLogout, searchKeyword = '', onSearchChange }) {
+export default function Navbar({ currentUser, onNavigate, activeTab, _onOpenAuthModal, onLogout, searchKeyword = '', onSearchChange }) {
   const [currency, setCurrency] = useState(getActiveCurrency());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);

@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   User, Mail, Phone, ShieldCheck, Ticket, Heart, Calendar, 
   MapPin, Download, PlusCircle, QrCode, DollarSign, Edit3, X, CheckCircle, 
-  TrendingUp, Award, Layers, LogOut, Lock, RefreshCw, Zap, Trash2
+  TrendingUp, Award, Layers, LogOut, Lock, Trash2
 } from 'lucide-react';
-import { apiFetch, setAuthSession } from '../services/api';
+import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
-import confetti from 'canvas-confetti';
 
 export default function ProfileDashboard({ currentUser, onNavigate, showToast, onUpdateUser, onLogout }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'bookings' | 'wishlist' | 'events'
-  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(currentUser);
 
   // Customer Data
@@ -29,13 +27,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
   });
   const [savingProfile, setSavingProfile] = useState(false);
 
-  useEffect(() => {
-    if (!currentUser) return;
-    fetchProfileData();
-  }, [currentUser]);
-
-  const fetchProfileData = async () => {
-    setLoading(true);
+  const fetchProfileData = useCallback(async () => {
     try {
       // 1. Fetch fresh user profile
       const userRes = await apiFetch('/users/me').catch(() => currentUser);
@@ -66,13 +58,15 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
         ]);
         setBookings(Array.isArray(bRes) ? bRes : []);
         setWishlist(Array.isArray(wRes) ? wRes : []);
-      }
     } catch (err) {
       console.error('Failed to load profile details:', err);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    fetchProfileData();
+  }, [currentUser, fetchProfileData]);
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();

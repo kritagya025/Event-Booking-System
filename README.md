@@ -215,24 +215,29 @@ CREATE DATABASE event_booking_db;
 
 ### 3. Configure Environment Variables
 
-Create environment variables or edit `src/main/resources/application.properties`:
+### 3. Configure Environment Variables
 
-| Variable | Default | Description |
-|---|---|---|
-| `DB_URL` | `jdbc:postgresql://localhost:5432/event_booking_db` | PostgreSQL connection URL |
-| `DB_USERNAME` | `postgres` | Database username |
-| `DB_PASSWORD` | `kritagya` | Database password |
-| `JWT_SECRET` | Base64 encoded key | JWT signing secret |
-| `JWT_EXPIRATION` | `86400000` (24h) | Access token expiry (ms) |
-| `JWT_REFRESH_EXPIRATION` | `604800000` (7d) | Refresh token expiry (ms) |
-| `MAIL_HOST` | `smtp.gmail.com` | SMTP mail host |
-| `MAIL_PORT` | `587` | SMTP mail port |
-| `MAIL_USERNAME` | - | SMTP mail username |
-| `MAIL_PASSWORD` | - | SMTP mail password |
-| `REDIS_HOST` | `localhost` | Redis host |
-| `REDIS_PORT` | `6379` | Redis port |
-| `CACHE_TYPE` | `simple` | `simple` or `redis` |
-| `CORS_ALLOWED_ORIGINS` | `http://localhost:3000,http://localhost:5173` | Frontend origins |
+The system relies on strict environment variable configuration. Fallback secret defaults have been removed to comply with production security standards.
+
+| Variable | Required in Prod | Description | Default (Dev Profile) |
+|---|---|---|---|
+| `SPRING_PROFILES_ACTIVE` | Yes | Active Spring profile (`dev` or `prod`) | `dev` |
+| `DB_URL` | Yes | PostgreSQL connection URL | `jdbc:postgresql://localhost:5432/event_booking_db` |
+| `DB_USERNAME` | Yes | Database username | `postgres` |
+| `DB_PASSWORD` | Yes | Database password | `kritagya` |
+| `JWT_SECRET` | Yes | Base64 encoded JWT signing secret (min 256 bits) | Dev fallback in `application-dev.properties` |
+| `JWT_EXPIRATION` | No | Access token expiry (ms) | `86400000` (24h) |
+| `JWT_REFRESH_EXPIRATION` | No | Refresh token expiry (ms) | `604800000` (7d) |
+| `TRUSTED_PROXIES` | No | Comma-separated list of trusted reverse proxy IPs | `127.0.0.1,0:0:0:0:0:0:0:1` |
+| `APP_SEED_DATA` | No | Enable automatic demo data seeding on startup (`dev` only) | `true` (dev) / `false` (prod) |
+| `MAIL_HOST` | No | SMTP mail host | `smtp.gmail.com` |
+| `MAIL_PORT` | No | SMTP mail port | `587` |
+| `MAIL_USERNAME` | No | SMTP mail username | `noreply@eventbookingsystem.com` |
+| `MAIL_PASSWORD` | No | SMTP mail password | - |
+| `REDIS_HOST` | No | Redis host | `localhost` |
+| `REDIS_PORT` | No | Redis port | `6379` |
+| `CACHE_TYPE` | No | `simple` or `redis` | `simple` |
+| `CORS_ALLOWED_ORIGINS` | No | Allowed CORS origins | `http://localhost:3000,http://localhost:5173` |
 
 ### 4. Install Frontend Dependencies
 

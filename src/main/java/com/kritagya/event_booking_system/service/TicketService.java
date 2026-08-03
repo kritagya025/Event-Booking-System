@@ -37,8 +37,17 @@ public class TicketService {
 
     @Transactional
     public List<TicketResponseDTO> generateTickets(Long bookingId) {
+        return generateTickets(bookingId, null);
+    }
+
+    @Transactional
+    public List<TicketResponseDTO> generateTickets(Long bookingId, com.kritagya.event_booking_system.entity.User currentUser) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException(bookingId));
+
+        if (currentUser != null && !booking.getUser().getId().equals(currentUser.getId()) && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to generate tickets for this booking.");
+        }
 
         // Prevent duplicate ticket generation
         List<Ticket> existingTickets = ticketRepository.findByBookingId(bookingId);
@@ -66,9 +75,17 @@ public class TicketService {
     }
 
     public List<TicketResponseDTO> getTicketsByBooking(Long bookingId) {
-        if (!bookingRepository.existsById(bookingId)) {
-            throw new BookingNotFoundException(bookingId);
+        return getTicketsByBooking(bookingId, null);
+    }
+
+    public List<TicketResponseDTO> getTicketsByBooking(Long bookingId, com.kritagya.event_booking_system.entity.User currentUser) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException(bookingId));
+
+        if (currentUser != null && !booking.getUser().getId().equals(currentUser.getId()) && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to view tickets for this booking.");
         }
+
         return ticketRepository.findByBookingId(bookingId)
                 .stream()
                 .map(TicketMapper::toDTO)
@@ -76,8 +93,19 @@ public class TicketService {
     }
 
     public TicketResponseDTO getTicket(Long id) {
+        return getTicket(id, null);
+    }
+
+    public TicketResponseDTO getTicket(Long id, com.kritagya.event_booking_system.entity.User currentUser) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + id));
+
+        if (currentUser != null && !ticket.getBooking().getUser().getId().equals(currentUser.getId()) 
+                && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN 
+                && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ORGANIZER) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to view this ticket.");
+        }
+
         return TicketMapper.toDTO(ticket);
     }
 
@@ -146,14 +174,34 @@ public class TicketService {
     }
 
     public byte[] generateTicketQrCode(Long ticketId) {
+        return generateTicketQrCode(ticketId, null);
+    }
+
+    public byte[] generateTicketQrCode(Long ticketId, com.kritagya.event_booking_system.entity.User currentUser) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
+
+        if (currentUser != null && !ticket.getBooking().getUser().getId().equals(currentUser.getId())
+                && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN
+                && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ORGANIZER) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to view QR code for this ticket.");
+        }
+
         return qrCodeService.generateQrCodeImage(ticket.getQrCode());
     }
 
     public byte[] generateTicketPdf(Long ticketId) {
+        return generateTicketPdf(ticketId, null);
+    }
+
+    public byte[] generateTicketPdf(Long ticketId, com.kritagya.event_booking_system.entity.User currentUser) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
+
+        if (currentUser != null && !ticket.getBooking().getUser().getId().equals(currentUser.getId())
+                && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to download PDF for this ticket.");
+        }
 
         if (ticket.getTicketStatus() == TicketStatus.CANCELLED || ticket.getBooking().getBookingStatus() == com.kritagya.event_booking_system.enums.BookingStatus.CANCELLED) {
             throw new IllegalStateException("Cannot download PDF for a cancelled ticket");
@@ -233,8 +281,17 @@ public class TicketService {
     }
 
     public byte[] generateBookingPdf(Long bookingId) {
+        return generateBookingPdf(bookingId, null);
+    }
+
+    public byte[] generateBookingPdf(Long bookingId, com.kritagya.event_booking_system.entity.User currentUser) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException(bookingId));
+
+        if (currentUser != null && !booking.getUser().getId().equals(currentUser.getId())
+                && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to download PDF for this booking.");
+        }
 
         if (booking.getBookingStatus() == com.kritagya.event_booking_system.enums.BookingStatus.CANCELLED) {
             throw new IllegalStateException("Cannot generate PDF for a cancelled booking");
