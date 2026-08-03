@@ -304,7 +304,11 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                           const isSelected = selectedSeats.some(s => s.id === seat.id);
                           let classNames = 'seat-btn ';
                           if (isSelected) classNames += 'seat-selected';
-                          else if (seat.status === 'AVAILABLE') classNames += 'seat-available';
+                          else if (seat.status === 'AVAILABLE') {
+                            if (seat.seatType === 'VIP') classNames += 'seat-available-vip';
+                            else if (seat.seatType === 'PREMIUM') classNames += 'seat-available-premium';
+                            else classNames += 'seat-available-regular';
+                          }
                           else if (seat.status === 'LOCKED') classNames += 'seat-locked';
                           else if (seat.status === 'BOOKED') classNames += 'seat-booked';
 
@@ -313,7 +317,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                               key={seat.id}
                               className={classNames}
                               onClick={() => toggleSeatSelection(seat)}
-                              title={`${seat.seatNumber} (${seat.seatType}) — ${formatPrice(seat.price, event.currency)}`}
+                              title={`${seat.seatNumber} (${seat.seatType || 'REGULAR'}) — ${formatPrice(seat.price, event.currency)}`}
                             >
                               {seat.seatNumber.replace(/^[A-Z]+/, '')}
                             </button>
@@ -324,18 +328,24 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   </div>
 
                   {/* Legend */}
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', fontSize: '0.75rem', color: 'var(--text-muted)', paddingTop: '14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <div className="seat-btn seat-available" style={{ width: '14px', height: '14px' }} /> Available
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '0.75rem', color: 'var(--text-secondary)', paddingTop: '16px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div className="seat-btn seat-available-vip" style={{ width: '16px', height: '16px', fontSize: '0.5rem' }}>VIP</div> VIP
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <div className="seat-btn seat-selected" style={{ width: '14px', height: '14px' }} /> Selected
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div className="seat-btn seat-available-premium" style={{ width: '16px', height: '16px', fontSize: '0.5rem' }}>PRM</div> Premium
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <div className="seat-btn seat-locked" style={{ width: '14px', height: '14px' }} /> Locked
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div className="seat-btn seat-available-regular" style={{ width: '16px', height: '16px', fontSize: '0.5rem' }}>REG</div> Regular
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <div className="seat-btn seat-booked" style={{ width: '14px', height: '14px' }} /> Booked
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div className="seat-btn seat-selected" style={{ width: '16px', height: '16px' }} /> Selected
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div className="seat-btn seat-locked" style={{ width: '16px', height: '16px' }} /> Locked
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div className="seat-btn seat-booked" style={{ width: '16px', height: '16px' }} /> Booked
                     </div>
                   </div>
                 </div>

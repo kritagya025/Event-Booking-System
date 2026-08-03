@@ -58,17 +58,18 @@ export default function RegisterPage({ onNavigate, showToast }) {
           <div 
             onClick={() => onNavigate('home')}
             style={{
-              width: '48px', height: '48px', borderRadius: '14px', background: '#FFF',
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', cursor: 'pointer'
+              width: '52px', height: '52px', borderRadius: '14px', background: 'var(--eb-orange)',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', cursor: 'pointer',
+              boxShadow: '0 4px 18px var(--eb-orange-glow)'
             }}
           >
-            <Ticket size={24} color="#000" />
+            <Ticket size={26} color="#FFFFFF" />
           </div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: '8px' }}>
-            Create account
+          <h1 className="gradient-text" style={{ fontSize: '2.2rem', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: '8px' }}>
+            Create Account
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            Join EventHub to book events and manage tickets
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
+            Join EventHub to reserve seats, track tickets, and unlock exclusive rewards
           </p>
         </div>
 

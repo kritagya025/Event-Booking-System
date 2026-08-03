@@ -350,28 +350,29 @@ export default function App() {
           <div style={{ padding: '0 24px 80px 24px', maxWidth: '1320px', margin: '0 auto' }}>
             
             {/* Hero Section */}
-            <div style={{ padding: '100px 0 80px 0', textAlign: 'center' }}>
-              <span className="badge badge-purple pulse-badge" style={{ marginBottom: '24px', padding: '6px 16px', fontSize: '0.7rem' }}>
-                <Sparkles size={14} /> REAL-TIME SEAT ALLOCATION
+            <div style={{ padding: '80px 0 60px 0', textAlign: 'center' }}>
+              <span className="badge badge-primary" style={{ marginBottom: '20px', padding: '6px 16px', fontSize: '0.72rem' }}>
+                <Sparkles size={14} /> LIVE SEAT ALLOCATION & QR TICKETING
               </span>
 
-              <h1 className="hero-title" style={{ fontSize: '4.2rem', marginBottom: '24px', lineHeight: 1.08, letterSpacing: '-0.05em', fontWeight: 900 }}>
-                Reserve Your Seats For<br />
-                <span style={{ color: '#FFFFFF' }}>World-Class Events</span>
+              <h1 className="hero-title" style={{ fontSize: '3.8rem', marginBottom: '20px', lineHeight: 1.1, letterSpacing: '-0.04em', fontWeight: 800 }}>
+                Discover & Book Extraordinary<br />
+                <span style={{ color: '#818CF8' }}>Live Events Worldwide</span>
               </h1>
 
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.15rem', maxWidth: '600px', margin: '0 auto 48px auto', lineHeight: 1.7, fontWeight: 400 }}>
-                Interactive seat maps, instant promo coupons, waitlist auto-promotions, and PDF QR code ticketing — all in real-time.
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '620px', margin: '0 auto 40px auto', lineHeight: 1.6, fontWeight: 400 }}>
+                Interactive seat maps, dynamic ticket tiers, instant discount coupons, and real-time seat lock synchronizations.
               </p>
 
               {/* Search Controls Form */}
               <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} style={{ 
-                maxWidth: '860px', margin: '0 auto', display: 'flex', gap: '8px', 
-                flexWrap: 'wrap', alignItems: 'center', padding: '8px',
-                background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-lg)'
+                maxWidth: '860px', margin: '0 auto', display: 'flex', gap: '10px', 
+                flexWrap: 'wrap', alignItems: 'center', padding: '10px',
+                background: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)'
               }}>
                 <div style={{ flex: '2 1 240px', position: 'relative' }}>
-                  <Search size={16} color="var(--text-subtle)" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input 
                     type="text" 
                     placeholder="Search events, artists, venues, city..." 
@@ -382,7 +383,7 @@ export default function App() {
                       applyLiveFilter(val, filters.category, filters.city);
                     }}
                     className="form-input"
-                    style={{ width: '100%', paddingLeft: '40px', height: '48px', fontSize: '0.95rem' }}
+                    style={{ width: '100%', paddingLeft: '44px', height: '48px', fontSize: '0.92rem' }}
                   />
                 </div>
 
@@ -398,12 +399,12 @@ export default function App() {
                     style={{ width: '100%', height: '48px', fontSize: '0.9rem' }}
                   >
                     <option value="">All Categories</option>
-                    <option value="MUSIC">Music</option>
-                    <option value="TECH">Tech & AI</option>
-                    <option value="THEATER">Theater</option>
-                    <option value="SPORTS">Sports</option>
-                    <option value="WORKSHOP">Workshop</option>
-                    <option value="OTHER">Other</option>
+                    <option value="MUSIC">Music & Concerts</option>
+                    <option value="TECH">Tech & AI Summits</option>
+                    <option value="THEATER">Theater & Shows</option>
+                    <option value="SPORTS">Sports & eSports</option>
+                    <option value="WORKSHOP">Workshops</option>
+                    <option value="OTHER">Other Events</option>
                   </select>
                 </div>
 
@@ -423,28 +424,117 @@ export default function App() {
                 </button>
 
                 {(filters.keyword || filters.category || filters.city) && (
-                  <button type="button" onClick={handleClearSearch} className="btn btn-secondary" style={{ height: '48px', padding: '0 16px', color: '#ef4444' }}>
+                  <button type="button" onClick={handleClearSearch} className="btn btn-outline" style={{ height: '48px', padding: '0 16px', color: '#FB7185' }}>
                     Clear
                   </button>
                 )}
               </form>
 
+              {/* Category Pill Filters */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '28px' }}>
+                {[
+                  { id: '', label: 'All Events' },
+                  { id: 'MUSIC', label: '🎵 Music & Concerts' },
+                  { id: 'TECH', label: '💻 Tech & AI' },
+                  { id: 'THEATER', label: '🎭 Theater & Arts' },
+                  { id: 'SPORTS', label: '⚽ Sports & eSports' }
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setFilters({ ...filters, category: cat.id });
+                      handleSearchAndFilter();
+                    }}
+                    className={`btn ${filters.category === cat.id ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+                    style={{ borderRadius: 'var(--radius-full)', padding: '6px 16px', fontSize: '0.8rem' }}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+
               {/* Stats */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '48px', marginTop: '48px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                <div><strong style={{ color: '#FFF', fontSize: '1.3rem', display: 'block' }}>50+</strong> Live Events</div>
-                <div><strong style={{ color: '#FFF', fontSize: '1.3rem', display: 'block' }}>100%</strong> WebSocket Sync</div>
-                <div><strong style={{ color: '#FFF', fontSize: '1.3rem', display: 'block' }}>0s</strong> Double-Booking</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '48px', marginTop: '40px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                <div><strong style={{ color: '#FFFFFF', fontSize: '1.25rem', display: 'block' }}>50+</strong> Live Events</div>
+                <div><strong style={{ color: '#FFFFFF', fontSize: '1.25rem', display: 'block' }}>100%</strong> Real-Time Sync</div>
+                <div><strong style={{ color: '#FFFFFF', fontSize: '1.25rem', display: 'block' }}>0s</strong> Concurrency Lock</div>
               </div>
             </div>
 
-            {/* Popular Events (only visible when NO search filter is active) */}
+            {/* Featured Spotlight Banner (when no search active) */}
+            {!(filters.keyword || filters.category || filters.city) && (
+              <div className="glass-panel" style={{ 
+                margin: '20px 0 48px 0', 
+                borderRadius: 'var(--radius-xl)', 
+                overflow: 'hidden',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                border: '1px solid rgba(240, 85, 55, 0.3)',
+                boxShadow: 'var(--shadow-card), 0 0 30px var(--eb-orange-tint)'
+              }}>
+                <div style={{ position: 'relative', minHeight: '280px' }}>
+                  <img 
+                    src={popularEvents[0]?.bannerImageUrl || '/images/concert.png'} 
+                    alt="Featured Event" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.9)' }} 
+                  />
+                  <div style={{ position: 'absolute', top: '16px', left: '16px' }}>
+                    <span className="badge badge-orange" style={{ padding: '6px 14px', fontSize: '0.75rem' }}>
+                      🔥 FEATURED SPOTLIGHT
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ padding: '36px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'var(--bg-surface)' }}>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--eb-orange)', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                      SAT, SEP 15 • 7:00 PM
+                    </div>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, lineHeight: 1.25, marginBottom: '12px', color: '#FFFFFF' }}>
+                      {popularEvents[0]?.name || 'Neon Horizon Cyber Music Festival 2026'}
+                    </h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginBottom: '20px', lineHeight: 1.6 }}>
+                      {popularEvents[0]?.description || 'Experience 3 days of immersive electronic music, holographic stages, and world-class laser shows with global headline artists.'}
+                    </p>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '24px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <MapPin size={16} color="var(--eb-orange)" /> Metro Arena Center
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Star size={16} color="#FFB800" fill="#FFB800" /> 4.9 (1.2k attending)
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--divider)', paddingTop: '20px' }}>
+                    <div>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', fontWeight: '700', textTransform: 'uppercase' }}>Tickets From</span>
+                      <span style={{ fontSize: '1.6rem', fontWeight: '800', color: '#FFFFFF' }}>
+                        {formatPrice(popularEvents[0]?.ticketPrice || 85.00, popularEvents[0]?.currency)}
+                      </span>
+                    </div>
+                    <button 
+                      onClick={() => openBookingModal(popularEvents[0] || mockEvents[0])} 
+                      className="btn btn-primary btn-lg"
+                    >
+                      Get Tickets <ArrowRight size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Popular Events */}
             {!(filters.keyword || filters.category || filters.city) && (
               <div style={{ marginTop: '20px' }}>
-                <div style={{ marginBottom: '28px' }}>
-                  <h2 style={{ fontSize: '1.6rem', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                    <Flame size={22} color="var(--text-secondary)" /> Popular & Trending
-                  </h2>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Top events with highest attendee interest</p>
+                <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.6rem', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                      <Flame size={22} color="var(--eb-orange)" /> Trending Near You
+                    </h2>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Top events with highest attendee interest this week</p>
+                  </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 380px))', gap: '20px', justifyContent: 'flex-start' }}>
@@ -464,32 +554,32 @@ export default function App() {
             )}
 
             {/* Full Catalog / Search Results */}
-            <div ref={catalogRef} style={{ marginTop: (filters.keyword || filters.category || filters.city) ? '30px' : '60px', scrollMarginTop: '100px' }}>
+            <div ref={catalogRef} style={{ marginTop: (filters.keyword || filters.category || filters.city) ? '30px' : '56px', scrollMarginTop: '100px' }}>
               
               {/* Header logic for normal vs active search */}
               {!(filters.keyword || filters.category || filters.city) ? (
-                <div style={{ marginBottom: '28px' }}>
-                  <h2 style={{ fontSize: '1.6rem', marginBottom: '4px' }}>All Events</h2>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Select an event to open the live interactive seat map</p>
+                <div style={{ marginBottom: '24px' }}>
+                  <h2 style={{ fontSize: '1.6rem', marginBottom: '4px' }}>Explore All Events</h2>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Select an event to view venue seat maps and book tickets</p>
                 </div>
               ) : (
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.08)' }}>
                   <div>
                     <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Search size={18} /> Search Results ({events.length})
+                      <Search size={18} color="var(--eb-orange)" /> Search Results ({events.length})
                     </h2>
                     <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       Showing events matching {filters.keyword ? `"${filters.keyword}"` : ''} {filters.category ? `[${filters.category}]` : ''} {filters.city ? `in ${filters.city}` : ''}
                     </p>
                   </div>
-                  <button onClick={handleClearSearch} className="btn btn-secondary btn-sm" style={{ color: '#ef4444' }}>
+                  <button onClick={handleClearSearch} className="btn btn-outline btn-sm" style={{ color: '#FF4D6D' }}>
                     Clear Search
                   </button>
                 </div>
               )}
 
               {loading ? (
-                <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>Loading events...</div>
+                <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>Loading live events...</div>
               ) : events.length === 0 ? (
                 /* Inline Empty State Card */
                 <div style={{ textAlign: 'center', padding: '60px 20px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-lg)', border: '1px dashed rgba(255,255,255,0.1)' }}>
@@ -524,6 +614,63 @@ export default function App() {
               )}
             </div>
           </div>
+
+          {/* Eventbrite Footer */}
+          <footer style={{ background: '#0D0C13', borderTop: '1px solid var(--border-subtle)', padding: '60px 24px 40px 24px', marginTop: '60px' }}>
+            <div style={{ maxWidth: '1320px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--eb-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Ticket size={18} color="#FFF" />
+                  </div>
+                  <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFF' }}>eventhub</span>
+                </div>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                  Discover the best local events, music concerts, tech summits, and live theater experiences.
+                </p>
+              </div>
+
+              <div>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-secondary)', marginBottom: '16px' }}>Use EventHub</h4>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+                  <li><a href="#events" onClick={() => handleNavigate('events')}>Create Events</a></li>
+                  <li><a href="#pricing">Pricing & Fees</a></li>
+                  <li><a href="#checkin" onClick={() => handleNavigate('checkin')}>Event Check-In App</a></li>
+                  <li><a href="#mobile">Mobile Ticketing</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-secondary)', marginBottom: '16px' }}>Plan Events</h4>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+                  <li><a href="#music">Music Festivals</a></li>
+                  <li><a href="#tech">Tech Conferences</a></li>
+                  <li><a href="#theater">Broadway & Theater</a></li>
+                  <li><a href="#sports">Sports & eSports</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-secondary)', marginBottom: '16px' }}>Connect</h4>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                  Subscribe for event updates & exclusive ticket deals.
+                </p>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input type="email" placeholder="Enter your email" className="form-input" style={{ height: '40px', fontSize: '0.85rem' }} />
+                  <button className="btn btn-primary btn-sm">Join</button>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ maxWidth: '1320px', margin: '40px auto 0 auto', paddingTop: '24px', borderTop: '1px solid var(--divider)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-subtle)' }}>
+              <span>© 2026 EventHub Inc. All rights reserved.</span>
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <a href="#privacy">Privacy</a>
+                <a href="#terms">Terms</a>
+                <a href="#cookies">Cookie Preferences</a>
+              </div>
+            </div>
+          </footer>
         </main>
       )}
 
@@ -596,7 +743,7 @@ export default function App() {
   );
 }
 
-// Minimal Monochrome Event Card
+// Eventbrite Signature Event Card
 function EventCard({ event, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
   const isSoldOut = event.availableSeats === 0;
   const canDelete = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER');
@@ -610,6 +757,16 @@ function EventCard({ event, currentUser, onBook, onWishlist, onWaitlist, onDelet
     return '/images/concert.png';
   };
 
+  const formatEventDateHeader = (dateStr) => {
+    if (!dateStr) return 'SAT, SEP 20 • 7:00 PM';
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase() + ' • 7:00 PM';
+    } catch {
+      return dateStr;
+    }
+  };
+
   return (
     <div className="glass-panel glass-panel-interactive" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Banner */}
@@ -621,74 +778,78 @@ function EventCard({ event, currentUser, onBook, onWishlist, onWaitlist, onDelet
         />
         <div className="card-banner-overlay">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className="badge badge-purple">{event.category || 'EVENT'}</span>
+            <span className="badge badge-orange">
+              {event.category || 'EVENT'}
+            </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               {canDelete && (
                 <button 
                   onClick={onDelete} 
-                  style={{ padding: '8px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.25)', border: '1px solid rgba(239, 68, 68, 0.4)' }} 
+                  style={{ padding: '8px', borderRadius: '50%', background: 'rgba(255, 77, 109, 0.2)', border: '1px solid rgba(255, 77, 109, 0.3)', backdropFilter: 'blur(8px)' }} 
                   title="Remove Event"
                 >
-                  <Trash2 size={14} color="#ef4444" />
+                  <Trash2 size={14} color="#FF4D6D" />
                 </button>
               )}
               <button 
                 onClick={onWishlist} 
-                style={{ padding: '8px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} 
+                style={{ padding: '8px', borderRadius: '50%', background: 'rgba(28, 26, 39, 0.8)', border: '1px solid var(--border-subtle)', backdropFilter: 'blur(8px)' }} 
                 title="Save to Wishlist"
               >
-                <Heart size={14} color="#FFF" />
+                <Heart size={14} color="#FFFFFF" />
               </button>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)', fontWeight: '600' }}>
-            <Star size={12} color="#FFF" fill="#FFF" /> 4.9
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.78rem', color: '#FFB800', fontWeight: '700' }}>
+            <Star size={13} color="#FFB800" fill="#FFB800" /> 4.9 <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>(120+ reviews)</span>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div style={{ padding: '16px 20px 20px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '8px', lineHeight: 1.3, fontWeight: 700 }}>{event.name}</h3>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          {/* Eventbrite Signature Orange Date Header */}
+          <div style={{ fontSize: '0.78rem', fontWeight: '800', color: 'var(--eb-orange)', letterSpacing: '0.05em', marginBottom: '6px' }}>
+            {formatEventDateHeader(event.eventDate)}
+          </div>
+
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '8px', lineHeight: 1.35, fontWeight: 700, color: 'var(--text-main)' }}>{event.name}</h3>
+          <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.5 }}>
             {event.description || 'An unforgettable live event featuring top performances and interactive sessions.'}
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Calendar size={14} color="var(--text-subtle)" /> {event.eventDate || '2026-09-15'}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <MapPin size={14} color="var(--text-subtle)" /> {event.venueName || 'Main Arena Center'}
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '18px' }}>
+            <MapPin size={15} color="var(--text-muted)" /> {event.venueName || 'Main Arena Center'}
           </div>
         </div>
 
         {/* Footer */}
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '14px', marginBottom: '14px' }}>
+        <div style={{ borderTop: '1px solid var(--divider)', paddingTop: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-subtle)', display: 'block', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em' }}>From</span>
-              <span style={{ fontSize: '1.5rem', fontWeight: '800', color: '#FFF' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ticket Price</span>
+              <span style={{ fontSize: '1.4rem', fontWeight: '800', color: '#FFFFFF' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-subtle)', display: 'block', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Availability</span>
-              <span style={{ fontSize: '0.85rem', fontWeight: '700', color: isSoldOut ? 'var(--text-muted)' : '#FFF' }}>
-                {isSoldOut ? 'SOLD OUT' : `${event.availableSeats} Left`}
-              </span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Availability</span>
+              {isSoldOut ? (
+                <span className="badge badge-rose">SOLD OUT</span>
+              ) : (
+                <span className="badge badge-emerald">{event.availableSeats} Left</span>
+              )}
             </div>
           </div>
 
           {isSoldOut ? (
-            <button onClick={onWaitlist} className="btn btn-secondary" style={{ width: '100%', height: '42px' }}>
-              <Bell size={14} /> Join Waitlist
+            <button onClick={onWaitlist} className="btn btn-secondary" style={{ width: '100%', height: '44px' }}>
+              <Bell size={15} /> Join Waitlist
             </button>
           ) : (
-            <button onClick={onBook} className="btn btn-primary" style={{ width: '100%', height: '42px' }}>
-              <Ticket size={14} /> Select Seats
+            <button onClick={onBook} className="btn btn-primary" style={{ width: '100%', height: '44px' }}>
+              <Ticket size={15} /> Select Seats
             </button>
           )}
         </div>

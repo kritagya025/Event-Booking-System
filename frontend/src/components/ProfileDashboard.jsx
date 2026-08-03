@@ -58,6 +58,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
         ]);
         setBookings(Array.isArray(bRes) ? bRes : []);
         setWishlist(Array.isArray(wRes) ? wRes : []);
+      }
     } catch (err) {
       console.error('Failed to load profile details:', err);
     }

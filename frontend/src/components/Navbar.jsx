@@ -47,36 +47,34 @@ export default function Navbar({ currentUser, onNavigate, activeTab, _onOpenAuth
       position: 'sticky',
       top: 0,
       zIndex: 100,
-      padding: '14px 20px',
-      background: 'rgba(0, 0, 0, 0.85)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-      borderBottom: '1px solid rgba(255,255,255,0.06)'
+      padding: '12px 24px',
+      background: 'rgba(19, 18, 26, 0.92)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      borderBottom: '1px solid var(--border-subtle)'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: '1320px', margin: '0 auto', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: '1320px', margin: '0 auto', gap: '16px' }}>
         
-        {/* Brand */}
+        {/* Eventbrite Brand Wordmark */}
         <div 
           onClick={() => handleNavClick('home')} 
           style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0 }}
         >
           <div style={{
-            width: '36px',
-            height: '36px',
+            width: '38px',
+            height: '38px',
             borderRadius: '10px',
-            background: '#FFFFFF',
+            background: 'var(--eb-orange)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            boxShadow: '0 4px 14px var(--eb-orange-glow)'
           }}>
-            <Ticket size={20} color="#000" />
+            <Ticket size={20} color="#FFFFFF" />
           </div>
           <div>
-            <span style={{ fontSize: '1.25rem', fontWeight: '900', fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>
-              EventHub
-            </span>
-            <span style={{ display: 'block', fontSize: '0.6rem', color: 'var(--text-subtle)', fontWeight: '600', letterSpacing: '0.1em', marginTop: '-3px' }}>
-              TICKETING
+            <span style={{ fontSize: '1.35rem', fontWeight: '900', fontFamily: 'var(--font-sans)', letterSpacing: '-0.04em', color: '#FFFFFF' }}>
+              eventhub
             </span>
           </div>
         </div>
