@@ -49,11 +49,31 @@ public class SeatService {
     }
 
     public List<SeatResponseDTO> getSeatsByVenue(Long venueId) {
-        if (!venueRepository.existsById(venueId)) {
-            throw new VenueNotFoundException(venueId);
+        Venue venue = venueRepository.findById(venueId)
+                .orElseThrow(() -> new VenueNotFoundException(venueId));
+
+        List<Seat> seats = seatRepository.findByVenueId(venueId);
+        if (seats.isEmpty()) {
+            int capacity = venue.getCapacity() != null && venue.getCapacity() > 0 ? venue.getCapacity() : 40;
+            seats = new java.util.ArrayList<>();
+            int seatsPerRow = 8;
+            int totalRows = (int) Math.ceil((double) capacity / seatsPerRow);
+
+            for (int r = 0; r < totalRows; r++) {
+                String rowLetter = String.valueOf((char) ('A' + r % 26));
+                com.kritagya.event_booking_system.enums.SeatType seatType = (r == 0) ? com.kritagya.event_booking_system.enums.SeatType.VIP : com.kritagya.event_booking_system.enums.SeatType.REGULAR;
+
+                for (int s = 1; s <= seatsPerRow; s++) {
+                    if (seats.size() >= capacity) break;
+                    String seatNum = rowLetter + s;
+                    Seat seat = new Seat(seatNum, rowLetter, seatType, SeatStatus.AVAILABLE, venue);
+                    seats.add(seat);
+                }
+            }
+            seats = seatRepository.saveAll(seats);
         }
-        return seatRepository.findByVenueId(venueId)
-                .stream()
+
+        return seats.stream()
                 .map(SeatMapper::toDTO)
                 .collect(Collectors.toList());
     }

@@ -32,6 +32,8 @@ public class EventRequestDTO {
     @PositiveOrZero(message = "Ticket price must be zero or positive")
     private BigDecimal ticketPrice;
 
+    private String currency;
+
     @NotNull(message = "Available seats is required")
     @Positive(message = "Available seats must be greater than 0")
     private Integer availableSeats;
@@ -146,5 +148,13 @@ public class EventRequestDTO {
 
     public void setRegistrationDeadline(LocalDate registrationDeadline) {
         this.registrationDeadline = registrationDeadline;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

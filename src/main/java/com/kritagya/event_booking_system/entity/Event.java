@@ -30,6 +30,7 @@ public class Event extends BaseEntity {
     private EventStatus status;
 
     private BigDecimal ticketPrice;
+    private String currency;
     private Integer availableSeats;
     private LocalDate registrationDeadline;
     private boolean deleted = false;
@@ -196,5 +197,13 @@ public class Event extends BaseEntity {
 
     public void setBannerImageUrl(String bannerImageUrl) {
         this.bannerImageUrl = bannerImageUrl;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

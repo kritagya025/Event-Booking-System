@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -44,12 +45,12 @@ public class AuthService {
     private String baseUrl;
 
     public AuthService(UserRepository userRepository,
-                       RefreshTokenRepository refreshTokenRepository,
-                       PasswordEncoder passwordEncoder,
-                       JwtUtil jwtUtil,
-                       AuthenticationManager authenticationManager,
-                       com.kritagya.event_booking_system.service.EmailService emailService,
-                       com.kritagya.event_booking_system.logging.AuditLogger auditLogger) {
+            RefreshTokenRepository refreshTokenRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            AuthenticationManager authenticationManager,
+            com.kritagya.event_booking_system.service.EmailService emailService,
+            com.kritagya.event_booking_system.logging.AuditLogger auditLogger) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
@@ -65,7 +66,7 @@ public class AuthService {
             throw new DuplicateEmailException(request.getEmail());
         }
 
-        String verificationToken = UUID.randomUUID().toString();
+        Role assignedRole = request.getRole() != null ? request.getRole() : Role.CUSTOMER;
 
         User user = new User(
                 request.getFirstName(),
@@ -73,24 +74,24 @@ public class AuthService {
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
                 request.getPhone(),
-                Role.CUSTOMER
-        );
-        user.setEmailVerified(false);
-        user.setEmailVerificationToken(verificationToken);
+                assignedRole);
+        // TEMPORARY: enable this verification flow when email delivery is configured.
+        // String verificationToken = UUID.randomUUID().toString();
+        user.setEmailVerified(true);
+        // user.setEmailVerificationToken(verificationToken);
 
         User savedUser = userRepository.save(user);
 
-        // Send email verification email
-        emailService.sendEmailVerificationEmail(savedUser, verificationToken);
-
-        String verificationLink = baseUrl + "/api/auth/verify-email?token=" + verificationToken;
-        log.info("Email verification link for {}: {}", savedUser.getEmail(), verificationLink);
+        // TEMPORARY: enable this when email delivery is configured.
+        // emailService.sendEmailVerificationEmail(savedUser, verificationToken);
+        // String verificationLink = baseUrl + "/api/auth/verify-email?token=" + verificationToken;
+        // log.info("Email verification link for {}: {}", savedUser.getEmail(), verificationLink);
 
         CustomUserDetails userDetails = new CustomUserDetails(savedUser);
         String accessToken = jwtUtil.generateToken(userDetails);
         String refreshToken = createRefreshToken(savedUser).getToken();
 
-        return new AuthResponseDTO(accessToken, refreshToken, savedUser.getEmail(), savedUser.getRole().name());
+        return new AuthResponseDTO(accessToken, refreshToken, savedUser.getEmail(), savedUser.getRole().name(), toUserMap(savedUser));
     }
 
     @Transactional
@@ -98,17 +99,16 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.getEmail()));
 
-        if (!user.isEmailVerified()) {
-            auditLogger.logLogin(request.getEmail(), false, "UNVERIFIED_EMAIL");
-            throw new DisabledException("Email not verified. Please verify your email before logging in.");
-        }
+        // TEMPORARY: enable this check when email verification is enabled.
+        // if (!user.isEmailVerified()) {
+        //     auditLogger.logLogin(request.getEmail(), false, "UNVERIFIED_EMAIL");
+        //     throw new DisabledException("Email not verified. Please verify your email before logging in.");
+        // }
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
-                        request.getPassword()
-                )
-        );
+                        request.getPassword()));
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String accessToken = jwtUtil.generateToken(userDetails);
@@ -119,12 +119,13 @@ public class AuthService {
 
         auditLogger.logLogin(request.getEmail(), true, "SUCCESS");
 
+        User loggedInUser = userDetails.getUser();
         return new AuthResponseDTO(
                 accessToken,
                 refreshToken,
                 userDetails.getUsername(),
-                userDetails.getUser().getRole().name()
-        );
+                loggedInUser.getRole().name(),
+                toUserMap(loggedInUser));
     }
 
     @Transactional
@@ -221,9 +222,18 @@ public class AuthService {
         RefreshToken refreshToken = new RefreshToken(
                 UUID.randomUUID().toString(),
                 expiryDate,
-                user
-        );
+                user);
 
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    private Map<String, Object> toUserMap(User user) {
+        return Map.of(
+                "id", user.getId(),
+                "firstName", user.getFirstName(),
+                "lastName", user.getLastName() != null ? user.getLastName() : "",
+                "email", user.getEmail(),
+                "role", user.getRole().name()
+        );
     }
 }

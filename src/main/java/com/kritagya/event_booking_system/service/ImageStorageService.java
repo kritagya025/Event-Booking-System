@@ -33,18 +33,37 @@ public class ImageStorageService {
     }
 
     public String storeImage(MultipartFile file) {
-        if (file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("Cannot store empty file.");
         }
 
+        // Validate File Size (max 5MB)
+        long maxSize = 5 * 1024 * 1024;
+        if (file.getSize() > maxSize) {
+            throw new IllegalArgumentException("File size exceeds maximum limit of 5MB.");
+        }
+
+        // Validate Image Content Type
+        String contentType = file.getContentType();
+        if (contentType == null || (!contentType.startsWith("image/") && !contentType.equals("application/octet-stream"))) {
+            throw new IllegalArgumentException("Invalid file type. Only image files (JPEG, PNG, WEBP, GIF) are allowed.");
+        }
+
         String originalFilename = file.getOriginalFilename();
-        String fileExtension = "";
+        String fileExtension = ".jpg";
         if (originalFilename != null && originalFilename.contains(".")) {
-            fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+            if (!java.util.List.of(".jpg", ".jpeg", ".png", ".webp", ".gif").contains(fileExtension)) {
+                throw new IllegalArgumentException("Invalid image extension: " + fileExtension);
+            }
         }
 
         String storedFilename = UUID.randomUUID().toString() + fileExtension;
-        Path targetLocation = this.uploadDirectory.resolve(storedFilename);
+        Path targetLocation = this.uploadDirectory.resolve(storedFilename).normalize();
+
+        if (!targetLocation.startsWith(this.uploadDirectory)) {
+            throw new IllegalArgumentException("Invalid target file location.");
+        }
 
         try {
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);

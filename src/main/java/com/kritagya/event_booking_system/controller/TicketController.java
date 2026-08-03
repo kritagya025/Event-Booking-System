@@ -66,4 +66,13 @@ public class TicketController {
         headers.setContentDispositionFormData("attachment", "ticket-" + id + ".pdf");
         return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
+
+    @GetMapping("/booking/{bookingId}/pdf")
+    public ResponseEntity<byte[]> downloadBookingPdf(@PathVariable Long bookingId) {
+        byte[] pdf = ticketService.generateBookingPdf(bookingId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "booking-" + bookingId + ".pdf");
+        return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
+    }
 }

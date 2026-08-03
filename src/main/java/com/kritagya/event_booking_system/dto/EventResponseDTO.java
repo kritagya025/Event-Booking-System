@@ -15,6 +15,7 @@ public class EventResponseDTO {
     private String category;
     private String status;
     private BigDecimal ticketPrice;
+    private String currency;
     private Integer availableSeats;
     private LocalDate registrationDeadline;
     private Long venueId;
@@ -165,5 +166,13 @@ public class EventResponseDTO {
 
     public void setOrganizerName(String organizerName) {
         this.organizerName = organizerName;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

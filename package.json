@@ -1,0 +1,15 @@
+{
+  "name": "event-booking-system-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Event Booking System Root Launcher",
+  "scripts": {
+    "backend": "mvnw.cmd spring-boot:run",
+    "frontend": "npm run dev --prefix frontend",
+    "dev": "concurrently -k -p \"[{name}]\" -n \"BACKEND,FRONTEND\" -c \"magenta.bold,cyan.bold\" \"npm run backend\" \"npm run frontend\"",
+    "start": "npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

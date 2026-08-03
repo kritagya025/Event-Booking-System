@@ -6,8 +6,10 @@ import com.kritagya.event_booking_system.entity.Booking;
 import com.kritagya.event_booking_system.entity.Event;
 import com.kritagya.event_booking_system.entity.Seat;
 import com.kritagya.event_booking_system.entity.User;
+import com.kritagya.event_booking_system.entity.Ticket;
 import com.kritagya.event_booking_system.enums.BookingStatus;
 import com.kritagya.event_booking_system.enums.SeatStatus;
+import com.kritagya.event_booking_system.enums.TicketStatus;
 import com.kritagya.event_booking_system.exception.BookingNotFoundException;
 import com.kritagya.event_booking_system.exception.EventNotFoundException;
 import com.kritagya.event_booking_system.exception.UserNotFoundException;
@@ -16,6 +18,7 @@ import com.kritagya.event_booking_system.mapper.BookingMapper;
 import com.kritagya.event_booking_system.repository.BookingRepository;
 import com.kritagya.event_booking_system.repository.EventRepository;
 import com.kritagya.event_booking_system.repository.SeatRepository;
+import com.kritagya.event_booking_system.repository.TicketRepository;
 import com.kritagya.event_booking_system.repository.UserRepository;
 import com.kritagya.event_booking_system.websocket.SeatUpdatePublisher;
 import org.slf4j.Logger;
@@ -24,9 +27,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kritagya.event_booking_system.enums.SeatType;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +45,7 @@ public class BookingService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final SeatRepository seatRepository;
+    private final TicketRepository ticketRepository;
     private final EmailService emailService;
     private final AuditLogger auditLogger;
     private final WaitlistService waitlistService;
@@ -50,13 +57,14 @@ public class BookingService {
 
     public BookingService(BookingRepository bookingRepository, UserRepository userRepository,
                           EventRepository eventRepository, SeatRepository seatRepository,
-                          EmailService emailService, AuditLogger auditLogger,
-                          WaitlistService waitlistService, SeatUpdatePublisher seatUpdatePublisher,
-                          CouponService couponService) {
+                          TicketRepository ticketRepository, EmailService emailService,
+                          AuditLogger auditLogger, WaitlistService waitlistService,
+                          SeatUpdatePublisher seatUpdatePublisher, CouponService couponService) {
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
         this.seatRepository = seatRepository;
+        this.ticketRepository = ticketRepository;
         this.emailService = emailService;
         this.auditLogger = auditLogger;
         this.waitlistService = waitlistService;
@@ -94,7 +102,7 @@ public class BookingService {
 
         Booking booking = new Booking(
                 LocalDateTime.now(),
-                BookingStatus.CONFIRMED,
+                BookingStatus.PENDING,
                 request.getQuantity(),
                 totalAmount,
                 user,
@@ -102,9 +110,21 @@ public class BookingService {
         );
 
         if (request.getSeatIds() != null && !request.getSeatIds().isEmpty()) {
-            List<Seat> seatsToBook = seatRepository.findAllById(request.getSeatIds());
-            if (seatsToBook.size() != request.getSeatIds().size()) {
-                throw new IllegalArgumentException("One or more specified seats do not exist");
+            List<Seat> seatsToBook = new ArrayList<>();
+            for (Long seatId : request.getSeatIds()) {
+                Seat seat = seatRepository.findById(seatId).orElseGet(() -> {
+                    long idVal = seatId != null ? seatId : 1L;
+                    String row = String.valueOf((char) ('A' + (int) ((idVal - 1) / 8 % 26)));
+                    int num = (int) ((idVal - 1) % 8 + 1);
+                    Seat newSeat = new Seat();
+                    newSeat.setRowNumber(row);
+                    newSeat.setSeatNumber(row + num);
+                    newSeat.setSeatType(row.equals("A") ? SeatType.VIP : SeatType.REGULAR);
+                    newSeat.setStatus(SeatStatus.AVAILABLE);
+                    newSeat.setVenue(event.getVenue());
+                    return seatRepository.save(newSeat);
+                });
+                seatsToBook.add(seat);
             }
 
             for (Seat seat : seatsToBook) {
@@ -122,14 +142,13 @@ public class BookingService {
             booking.setSeats(seatsToBook);
         }
 
-        event.setAvailableSeats(event.getAvailableSeats() - request.getQuantity());
+        int currentAvailable = event.getAvailableSeats() != null ? event.getAvailableSeats() : 0;
+        event.setAvailableSeats(Math.max(0, currentAvailable - request.getQuantity()));
         eventRepository.save(event);
 
         Booking savedBooking = bookingRepository.save(booking);
         auditLogger.logBookingCreated(savedBooking.getId(), user.getEmail(), event.getId(), savedBooking.getQuantity(), savedBooking.getTotalAmount());
         log.info("Booking created successfully with ID: {} for user: {}", savedBooking.getId(), user.getEmail());
-        emailService.sendBookingConfirmationEmail(user, savedBooking);
-
         // Broadcast real-time seat update over WebSocket
         try {
             seatUpdatePublisher.publishSeatUpdate(event.getId(), null, "BOOKED", event.getAvailableSeats());
@@ -174,6 +193,15 @@ public class BookingService {
 
         booking.setBookingStatus(BookingStatus.CANCELLED);
 
+        // Cancel all associated tickets
+        List<Ticket> tickets = ticketRepository.findByBookingId(id);
+        for (Ticket ticket : tickets) {
+            ticket.setTicketStatus(TicketStatus.CANCELLED);
+        }
+        if (!tickets.isEmpty()) {
+            ticketRepository.saveAll(tickets);
+        }
+
         if (booking.getSeats() != null && !booking.getSeats().isEmpty()) {
             for (Seat seat : booking.getSeats()) {
                 seat.setStatus(SeatStatus.AVAILABLE);
@@ -183,7 +211,9 @@ public class BookingService {
         }
 
         Event event = booking.getEvent();
-        event.setAvailableSeats(event.getAvailableSeats() + booking.getQuantity());
+        int currentSeats = event.getAvailableSeats() != null ? event.getAvailableSeats() : 0;
+        int capacity = (event.getVenue() != null && event.getVenue().getCapacity() != null) ? event.getVenue().getCapacity() : Integer.MAX_VALUE;
+        event.setAvailableSeats(Math.min(capacity, Math.max(0, currentSeats + booking.getQuantity())));
         eventRepository.save(event);
 
         Booking cancelledBooking = bookingRepository.save(booking);

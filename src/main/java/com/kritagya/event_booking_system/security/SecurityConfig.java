@@ -36,9 +36,9 @@ public class SecurityConfig {
     private String allowedOrigins;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          CustomUserDetailsService userDetailsService,
-                          RateLimitingFilter rateLimitingFilter) {
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            CustomUserDetailsService userDetailsService,
+            RateLimitingFilter rateLimitingFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.userDetailsService = userDetailsService;
@@ -71,7 +71,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/me").authenticated()
 
                         // Swagger / OpenAPI
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**")
+                        .permitAll()
 
                         // Ticket validation and check-in — ADMIN and ORGANIZER
                         .requestMatchers(HttpMethod.GET, "/api/tickets/validate/**").hasAnyRole("ADMIN", "ORGANIZER")
@@ -94,23 +95,26 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/seats/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.DELETE, "/api/seats/**").hasAnyRole("ADMIN", "ORGANIZER")
 
-                        // Booking — ADMIN and CUSTOMER can create and cancel
+                        // Booking — ADMIN and CUSTOMER can create, cancel, and view user bookings
                         .requestMatchers(HttpMethod.POST, "/api/bookings").hasAnyRole("ADMIN", "CUSTOMER")
                         .requestMatchers(HttpMethod.PATCH, "/api/bookings/*/cancel").hasAnyRole("ADMIN", "CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/bookings/user/**").hasAnyRole("ADMIN", "CUSTOMER")
+
+                        // Wishlist — ADMIN and CUSTOMER only
+                        .requestMatchers("/api/wishlist/**").hasAnyRole("ADMIN", "CUSTOMER")
 
                         // Payment — ADMIN and CUSTOMER can create
                         .requestMatchers(HttpMethod.POST, "/api/payments").hasAnyRole("ADMIN", "CUSTOMER")
 
                         // Ticket generation and PDF download — ADMIN and CUSTOMER
                         .requestMatchers(HttpMethod.POST, "/api/tickets/**").hasAnyRole("ADMIN", "CUSTOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/tickets/*/pdf").hasAnyRole("ADMIN", "CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/*/pdf", "/api/tickets/booking/*/pdf").hasAnyRole("ADMIN", "CUSTOMER")
 
                         // User management — ADMIN only
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
 
                         // All other requests require authentication
-                        .anyRequest().authenticated()
-                );
+                        .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

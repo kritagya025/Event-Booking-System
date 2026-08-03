@@ -24,6 +24,13 @@ public class EventMapper {
         );
         event.setOrganizer(organizer);
         event.setRegistrationDeadline(request.getRegistrationDeadline());
+
+        String currency = request.getCurrency();
+        if (currency == null || currency.isBlank()) {
+            currency = inferCurrencyFromVenue(venue);
+        }
+        event.setCurrency(currency);
+
         return event;
     }
 
@@ -35,7 +42,15 @@ public class EventMapper {
             organizerName = event.getOrganizer().getFirstName() + " " + event.getOrganizer().getLastName();
         }
 
-        return new EventResponseDTO(
+        Long venueId = event.getVenue() != null ? event.getVenue().getId() : null;
+        String venueName = event.getVenue() != null ? event.getVenue().getName() : null;
+
+        String currency = event.getCurrency();
+        if (currency == null || currency.isBlank()) {
+            currency = inferCurrencyFromVenue(event.getVenue());
+        }
+
+        EventResponseDTO dto = new EventResponseDTO(
                 event.getId(),
                 event.getName(),
                 event.getDescription(),
@@ -47,10 +62,29 @@ public class EventMapper {
                 event.getTicketPrice(),
                 event.getAvailableSeats(),
                 event.getRegistrationDeadline(),
-                event.getVenue().getId(),
-                event.getVenue().getName(),
+                venueId,
+                venueName,
                 organizerId,
                 organizerName
         );
+        dto.setCurrency(currency);
+        return dto;
+    }
+
+    private static String inferCurrencyFromVenue(Venue venue) {
+        if (venue == null || venue.getAddress() == null) {
+            return "USD";
+        }
+        String addr = venue.getAddress().toLowerCase();
+        if (addr.contains("india") || addr.contains("delhi") || addr.contains("mumbai") || addr.contains("bangalore")) {
+            return "INR";
+        }
+        if (addr.contains("uk") || addr.contains("london") || addr.contains("england")) {
+            return "GBP";
+        }
+        if (addr.contains("europe") || addr.contains("germany") || addr.contains("france") || addr.contains("berlin") || addr.contains("paris")) {
+            return "EUR";
+        }
+        return "USD";
     }
 }

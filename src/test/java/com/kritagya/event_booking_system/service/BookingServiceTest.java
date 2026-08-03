@@ -49,6 +49,9 @@ class BookingServiceTest {
     private SeatRepository seatRepository;
 
     @Mock
+    private com.kritagya.event_booking_system.repository.TicketRepository ticketRepository;
+
+    @Mock
     private EmailService emailService;
 
     @Mock

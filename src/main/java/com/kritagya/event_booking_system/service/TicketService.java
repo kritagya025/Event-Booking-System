@@ -29,7 +29,7 @@ public class TicketService {
     private final QrCodeService qrCodeService;
 
     public TicketService(TicketRepository ticketRepository, BookingRepository bookingRepository,
-                         QrCodeService qrCodeService) {
+            QrCodeService qrCodeService) {
         this.ticketRepository = ticketRepository;
         this.bookingRepository = bookingRepository;
         this.qrCodeService = qrCodeService;
@@ -55,8 +55,7 @@ public class TicketService {
                     ticketCode,
                     LocalDateTime.now(),
                     TicketStatus.ACTIVE,
-                    booking
-            );
+                    booking);
             tickets.add(ticket);
         }
 
@@ -156,6 +155,10 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
 
+        if (ticket.getTicketStatus() == TicketStatus.CANCELLED || ticket.getBooking().getBookingStatus() == com.kritagya.event_booking_system.enums.BookingStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot download PDF for a cancelled ticket");
+        }
+
         Booking booking = ticket.getBooking();
         Event event = booking.getEvent();
 
@@ -226,6 +229,95 @@ public class TicketService {
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate ticket PDF", e);
+        }
+    }
+
+    public byte[] generateBookingPdf(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException(bookingId));
+
+        if (booking.getBookingStatus() == com.kritagya.event_booking_system.enums.BookingStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot generate PDF for a cancelled booking");
+        }
+
+        List<Ticket> tickets = ticketRepository.findByBookingId(bookingId);
+        if (tickets.isEmpty()) {
+            generateTickets(bookingId);
+            tickets = ticketRepository.findByBookingId(bookingId);
+        }
+
+        Event event = booking.getEvent();
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            com.itextpdf.kernel.pdf.PdfWriter writer = new com.itextpdf.kernel.pdf.PdfWriter(baos);
+            com.itextpdf.kernel.pdf.PdfDocument pdf = new com.itextpdf.kernel.pdf.PdfDocument(writer);
+            com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdf);
+
+            document.add(new com.itextpdf.layout.element.Paragraph("EVENT BOOKING CONFIRMATION & TICKETS")
+                    .setFontSize(20)
+                    .setBold()
+                    .setTextAlignment(com.itextpdf.layout.properties.TextAlignment.CENTER));
+
+            document.add(new com.itextpdf.layout.element.Paragraph("\n"));
+
+            document.add(new com.itextpdf.layout.element.Paragraph("Event: " + event.getName())
+                    .setFontSize(14).setBold());
+            if (event.getEventDate() != null) {
+                document.add(new com.itextpdf.layout.element.Paragraph(
+                        "Date: " + event.getEventDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))));
+            }
+            if (event.getStartTime() != null && event.getEndTime() != null) {
+                document.add(new com.itextpdf.layout.element.Paragraph(
+                        "Time: " + event.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"))
+                                + " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("hh:mm a"))));
+            }
+            if (event.getVenue() != null) {
+                document.add(new com.itextpdf.layout.element.Paragraph(
+                        "Venue: " + event.getVenue().getName() + " (" + event.getVenue().getAddress() + ")"));
+            }
+
+            document.add(new com.itextpdf.layout.element.Paragraph("\n"));
+
+            document.add(new com.itextpdf.layout.element.Paragraph(
+                    "Customer: " + booking.getUser().getFirstName() + " " + booking.getUser().getLastName()
+                            + " (" + booking.getUser().getEmail() + ")"));
+            document.add(new com.itextpdf.layout.element.Paragraph(
+                    "Booking ID: #" + booking.getId() + " | Status: " + booking.getBookingStatus()
+                            + " | Total Amount: $" + booking.getTotalAmount()));
+
+            document.add(new com.itextpdf.layout.element.Paragraph("\n--- TICKETS ---").setFontSize(12).setBold());
+
+            for (int i = 0; i < tickets.size(); i++) {
+                Ticket t = tickets.get(i);
+                if (t.getTicketStatus() == TicketStatus.CANCELLED) {
+                    continue;
+                }
+                document.add(new com.itextpdf.layout.element.Paragraph(
+                        "Ticket #" + (i + 1) + " | Code: " + t.getQrCode() + " | Status: " + t.getTicketStatus())
+                        .setFontSize(11).setBold());
+
+                if (booking.getSeats() != null && i < booking.getSeats().size()) {
+                    com.kritagya.event_booking_system.entity.Seat seat = booking.getSeats().get(i);
+                    document.add(new com.itextpdf.layout.element.Paragraph(
+                            "Seat: " + seat.getSeatNumber() + " (" + seat.getSeatType() + ")"));
+                }
+
+                byte[] qrCodeBytes = qrCodeService.generateQrCodeImage(t.getQrCode());
+                com.itextpdf.io.image.ImageData imageData = com.itextpdf.io.image.ImageDataFactory.create(qrCodeBytes);
+                com.itextpdf.layout.element.Image qrImage = new com.itextpdf.layout.element.Image(imageData);
+                qrImage.setWidth(120);
+                qrImage.setHeight(120);
+                qrImage.setHorizontalAlignment(com.itextpdf.layout.properties.HorizontalAlignment.CENTER);
+                document.add(qrImage);
+                document.add(new com.itextpdf.layout.element.Paragraph("\n"));
+            }
+
+            document.close();
+            return baos.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate booking PDF", e);
         }
     }
 }

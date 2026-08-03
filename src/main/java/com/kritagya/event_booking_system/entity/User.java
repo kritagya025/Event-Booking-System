@@ -27,6 +27,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(columnDefinition = "boolean default false")
     private boolean emailVerified = false;
 
     @Column(unique = true)

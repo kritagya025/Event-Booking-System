@@ -52,6 +52,8 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEmailVerified();
+        // TEMPORARY: restore the email-verification check when email delivery is configured.
+        // return user.isEmailVerified();
+        return true;
     }
 }

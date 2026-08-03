@@ -1,11 +1,14 @@
 package com.kritagya.event_booking_system.auth;
 
+import java.util.Map;
+
 public class AuthResponseDTO {
 
     private String token;
     private String refreshToken;
     private String email;
     private String role;
+    private Map<String, Object> user;
 
     public AuthResponseDTO() {
     }
@@ -17,35 +20,26 @@ public class AuthResponseDTO {
         this.role = role;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
+    public AuthResponseDTO(String token, String refreshToken, String email, String role, Map<String, Object> user) {
         this.token = token;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
         this.role = role;
+        this.user = user;
     }
+
+    public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
+
+    public String getRefreshToken() { return refreshToken; }
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public Map<String, Object> getUser() { return user; }
+    public void setUser(Map<String, Object> user) { this.user = user; }
 }

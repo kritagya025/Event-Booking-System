@@ -6,6 +6,7 @@ import com.kritagya.event_booking_system.entity.Booking;
 import com.kritagya.event_booking_system.entity.Payment;
 import com.kritagya.event_booking_system.enums.PaymentMethod;
 import com.kritagya.event_booking_system.enums.PaymentStatus;
+import com.kritagya.event_booking_system.enums.BookingStatus;
 import com.kritagya.event_booking_system.exception.BookingNotFoundException;
 import com.kritagya.event_booking_system.logging.AuditLogger;
 import com.kritagya.event_booking_system.mapper.PaymentMapper;
@@ -28,11 +29,14 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
     private final AuditLogger auditLogger;
+    private final TicketService ticketService;
 
-    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, AuditLogger auditLogger) {
+    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, AuditLogger auditLogger,
+                          TicketService ticketService) {
         this.paymentRepository = paymentRepository;
         this.bookingRepository = bookingRepository;
         this.auditLogger = auditLogger;
+        this.ticketService = ticketService;
     }
 
     @Transactional
@@ -49,6 +53,9 @@ public class PaymentService {
         );
 
         Payment savedPayment = paymentRepository.save(payment);
+        booking.setBookingStatus(BookingStatus.CONFIRMED);
+        bookingRepository.save(booking);
+        ticketService.generateTickets(booking.getId());
         auditLogger.logPaymentProcessed(savedPayment.getId(), booking.getId(),
                 request.getPaymentMethod(), savedPayment.getPaymentStatus().name(), savedPayment.getAmount());
         log.info("Payment created successfully with ID: {} for booking ID: {}", savedPayment.getId(), booking.getId());
