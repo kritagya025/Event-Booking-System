@@ -491,10 +491,94 @@ button {
   background: var(--bg-card-hover);
 }
 
-/* ─── Responsive ─── */
+/* ─── Responsive Device Layout Utilities ─── */
+.desktop-only {
+  display: flex !important;
+}
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 868px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: flex !important;
+  }
+}
+
+/* Tablets & Small Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 3.2rem !important;
+  }
+}
+
+/* Mobile Devices (max-width: 768px) */
 @media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.2rem !important;
+  }
+
+  .modal-container {
+    width: 95% !important;
+    max-width: 100% !important;
+    padding: 16px !important;
+    margin: 12px !important;
+    max-height: 92vh !important;
+  }
+
   .card-banner-wrapper {
-    height: 160px;
+    height: 170px !important;
+  }
+
+  /* Form Grids on Mobile */
+  form div[style*="grid-template-columns"],
+  div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Interactive Seat Map Mobile Scroll */
+  .seat-map-container {
+    overflow-x: auto;
+    padding: 12px 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .seats-grid {
+    min-width: 310px;
+  }
+
+  .seat-btn {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.6rem !important;
+  }
+
+  /* Toast Notifications Mobile */
+  .toast-container {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 12px !important;
+  }
+}
+
+/* Small Mobile Screens (max-width: 480px) */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.85rem !important;
+  }
+
+  .btn {
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .seat-btn {
+    width: 25px !important;
+    height: 25px !important;
+    font-size: 0.55rem !important;
   }
 }
 

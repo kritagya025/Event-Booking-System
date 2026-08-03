@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/images/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/images/upload").hasAnyRole("ADMIN", "ORGANIZER", "CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/venues", "/api/venues/**").permitAll()
 
@@ -79,8 +80,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/checkin/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.POST, "/api/tickets/checkin/**").hasAnyRole("ADMIN", "ORGANIZER")
 
-                        // Event management — ADMIN and ORGANIZER only
-                        .requestMatchers(HttpMethod.POST, "/api/events").hasAnyRole("ADMIN", "ORGANIZER")
+                        // Event management — ADMIN, ORGANIZER, and CUSTOMER
+                        .requestMatchers(HttpMethod.POST, "/api/events").hasAnyRole("ADMIN", "ORGANIZER", "CUSTOMER")
                         .requestMatchers(HttpMethod.PUT, "/api/events/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.PATCH, "/api/events/**").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyRole("ADMIN", "ORGANIZER")

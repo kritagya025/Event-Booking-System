@@ -28,4 +28,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT COALESCE(SUM(b.totalAmount), 0) FROM Booking b WHERE b.event.id = :eventId AND b.bookingStatus = :status")
     java.math.BigDecimal sumRevenueByEventIdAndStatus(@Param("eventId") Long eventId, @Param("status") BookingStatus status);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM Booking b WHERE b.event.id = :eventId")
+    void deleteByEventId(@Param("eventId") Long eventId);
 }

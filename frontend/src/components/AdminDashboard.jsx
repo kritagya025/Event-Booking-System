@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Users, Calendar, Ticket, Activity, BarChart2, Award } from 'lucide-react';
+import { DollarSign, Users, Calendar, Ticket, Activity, BarChart2, Award, Trash2 } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
 
@@ -22,9 +22,20 @@ export default function AdminDashboard({ showToast }) {
       setDashboardData(dash);
       setRevenueData(rev);
     } catch (err) {
-      showToast('Failed to load admin analytics', 'error');
+      console.error('Failed to load admin metrics:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId, eventName) => {
+    if (!window.confirm(`Are you sure you want to remove event "${eventName || 'this event'}"?`)) return;
+    try {
+      await apiFetch(`/events/${eventId}`, { method: 'DELETE' });
+      showToast('Event removed successfully', 'success');
+      fetchAdminData();
+    } catch (err) {
+      showToast(err.message || 'Failed to remove event', 'error');
     }
   };
 
@@ -120,9 +131,16 @@ export default function AdminDashboard({ showToast }) {
                     <span className="badge badge-purple" style={{ fontSize: '0.6rem' }}>{event.category}</span>
                   </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ fontSize: '0.95rem', fontWeight: '700' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
-                  <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-subtle)' }}>{event.availableSeats} left</span>
+                  <button 
+                    onClick={() => handleDeleteEvent(event.id, event.name)} 
+                    className="btn btn-secondary btn-sm" 
+                    style={{ padding: '4px 8px', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}
+                    title="Remove Event"
+                  >
+                    <Trash2 size={13} />
+                  </button>
                 </div>
               </div>
             ))}

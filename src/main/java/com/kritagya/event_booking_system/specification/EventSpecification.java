@@ -21,8 +21,8 @@ public class EventSpecification {
             // Always exclude soft-deleted events
             predicates.add(criteriaBuilder.isFalse(root.get("deleted")));
 
-            // Only show published events for public listings
-            predicates.add(criteriaBuilder.equal(root.get("status"), EventStatus.PUBLISHED));
+            // Only exclude cancelled events
+            predicates.add(criteriaBuilder.notEqual(root.get("status"), EventStatus.CANCELLED));
 
             if (category != null && !category.isBlank()) {
                 predicates.add(criteriaBuilder.equal(root.get("category"), category));
@@ -46,11 +46,22 @@ public class EventSpecification {
             }
 
             if (keyword != null && !keyword.isBlank()) {
-                String pattern = "%" + keyword.toLowerCase() + "%";
-                Predicate nameLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), pattern);
-                Predicate descLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), pattern);
-                Predicate venueLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("venue").get("name")), pattern);
-                predicates.add(criteriaBuilder.or(nameLike, descLike, venueLike));
+                String[] tokens = keyword.trim().toLowerCase().split("\\s+");
+                List<Predicate> tokenPredicates = new ArrayList<>();
+                for (String token : tokens) {
+                    if (!token.isBlank()) {
+                        String pattern = "%" + token + "%";
+                        Predicate nameLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), pattern);
+                        Predicate descLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), pattern);
+                        Predicate venueLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("venue").get("name")), pattern);
+                        Predicate venueAddrLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("venue").get("address")), pattern);
+                        Predicate catLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("category")), pattern);
+                        tokenPredicates.add(criteriaBuilder.or(nameLike, descLike, venueLike, venueAddrLike, catLike));
+                    }
+                }
+                if (!tokenPredicates.isEmpty()) {
+                    predicates.add(criteriaBuilder.or(tokenPredicates.toArray(new Predicate[0])));
+                }
             }
 
             if (minPrice != null) {

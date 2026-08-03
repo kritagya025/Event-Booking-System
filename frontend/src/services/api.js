@@ -53,7 +53,14 @@ export async function apiFetch(endpoint, options = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: 'An unexpected error occurred.' }));
-    throw new Error(errorData.message || `HTTP Error ${response.status}`);
+    let msg = errorData.message || `HTTP Error ${response.status}`;
+    if (errorData.details && typeof errorData.details === 'object') {
+      const detailsList = Object.entries(errorData.details).map(([field, err]) => `${field}: ${err}`).join(', ');
+      if (detailsList) {
+        msg += ` (${detailsList})`;
+      }
+    }
+    throw new Error(msg);
   }
 
   // Handle 24 NO CONTENT

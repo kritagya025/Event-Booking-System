@@ -59,8 +59,25 @@ public class EventService {
     @Transactional
     @CacheEvict(value = "events", allEntries = true)
     public EventResponseDTO createEvent(EventRequestDTO request, User organizer) {
-        Venue venue = venueRepository.findById(request.getVenueId())
-                .orElseThrow(() -> new VenueNotFoundException(request.getVenueId()));
+        Venue venue = null;
+        if (request.getVenueId() != null && request.getVenueId() > 0) {
+            venue = venueRepository.findById(request.getVenueId()).orElse(null);
+        }
+
+        if (venue == null) {
+            String name = (request.getVenueName() != null && !request.getVenueName().trim().isEmpty())
+                    ? request.getVenueName().trim()
+                    : "Event Venue Location";
+            String address = (request.getVenueAddress() != null && !request.getVenueAddress().trim().isEmpty())
+                    ? request.getVenueAddress().trim()
+                    : "Main Address";
+
+            int capacity = (request.getAvailableSeats() != null && request.getAvailableSeats() > 0)
+                    ? request.getAvailableSeats()
+                    : 5000;
+
+            venue = venueRepository.save(new Venue(name, address, capacity, "Custom event venue location"));
+        }
 
         Event event = EventMapper.toEntity(request, venue, organizer);
         Event savedEvent = eventRepository.save(event);

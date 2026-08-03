@@ -14,7 +14,7 @@ public class EventRequestDTO {
     private String description;
 
     @NotNull(message = "Event date is required")
-    @Future(message = "Event date must be in the future")
+    @FutureOrPresent(message = "Event date must be today or in the future")
     private LocalDate eventDate;
 
     @NotNull(message = "Start time is required")
@@ -38,8 +38,11 @@ public class EventRequestDTO {
     @Positive(message = "Available seats must be greater than 0")
     private Integer availableSeats;
 
-    @NotNull(message = "Venue ID is required")
     private Long venueId;
+
+    private String venueName;
+
+    private String venueAddress;
 
     private LocalDate registrationDeadline;
 
@@ -156,5 +159,21 @@ public class EventRequestDTO {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public String getVenueName() {
+        return venueName;
+    }
+
+    public void setVenueName(String venueName) {
+        this.venueName = venueName;
+    }
+
+    public String getVenueAddress() {
+        return venueAddress;
+    }
+
+    public void setVenueAddress(String venueAddress) {
+        this.venueAddress = venueAddress;
     }
 }

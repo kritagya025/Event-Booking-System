@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
@@ -8,10 +8,11 @@ import AdminDashboard from './components/AdminDashboard';
 import MyBookings from './components/MyBookings';
 import Wishlist from './components/Wishlist';
 import CreateEventModal from './components/CreateEventModal';
+import ProfileDashboard from './components/ProfileDashboard';
 
 import { 
   Sparkles, Calendar, MapPin, Ticket, Heart, Search, 
-  Flame, ArrowRight, Star, Bell, AlertCircle, Check, Zap, Users, Compass
+  Flame, ArrowRight, Star, Bell, AlertCircle, Check, Zap, Users, Compass, Trash2
 } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
@@ -33,6 +34,7 @@ export default function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const [events, setEvents] = useState([]);
+  const [allMasterEvents, setAllMasterEvents] = useState([]);
   const [popularEvents, setPopularEvents] = useState([]);
   const [trendingEvents, setTrendingEvents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,6 +47,20 @@ export default function App() {
     maxPrice: ''
   });
 
+  const filtersRef = useRef(filters);
+  const allMasterEventsRef = useRef([]);
+  const catalogRef = useRef(null);
+
+  const scrollToResults = () => {
+    if (catalogRef.current) {
+      catalogRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
+
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
@@ -53,8 +69,16 @@ export default function App() {
 
     fetchCatalogData();
 
+    // Auto-refresh catalog every 4s for real-time synchronization
+    const interval = setInterval(() => {
+      fetchCatalogData(true);
+    }, 4000);
+
     window.addEventListener('auth-expired', handleLogout);
-    return () => window.removeEventListener('auth-expired', handleLogout);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('auth-expired', handleLogout);
+    };
   }, []);
 
   const showToast = (message, type = 'info') => {
@@ -65,50 +89,110 @@ export default function App() {
     }, 4000);
   };
 
-  const fetchCatalogData = async () => {
-    setLoading(true);
+  const fetchCatalogData = async (isSilent = false) => {
+    if (!isSilent) setLoading(true);
     try {
       const [allEv, popEv, trendEv] = await Promise.all([
-        apiFetch('/events?size=20').catch(() => null),
+        apiFetch('/events?size=50').catch(() => null),
         apiFetch('/events/popular?limit=4').catch(() => null),
         apiFetch('/events/trending?limit=4').catch(() => null)
       ]);
 
-      if (allEv && allEv.content && allEv.content.length > 0) setEvents(allEv.content);
-      else setEvents(mockEvents);
+      let freshList = [];
+      if (allEv && Array.isArray(allEv.content) && allEv.content.length > 0) {
+        freshList = allEv.content;
+      } else {
+        freshList = mockEvents;
+      }
 
-      if (popEv && popEv.length > 0) setPopularEvents(popEv);
+      setAllMasterEvents(freshList);
+      allMasterEventsRef.current = freshList;
+
+      // Re-apply active search filters on master event catalog using live filtersRef
+      const currentFilters = filtersRef.current;
+      if (currentFilters.keyword || currentFilters.category || currentFilters.city) {
+        applyLiveFilter(currentFilters.keyword, currentFilters.category, currentFilters.city, freshList);
+      } else {
+        setEvents(freshList);
+      }
+
+      if (popEv && Array.isArray(popEv) && popEv.length > 0) setPopularEvents(popEv);
       else setPopularEvents(mockEvents.slice(0, 3));
 
-      if (trendEv && trendEv.length > 0) setTrendingEvents(trendEv);
+      if (trendEv && Array.isArray(trendEv) && trendEv.length > 0) setTrendingEvents(trendEv);
       else setTrendingEvents(mockEvents.slice(1, 4));
 
     } catch (err) {
+      setAllMasterEvents(mockEvents);
+      allMasterEventsRef.current = mockEvents;
       setEvents(mockEvents);
       setPopularEvents(mockEvents.slice(0, 3));
       setTrendingEvents(mockEvents.slice(1, 4));
+    } finally {
+      if (!isSilent) setLoading(false);
+    }
+  };
+
+  const applyLiveFilter = (kw = filters.keyword, cat = filters.category, ct = filters.city, sourceList = null) => {
+    const masterSource = sourceList || (allMasterEventsRef.current.length > 0 ? allMasterEventsRef.current : (allMasterEvents.length > 0 ? allMasterEvents : mockEvents));
+    let list = [...masterSource];
+
+    if (cat) {
+      list = list.filter((e) => e.category === cat);
+    }
+    if (ct && ct.trim()) {
+      const ctLower = ct.trim().toLowerCase();
+      list = list.filter((e) => e.venueAddress && e.venueAddress.toLowerCase().includes(ctLower));
+    }
+
+    if (kw && kw.trim()) {
+      const tokens = kw.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      list = list.filter((e) => {
+        const searchableText = [
+          e.name,
+          e.description,
+          e.category,
+          e.venueName,
+          e.venueAddress,
+          e.currency
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        return tokens.some((token) => searchableText.includes(token));
+      });
+    }
+
+    setEvents(list);
+  };
+
+  const handleSearchAndFilter = async (searchKeywordOverride) => {
+    setLoading(true);
+    const activeKeyword = searchKeywordOverride !== undefined ? searchKeywordOverride : filters.keyword;
+    try {
+      let query = '/events/search?';
+      if (filters.category) query += `category=${encodeURIComponent(filters.category)}&`;
+      if (filters.city) query += `city=${encodeURIComponent(filters.city)}&`;
+      if (activeKeyword) query += `keyword=${encodeURIComponent(activeKeyword)}&`;
+
+      const res = await apiFetch(query);
+      if (res && Array.isArray(res.content)) {
+        setEvents(res.content);
+      } else {
+        applyLiveFilter(activeKeyword, filters.category, filters.city);
+      }
+      if (activeKeyword || filters.category || filters.city) {
+        scrollToResults();
+      }
+    } catch (err) {
+      applyLiveFilter(activeKeyword, filters.category, filters.city);
+      scrollToResults();
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSearchAndFilter = async () => {
-    setLoading(true);
-    try {
-      let query = '/events/search?';
-      if (filters.category) query += `category=${encodeURIComponent(filters.category)}&`;
-      if (filters.city) query += `city=${encodeURIComponent(filters.city)}&`;
-      if (filters.keyword) query += `keyword=${encodeURIComponent(filters.keyword)}&`;
-      if (filters.minPrice) query += `minPrice=${filters.minPrice}&`;
-      if (filters.maxPrice) query += `maxPrice=${filters.maxPrice}&`;
-
-      const res = await apiFetch(query);
-      if (res && res.content) setEvents(res.content);
-    } catch (err) {
-      showToast('Search completed', 'info');
-    } finally {
-      setLoading(false);
-    }
+  const handleClearSearch = () => {
+    setFilters({ category: '', dateFrom: '', dateTo: '', city: '', keyword: '', minPrice: '', maxPrice: '' });
+    fetchCatalogData();
   };
 
   const handleLogout = () => {
@@ -151,16 +235,35 @@ export default function App() {
     setIsSeatMapOpen(true);
   };
 
+  const handleDeleteEvent = async (eventId, eventName, e) => {
+    if (e) e.stopPropagation();
+    if (!window.confirm(`Are you sure you want to remove event "${eventName || 'this event'}"?`)) return;
+
+    // Optimistic UI state removal
+    setEvents((prev) => prev.filter((item) => item.id !== eventId));
+    setPopularEvents((prev) => prev.filter((item) => item.id !== eventId));
+    setTrendingEvents((prev) => prev.filter((item) => item.id !== eventId));
+
+    try {
+      await apiFetch(`/events/${eventId}`, { method: 'DELETE' });
+      showToast('Event removed successfully', 'success');
+      fetchCatalogData(true);
+    } catch (err) {
+      showToast(err.message || 'Failed to remove event', 'error');
+      fetchCatalogData(true);
+    }
+  };
+
   const handleNavigate = (tab, params = {}) => {
     if (currentUser && currentUser.role === 'ORGANIZER' && (tab === 'my-bookings' || tab === 'wishlist')) {
       showToast('Organizers do not have access to customer ticket features.', 'info');
       setActiveTab('home');
       return;
     }
-    setActiveTab(tab);
-    if (params.keyword) {
-      setFilters(prev => ({ ...prev, keyword: params.keyword }));
-      handleSearchAndFilter();
+    setActiveTab(tab === 'events' ? 'home' : tab);
+    if (params.keyword !== undefined) {
+      setFilters((prev) => ({ ...prev, keyword: params.keyword }));
+      handleSearchAndFilter(params.keyword);
     }
     if (tab === 'checkin') setIsCheckInOpen(true);
     if (tab === 'create-event') setIsCreateEventOpen(true);
@@ -221,10 +324,23 @@ export default function App() {
         activeTab={activeTab}
         onOpenAuthModal={() => handleNavigate('login')}
         onLogout={handleLogout}
+        searchKeyword={filters.keyword}
+        onSearchChange={(kw) => {
+          setFilters((prev) => ({ ...prev, keyword: kw }));
+          applyLiveFilter(kw, filters.category, filters.city);
+        }}
       />
 
       {activeTab === 'admin' ? (
         <AdminDashboard showToast={showToast} />
+      ) : activeTab === 'profile' ? (
+        <ProfileDashboard 
+          currentUser={currentUser} 
+          onNavigate={handleNavigate} 
+          showToast={showToast}
+          onUpdateUser={(updated) => setCurrentUser(updated)}
+          onLogout={handleLogout}
+        />
       ) : activeTab === 'my-bookings' ? (
         <MyBookings currentUser={currentUser} showToast={showToast} />
       ) : activeTab === 'wishlist' ? (
@@ -239,7 +355,7 @@ export default function App() {
                 <Sparkles size={14} /> REAL-TIME SEAT ALLOCATION
               </span>
 
-              <h1 style={{ fontSize: '4.2rem', marginBottom: '24px', lineHeight: 1.08, letterSpacing: '-0.05em', fontWeight: 900 }}>
+              <h1 className="hero-title" style={{ fontSize: '4.2rem', marginBottom: '24px', lineHeight: 1.08, letterSpacing: '-0.05em', fontWeight: 900 }}>
                 Reserve Your Seats For<br />
                 <span style={{ color: '#FFFFFF' }}>World-Class Events</span>
               </h1>
@@ -248,8 +364,8 @@ export default function App() {
                 Interactive seat maps, instant promo coupons, waitlist auto-promotions, and PDF QR code ticketing — all in real-time.
               </p>
 
-              {/* Search Controls */}
-              <div style={{ 
+              {/* Search Controls Form */}
+              <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} style={{ 
                 maxWidth: '860px', margin: '0 auto', display: 'flex', gap: '8px', 
                 flexWrap: 'wrap', alignItems: 'center', padding: '8px',
                 background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-lg)'
@@ -258,9 +374,13 @@ export default function App() {
                   <Search size={16} color="var(--text-subtle)" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input 
                     type="text" 
-                    placeholder="Search events, artists, venues..." 
+                    placeholder="Search events, artists, venues, city..." 
                     value={filters.keyword} 
-                    onChange={(e) => setFilters({ ...filters, keyword: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setFilters({ ...filters, keyword: val });
+                      applyLiveFilter(val, filters.category, filters.city);
+                    }}
                     className="form-input"
                     style={{ width: '100%', paddingLeft: '40px', height: '48px', fontSize: '0.95rem' }}
                   />
@@ -269,7 +389,11 @@ export default function App() {
                 <div style={{ flex: '1 1 160px' }}>
                   <select 
                     value={filters.category} 
-                    onChange={(e) => setFilters({ ...filters, category: e.target.value })} 
+                    onChange={(e) => {
+                      const cat = e.target.value;
+                      setFilters({ ...filters, category: cat });
+                      handleSearchAndFilter();
+                    }} 
                     className="form-select"
                     style={{ width: '100%', height: '48px', fontSize: '0.9rem' }}
                   >
@@ -294,10 +418,16 @@ export default function App() {
                   />
                 </div>
 
-                <button onClick={handleSearchAndFilter} className="btn btn-primary" style={{ height: '48px', padding: '0 24px' }}>
+                <button type="submit" className="btn btn-primary" style={{ height: '48px', padding: '0 24px' }}>
                   Search <ArrowRight size={16} />
                 </button>
-              </div>
+
+                {(filters.keyword || filters.category || filters.city) && (
+                  <button type="button" onClick={handleClearSearch} className="btn btn-secondary" style={{ height: '48px', padding: '0 16px', color: '#ef4444' }}>
+                    Clear
+                  </button>
+                )}
+              </form>
 
               {/* Stats */}
               <div style={{ display: 'flex', justifyContent: 'center', gap: '48px', marginTop: '48px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
@@ -307,46 +437,87 @@ export default function App() {
               </div>
             </div>
 
-            {/* Popular Events */}
-            <div style={{ marginTop: '20px' }}>
-              <div style={{ marginBottom: '28px' }}>
-                <h2 style={{ fontSize: '1.6rem', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                  <Flame size={22} color="var(--text-secondary)" /> Popular & Trending
-                </h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Top events with highest attendee interest</p>
-              </div>
+            {/* Popular Events (only visible when NO search filter is active) */}
+            {!(filters.keyword || filters.category || filters.city) && (
+              <div style={{ marginTop: '20px' }}>
+                <div style={{ marginBottom: '28px' }}>
+                  <h2 style={{ fontSize: '1.6rem', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                    <Flame size={22} color="var(--text-secondary)" /> Popular & Trending
+                  </h2>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Top events with highest attendee interest</p>
+                </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-                {popularEvents.map((event) => (
-                  <EventCard 
-                    key={event.id} 
-                    event={event} 
-                    onBook={() => openBookingModal(event)}
-                    onWishlist={(e) => handleToggleWishlist(event.id, e)}
-                    onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
-                  />
-                ))}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 380px))', gap: '20px', justifyContent: 'flex-start' }}>
+                  {popularEvents.map((event) => (
+                    <EventCard 
+                      key={event.id} 
+                      event={event} 
+                      currentUser={currentUser}
+                      onBook={() => openBookingModal(event)}
+                      onWishlist={(e) => handleToggleWishlist(event.id, e)}
+                      onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
+                      onDelete={(e) => handleDeleteEvent(event.id, event.name, e)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Full Catalog */}
-            <div style={{ marginTop: '80px' }}>
-              <div style={{ marginBottom: '28px' }}>
-                <h2 style={{ fontSize: '1.6rem', marginBottom: '4px' }}>All Events</h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Select an event to open the live interactive seat map</p>
-              </div>
+            {/* Full Catalog / Search Results */}
+            <div ref={catalogRef} style={{ marginTop: (filters.keyword || filters.category || filters.city) ? '30px' : '60px', scrollMarginTop: '100px' }}>
+              
+              {/* Header logic for normal vs active search */}
+              {!(filters.keyword || filters.category || filters.city) ? (
+                <div style={{ marginBottom: '28px' }}>
+                  <h2 style={{ fontSize: '1.6rem', marginBottom: '4px' }}>All Events</h2>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Select an event to open the live interactive seat map</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Search size={18} /> Search Results ({events.length})
+                    </h2>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      Showing events matching {filters.keyword ? `"${filters.keyword}"` : ''} {filters.category ? `[${filters.category}]` : ''} {filters.city ? `in ${filters.city}` : ''}
+                    </p>
+                  </div>
+                  <button onClick={handleClearSearch} className="btn btn-secondary btn-sm" style={{ color: '#ef4444' }}>
+                    Clear Search
+                  </button>
+                </div>
+              )}
 
               {loading ? (
                 <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>Loading events...</div>
+              ) : events.length === 0 ? (
+                /* Inline Empty State Card */
+                <div style={{ textAlign: 'center', padding: '60px 20px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-lg)', border: '1px dashed rgba(255,255,255,0.1)' }}>
+                  <Search size={36} color="var(--text-muted)" style={{ marginBottom: '12px' }} />
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '6px' }}>No events found matching your search</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>
+                    No events matched "{filters.keyword || filters.category || filters.city}". Try searching for another keyword or location.
+                  </p>
+                  <button onClick={handleClearSearch} className="btn btn-primary">
+                    View All Events
+                  </button>
+                </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 380px))', 
+                  gap: '20px',
+                  justifyContent: 'flex-start'
+                }}>
                   {events.map((event) => (
                     <EventCard 
                       key={event.id} 
                       event={event} 
+                      currentUser={currentUser}
                       onBook={() => openBookingModal(event)}
                       onWishlist={(e) => handleToggleWishlist(event.id, e)}
                       onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
+                      onDelete={(e) => handleDeleteEvent(event.id, event.name, e)}
                     />
                   ))}
                 </div>
@@ -401,7 +572,13 @@ export default function App() {
         isOpen={isCreateEventOpen}
         onClose={() => setIsCreateEventOpen(false)}
         showToast={showToast}
-        onEventCreated={() => fetchCatalogData()}
+        onEventCreated={(newEvent) => {
+          if (newEvent) {
+            setEvents((prev) => [newEvent, ...prev.filter((e) => e.id !== newEvent.id)]);
+            setPopularEvents((prev) => [newEvent, ...prev.filter((e) => e.id !== newEvent.id)]);
+          }
+          fetchCatalogData(true);
+        }}
       />
 
       {/* Toast Overlay */}
@@ -420,8 +597,9 @@ export default function App() {
 }
 
 // Minimal Monochrome Event Card
-function EventCard({ event, onBook, onWishlist, onWaitlist }) {
+function EventCard({ event, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
   const isSoldOut = event.availableSeats === 0;
+  const canDelete = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER');
 
   const getImageForEvent = (event) => {
     if (event.bannerImageUrl) return event.bannerImageUrl;
@@ -444,13 +622,24 @@ function EventCard({ event, onBook, onWishlist, onWaitlist }) {
         <div className="card-banner-overlay">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="badge badge-purple">{event.category || 'EVENT'}</span>
-            <button 
-              onClick={onWishlist} 
-              style={{ padding: '8px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} 
-              title="Save to Wishlist"
-            >
-              <Heart size={14} color="#FFF" />
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {canDelete && (
+                <button 
+                  onClick={onDelete} 
+                  style={{ padding: '8px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.25)', border: '1px solid rgba(239, 68, 68, 0.4)' }} 
+                  title="Remove Event"
+                >
+                  <Trash2 size={14} color="#ef4444" />
+                </button>
+              )}
+              <button 
+                onClick={onWishlist} 
+                style={{ padding: '8px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} 
+                title="Save to Wishlist"
+              >
+                <Heart size={14} color="#FFF" />
+              </button>
+            </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)', fontWeight: '600' }}>

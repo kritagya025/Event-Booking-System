@@ -32,7 +32,8 @@ public class EventController {
     @PostMapping
     public ResponseEntity<EventResponseDTO> createEvent(@Valid @RequestBody EventRequestDTO request,
                                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
-        EventResponseDTO response = eventService.createEvent(request, userDetails.getUser());
+        com.kritagya.event_booking_system.entity.User organizer = userDetails != null ? userDetails.getUser() : null;
+        EventResponseDTO response = eventService.createEvent(request, organizer);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

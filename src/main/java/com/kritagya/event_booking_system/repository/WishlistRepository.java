@@ -18,4 +18,8 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
     Optional<Wishlist> findByUserIdAndEventId(Long userId, Long eventId);
 
     void deleteByUserIdAndEventId(Long userId, Long eventId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM Wishlist w WHERE w.event.id = :eventId")
+    void deleteByEventId(@Param("eventId") Long eventId);
 }

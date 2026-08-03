@@ -37,10 +37,10 @@ public class ImageStorageService {
             throw new IllegalArgumentException("Cannot store empty file.");
         }
 
-        // Validate File Size (max 5MB)
-        long maxSize = 5 * 1024 * 1024;
+        // Validate File Size (max 20MB)
+        long maxSize = 20 * 1024 * 1024;
         if (file.getSize() > maxSize) {
-            throw new IllegalArgumentException("File size exceeds maximum limit of 5MB.");
+            throw new IllegalArgumentException("File size exceeds maximum limit of 20MB.");
         }
 
         // Validate Image Content Type
@@ -53,8 +53,8 @@ public class ImageStorageService {
         String fileExtension = ".jpg";
         if (originalFilename != null && originalFilename.contains(".")) {
             fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-            if (!java.util.List.of(".jpg", ".jpeg", ".png", ".webp", ".gif").contains(fileExtension)) {
-                throw new IllegalArgumentException("Invalid image extension: " + fileExtension);
+            if (!java.util.List.of(".jpg", ".jpeg", ".png", ".webp", ".gif", ".jfif", ".svg", ".avif", ".bmp").contains(fileExtension)) {
+                throw new IllegalArgumentException("Invalid image extension: " + fileExtension + ". Allowed extensions: JPG, PNG, WEBP, GIF, SVG, AVIF.");
             }
         }
 

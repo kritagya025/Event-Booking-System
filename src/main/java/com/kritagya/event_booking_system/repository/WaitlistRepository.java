@@ -20,4 +20,8 @@ public interface WaitlistRepository extends JpaRepository<Waitlist, Long> {
 
     @Query("SELECT COUNT(w) FROM Waitlist w WHERE w.event.id = :eventId AND w.status = :status")
     Long countByEventIdAndStatus(@Param("eventId") Long eventId, @Param("status") WaitlistStatus status);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM Waitlist w WHERE w.event.id = :eventId")
+    void deleteByEventId(@Param("eventId") Long eventId);
 }

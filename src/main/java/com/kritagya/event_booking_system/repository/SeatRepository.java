@@ -20,4 +20,8 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     @Modifying
     @Query("UPDATE Seat s SET s.status = 'AVAILABLE', s.lockedUntil = null WHERE s.status = 'LOCKED' AND s.lockedUntil < :now")
     int releaseExpiredLocks(LocalDateTime now);
+
+    @Modifying
+    @Query("DELETE FROM Seat s WHERE s.venue.id = :venueId")
+    void deleteByVenueId(@org.springframework.data.repository.query.Param("venueId") Long venueId);
 }

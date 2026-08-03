@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check, Tag, ArrowRight, Zap, ArrowLeft, CreditCard, Wallet, Smartphone, Landmark, Gift, ShieldCheck } from 'lucide-react';
+import { X, Check, Tag, ArrowRight, Zap, ArrowLeft, CreditCard, Wallet, Smartphone, Landmark, Gift, ShieldCheck, QrCode } from 'lucide-react';
 import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
@@ -14,6 +14,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   const [bookingLoading, setBookingLoading] = useState(false);
 
   const [paymentMethod, setPaymentMethod] = useState('UPI');
+  const [upiSubOption, setUpiSubOption] = useState('UPI_ID'); // 'UPI_ID' or 'UPI_QR'
   const [paymentDetails, setPaymentDetails] = useState({
     upiId: '',
     cardNumber: '',
@@ -56,46 +57,92 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   }, [event, isOpen]);
 
   const fetchVenueSeats = async () => {
-    if (!event.venueId && !event.venue?.id) return;
     const vId = event.venueId || event.venue?.id || 1;
     setLoadingSeats(true);
 
     try {
-      const data = await apiFetch(`/seats/venue/${vId}`);
+      const data = await apiFetch(`/seats/venue/${vId}`).catch(() => null);
       if (data && data.length > 0) {
-        const formatted = data.map(s => ({
+        let formatted = data.map(s => ({
           ...s,
           price: s.seatType === 'VIP' ? (event.ticketPrice * 1.5) : event.ticketPrice
         }));
+
+        const targetCount = event.availableSeats !== undefined ? event.availableSeats : 40;
+        if (targetCount > formatted.length) {
+          formatted = expandSeatMap(formatted, targetCount);
+        }
         setSeatMap(formatted);
       } else {
-        generateFallbackSeats();
+        generateSeatsForEvent();
       }
     } catch (err) {
-      generateFallbackSeats();
+      generateSeatsForEvent();
     } finally {
       setLoadingSeats(false);
     }
   };
 
-  const generateFallbackSeats = () => {
-    const rows = ['A', 'B', 'C', 'D', 'E'];
+  const getRowLetter = (idx) => {
+    if (idx < 26) return String.fromCharCode(65 + idx);
+    return 'A' + String.fromCharCode(65 + (idx - 26));
+  };
+
+  const generateSeatsForEvent = () => {
+    const targetCount = (event.availableSeats !== undefined) ? event.availableSeats : 40;
+    const isSoldOut = targetCount === 0;
+    const countToGenerate = isSoldOut ? 40 : Math.min(targetCount, 300);
+
+    const seatsPerRow = 10;
+    const totalRows = Math.ceil(countToGenerate / seatsPerRow);
     const generated = [];
     let counter = 1;
 
-    rows.forEach((row, rIdx) => {
-      for (let num = 1; num <= 8; num++) {
+    for (let r = 0; r < totalRows; r++) {
+      const row = getRowLetter(r);
+      for (let num = 1; num <= seatsPerRow; num++) {
+        if (generated.length >= countToGenerate) break;
         generated.push({
           id: counter++,
           seatNumber: `${row}${num}`,
           rowNumber: row,
-          seatType: rIdx === 0 ? 'VIP' : 'REGULAR',
-          status: 'AVAILABLE',
-          price: rIdx === 0 ? (event.ticketPrice * 1.5) : event.ticketPrice
+          seatType: r === 0 ? 'VIP' : 'REGULAR',
+          status: isSoldOut ? 'BOOKED' : 'AVAILABLE',
+          price: r === 0 ? (event.ticketPrice * 1.5) : event.ticketPrice
         });
       }
-    });
+    }
     setSeatMap(generated);
+  };
+
+  const expandSeatMap = (existingSeats, targetCount) => {
+    const isSoldOut = targetCount === 0;
+    const countToGenerate = isSoldOut ? 40 : Math.min(targetCount, 300);
+    if (existingSeats.length >= countToGenerate) return existingSeats;
+
+    const expanded = [...existingSeats];
+    const seatsPerRow = 10;
+    const totalRows = Math.ceil(countToGenerate / seatsPerRow);
+    let counter = existingSeats.length + 1;
+
+    for (let r = 0; r < totalRows; r++) {
+      const row = getRowLetter(r);
+      for (let num = 1; num <= seatsPerRow; num++) {
+        if (expanded.length >= countToGenerate) break;
+        const seatNum = `${row}${num}`;
+        if (!expanded.some(s => s.seatNumber === seatNum)) {
+          expanded.push({
+            id: counter++,
+            seatNumber: seatNum,
+            rowNumber: row,
+            seatType: r === 0 ? 'VIP' : 'REGULAR',
+            status: isSoldOut ? 'BOOKED' : 'AVAILABLE',
+            price: r === 0 ? (event.ticketPrice * 1.5) : event.ticketPrice
+          });
+        }
+      }
+    }
+    return expanded;
   };
 
   if (!isOpen || !event) return null;
@@ -405,17 +452,110 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
               {/* Dynamic Payment Fields */}
               <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.03)', marginBottom: '20px' }}>
                 {paymentMethod === 'UPI' && (
-                  <div className="form-group">
-                    <label className="form-label">UPI Virtual Payment Address (VPA)<span style={{ color: '#ef4444' }}> *</span></label>
-                    <input
-                      type="text"
-                      name="upiId"
-                      required
-                      placeholder="e.g. username@okaxis / 9876543210@paytm"
-                      value={paymentDetails.upiId}
-                      onChange={handleDetailsChange}
-                      className="form-input"
-                    />
+                  <div>
+                    {/* UPI Mode Selector */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUpiSubOption('UPI_ID');
+                        }}
+                        className={`btn ${upiSubOption === 'UPI_ID' ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ padding: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                      >
+                        <Smartphone size={16} /> Enter UPI ID
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUpiSubOption('UPI_QR');
+                          if (!paymentDetails.upiId) {
+                            setPaymentDetails((prev) => ({ ...prev, upiId: 'eventhub.qr@upi' }));
+                          }
+                        }}
+                        className={`btn ${upiSubOption === 'UPI_QR' ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ padding: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                      >
+                        <QrCode size={16} /> Scan UPI QR Code
+                      </button>
+                    </div>
+
+                    {upiSubOption === 'UPI_ID' ? (
+                      <div className="form-group">
+                        <label className="form-label">UPI Virtual Payment Address (VPA / Phone)<span style={{ color: '#ef4444' }}> *</span></label>
+                        <input
+                          type="text"
+                          name="upiId"
+                          required
+                          placeholder="e.g. username@okaxis / 9876543210@paytm"
+                          value={paymentDetails.upiId}
+                          onChange={handleDetailsChange}
+                          className="form-input"
+                        />
+                        <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+                          {['@ybl', '@paytm', '@okaxis', '@apl', '@upi'].map((handle) => (
+                            <button
+                              key={handle}
+                              type="button"
+                              onClick={() => {
+                                const current = paymentDetails.upiId || 'user';
+                                const base = current.split('@')[0] || 'user';
+                                setPaymentDetails({ ...paymentDetails, upiId: `${base}${handle}` });
+                              }}
+                              style={{
+                                fontSize: '0.72rem',
+                                padding: '3px 9px',
+                                borderRadius: '12px',
+                                background: 'rgba(255,255,255,0.06)',
+                                border: '1px solid rgba(255,255,255,0.12)',
+                                color: 'var(--text-muted)',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {handle}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (() => {
+                      const currentSubtotal = calculateSubtotal();
+                      const currentDiscount = discountInfo ? (discountInfo.calculatedDiscount || 0) : 0;
+                      const currentTotal = Math.max(0, currentSubtotal - currentDiscount);
+                      const formattedAmt = currentTotal.toFixed(2);
+
+                      return (
+                        <div style={{ textAlign: 'center', padding: '16px 12px', background: 'rgba(0,0,0,0.35)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
+                            Scan this QR Code using GPay, PhonePe, Paytm, or BHIM to pay instantly
+                          </p>
+
+                          {/* Live QR Code Preview */}
+                          <div style={{ display: 'inline-block', padding: '12px', background: '#FFFFFF', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
+                            <img 
+                              src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=eventhub@upi%26pn=EventHub%26am=${formattedAmt}%26cu=${event?.currency || 'INR'}`} 
+                              alt="UPI Payment QR Code"
+                              style={{ width: '160px', height: '160px', display: 'block' }}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          </div>
+
+                          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '14px', flexWrap: 'wrap' }}>
+                            {['GPay', 'PhonePe', 'Paytm', 'BHIM', 'Amazon Pay'].map((appName) => (
+                              <span key={appName} style={{ fontSize: '0.7rem', padding: '3px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)', color: '#FFF', fontWeight: 600 }}>
+                                {appName}
+                              </span>
+                            ))}
+                          </div>
+
+                          <p style={{ fontSize: '0.78rem', color: '#10b981', marginTop: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                            <Zap size={14} /> Scan & Complete Payment of {formatPrice(currentTotal, event?.currency)}
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
 

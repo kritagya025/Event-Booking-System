@@ -17,7 +17,7 @@ public class EventMapper {
                 request.getStartTime(),
                 request.getEndTime(),
                 request.getCategory(),
-                request.getStatus() != null ? EventStatus.valueOf(request.getStatus()) : EventStatus.DRAFT,
+                parseStatus(request.getStatus()),
                 request.getTicketPrice(),
                 request.getAvailableSeats(),
                 venue
@@ -86,5 +86,16 @@ public class EventMapper {
             return "EUR";
         }
         return "USD";
+    }
+
+    private static EventStatus parseStatus(String statusStr) {
+        if (statusStr == null || statusStr.isBlank()) {
+            return EventStatus.PUBLISHED;
+        }
+        try {
+            return EventStatus.valueOf(statusStr.toUpperCase());
+        } catch (Exception e) {
+            return EventStatus.PUBLISHED;
+        }
     }
 }
