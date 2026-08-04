@@ -88,7 +88,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '14px' }}>
-                <span style={{ fontSize: '1.3rem', fontWeight: '800', color: '#FFF' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
+                <span style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-main)' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
                 <button onClick={() => onSelectEvent(event)} className="btn btn-primary btn-sm">
                   Book <ArrowRight size={12} />
                 </button>

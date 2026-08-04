@@ -9,6 +9,7 @@ import MyBookings from './components/MyBookings';
 import Wishlist from './components/Wishlist';
 import CreateEventModal from './components/CreateEventModal';
 import ProfileDashboard from './components/ProfileDashboard';
+import IntroSplashScreen from './components/IntroSplashScreen';
 
 import { 
   Sparkles, Calendar, MapPin, Ticket, Heart, Search, 
@@ -19,12 +20,69 @@ import { formatPrice, subscribeCurrencyChange } from './services/currency';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('home');
+  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem('eventhub_intro_seen'));
+  
+  const getInitialTab = () => {
+    const hash = window.location.hash.replace('#', '');
+    const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
+    if (hash && validTabs.includes(hash)) return hash;
+    const saved = localStorage.getItem('active_nav_tab');
+    if (saved && validTabs.includes(saved)) return saved;
+    return 'home';
+  };
+
+  const [activeTab, setActiveTabState] = useState(getInitialTab);
+
+  const setActiveTab = (tab) => {
+    const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
+    const target = validTabs.includes(tab) ? tab : 'home';
+    setActiveTabState(target);
+    localStorage.setItem('active_nav_tab', target);
+    window.location.hash = target;
+  };
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
+      if (hash && validTabs.includes(hash)) {
+        setActiveTabState(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const [, setCurrencyState] = useState(Date.now());
 
   useEffect(() => {
     return subscribeCurrencyChange(() => setCurrencyState(Date.now()));
   }, []);
+
+  // Scroll Reveal IntersectionObserver
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-visible');
+          }
+        });
+      },
+      { threshold: 0.05 }
+    );
+
+    const timer = setTimeout(() => {
+      const elements = document.querySelectorAll('.js-reveal');
+      elements.forEach((el) => observer.observe(el));
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [activeTab]);
 
 
   const [isSeatMapOpen, setIsSeatMapOpen] = useState(false);
@@ -231,7 +289,17 @@ export default function App() {
   };
 
   const openBookingModal = (event) => {
-    setSelectedEvent(event);
+    const targetEvent = event || popularEvents[0] || events[0];
+    if (!targetEvent) {
+      showToast('No event selected', 'info');
+      return;
+    }
+    if (!currentUser) {
+      handleNavigate('login');
+      showToast('Please sign in to select seats & book tickets', 'info');
+      return;
+    }
+    setSelectedEvent(targetEvent);
     setIsSeatMapOpen(true);
   };
 
@@ -257,16 +325,25 @@ export default function App() {
   const handleNavigate = (tab, params = {}) => {
     if (currentUser && currentUser.role === 'ORGANIZER' && (tab === 'my-bookings' || tab === 'wishlist')) {
       showToast('Organizers do not have access to customer ticket features.', 'info');
-      setActiveTab('home');
-      return;
+      tab = 'home';
     }
-    setActiveTab(tab === 'events' ? 'home' : tab);
+    const finalTab = (tab === 'events' || tab === 'explore') ? 'home' : tab;
+    setActiveTabState(finalTab);
+    localStorage.setItem('active_nav_tab', finalTab);
+    window.location.hash = finalTab;
+
     if (params.keyword !== undefined) {
       setFilters((prev) => ({ ...prev, keyword: params.keyword }));
       handleSearchAndFilter(params.keyword);
     }
     if (tab === 'checkin') setIsCheckInOpen(true);
     if (tab === 'create-event') setIsCreateEventOpen(true);
+
+    if (tab === 'events' || tab === 'explore' || tab === 'all-events') {
+      setTimeout(() => {
+        scrollToResults();
+      }, 100);
+    }
   };
 
   // Full-page auth routes render without Navbar
@@ -349,117 +426,163 @@ export default function App() {
         <main>
           <div style={{ padding: '0 24px 80px 24px', maxWidth: '1320px', margin: '0 auto' }}>
             
-            {/* Hero Section */}
-            <div style={{ padding: '80px 0 60px 0', textAlign: 'center' }}>
-              <span className="badge badge-primary" style={{ marginBottom: '20px', padding: '6px 16px', fontSize: '0.72rem' }}>
-                <Sparkles size={14} /> LIVE SEAT ALLOCATION & QR TICKETING
-              </span>
-
-              <h1 className="hero-title" style={{ fontSize: '3.8rem', marginBottom: '20px', lineHeight: 1.1, letterSpacing: '-0.04em', fontWeight: 800 }}>
-                Discover & Book Extraordinary<br />
-                <span style={{ color: '#818CF8' }}>Live Events Worldwide</span>
-              </h1>
-
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '620px', margin: '0 auto 40px auto', lineHeight: 1.6, fontWeight: 400 }}>
-                Interactive seat maps, dynamic ticket tiers, instant discount coupons, and real-time seat lock synchronizations.
-              </p>
-
-              {/* Search Controls Form */}
-              <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} style={{ 
-                maxWidth: '860px', margin: '0 auto', display: 'flex', gap: '10px', 
-                flexWrap: 'wrap', alignItems: 'center', padding: '10px',
-                background: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)',
-                border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ flex: '2 1 240px', position: 'relative' }}>
-                  <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-                  <input 
-                    type="text" 
-                    placeholder="Search events, artists, venues, city..." 
-                    value={filters.keyword} 
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setFilters({ ...filters, keyword: val });
-                      applyLiveFilter(val, filters.category, filters.city);
-                    }}
-                    className="form-input"
-                    style={{ width: '100%', paddingLeft: '44px', height: '48px', fontSize: '0.92rem' }}
-                  />
+            {/* EventHub Split Hero Section (Inspired by layout structure) */}
+            <div className="hero-split-grid">
+              
+              {/* Left Column Text & CTAs */}
+              <div>
+                <div className="hero-pill-badge">
+                  <Zap size={14} /> REAL-TIME SEAT SELECTION & INSTANT QR PASSES
                 </div>
 
-                <div style={{ flex: '1 1 160px' }}>
-                  <select 
-                    value={filters.category} 
-                    onChange={(e) => {
-                      const cat = e.target.value;
-                      setFilters({ ...filters, category: cat });
-                      handleSearchAndFilter();
-                    }} 
-                    className="form-select"
-                    style={{ width: '100%', height: '48px', fontSize: '0.9rem' }}
+                <h1 className="hero-main-title">
+                  Discover & Book <br />
+                  Extraordinary Events. <br />
+                  <span className="hero-title-accent">Every Stage. Worldwide.</span>
+                </h1>
+
+                <p className="hero-description">
+                  EventHub is the ultimate live event platform — featuring <strong>interactive seat maps, dynamic ticket tiers, instant discount coupons, and real-time seat lock synchronizations</strong> for concerts, summits, and theater.
+                </p>
+
+                <div className="hero-cta-group">
+                  <button 
+                    onClick={() => handleNavigate('events')}
+                    className="btn-sb-primary"
                   >
-                    <option value="">All Categories</option>
-                    <option value="MUSIC">Music & Concerts</option>
-                    <option value="TECH">Tech & AI Summits</option>
-                    <option value="THEATER">Theater & Shows</option>
-                    <option value="SPORTS">Sports & eSports</option>
-                    <option value="WORKSHOP">Workshops</option>
-                    <option value="OTHER">Other Events</option>
-                  </select>
-                </div>
-
-                <div style={{ flex: '1 1 140px' }}>
-                  <input 
-                    type="text" 
-                    placeholder="City" 
-                    value={filters.city} 
-                    onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                    className="form-input"
-                    style={{ width: '100%', height: '48px' }}
-                  />
-                </div>
-
-                <button type="submit" className="btn btn-primary" style={{ height: '48px', padding: '0 24px' }}>
-                  Search <ArrowRight size={16} />
-                </button>
-
-                {(filters.keyword || filters.category || filters.city) && (
-                  <button type="button" onClick={handleClearSearch} className="btn btn-outline" style={{ height: '48px', padding: '0 16px', color: '#FB7185' }}>
-                    Clear
+                    Explore Events <ArrowRight size={18} />
                   </button>
-                )}
-              </form>
+
+                  {!currentUser ? (
+                    <button 
+                      onClick={() => handleNavigate('login')}
+                      className="btn-sb-outline"
+                    >
+                      Sign In
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => handleNavigate('my-bookings')}
+                      className="btn-sb-outline"
+                    >
+                      My Ticket Passes
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column Showcase Image Card Frame */}
+              <div className="hero-image-frame">
+                <img 
+                  src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=1200&q=80" 
+                  alt="Live Concert Stage & Crowd" 
+                />
+              </div>
+
+            </div>
+
+            {/* Search Controls Bar */}
+            <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} className="search-bar-skillbridge">
+              <div style={{ flex: '2 1 240px', position: 'relative' }}>
+                <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+                <input 
+                  type="text" 
+                  placeholder="Search events, artists, venues, city..." 
+                  value={filters.keyword} 
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFilters({ ...filters, keyword: val });
+                    applyLiveFilter(val, filters.category, filters.city);
+                  }}
+                  className="form-input-sb"
+                  style={{ paddingLeft: '44px' }}
+                />
+              </div>
+
+              <div style={{ flex: '1 1 160px' }}>
+                <select 
+                  value={filters.category} 
+                  onChange={(e) => {
+                    const cat = e.target.value;
+                    setFilters({ ...filters, category: cat });
+                    handleSearchAndFilter();
+                  }} 
+                  className="form-select-sb"
+                  style={{ width: '100%' }}
+                >
+                  <option value="">All Categories</option>
+                  <option value="MUSIC">Music & Concerts</option>
+                  <option value="TECH">Tech & AI Summits</option>
+                  <option value="THEATER">Theater & Shows</option>
+                  <option value="SPORTS">Sports & eSports</option>
+                  <option value="WORKSHOP">Workshops</option>
+                  <option value="OTHER">Other Events</option>
+                </select>
+              </div>
+
+              <div style={{ flex: '1 1 140px' }}>
+                <input 
+                  type="text" 
+                  placeholder="City" 
+                  value={filters.city} 
+                  onChange={(e) => setFilters({ ...filters, city: e.target.value })}
+                  className="form-input-sb"
+                />
+              </div>
+
+              <button type="submit" className="btn-sb-primary" style={{ padding: '12px 24px' }}>
+                Search <ArrowRight size={16} />
+              </button>
+
+              {(filters.keyword || filters.category || filters.city) && (
+                <button type="button" onClick={handleClearSearch} className="btn-sb-outline" style={{ padding: '12px 18px', color: '#FF4D6D' }}>
+                  Clear
+                </button>
+              )}
+            </form>
 
               {/* Category Pill Filters */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '28px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap', marginTop: '28px' }}>
                 {[
                   { id: '', label: 'All Events' },
                   { id: 'MUSIC', label: '🎵 Music & Concerts' },
                   { id: 'TECH', label: '💻 Tech & AI' },
                   { id: 'THEATER', label: '🎭 Theater & Arts' },
                   { id: 'SPORTS', label: '⚽ Sports & eSports' }
-                ].map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      setFilters({ ...filters, category: cat.id });
-                      handleSearchAndFilter();
-                    }}
-                    className={`btn ${filters.category === cat.id ? 'btn-primary' : 'btn-secondary'} btn-sm`}
-                    style={{ borderRadius: 'var(--radius-full)', padding: '6px 16px', fontSize: '0.8rem' }}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
+                ].map((cat) => {
+                  const isActive = filters.category === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setFilters({ ...filters, category: cat.id });
+                        handleSearchAndFilter();
+                      }}
+                      style={{
+                        borderRadius: 'var(--radius-full)',
+                        padding: '8px 18px',
+                        fontSize: '0.85rem',
+                        fontWeight: 700,
+                        background: isActive ? 'var(--primary)' : 'var(--bg-surface)',
+                        color: isActive ? '#FFFFFF' : 'var(--text-main)',
+                        border: '1px solid ' + (isActive ? 'var(--primary)' : 'var(--border-subtle)'),
+                        boxShadow: isActive ? '0 4px 14px var(--primary-glow)' : 'var(--shadow-card)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      {cat.label}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Stats */}
               <div style={{ display: 'flex', justifyContent: 'center', gap: '48px', marginTop: '40px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                <div><strong style={{ color: '#FFFFFF', fontSize: '1.25rem', display: 'block' }}>50+</strong> Live Events</div>
-                <div><strong style={{ color: '#FFFFFF', fontSize: '1.25rem', display: 'block' }}>100%</strong> Real-Time Sync</div>
-                <div><strong style={{ color: '#FFFFFF', fontSize: '1.25rem', display: 'block' }}>0s</strong> Concurrency Lock</div>
+                <div><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>50+</strong> Live Events</div>
+                <div><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>100%</strong> Real-Time Sync</div>
+                <div><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>0s</strong> Concurrency Lock</div>
               </div>
-            </div>
 
             {/* Featured Spotlight Banner (when no search active) */}
             {!(filters.keyword || filters.category || filters.city) && (
@@ -490,7 +613,7 @@ export default function App() {
                     <div style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--eb-orange)', letterSpacing: '0.05em', marginBottom: '8px' }}>
                       SAT, SEP 15 • 7:00 PM
                     </div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, lineHeight: 1.25, marginBottom: '12px', color: '#FFFFFF' }}>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, lineHeight: 1.25, marginBottom: '12px', color: 'var(--text-main)' }}>
                       {popularEvents[0]?.name || 'Neon Horizon Cyber Music Festival 2026'}
                     </h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginBottom: '20px', lineHeight: 1.6 }}>
@@ -499,7 +622,7 @@ export default function App() {
                     
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '24px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <MapPin size={16} color="var(--eb-orange)" /> Metro Arena Center
+                        <MapPin size={16} color="var(--primary)" /> Metro Arena Center
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <Star size={16} color="#FFB800" fill="#FFB800" /> 4.9 (1.2k attending)
@@ -507,10 +630,10 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--divider)', paddingTop: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-subtle)', paddingTop: '20px' }}>
                     <div>
                       <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', fontWeight: '700', textTransform: 'uppercase' }}>Tickets From</span>
-                      <span style={{ fontSize: '1.6rem', fontWeight: '800', color: '#FFFFFF' }}>
+                      <span style={{ fontSize: '1.6rem', fontWeight: '800', color: 'var(--text-main)' }}>
                         {formatPrice(popularEvents[0]?.ticketPrice || 85.00, popularEvents[0]?.currency)}
                       </span>
                     </div>
@@ -615,85 +738,55 @@ export default function App() {
             </div>
           </div>
 
-          {/* Eventbrite Footer */}
-          <footer style={{ background: '#0D0C13', borderTop: '1px solid var(--border-subtle)', padding: '60px 24px 40px 24px', marginTop: '60px' }}>
-            <div style={{ maxWidth: '1320px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px' }}>
+          {/* SkillBridge Footer */}
+          <footer style={{ background: 'var(--bg-main)', borderTop: '1px solid var(--border-subtle)', padding: '60px 24px 40px 24px', marginTop: '60px' }}>
+            <div style={{ maxWidth: '1320px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '40px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--eb-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Ticket size={18} color="#FFF" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--sb-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Ticket size={20} color="#FFF" />
                   </div>
-                  <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFF' }}>eventhub</span>
+                  <span style={{ fontSize: '1.3rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>
+                    Event<span style={{ color: 'var(--sb-orange)' }}>Hub</span>
+                  </span>
                 </div>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                  Discover the best local events, music concerts, tech summits, and live theater experiences.
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  Built with purpose. Powered by revolution. Connecting attendees with verified live events and transparent seat allocation.
                 </p>
               </div>
 
               <div>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-secondary)', marginBottom: '16px' }}>Use EventHub</h4>
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-                  <li><a href="#events" onClick={() => handleNavigate('events')}>Create Events</a></li>
-                  <li><a href="#pricing">Pricing & Fees</a></li>
-                  <li><a href="#checkin" onClick={() => handleNavigate('checkin')}>Event Check-In App</a></li>
-                  <li><a href="#mobile">Mobile Ticketing</a></li>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-main)', marginBottom: '16px' }}>Platform</h4>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                  <li><a href="#events" onClick={() => handleNavigate('events')}>Browse Events</a></li>
+                  <li><a href="#create" onClick={() => handleNavigate('create-event')}>Host Event</a></li>
+                  <li><a href="#checkin" onClick={() => handleNavigate('checkin')}>Gate QR Scanner</a></li>
+                  <li><a href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noreferrer">API Documentation</a></li>
                 </ul>
               </div>
 
               <div>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-secondary)', marginBottom: '16px' }}>Plan Events</h4>
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-                  <li><a href="#music">Music Festivals</a></li>
-                  <li><a href="#tech">Tech Conferences</a></li>
-                  <li><a href="#theater">Broadway & Theater</a></li>
-                  <li><a href="#sports">Sports & eSports</a></li>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-main)', marginBottom: '16px' }}>Resources</h4>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                  <li><a href="#terms">Terms & Conditions</a></li>
+                  <li><a href="#privacy">Privacy Policy</a></li>
+                  <li><a href="http://localhost:8080/actuator/health" target="_blank" rel="noreferrer">System Status</a></li>
+                  <li><a href="http://localhost:8080/h2-console" target="_blank" rel="noreferrer">Database Console</a></li>
                 </ul>
-              </div>
-
-              <div>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-secondary)', marginBottom: '16px' }}>Connect</h4>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                  Subscribe for event updates & exclusive ticket deals.
-                </p>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input type="email" placeholder="Enter your email" className="form-input" style={{ height: '40px', fontSize: '0.85rem' }} />
-                  <button className="btn btn-primary btn-sm">Join</button>
-                </div>
               </div>
             </div>
 
-            <div style={{ maxWidth: '1320px', margin: '40px auto 0 auto', paddingTop: '24px', borderTop: '1px solid var(--divider)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-subtle)' }}>
+            <div style={{ maxWidth: '1320px', margin: '40px auto 0 auto', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
               <span>© 2026 EventHub Inc. All rights reserved.</span>
               <div style={{ display: 'flex', gap: '20px' }}>
                 <a href="#privacy">Privacy</a>
                 <a href="#terms">Terms</a>
-                <a href="#cookies">Cookie Preferences</a>
+                <a href="#cookies">Cookies</a>
               </div>
             </div>
           </footer>
         </main>
       )}
-
-      {/* Footer */}
-      <footer style={{ padding: '48px 24px', marginTop: '80px' }}>
-        <div style={{ maxWidth: '1320px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
-          <div>
-            <span style={{ fontSize: '1.3rem', fontWeight: '900', fontFamily: 'var(--font-display)' }}>
-              Event<span style={{ color: '#FFFFFF' }}>Hub</span>
-            </span>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-subtle)', marginTop: '4px' }}>
-              Event Booking System — Spring Boot 3.4.1 & React 18
-            </p>
-          </div>
-          <div style={{ display: 'flex', gap: '24px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            <a href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noreferrer" style={{ color: '#FFF', fontWeight: '600' }}>
-              Swagger API
-            </a>
-            <a href="http://localhost:8080/actuator/health" target="_blank" rel="noreferrer">Health</a>
-            <a href="http://localhost:8080/h2-console" target="_blank" rel="noreferrer">H2 Console</a>
-          </div>
-        </div>
-      </footer>
 
       {/* Modals */}
 
@@ -739,6 +832,16 @@ export default function App() {
           </div>
         ))}
       </div>
+
+      {/* 1-Time Multilingual Namaste Intro Splash */}
+      {showIntro && (
+        <IntroSplashScreen 
+          onComplete={() => {
+            setShowIntro(false);
+            sessionStorage.setItem('eventhub_intro_seen', 'true');
+          }} 
+        />
+      )}
     </div>
   );
 }
@@ -830,7 +933,7 @@ function EventCard({ event, currentUser, onBook, onWishlist, onWaitlist, onDelet
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div>
               <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ticket Price</span>
-              <span style={{ fontSize: '1.4rem', fontWeight: '800', color: '#FFFFFF' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
+              <span style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
             </div>
 
             <div style={{ textAlign: 'right' }}>

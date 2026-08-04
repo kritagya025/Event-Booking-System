@@ -41,7 +41,6 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "adminStats", key = "'dashboard'")
     public AdminDashboardDTO getDashboard() {
         log.info("Calculating admin dashboard metrics");
         long totalUsers = userRepository.count();

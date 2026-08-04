@@ -173,7 +173,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
 
         <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
           Already have an account?{' '}
-          <button onClick={() => onNavigate('login')} style={{ color: '#FFF', fontWeight: '700' }}>
+          <button onClick={() => onNavigate('login')} style={{ color: 'var(--primary)', fontWeight: '700' }}>
             Sign in
           </button>
         </div>

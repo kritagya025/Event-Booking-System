@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Ticket, Heart, User, LogOut, ShieldCheck, QrCode, PlusCircle, Compass, Globe, Menu, X } from 'lucide-react';
+import { 
+  Compass, Ticket, Heart, PlusCircle, Globe, User, LogOut, ShieldCheck, QrCode, Search, 
+  Sun, Moon, Home, Layers
+} from 'lucide-react';
 import { getActiveCurrency, setActiveCurrency, getAvailableCurrencies, subscribeCurrencyChange } from '../services/currency';
 
-export default function Navbar({ currentUser, onNavigate, activeTab, _onOpenAuthModal, onLogout, searchKeyword = '', onSearchChange }) {
+export default function Navbar({ 
+  currentUser, 
+  onNavigate, 
+  activeTab, 
+  onLogout 
+}) {
   const [currency, setCurrency] = useState(getActiveCurrency());
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem('sb-theme') || 'dark');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem('sb-theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     return subscribeCurrencyChange((newCurr) => setCurrency(newCurr));
@@ -21,6 +34,10 @@ export default function Navbar({ currentUser, onNavigate, activeTab, _onOpenAuth
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   const getUserInitials = (user) => {
     if (!user) return 'U';
     const first = user.firstName ? user.firstName.charAt(0).toUpperCase() : '';
@@ -28,391 +45,360 @@ export default function Navbar({ currentUser, onNavigate, activeTab, _onOpenAuth
     return (first + last) || 'U';
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (onSearchChange) {
-      onSearchChange(searchKeyword);
-    }
-    onNavigate('home');
-    setMobileMenuOpen(false);
-  };
-
   const handleNavClick = (tab, params = {}) => {
     onNavigate(tab, params);
-    setMobileMenuOpen(false);
   };
 
   return (
-    <nav style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      padding: '12px 24px',
-      background: 'rgba(19, 18, 26, 0.92)',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
-      borderBottom: '1px solid var(--border-subtle)'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: '1320px', margin: '0 auto', gap: '16px' }}>
-        
-        {/* Eventbrite Brand Wordmark */}
-        <div 
-          onClick={() => handleNavClick('home')} 
-          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0 }}
-        >
-          <div style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '10px',
-            background: 'var(--eb-orange)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 14px var(--eb-orange-glow)'
-          }}>
-            <Ticket size={20} color="#FFFFFF" />
-          </div>
-          <div>
-            <span style={{ fontSize: '1.35rem', fontWeight: '900', fontFamily: 'var(--font-sans)', letterSpacing: '-0.04em', color: '#FFFFFF' }}>
-              eventhub
-            </span>
-          </div>
-        </div>
-
-
-        {/* Desktop Nav Links */}
-        <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <button 
-            onClick={() => handleNavClick('events')}
-            className={`btn ${activeTab === 'events' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ padding: '7px 14px', fontSize: '0.82rem' }}
+    <>
+      {/* ─── DESKTOP & MOBILE TOP HEADER BAR ─── */}
+      <header className="sb-navbar-header">
+        <div className="sb-navbar-container">
+          
+          {/* Brand Logo (Left) */}
+          <div 
+            onClick={() => handleNavClick('home')} 
+            className="sb-logo-brand"
           >
-            <Compass size={14} /> Explore
-          </button>
-
-          {currentUser && currentUser.role === 'CUSTOMER' && (
-            <>
-              <button 
-                onClick={() => handleNavClick('wishlist')}
-                className={`btn ${activeTab === 'wishlist' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ padding: '7px 14px', fontSize: '0.82rem' }}
-              >
-                <Heart size={14} /> Wishlist
-              </button>
-            </>
-          )}
-
-          {currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER') && (
-            <>
-              <button 
-                onClick={() => handleNavClick('create-event')}
-                className="btn btn-secondary"
-                style={{ padding: '7px 14px', fontSize: '0.82rem' }}
-              >
-                <PlusCircle size={14} /> Create
-              </button>
-
-              <button 
-                onClick={() => handleNavClick('checkin')}
-                className={`btn ${activeTab === 'checkin' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ padding: '7px 14px', fontSize: '0.82rem' }}
-              >
-                <QrCode size={14} /> Check-In
-              </button>
-            </>
-          )}
-
-          {currentUser && currentUser.role === 'ADMIN' && (
-            <button 
-              onClick={() => handleNavClick('admin')}
-              className={`btn ${activeTab === 'admin' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ padding: '7px 14px', fontSize: '0.82rem' }}
-            >
-              <ShieldCheck size={14} /> Admin
-            </button>
-          )}
-
-          {/* Regional Currency Switcher */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: 'var(--radius-sm)', padding: '2px 8px' }}>
-            <Globe size={13} color="var(--text-muted)" />
-            <select 
-              value={currency} 
-              onChange={(e) => setActiveCurrency(e.target.value)}
-              style={{ 
-                background: 'transparent', 
-                color: 'var(--text-main)', 
-                border: 'none', 
-                fontSize: '0.8rem', 
-                fontWeight: '600', 
-                outline: 'none', 
-                cursor: 'pointer' 
-              }}
-            >
-              {getAvailableCurrencies().map((c) => (
-                <option key={c.code} value={c.code} style={{ background: '#0A0A0A', color: '#FFF' }}>
-                  {c.symbol} {c.code}
-                </option>
-              ))}
-            </select>
+            <div className="sb-logo-icon">
+              <Ticket size={22} color="#FFFFFF" />
+            </div>
+            <div className="sb-logo-text">
+              <span className="dark-part">event</span>
+              <span className="orange-part">hub</span>
+            </div>
           </div>
 
-          {currentUser ? (
-            <div id="user-profile-menu-container" style={{ position: 'relative', marginLeft: '8px' }}>
-              {/* Circular Avatar Trigger */}
-              <button
-                type="button"
-                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #6366f1, #a855f7)',
-                  border: '2px solid rgba(255,255,255,0.25)',
-                  color: '#FFFFFF',
-                  fontWeight: '800',
-                  fontSize: '0.9rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
-                  transition: 'all 0.2s ease',
-                  overflow: 'hidden',
-                  padding: 0
-                }}
-                title={`${currentUser.firstName || ''} ${currentUser.lastName || ''}`}
-              >
-                {currentUser.avatarUrl ? (
-                  <img src={currentUser.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  getUserInitials(currentUser)
-                )}
-              </button>
-
-              {/* Dropdown Menu Popup */}
-              {profileDropdownOpen && (
-                <div style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: '50px',
-                  width: '230px',
-                  background: '#121216',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: '14px',
-                  padding: '8px',
-                  zIndex: 1000,
-                  boxShadow: '0 16px 40px rgba(0,0,0,0.75)',
-                  backdropFilter: 'blur(20px)'
-                }}>
-                  {/* User Info Header */}
-                  <div style={{ padding: '10px 12px', borderBottom: '1px solid rgba(255,255,255,0.08)', marginBottom: '6px' }}>
-                    <span style={{ display: 'block', fontSize: '0.92rem', fontWeight: '800', color: '#FFF' }}>
-                      {currentUser.firstName} {currentUser.lastName}
-                    </span>
-                    <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', margin: '2px 0 6px 0', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                      {currentUser.email}
-                    </span>
-                    <span className="badge badge-purple" style={{ fontSize: '0.6rem', padding: '2px 8px' }}>
-                      {currentUser.role}
-                    </span>
-                  </div>
-
-                  {/* Menu Options */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleNavClick('profile');
-                        setProfileDropdownOpen(false);
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        width: '100%',
-                        padding: '10px 12px',
-                        borderRadius: '8px',
-                        background: activeTab === 'profile' ? 'rgba(255,255,255,0.08)' : 'transparent',
-                        color: '#FFF',
-                        border: 'none',
-                        fontSize: '0.86rem',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        textAlign: 'left'
-                      }}
-                    >
-                      <User size={16} color="var(--primary)" /> Profile
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleNavClick('my-bookings');
-                        setProfileDropdownOpen(false);
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        width: '100%',
-                        padding: '10px 12px',
-                        borderRadius: '8px',
-                        background: activeTab === 'my-bookings' ? 'rgba(255,255,255,0.08)' : 'transparent',
-                        color: '#FFF',
-                        border: 'none',
-                        fontSize: '0.86rem',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        textAlign: 'left'
-                      }}
-                    >
-                      <Ticket size={16} color="#10b981" /> My Tickets
-                    </button>
-
-                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', margin: '4px 0' }} />
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onLogout();
-                        setProfileDropdownOpen(false);
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        width: '100%',
-                        padding: '10px 12px',
-                        borderRadius: '8px',
-                        background: 'transparent',
-                        color: '#ef4444',
-                        border: 'none',
-                        fontSize: '0.86rem',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        textAlign: 'left'
-                      }}
-                    >
-                      <LogOut size={16} color="#ef4444" /> Logout
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '8px' }}>
-              <button 
-                onClick={() => handleNavClick('login')} 
-                className="btn btn-secondary"
-                style={{ padding: '7px 16px', fontSize: '0.82rem' }}
-              >
-                Sign In
-              </button>
-              <button 
-                onClick={() => handleNavClick('register')} 
-                className="btn btn-primary"
-                style={{ padding: '7px 16px', fontSize: '0.82rem' }}
-              >
-                Register
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Mobile Hamburger Button */}
-        <button 
-          className="mobile-only btn btn-secondary" 
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          style={{ padding: '8px' }}
-        >
-          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-
-      </div>
-
-      {/* Mobile Drawer Dropdown Menu */}
-      {mobileMenuOpen && (
-        <div className="mobile-only" style={{
-          marginTop: '14px',
-          paddingTop: '14px',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px'
-        }}>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <button onClick={() => handleNavClick('events')} className={`btn ${activeTab === 'events' ? 'btn-primary' : 'btn-secondary'}`}>
-              <Compass size={14} /> Explore
+          {/* Clean Role-Based Navigation Links (Desktop Center) */}
+          <nav className="sb-nav-center-links">
+            <button 
+              onClick={() => handleNavClick('home')}
+              className={`sb-nav-link ${activeTab === 'home' ? 'active' : ''}`}
+            >
+              Home
             </button>
 
-            {currentUser && (
-              <button onClick={() => handleNavClick('profile')} className={`btn ${activeTab === 'profile' ? 'btn-primary' : 'btn-secondary'}`}>
-                <User size={14} /> Profile
-              </button>
-            )}
+            <button 
+              onClick={() => handleNavClick('events')}
+              className={`sb-nav-link ${activeTab === 'events' ? 'active' : ''}`}
+            >
+              Explore Events
+            </button>
 
+            {/* CUSTOMER ROLE LINKS */}
             {currentUser && currentUser.role === 'CUSTOMER' && (
               <>
-                <button onClick={() => handleNavClick('wishlist')} className={`btn ${activeTab === 'wishlist' ? 'btn-primary' : 'btn-secondary'}`}>
-                  <Heart size={14} /> Wishlist
+                <button 
+                  onClick={() => handleNavClick('wishlist')}
+                  className={`sb-nav-link ${activeTab === 'wishlist' ? 'active' : ''}`}
+                >
+                  Wishlist
                 </button>
-                <button onClick={() => handleNavClick('my-bookings')} className={`btn ${activeTab === 'my-bookings' ? 'btn-primary' : 'btn-secondary'}`}>
-                  <Ticket size={14} /> My Tickets
+
+                <button 
+                  onClick={() => handleNavClick('my-bookings')}
+                  className={`sb-nav-link ${activeTab === 'my-bookings' ? 'active' : ''}`}
+                >
+                  My Tickets
                 </button>
               </>
             )}
 
-            {currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER') && (
+            {/* ORGANIZER ROLE LINKS */}
+            {currentUser && currentUser.role === 'ORGANIZER' && (
               <>
-                <button onClick={() => handleNavClick('create-event')} className="btn btn-secondary">
-                  <PlusCircle size={14} /> Create Event
+                <button 
+                  onClick={() => handleNavClick('create-event')}
+                  className={`sb-nav-link ${activeTab === 'create-event' ? 'active' : ''}`}
+                >
+                  Host Event
                 </button>
-                <button onClick={() => handleNavClick('checkin')} className={`btn ${activeTab === 'checkin' ? 'btn-primary' : 'btn-secondary'}`}>
-                  <QrCode size={14} /> Gate Check-In
+
+                <button 
+                  onClick={() => handleNavClick('checkin')}
+                  className={`sb-nav-link ${activeTab === 'checkin' ? 'active' : ''}`}
+                >
+                  Gate Check-In
                 </button>
               </>
             )}
 
+            {/* ADMIN ROLE LINK */}
             {currentUser && currentUser.role === 'ADMIN' && (
-              <button onClick={() => handleNavClick('admin')} className={`btn ${activeTab === 'admin' ? 'btn-primary' : 'btn-secondary'}`}>
-                <ShieldCheck size={14} /> Admin
+              <button 
+                onClick={() => handleNavClick('admin')}
+                className={`sb-nav-link ${activeTab === 'admin' ? 'active' : ''}`}
+              >
+                Admin Panel
               </button>
             )}
-          </div>
+          </nav>
 
-          {/* Regional Currency Switcher Mobile */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Globe size={14} /> Regional Currency:
-            </span>
-            <select 
-              value={currency} 
-              onChange={(e) => setActiveCurrency(e.target.value)}
-              className="form-select"
-              style={{ width: 'auto', padding: '4px 12px', fontSize: '0.85rem' }}
-            >
-              {getAvailableCurrencies().map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.symbol} {c.code}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {currentUser ? (
-            <button onClick={() => { onLogout(); setMobileMenuOpen(false); }} className="btn btn-secondary" style={{ width: '100%', color: '#ef4444', marginTop: '6px' }}>
-              <LogOut size={14} /> Sign Out ({currentUser.firstName})
-            </button>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '6px' }}>
-              <button onClick={() => handleNavClick('login')} className="btn btn-secondary">Sign In</button>
-              <button onClick={() => handleNavClick('register')} className="btn btn-primary">Register</button>
+          {/* Right Controls: Currency, Theme Switcher & User Profile Menu */}
+          <div className="sb-nav-right-controls">
+            
+            {/* Multi-Currency Selector */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--bg-surface)', padding: '5px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+              <Globe size={14} color="var(--primary)" />
+              <select 
+                value={currency} 
+                onChange={(e) => setActiveCurrency(e.target.value)}
+                style={{ background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.82rem', fontWeight: '700', outline: 'none', cursor: 'pointer' }}
+              >
+                {getAvailableCurrencies().map((c) => (
+                  <option key={c.code} value={c.code} style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
+                    {c.symbol} {c.code}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-        </div>
-      )}
 
-    </nav>
+            {/* Light/Dark Mode Switcher */}
+            <button 
+              onClick={toggleTheme} 
+              className="theme-toggle-btn"
+              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            {/* User Account / Profile Dropdown */}
+            {currentUser ? (
+              <div id="user-profile-menu-container" style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'var(--primary)',
+                    border: '2px solid var(--bg-surface)',
+                    color: '#FFFFFF',
+                    fontWeight: '800',
+                    fontSize: '0.9rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 14px var(--primary-glow)',
+                    overflow: 'hidden',
+                    padding: 0
+                  }}
+                  title={`${currentUser.firstName || ''} ${currentUser.lastName || ''}`}
+                >
+                  {currentUser.avatarUrl ? (
+                    <img src={currentUser.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    getUserInitials(currentUser)
+                  )}
+                </button>
+
+                {/* User Profile Dropdown Menu */}
+                {profileDropdownOpen && (
+                  <div style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: '52px',
+                    width: '240px',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '12px',
+                    zIndex: 1100,
+                    boxShadow: 'var(--shadow-elevated)',
+                  }}>
+                    <div style={{ padding: '8px', borderBottom: '1px solid var(--border-subtle)', marginBottom: '8px' }}>
+                      <span style={{ display: 'block', fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                        {currentUser.firstName} {currentUser.lastName}
+                      </span>
+                      <span style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                        {currentUser.email}
+                      </span>
+                      <span className="badge badge-primary" style={{ fontSize: '0.62rem', marginTop: '6px', display: 'inline-block' }}>
+                        {currentUser.role}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <button
+                        type="button"
+                        onClick={() => { handleNavClick('profile'); setProfileDropdownOpen(false); }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                      >
+                        <User size={16} color="var(--primary)" /> Account Profile
+                      </button>
+
+                      {currentUser.role === 'CUSTOMER' && (
+                        <button
+                          type="button"
+                          onClick={() => { handleNavClick('my-bookings'); setProfileDropdownOpen(false); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                        >
+                          <Ticket size={16} color="#10B981" /> Purchased Tickets
+                        </button>
+                      )}
+
+                      {currentUser.role === 'ORGANIZER' && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => { handleNavClick('create-event'); setProfileDropdownOpen(false); }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                          >
+                            <PlusCircle size={16} color="#A855F7" /> Host New Event
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { handleNavClick('checkin'); setProfileDropdownOpen(false); }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                          >
+                            <QrCode size={16} color="#F59E0B" /> Gate Scanner
+                          </button>
+                        </>
+                      )}
+
+                      {currentUser.role === 'ADMIN' && (
+                        <button
+                          type="button"
+                          onClick={() => { handleNavClick('admin'); setProfileDropdownOpen(false); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                        >
+                          <ShieldCheck size={16} color="#6366F1" /> Admin Panel
+                        </button>
+                      )}
+
+                      <div style={{ height: '1px', background: 'var(--border-subtle)', margin: '4px 0' }} />
+
+                      <button
+                        type="button"
+                        onClick={() => { onLogout(); setProfileDropdownOpen(false); }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: '#EF4444', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                      >
+                        <LogOut size={16} color="#EF4444" /> Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button 
+                  onClick={() => handleNavClick('login')} 
+                  className="btn-sb-outline"
+                  style={{ padding: '8px 20px', fontSize: '0.88rem' }}
+                >
+                  Sign In
+                </button>
+                <button 
+                  onClick={() => handleNavClick('register')} 
+                  className="btn-sb-primary"
+                  style={{ padding: '8px 20px', fontSize: '0.88rem' }}
+                >
+                  Register
+                </button>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      </header>
+
+      {/* ─── MOBILE FLOATING BOTTOM TAB BAR (MOBILE DEVICES ≤ 768px) ─── */}
+      <nav className="mobile-bottom-tab-bar">
+        
+        {/* 1. Home */}
+        <button 
+          onClick={() => handleNavClick('home')}
+          className={`mobile-tab-item ${activeTab === 'home' ? 'active' : ''}`}
+        >
+          <Home size={20} />
+          <span>Home</span>
+        </button>
+
+        {/* 2. Explore */}
+        <button 
+          onClick={() => handleNavClick('events')}
+          className={`mobile-tab-item ${activeTab === 'events' ? 'active' : ''}`}
+        >
+          <Compass size={20} />
+          <span>Explore</span>
+        </button>
+
+        {/* 3. CENTER ELEVATED ACTION BUTTON (Role Aware) */}
+        {currentUser?.role === 'ORGANIZER' ? (
+          <button 
+            onClick={() => handleNavClick('create-event')}
+            className="mobile-tab-center-btn"
+            title="Host Event"
+          >
+            <PlusCircle size={24} />
+          </button>
+        ) : currentUser?.role === 'ADMIN' ? (
+          <button 
+            onClick={() => handleNavClick('admin')}
+            className="mobile-tab-center-btn"
+            title="Admin Dashboard"
+          >
+            <ShieldCheck size={24} />
+          </button>
+        ) : (
+          <button 
+            onClick={() => {
+              if (!currentUser) handleNavClick('login');
+              else handleNavClick('wishlist');
+            }}
+            className="mobile-tab-center-btn"
+            title="Wishlist"
+          >
+            <Heart size={24} />
+          </button>
+        )}
+
+        {/* 4. Tickets / Scanner / Dashboard */}
+        {currentUser?.role === 'ORGANIZER' ? (
+          <button 
+            onClick={() => handleNavClick('checkin')}
+            className={`mobile-tab-item ${activeTab === 'checkin' ? 'active' : ''}`}
+          >
+            <QrCode size={20} />
+            <span>Scan</span>
+          </button>
+        ) : currentUser?.role === 'ADMIN' ? (
+          <button 
+            onClick={() => handleNavClick('admin')}
+            className={`mobile-tab-item ${activeTab === 'admin' ? 'active' : ''}`}
+          >
+            <ShieldCheck size={20} />
+            <span>Admin</span>
+          </button>
+        ) : (
+          <button 
+            onClick={() => {
+              if (!currentUser) handleNavClick('login');
+              else handleNavClick('my-bookings');
+            }}
+            className={`mobile-tab-item ${activeTab === 'my-bookings' ? 'active' : ''}`}
+          >
+            <Ticket size={20} />
+            <span>Tickets</span>
+          </button>
+        )}
+
+        {/* 5. Account Profile */}
+        <button 
+          onClick={() => {
+            if (!currentUser) handleNavClick('login');
+            else handleNavClick('profile');
+          }}
+          className={`mobile-tab-item ${activeTab === 'profile' ? 'active' : ''}`}
+        >
+          <User size={20} />
+          <span>Profile</span>
+        </button>
+
+      </nav>
+    </>
   );
 }

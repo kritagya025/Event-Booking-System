@@ -135,14 +135,14 @@ export default function LoginPage({ onAuthSuccess, onNavigate, showToast }) {
 
         {forgotMode ? (
           <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            <button onClick={() => setForgotMode(false)} style={{ color: '#FFF', fontWeight: '700' }}>
+            <button onClick={() => setForgotMode(false)} style={{ color: 'var(--primary)', fontWeight: '700' }}>
               Back to sign in
             </button>
           </div>
         ) : (
           <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Don't have an account?{' '}
-            <button onClick={() => onNavigate('register')} style={{ color: '#FFF', fontWeight: '700' }}>
+            <button onClick={() => onNavigate('register')} style={{ color: 'var(--primary)', fontWeight: '700' }}>
               Create account
             </button>
           </div>
