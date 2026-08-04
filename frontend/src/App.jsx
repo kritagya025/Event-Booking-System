@@ -10,6 +10,12 @@ import Wishlist from './components/Wishlist';
 import CreateEventModal from './components/CreateEventModal';
 import ProfileDashboard from './components/ProfileDashboard';
 import IntroSplashScreen from './components/IntroSplashScreen';
+import TermsModal from './components/TermsModal';
+import PrivacyModal from './components/PrivacyModal';
+import SystemStatusModal from './components/SystemStatusModal';
+import DatabaseConsoleModal from './components/DatabaseConsoleModal';
+import CookiesModal from './components/CookiesModal';
+import ApiDocsModal from './components/ApiDocsModal';
 
 import { 
   Sparkles, Calendar, MapPin, Ticket, Heart, Search, 
@@ -88,6 +94,13 @@ export default function App() {
   const [isSeatMapOpen, setIsSeatMapOpen] = useState(false);
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
+
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+  const [isSystemStatusOpen, setIsSystemStatusOpen] = useState(false);
+  const [isDatabaseConsoleOpen, setIsDatabaseConsoleOpen] = useState(false);
+  const [isCookiesOpen, setIsCookiesOpen] = useState(false);
+  const [isApiDocsOpen, setIsApiDocsOpen] = useState(false);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -758,20 +771,20 @@ export default function App() {
               <div>
                 <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-main)', marginBottom: '16px' }}>Platform</h4>
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-                  <li><a href="#events" onClick={() => handleNavigate('events')}>Browse Events</a></li>
-                  <li><a href="#create" onClick={() => handleNavigate('create-event')}>Host Event</a></li>
-                  <li><a href="#checkin" onClick={() => handleNavigate('checkin')}>Gate QR Scanner</a></li>
-                  <li><a href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noreferrer">API Documentation</a></li>
+                  <li><a href="#events" onClick={(e) => { e.preventDefault(); handleNavigate('events'); }}>Browse Events</a></li>
+                  <li><a href="#create" onClick={(e) => { e.preventDefault(); handleNavigate('create-event'); }}>Host Event</a></li>
+                  <li><a href="#checkin" onClick={(e) => { e.preventDefault(); handleNavigate('checkin'); }}>Gate QR Scanner</a></li>
+                  <li><a href="#apidocs" onClick={(e) => { e.preventDefault(); setIsApiDocsOpen(true); }}>API Documentation</a></li>
                 </ul>
               </div>
 
               <div>
                 <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-main)', marginBottom: '16px' }}>Resources</h4>
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-                  <li><a href="#terms">Terms & Conditions</a></li>
-                  <li><a href="#privacy">Privacy Policy</a></li>
-                  <li><a href="http://localhost:8080/actuator/health" target="_blank" rel="noreferrer">System Status</a></li>
-                  <li><a href="http://localhost:8080/h2-console" target="_blank" rel="noreferrer">Database Console</a></li>
+                  <li><a href="#terms" onClick={(e) => { e.preventDefault(); setIsTermsOpen(true); }}>Terms & Conditions</a></li>
+                  <li><a href="#privacy" onClick={(e) => { e.preventDefault(); setIsPrivacyOpen(true); }}>Privacy Policy</a></li>
+                  <li><a href="#status" onClick={(e) => { e.preventDefault(); setIsSystemStatusOpen(true); }}>System Status</a></li>
+                  <li><a href="#database" onClick={(e) => { e.preventDefault(); setIsDatabaseConsoleOpen(true); }}>Database Console</a></li>
                 </ul>
               </div>
             </div>
@@ -779,9 +792,9 @@ export default function App() {
             <div style={{ maxWidth: '1320px', margin: '40px auto 0 auto', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
               <span>© 2026 EventHub Inc. All rights reserved.</span>
               <div style={{ display: 'flex', gap: '20px' }}>
-                <a href="#privacy">Privacy</a>
-                <a href="#terms">Terms</a>
-                <a href="#cookies">Cookies</a>
+                <a href="#privacy" onClick={(e) => { e.preventDefault(); setIsPrivacyOpen(true); }}>Privacy</a>
+                <a href="#terms" onClick={(e) => { e.preventDefault(); setIsTermsOpen(true); }}>Terms</a>
+                <a href="#cookies" onClick={(e) => { e.preventDefault(); setIsCookiesOpen(true); }}>Cookies</a>
               </div>
             </div>
           </footer>
@@ -820,6 +833,13 @@ export default function App() {
           fetchCatalogData(true);
         }}
       />
+
+      <TermsModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
+      <PrivacyModal isOpen={isPrivacyOpen} onClose={() => setIsPrivacyOpen(false)} />
+      <SystemStatusModal isOpen={isSystemStatusOpen} onClose={() => setIsSystemStatusOpen(false)} />
+      <DatabaseConsoleModal isOpen={isDatabaseConsoleOpen} onClose={() => setIsDatabaseConsoleOpen(false)} />
+      <CookiesModal isOpen={isCookiesOpen} onClose={() => setIsCookiesOpen(false)} showToast={showToast} />
+      <ApiDocsModal isOpen={isApiDocsOpen} onClose={() => setIsApiDocsOpen(false)} />
 
       {/* Toast Overlay */}
       <div className="toast-container">
