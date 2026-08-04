@@ -1,15 +1,12 @@
 package com.kritagya.event_booking_system.config;
 
-import com.kritagya.event_booking_system.entity.Event;
-import com.kritagya.event_booking_system.entity.Seat;
-import com.kritagya.event_booking_system.entity.Venue;
-import com.kritagya.event_booking_system.enums.EventStatus;
-import com.kritagya.event_booking_system.enums.SeatStatus;
-import com.kritagya.event_booking_system.enums.SeatType;
+import com.kritagya.event_booking_system.entity.*;
+import com.kritagya.event_booking_system.enums.*;
 import com.kritagya.event_booking_system.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +33,8 @@ public class DataInitializerRunner implements CommandLineRunner {
     private final WishlistRepository wishlistRepository;
     private final WaitlistRepository waitlistRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DataInitializerRunner(
             EventRepository eventRepository,
@@ -45,7 +44,9 @@ public class DataInitializerRunner implements CommandLineRunner {
             TicketRepository ticketRepository,
             WishlistRepository wishlistRepository,
             WaitlistRepository waitlistRepository,
-            ReviewRepository reviewRepository
+            ReviewRepository reviewRepository,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder
     ) {
         this.eventRepository = eventRepository;
         this.venueRepository = venueRepository;
@@ -55,12 +56,29 @@ public class DataInitializerRunner implements CommandLineRunner {
         this.wishlistRepository = wishlistRepository;
         this.waitlistRepository = waitlistRepository;
         this.reviewRepository = reviewRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional
     public void run(String... args) {
-        log.info("[DataInitializer] Cleaning database to ensure ONLY the 4 primary dummy events exist...");
+        log.info("[DataInitializer] Initializing system data, default users, and primary events...");
+
+        // 0. Seed default Admin and Customer users if not present
+        if (!userRepository.existsByEmail("admin@eventhub.com")) {
+            User admin = new User("System", "Admin", "admin@eventhub.com", passwordEncoder.encode("Admin@123"), "+1234567890", Role.ADMIN);
+            admin.setEmailVerified(true);
+            userRepository.save(admin);
+            log.info("[DataInitializer] Default Admin user created: admin@eventhub.com");
+        }
+
+        if (!userRepository.existsByEmail("customer@eventhub.com")) {
+            User customer = new User("John", "Doe", "customer@eventhub.com", passwordEncoder.encode("Customer@123"), "+1987654321", Role.CUSTOMER);
+            customer.setEmailVerified(true);
+            userRepository.save(customer);
+            log.info("[DataInitializer] Default Customer user created: customer@eventhub.com");
+        }
 
         Set<String> dummyNames = Set.of(
                 "Neon Horizon Cyber Music Festival 2026",

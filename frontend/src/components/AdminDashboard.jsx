@@ -67,79 +67,81 @@ export default function AdminDashboard({ showToast }) {
       </div>
 
       {/* KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '32px' }}>
-        <div className="stat-card">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+        <div className="glass-panel" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Revenue</span>
-            <DollarSign size={18} color="var(--text-subtle)" />
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Revenue</span>
+            <DollarSign size={20} color="var(--eb-orange)" />
           </div>
-          <div style={{ fontSize: '1.7rem', fontWeight: '800' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#FFFFFF' }}>
             {formatPrice(metrics.totalRevenue)}
           </div>
-          <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>+{formatPrice(4250)} today</span>
+          <span style={{ fontSize: '0.75rem', color: '#34D399', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+            +{formatPrice(metrics.todayRevenue || 4250)} today
+          </span>
         </div>
 
-        <div className="stat-card">
+        <div className="glass-panel" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Bookings</span>
-            <Ticket size={18} color="var(--text-subtle)" />
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Bookings</span>
+            <Ticket size={20} color="#39C5BB" />
           </div>
-          <div style={{ fontSize: '1.7rem', fontWeight: '800' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#FFFFFF' }}>
             {metrics.totalBookings?.toLocaleString()}
           </div>
-          <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Confirmed orders</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px', display: 'block' }}>Confirmed ticket orders</span>
         </div>
 
-        <div className="stat-card">
+        <div className="glass-panel" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Users</span>
-            <Users size={18} color="var(--text-subtle)" />
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Active Users</span>
+            <Users size={20} color="#FFB800" />
           </div>
-          <div style={{ fontSize: '1.7rem', fontWeight: '800' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#FFFFFF' }}>
             {metrics.totalUsers?.toLocaleString()}
           </div>
-          <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Customers & organizers</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px', display: 'block' }}>Registered customers & admins</span>
         </div>
 
-        <div className="stat-card">
+        <div className="glass-panel" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Events</span>
-            <Calendar size={18} color="var(--text-subtle)" />
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Events</span>
+            <Calendar size={20} color="#FF4D6D" />
           </div>
-          <div style={{ fontSize: '1.7rem', fontWeight: '800' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#FFFFFF' }}>
             {metrics.totalEvents}
           </div>
-          <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{metrics.upcomingEventsCount} upcoming</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px', display: 'block' }}>{metrics.upcomingEventsCount} upcoming events</span>
         </div>
       </div>
 
       {/* Detail Panels */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
-        <div className="stat-card">
-          <h3 style={{ fontSize: '1.05rem', marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
-            <Award size={16} color="var(--text-secondary)" /> Top Events
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+        <div className="glass-panel" style={{ padding: '24px' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+            <Award size={18} color="var(--eb-orange)" /> Top Performing Events
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {metrics.popularEvents?.map((event, idx) => (
-              <div key={event.id || idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', borderRadius: 'var(--radius-sm)', background: 'rgba(255,255,255,0.03)' }}>
+              <div key={event.id || idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: '#FFF', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '0.75rem' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--eb-orange)', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '0.78rem' }}>
                     {idx + 1}
                   </div>
                   <div>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 600 }}>{event.name}</h4>
-                    <span className="badge badge-purple" style={{ fontSize: '0.6rem' }}>{event.category}</span>
+                    <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)' }}>{event.name}</h4>
+                    <span className="badge badge-orange" style={{ fontSize: '0.62rem', marginTop: '2px' }}>{event.category}</span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '0.95rem', fontWeight: '700' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
+                  <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#FFFFFF' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
                   <button 
                     onClick={() => handleDeleteEvent(event.id, event.name)} 
-                    className="btn btn-secondary btn-sm" 
-                    style={{ padding: '4px 8px', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}
+                    className="btn btn-danger btn-sm" 
+                    style={{ padding: '6px 10px' }}
                     title="Remove Event"
                   >
-                    <Trash2 size={13} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
@@ -147,26 +149,25 @@ export default function AdminDashboard({ showToast }) {
           </div>
         </div>
 
-        <div className="stat-card">
-          <h3 style={{ fontSize: '1.05rem', marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
-            <BarChart2 size={16} color="var(--text-secondary)" /> System Health
+        <div className="glass-panel" style={{ padding: '24px' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+            <BarChart2 size={18} color="#39C5BB" /> System Infrastructure & Security
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.85rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Database</span>
-              <span className="badge badge-green">PostgreSQL</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', fontSize: '0.88rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-sm)' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>Database Security</span>
+              <span className="badge badge-emerald">PostgreSQL Encrypted</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Cache</span>
-              <span className="badge badge-green">Redis</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-sm)' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>Seat Locking Cache</span>
+              <span className="badge badge-emerald">Redis Sentinel</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>WebSocket</span>
-              <span className="badge badge-purple">Active</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-sm)' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>Authentication</span>
+              <span className="badge badge-orange">HttpOnly JWT Cookie</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Rate Limit</span>
-              <span className="badge badge-cyan">10/min</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-sm)' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>Rate Limiting</span>
             </div>
           </div>
         </div>
