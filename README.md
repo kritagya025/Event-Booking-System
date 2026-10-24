@@ -269,6 +269,18 @@ cd frontend
 npm run dev
 ```
 
+### Running Tests
+
+Execute the automated backend test suite (52 unit and integration tests covering controllers, security policies, services, concurrency, QR code generation, and iCalendar exports):
+
+```bash
+# Run all backend tests
+./mvnw test
+
+# Run specific test classes
+./mvnw test -Dtest=BookingControllerTest,CalendarControllerTest,CalendarServiceTest,QrCodeServiceTest
+```
+
 ### 🌐 Access Points
 
 | Service | URL |
