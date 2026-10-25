@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Ticket, Calendar, MapPin, Download, XCircle } from 'lucide-react';
-import { apiFetch, getStoredToken } from '../services/api';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink, ShieldCheck, CreditCard, Sparkles } from 'lucide-react';
+import { apiFetch, BASE_URL } from '../services/api';
 import { formatPrice } from '../services/currency';
 
 export default function MyBookings({ currentUser, showToast }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchUserBookings = useCallback(async () => {
     setLoading(true);
@@ -51,11 +53,11 @@ export default function MyBookings({ currentUser, showToast }) {
   }, [currentUser, fetchUserBookings]);
 
   const handleCancelBooking = async (bookingId) => {
-    if (!window.confirm('Cancel this booking? Seats will be returned.')) return;
+    if (!window.confirm('Cancel this booking? Seats will be returned to availability.')) return;
 
     try {
       await apiFetch(`/bookings/${bookingId}/cancel`, { method: 'PATCH' });
-      showToast('Booking cancelled. Waitlist auto-promoted.', 'info');
+      showToast('Booking cancelled successfully.', 'info');
       fetchUserBookings();
     } catch (err) {
       showToast(err.message || 'Failed to cancel booking', 'error');
@@ -69,7 +71,7 @@ export default function MyBookings({ currentUser, showToast }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/tickets/booking/${booking.id}/pdf`, {
+      const response = await fetch(`${BASE_URL}/tickets/booking/${booking.id}/pdf`, {
         credentials: 'include'
       }).catch(() => null);
 
@@ -134,65 +136,191 @@ export default function MyBookings({ currentUser, showToast }) {
   };
 
   const handleDownloadCalendar = (eventId) => {
-    window.open(`http://localhost:8080/api/events/${eventId}/calendar.ics`, '_blank');
-    showToast('Downloading calendar file...', 'info');
+    window.open(`${BASE_URL}/events/${eventId}/calendar.ics`, '_blank');
+    showToast('Downloading calendar file (.ics)...', 'info');
   };
+
+  const handleOpenGoogleCalendar = async (eventId, eventData) => {
+    try {
+      const response = await apiFetch(`/events/${eventId}/google-calendar-link`);
+      if (response && response.googleCalendarUrl) {
+        window.open(response.googleCalendarUrl, '_blank');
+        showToast('Opening Google Calendar...', 'success');
+        return;
+      }
+    } catch (err) {
+      console.warn('Backend calendar link fallback:', err);
+    }
+
+    // Direct Google Calendar link fallback
+    const title = encodeURIComponent(eventData?.name || 'Event Booking');
+    const details = encodeURIComponent(`Booking reservation for ${eventData?.name || 'event'}`);
+    const location = encodeURIComponent(eventData?.venue?.name || 'Event Venue');
+    const dateFormatted = (eventData?.eventDate || '2026-09-15').replace(/-/g, '');
+    const gUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dateFormatted}T180000Z/${dateFormatted}T210000Z`;
+    window.open(gUrl, '_blank');
+    showToast('Opening Google Calendar...', 'success');
+  };
+
+  // Filtered and searched bookings
+  const filteredBookings = useMemo(() => {
+    return bookings.filter((b) => {
+      const matchesStatus =
+        statusFilter === 'ALL' ||
+        (statusFilter === 'CONFIRMED' && b.bookingStatus === 'CONFIRMED') ||
+        (statusFilter === 'CANCELLED' && b.bookingStatus === 'CANCELLED');
+
+      const matchesSearch =
+        !searchQuery.trim() ||
+        b.event?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.event?.venue?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        String(b.id).includes(searchQuery);
+
+      return matchesStatus && matchesSearch;
+    });
+  }, [bookings, statusFilter, searchQuery]);
+
+  // Statistics calculation
+  const stats = useMemo(() => {
+    const totalCount = bookings.length;
+    const confirmedCount = bookings.filter(b => b.bookingStatus === 'CONFIRMED').length;
+    const totalSpent = bookings
+      .filter(b => b.bookingStatus === 'CONFIRMED')
+      .reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
+    return { totalCount, confirmedCount, totalSpent };
+  }, [bookings]);
 
   return (
     <div style={{ padding: '0 24px 40px 24px', maxWidth: '1320px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '28px' }}>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 800 }}>My Tickets</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Manage bookings, download PDFs, or export to calendar</p>
+      <div style={{ marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: 800 }}>My Tickets & Reservations</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+          Manage your booked events, download unified PDF passes, or sync with your personal calendar
+        </p>
+      </div>
+
+      {/* Metrics Banner */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(99, 102, 241, 0.15)', color: '#818CF8' }}>
+            <Ticket size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Total Bookings</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 800 }}>{stats.totalCount}</div>
+          </div>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.15)', color: '#34D399' }}>
+            <ShieldCheck size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Active Passes</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#34D399' }}>{stats.confirmedCount}</div>
+          </div>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(236, 72, 153, 0.15)', color: '#F472B6' }}>
+            <CreditCard size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Total Invested</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)' }}>{formatPrice(stats.totalSpent)}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter and Search Controls */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {['ALL', 'CONFIRMED', 'CANCELLED'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`btn btn-sm ${statusFilter === status ? 'btn-primary' : 'btn-secondary'}`}
+              style={{ textTransform: 'capitalize', fontWeight: 600 }}
+            >
+              {status.toLowerCase()}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ position: 'relative', minWidth: '260px' }}>
+          <Search size={16} color="var(--text-subtle)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+          <input
+            type="text"
+            placeholder="Search by event, venue, or #ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="input-field"
+            style={{ paddingLeft: '36px', height: '38px', fontSize: '0.85rem' }}
+          />
+        </div>
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</div>
-      ) : bookings.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
+          <Sparkles className="spin-icon" size={28} style={{ marginBottom: '12px' }} />
+          <div>Retrieving your passes...</div>
+        </div>
+      ) : filteredBookings.length === 0 ? (
         <div className="glass-panel" style={{ textAlign: 'center', padding: '60px' }}>
-          <Ticket size={40} color="var(--text-subtle)" style={{ marginBottom: '12px' }} />
-          <h3 style={{ fontWeight: 700 }}>No bookings yet</h3>
-          <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '0.88rem' }}>Explore events and reserve your seats</p>
+          <Ticket size={42} color="var(--text-subtle)" style={{ marginBottom: '12px' }} />
+          <h3 style={{ fontWeight: 700 }}>No bookings found</h3>
+          <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '0.88rem' }}>
+            {searchQuery || statusFilter !== 'ALL'
+              ? 'No reservations match your search or filter criteria.'
+              : 'Explore the live events catalog and reserve your first pass.'}
+          </p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px' }}>
-          {bookings.map((b) => (
-            <div key={b.id} className="glass-panel" style={{ padding: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-                <span className={`badge ${b.bookingStatus === 'CONFIRMED' ? 'badge-green' : 'badge-red'}`}>
-                  {b.bookingStatus}
-                </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>#{b.id}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: '16px' }}>
+          {filteredBookings.map((b) => (
+            <div key={b.id} className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+                  <span className={`badge ${b.bookingStatus === 'CONFIRMED' ? 'badge-green' : 'badge-red'}`}>
+                    {b.bookingStatus}
+                  </span>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', fontWeight: 600 }}>Booking #{b.id}</span>
+                </div>
+
+                <h3 style={{ fontSize: '1.15rem', marginBottom: '12px', fontWeight: 700, lineHeight: 1.3 }}>{b.event?.name || 'Event'}</h3>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)', marginBottom: '18px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Calendar size={14} color="var(--text-subtle)" /> {b.event?.eventDate} @ {b.event?.startTime || '19:00'}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <MapPin size={14} color="var(--text-subtle)" /> {b.event?.venue?.name || 'Venue'}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Ticket size={14} color="var(--text-subtle)" /> {b.quantity} pass(es) · <strong style={{ color: 'var(--text-main)' }}>{formatPrice(b.totalAmount, b.event?.currency)}</strong>
+                  </div>
+                </div>
               </div>
 
-              <h3 style={{ fontSize: '1.1rem', marginBottom: '12px', fontWeight: 700 }}>{b.event?.name || 'Event'}</h3>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '18px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Calendar size={14} color="var(--text-subtle)" /> {b.event?.eventDate} @ {b.event?.startTime || '19:00'}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <MapPin size={14} color="var(--text-subtle)" /> {b.event?.venue?.name || 'Venue'}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Ticket size={14} color="var(--text-subtle)" /> {b.quantity} ticket(s) · <strong style={{ color: 'var(--text-main)' }}>{formatPrice(b.totalAmount, b.event?.currency)}</strong>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: '14px' }}>
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
                 {b.bookingStatus !== 'CANCELLED' && (
                   <button onClick={() => handleDownloadPdf(b)} className="btn btn-primary btn-sm">
-                    <Download size={12} /> Unified PDF Ticket
+                    <Download size={13} /> E-Ticket PDF
                   </button>
                 )}
 
-                <button onClick={() => handleDownloadCalendar(b.event?.id || 1)} className="btn btn-secondary btn-sm">
-                  <Calendar size={12} /> Calendar
+                <button onClick={() => handleDownloadCalendar(b.event?.id || 1)} className="btn btn-secondary btn-sm" title="Download .ics file">
+                  <Calendar size={13} /> .ICS
+                </button>
+
+                <button onClick={() => handleOpenGoogleCalendar(b.event?.id || 1, b.event)} className="btn btn-secondary btn-sm" title="Add to Google Calendar">
+                  <ExternalLink size={13} /> Google Cal
                 </button>
 
                 {b.bookingStatus === 'CONFIRMED' && (
-                  <button onClick={() => handleCancelBooking(b.id)} className="btn btn-secondary btn-sm">
-                    <XCircle size={12} /> Cancel
+                  <button onClick={() => handleCancelBooking(b.id)} className="btn btn-secondary btn-sm" style={{ color: '#F87171' }} title="Cancel reservation">
+                    <XCircle size={13} /> Cancel
                   </button>
                 )}
               </div>

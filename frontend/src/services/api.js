@@ -1,6 +1,6 @@
 // API Service module with HttpOnly Cookie credentials and auto-refresh
 
-const BASE_URL = 'http://localhost:8080/api';
+export const BASE_URL = 'http://localhost:8080/api';
 
 export const getStoredToken = () => null; // Tokens are securely stored in HttpOnly cookies
 export const getStoredUser = () => {
