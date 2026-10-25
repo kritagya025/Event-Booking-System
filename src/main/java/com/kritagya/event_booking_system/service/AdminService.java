@@ -194,4 +194,25 @@ public class AdminService {
                 getEventStatistics()
         );
     }
+
+    public SystemHealthDTO getSystemHealth() {
+        Runtime runtime = Runtime.getRuntime();
+        long uptime = java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() / 1000;
+        int processors = runtime.availableProcessors();
+        long freeMem = runtime.freeMemory() / (1024 * 1024);
+        long totalMem = runtime.totalMemory() / (1024 * 1024);
+        long maxMem = runtime.maxMemory() / (1024 * 1024);
+        int activeThreads = Thread.activeCount();
+
+        return new SystemHealthDTO(
+                "UP",
+                uptime,
+                processors,
+                freeMem,
+                totalMem,
+                maxMem,
+                activeThreads,
+                LocalDateTime.now()
+        );
+    }
 }

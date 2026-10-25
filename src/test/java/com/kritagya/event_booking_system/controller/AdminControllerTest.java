@@ -80,4 +80,29 @@ class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalRevenue").value(15000));
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/admin/system-health should return health diagnostics for ADMIN")
+    void getSystemHealth_AdminSuccess() throws Exception {
+        SystemHealthDTO health = new SystemHealthDTO(
+                "UP", 3600L, 8, 256L, 512L, 1024L, 24, java.time.LocalDateTime.now()
+        );
+        when(adminService.getSystemHealth()).thenReturn(health);
+
+        mockMvc.perform(get("/api/admin/system-health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"))
+                .andExpect(jsonPath("$.uptimeSeconds").value(3600))
+                .andExpect(jsonPath("$.availableProcessors").value(8))
+                .andExpect(jsonPath("$.jvmFreeMemoryMB").value(256));
+    }
+
+    @Test
+    @WithMockUser(roles = "CUSTOMER")
+    @DisplayName("GET /api/admin/system-health should return 403 Forbidden for CUSTOMER")
+    void getSystemHealth_CustomerForbidden() throws Exception {
+        mockMvc.perform(get("/api/admin/system-health"))
+                .andExpect(status().isForbidden());
+    }
 }

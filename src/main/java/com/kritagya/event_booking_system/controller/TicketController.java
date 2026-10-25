@@ -105,40 +105,43 @@ public class TicketController {
             @ApiResponse(responseCode = "404", description = "Ticket not found")
     })
     public ResponseEntity<byte[]> getTicketQrCode(
-            @Parameter(description = "Ticket ID") @PathVariable Long id) {
-        byte[] qrCode = ticketService.getTicketQrCode(id);
+            @Parameter(description = "Ticket ID") @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        byte[] qrCode = ticketService.generateTicketQrCode(id, userDetails != null ? userDetails.getUser() : null);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
         return new ResponseEntity<>(qrCode, headers, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping("/{id}/pdf")
     @Operation(summary = "Download individual ticket PDF pass", description = "Generates a printable PDF ticket pass for the given ticket ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "PDF ticket pass stream"),
             @ApiResponse(responseCode = "404", description = "Ticket not found")
     })
-    public ResponseEntity<byte[]> getTicketPdf(
-            @Parameter(description = "Ticket ID") @PathVariable Long id) {
-        byte[] pdfBytes = ticketService.generateTicketPdf(id);
+    public ResponseEntity<byte[]> downloadTicketPdf(
+            @Parameter(description = "Ticket ID") @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        byte[] pdf = ticketService.generateTicketPdf(id, userDetails != null ? userDetails.getUser() : null);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "ticket-" + id + ".pdf");
-        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/booking/{bookingId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping("/booking/{bookingId}/pdf")
     @Operation(summary = "Download unified booking summary PDF pass", description = "Generates a complete PDF document containing all passes for a booking")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "PDF booking summary stream"),
             @ApiResponse(responseCode = "404", description = "Booking not found")
     })
-    public ResponseEntity<byte[]> getBookingTicketsPdf(
-            @Parameter(description = "Booking ID") @PathVariable Long bookingId) {
-        byte[] pdfBytes = ticketService.generateBookingTicketsPdf(bookingId);
+    public ResponseEntity<byte[]> downloadBookingPdf(
+            @Parameter(description = "Booking ID") @PathVariable Long bookingId,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        byte[] pdf = ticketService.generateBookingPdf(bookingId, userDetails != null ? userDetails.getUser() : null);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "booking-" + bookingId + "-tickets.pdf");
-        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        headers.setContentDispositionFormData("attachment", "booking-" + bookingId + ".pdf");
+        return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
 }

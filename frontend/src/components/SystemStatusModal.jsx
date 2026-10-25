@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Activity, CheckCircle2, AlertTriangle, RefreshCw, Server, Database, ShieldCheck, Wifi, Clock } from 'lucide-react';
+import { X, Activity, CheckCircle2, AlertTriangle, RefreshCw, Server, Database, ShieldCheck, Wifi, Clock, Cpu } from 'lucide-react';
 import { apiFetch } from '../services/api';
 
 export default function SystemStatusModal({ isOpen, onClose }) {
@@ -7,6 +7,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
   const [lastChecked, setLastChecked] = useState(new Date().toLocaleTimeString());
   const [apiLatency, setApiLatency] = useState(null);
   const [apiStatus, setApiStatus] = useState('checking'); // 'operational' | 'degraded' | 'checking'
+  const [diagnostics, setDiagnostics] = useState(null);
 
   const checkStatus = async () => {
     setLoading(true);
@@ -16,6 +17,15 @@ export default function SystemStatusModal({ isOpen, onClose }) {
       const end = performance.now();
       setApiLatency(Math.round(end - start));
       setApiStatus('operational');
+
+      try {
+        const diag = await apiFetch('/admin/system-health');
+        if (diag && diag.status) {
+          setDiagnostics(diag);
+        }
+      } catch (_e) {
+        // Non-admin or unauthenticated
+      }
     } catch (_err) {
       setApiLatency(null);
       setApiStatus('degraded');
@@ -100,7 +110,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
           padding: '24px 28px',
           borderBottom: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           background: 'rgba(255, 255, 255, 0.02)'
         }}>
@@ -179,6 +189,38 @@ export default function SystemStatusModal({ isOpen, onClose }) {
           </button>
         </div>
 
+        {/* Real-time Diagnostics if Admin */}
+        {diagnostics && (
+          <div style={{
+            margin: '16px 28px 0 28px',
+            padding: '14px 18px',
+            borderRadius: '12px',
+            background: 'rgba(99, 102, 241, 0.08)',
+            border: '1px solid rgba(99, 102, 241, 0.2)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+            gap: '12px',
+            fontSize: '0.8rem'
+          }}>
+            <div>
+              <div style={{ color: 'var(--text-muted)' }}>JVM Memory</div>
+              <div style={{ fontWeight: 700, color: '#818CF8' }}>{diagnostics.jvmTotalMemoryMB - diagnostics.jvmFreeMemoryMB} / {diagnostics.jvmMaxMemoryMB} MB</div>
+            </div>
+            <div>
+              <div style={{ color: 'var(--text-muted)' }}>CPU Cores</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{diagnostics.availableProcessors} Active</div>
+            </div>
+            <div>
+              <div style={{ color: 'var(--text-muted)' }}>JVM Threads</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{diagnostics.activeJvmThreads} Threads</div>
+            </div>
+            <div>
+              <div style={{ color: 'var(--text-muted)' }}>Uptime</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{Math.floor(diagnostics.uptimeSeconds / 60)} mins</div>
+            </div>
+          </div>
+        )}
+
         {/* Services List */}
         <div style={{
           padding: '24px 28px',
@@ -241,7 +283,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
           padding: '18px 28px',
           borderTop: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           background: 'rgba(0, 0, 0, 0.2)',
           fontSize: '0.82rem',
