@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink, ShieldCheck, CreditCard, Sparkles } from 'lucide-react';
+import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink, ShieldCheck, CreditCard, Clock } from 'lucide-react';
 import { apiFetch, BASE_URL } from '../services/api';
 import { formatPrice } from '../services/currency';
 
@@ -184,10 +184,11 @@ export default function MyBookings({ currentUser, showToast }) {
   const stats = useMemo(() => {
     const totalCount = bookings.length;
     const confirmedCount = bookings.filter(b => b.bookingStatus === 'CONFIRMED').length;
+    const upcomingCount = bookings.filter(b => b.bookingStatus === 'CONFIRMED' && (!b.event?.eventDate || new Date(b.event.eventDate) >= new Date())).length;
     const totalSpent = bookings
       .filter(b => b.bookingStatus === 'CONFIRMED')
       .reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
-    return { totalCount, confirmedCount, totalSpent };
+    return { totalCount, confirmedCount, upcomingCount, totalSpent };
   }, [bookings]);
 
   return (
@@ -199,10 +200,10 @@ export default function MyBookings({ currentUser, showToast }) {
         </p>
       </div>
 
-      {/* Metrics Banner */}
+      {/* Balanced 4-Metric Grid (Anti-AI Tell #16, Unified Cohesive Palette) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(99, 102, 241, 0.15)', color: '#818CF8' }}>
+          <div style={{ padding: '10px', borderRadius: '10px', background: 'var(--primary-tint)', color: 'var(--primary)' }}>
             <Ticket size={22} />
           </div>
           <div>
@@ -212,17 +213,27 @@ export default function MyBookings({ currentUser, showToast }) {
         </div>
 
         <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.15)', color: '#34D399' }}>
+          <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(5, 150, 105, 0.12)', color: '#059669' }}>
             <ShieldCheck size={22} />
           </div>
           <div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Active Passes</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#34D399' }}>{stats.confirmedCount}</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#059669' }}>{stats.confirmedCount}</div>
           </div>
         </div>
 
         <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(236, 72, 153, 0.15)', color: '#F472B6' }}>
+          <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(217, 119, 6, 0.12)', color: '#D97706' }}>
+            <Clock size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Upcoming Shows</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#D97706' }}>{stats.upcomingCount}</div>
+          </div>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ padding: '10px', borderRadius: '10px', background: 'var(--border-subtle)', color: 'var(--text-main)' }}>
             <CreditCard size={22} />
           </div>
           <div>
@@ -261,9 +272,21 @@ export default function MyBookings({ currentUser, showToast }) {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
-          <Sparkles className="spin-icon" size={28} style={{ marginBottom: '12px' }} />
-          <div>Retrieving your passes...</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: '16px' }}>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div className="skeleton-box" style={{ height: '14px', width: '30%' }} />
+                <div className="skeleton-box" style={{ height: '22px', width: '80px', borderRadius: '12px' }} />
+              </div>
+              <div className="skeleton-box" style={{ height: '22px', width: '80%' }} />
+              <div className="skeleton-box" style={{ height: '14px', width: '55%' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+                <div className="skeleton-box" style={{ height: '18px', width: '90px' }} />
+                <div className="skeleton-box" style={{ height: '32px', width: '100px', borderRadius: '8px' }} />
+              </div>
+            </div>
+          ))}
         </div>
       ) : filteredBookings.length === 0 ? (
         <div className="glass-panel" style={{ textAlign: 'center', padding: '60px' }}>

@@ -51,7 +51,19 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading...</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div className="skeleton-box" style={{ height: '20px', width: '70px', borderRadius: '12px' }} />
+                <div className="skeleton-box" style={{ height: '24px', width: '28px', borderRadius: '6px' }} />
+              </div>
+              <div className="skeleton-box" style={{ height: '22px', width: '80%' }} />
+              <div className="skeleton-box" style={{ height: '14px', width: '50%' }} />
+              <div className="skeleton-box" style={{ height: '14px', width: '40%' }} />
+            </div>
+          ))}
+        </div>
       ) : wishlistItems.length === 0 ? (
         <div className="glass-panel" style={{ textAlign: 'center', padding: '60px' }}>
           <Heart size={40} color="var(--text-subtle)" style={{ marginBottom: '12px' }} />
@@ -64,7 +76,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
             <div key={event.id} className="glass-panel glass-panel-interactive" style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <span className="badge badge-purple">{event.category}</span>
+                  <span className="badge badge-orange">{event.category}</span>
                   <button 
                     onClick={() => handleRemoveFromWishlist(event.id)}
                     className="btn btn-secondary btn-sm"

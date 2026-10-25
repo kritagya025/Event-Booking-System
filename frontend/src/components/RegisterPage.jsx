@@ -58,14 +58,14 @@ export default function RegisterPage({ onNavigate, showToast }) {
           <div 
             onClick={() => onNavigate('home')}
             style={{
-              width: '52px', height: '52px', borderRadius: '14px', background: 'var(--eb-orange)',
+              width: '48px', height: '48px', borderRadius: '12px', background: 'var(--primary)',
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', cursor: 'pointer',
-              boxShadow: '0 4px 18px var(--eb-orange-glow)'
+              boxShadow: '0 2px 8px var(--primary-tint)'
             }}
           >
-            <Ticket size={26} color="#FFFFFF" />
+            <Ticket size={24} color="#FFFFFF" />
           </div>
-          <h1 className="gradient-text" style={{ fontSize: '2.2rem', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: '8px' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '8px', color: 'var(--text-main)' }}>
             Create Account
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem' }}>

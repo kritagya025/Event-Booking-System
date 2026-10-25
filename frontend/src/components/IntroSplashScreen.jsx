@@ -59,9 +59,9 @@ export default function IntroSplashScreen({ onComplete }) {
             style={{
               fontSize: '4.8rem',
               fontWeight: 900,
-              fontFamily: "'Space Grotesk', system-ui, sans-serif",
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               letterSpacing: '-0.04em',
-              background: 'linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 100%)',
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #FED7AA 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               animation: 'greetingPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards'

@@ -22,8 +22,7 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(5, 7, 15, 0.85)',
-      backdropFilter: 'blur(12px)',
+      backgroundColor: 'rgba(11, 15, 23, 0.82)',
       zIndex: 9999,
       display: 'flex',
       alignItems: 'center',
@@ -33,7 +32,7 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{
         background: 'var(--card-bg, #111827)',
         border: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-        borderRadius: '20px',
+        borderRadius: 'var(--radius-lg)',
         width: '100%',
         maxWidth: '680px',
         maxHeight: '85vh',

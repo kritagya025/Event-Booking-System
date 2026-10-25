@@ -157,14 +157,14 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
               width: '72px',
               height: '72px',
               borderRadius: '50%',
-              background: isOrganizer ? 'linear-gradient(135deg, #a855f7, #6366f1)' : 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+              background: isOrganizer ? 'linear-gradient(135deg, #EA580C, #C2410C)' : 'linear-gradient(135deg, #475569, #334155)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '1.8rem',
               fontWeight: '800',
               color: '#FFF',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.3)'
+              boxShadow: '0 4px 14px rgba(0,0,0,0.2)'
             }}>
               {(profile.firstName || 'U')[0].toUpperCase()}
             </div>
@@ -174,7 +174,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                 <h2 style={{ fontSize: '1.6rem', fontWeight: '800' }}>
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <span className={`badge ${isOrganizer ? 'badge-purple' : 'badge-green'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <span className={`badge ${isOrganizer ? 'badge-orange' : 'badge-green'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                   <ShieldCheck size={12} /> {profile.role}
                 </span>
               </div>

@@ -186,7 +186,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         calculatedDiscount: discountAmount
       });
 
-      showToast(`Coupon applied — saved ${formatPrice(discountAmount, event.currency)}`, 'success');
+      showToast(`Coupon applied: saved ${formatPrice(discountAmount, event.currency)}`, 'success');
     } catch (err) {
       showToast(err.message || 'Invalid coupon code', 'error');
       setDiscountInfo(null);
@@ -371,7 +371,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                               key={seat.id}
                               className={classNames}
                               onClick={() => toggleSeatSelection(seat)}
-                              title={`${seat.seatNumber} (${seat.seatType || 'REGULAR'}) — ${formatPrice(seat.price, event.currency)}`}
+                              title={`${seat.seatNumber} (${seat.seatType || 'REGULAR'}): ${formatPrice(seat.price, event.currency)}`}
                             >
                               {seat.seatNumber.replace(/^[A-Z]+/, '')}
                             </button>

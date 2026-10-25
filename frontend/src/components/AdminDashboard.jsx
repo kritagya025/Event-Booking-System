@@ -92,7 +92,7 @@ export default function AdminDashboard({ showToast }) {
           <div style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)' }}>
             {formatPrice(displayTotalRevenue)}
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#34D399', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+          <span style={{ fontSize: '0.75rem', color: '#059669', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
             +{formatPrice(displayTodayRevenue)} today
           </span>
         </div>
@@ -100,7 +100,7 @@ export default function AdminDashboard({ showToast }) {
         <div className="glass-panel" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Bookings</span>
-            <Ticket size={20} color="#39C5BB" />
+            <Ticket size={20} color="#059669" />
           </div>
           <div style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)' }}>
             {dbBookingsCount.toLocaleString()}
@@ -111,7 +111,7 @@ export default function AdminDashboard({ showToast }) {
         <div className="glass-panel" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Active Users</span>
-            <Users size={20} color="#FFB800" />
+            <Users size={20} color="#D97706" />
           </div>
           <div style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)' }}>
             {dbUsersCount.toLocaleString()}
@@ -122,7 +122,7 @@ export default function AdminDashboard({ showToast }) {
         <div className="glass-panel" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Events</span>
-            <Calendar size={20} color="#FF4D6D" />
+            <Calendar size={20} color="var(--primary)" />
           </div>
           <div style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)' }}>
             {dbEventsCount}

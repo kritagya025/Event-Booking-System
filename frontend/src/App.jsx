@@ -18,8 +18,9 @@ import CookiesModal from './components/CookiesModal';
 import ApiDocsModal from './components/ApiDocsModal';
 
 import { 
-  Sparkles, Calendar, MapPin, Ticket, Heart, Search, 
-  Flame, ArrowRight, Star, Bell, AlertCircle, Check, Zap, Users, Compass, Trash2
+  MapPin, Ticket, Heart, Search, 
+  Flame, ArrowRight, Star, Bell, AlertCircle, Check, Zap, Trash2,
+  Music, Laptop, Film, Trophy
 } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
@@ -295,7 +296,7 @@ export default function App() {
     }
     try {
       await apiFetch(`/waitlist/${eventId}`, { method: 'POST' });
-      showToast('Joined waitlist — you will receive an email if a seat opens.', 'success');
+      showToast('Joined waitlist: you will receive an email if a seat opens.', 'success');
     } catch (err) {
       showToast(err.message || 'Already on waitlist for this event', 'info');
     }
@@ -455,7 +456,7 @@ export default function App() {
                 </h1>
 
                 <p className="hero-description">
-                  EventHub is the ultimate live event platform — featuring <strong>interactive seat maps, dynamic ticket tiers, instant discount coupons, and real-time seat lock synchronizations</strong> for concerts, summits, and theater.
+                  EventHub is the ultimate live event platform, featuring <strong>interactive seat maps, dynamic ticket tiers, instant discount coupons, and real-time seat lock synchronizations</strong> for concerts, summits, and theater.
                 </p>
 
                 <div className="hero-cta-group">
@@ -554,15 +555,16 @@ export default function App() {
               )}
             </form>
 
-              {/* Category Pill Filters */}
+              {/* Category Pill Filters (Domain Icons, No Raw Emojis) */}
               <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap', marginTop: '28px' }}>
                 {[
-                  { id: '', label: 'All Events' },
-                  { id: 'MUSIC', label: '🎵 Music & Concerts' },
-                  { id: 'TECH', label: '💻 Tech & AI' },
-                  { id: 'THEATER', label: '🎭 Theater & Arts' },
-                  { id: 'SPORTS', label: '⚽ Sports & eSports' }
+                  { id: '', label: 'All Events', icon: null },
+                  { id: 'MUSIC', label: 'Music & Concerts', icon: Music },
+                  { id: 'TECH', label: 'Tech & AI', icon: Laptop },
+                  { id: 'THEATER', label: 'Theater & Arts', icon: Film },
+                  { id: 'SPORTS', label: 'Sports & eSports', icon: Trophy }
                 ].map((cat) => {
+                  const Icon = cat.icon;
                   const isActive = filters.category === cat.id;
                   return (
                     <button
@@ -579,22 +581,27 @@ export default function App() {
                         background: isActive ? 'var(--primary)' : 'var(--bg-surface)',
                         color: isActive ? '#FFFFFF' : 'var(--text-main)',
                         border: '1px solid ' + (isActive ? 'var(--primary)' : 'var(--border-subtle)'),
-                        boxShadow: isActive ? '0 4px 14px var(--primary-glow)' : 'var(--shadow-card)',
+                        boxShadow: isActive ? '0 2px 8px var(--primary-tint)' : 'var(--shadow-card)',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '7px'
                       }}
                     >
+                      {Icon && <Icon size={14} />}
                       {cat.label}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Stats */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '48px', marginTop: '40px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                <div><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>50+</strong> Live Events</div>
-                <div><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>100%</strong> Real-Time Sync</div>
-                <div><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>0s</strong> Concurrency Lock</div>
+              {/* Balanced 4-Item Platform Metrics */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '14px', maxWidth: '720px', margin: '40px auto 0 auto', color: 'var(--text-secondary)', fontSize: '0.82rem', textAlign: 'center' }}>
+                <div className="glass-panel" style={{ padding: '12px 16px' }}><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>50+</strong> Live Events</div>
+                <div className="glass-panel" style={{ padding: '12px 16px' }}><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>100%</strong> Real-Time Sync</div>
+                <div className="glass-panel" style={{ padding: '12px 16px' }}><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>0s</strong> Lock Delay</div>
+                <div className="glass-panel" style={{ padding: '12px 16px' }}><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>4.9★</strong> Verified Reviews</div>
               </div>
 
             {/* Featured Spotlight Banner (when no search active) */}
@@ -615,8 +622,8 @@ export default function App() {
                     style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.9)' }} 
                   />
                   <div style={{ position: 'absolute', top: '16px', left: '16px' }}>
-                    <span className="badge badge-orange" style={{ padding: '6px 14px', fontSize: '0.75rem' }}>
-                      🔥 FEATURED SPOTLIGHT
+                    <span className="badge badge-orange" style={{ padding: '6px 14px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <Flame size={13} /> FEATURED SPOTLIGHT
                     </span>
                   </div>
                 </div>
@@ -715,7 +722,27 @@ export default function App() {
               )}
 
               {loading ? (
-                <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>Loading live events...</div>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 380px))', 
+                  gap: '20px',
+                  justifyContent: 'flex-start'
+                }}>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="skeleton-event-card" style={{ padding: 0 }}>
+                      <div className="skeleton-box" style={{ height: '210px', width: '100%', borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0' }} />
+                      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div className="skeleton-box" style={{ height: '14px', width: '35%' }} />
+                        <div className="skeleton-box" style={{ height: '22px', width: '85%' }} />
+                        <div className="skeleton-box" style={{ height: '14px', width: '60%' }} />
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', alignItems: 'center' }}>
+                          <div className="skeleton-box" style={{ height: '26px', width: '70px' }} />
+                          <div className="skeleton-box" style={{ height: '36px', width: '110px', borderRadius: 'var(--radius-md)' }} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : events.length === 0 ? (
                 /* Inline Empty State Card */
                 <div style={{ textAlign: 'center', padding: '60px 20px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-lg)', border: '1px dashed rgba(255,255,255,0.1)' }}>
@@ -908,15 +935,15 @@ function EventCard({ event, currentUser, onBook, onWishlist, onWaitlist, onDelet
               {canDelete && (
                 <button 
                   onClick={onDelete} 
-                  style={{ padding: '8px', borderRadius: '50%', background: 'rgba(255, 77, 109, 0.2)', border: '1px solid rgba(255, 77, 109, 0.3)', backdropFilter: 'blur(8px)' }} 
+                  style={{ padding: '8px', borderRadius: '50%', background: 'rgba(220, 38, 38, 0.85)', border: 'none', cursor: 'pointer' }} 
                   title="Remove Event"
                 >
-                  <Trash2 size={14} color="#FF4D6D" />
+                  <Trash2 size={14} color="#FFFFFF" />
                 </button>
               )}
               <button 
                 onClick={onWishlist} 
-                style={{ padding: '8px', borderRadius: '50%', background: 'rgba(28, 26, 39, 0.8)', border: '1px solid var(--border-subtle)', backdropFilter: 'blur(8px)' }} 
+                style={{ padding: '8px', borderRadius: '50%', background: 'rgba(15, 23, 42, 0.85)', border: '1px solid var(--border-subtle)', cursor: 'pointer' }} 
                 title="Save to Wishlist"
               >
                 <Heart size={14} color="#FFFFFF" />
@@ -1007,7 +1034,7 @@ const mockEvents = [
   },
   {
     id: 3,
-    name: 'Phantom of the Opera — Broadway Revival',
+    name: 'Phantom of the Opera: Broadway Revival',
     description: 'The iconic award-winning musical returns with an all-new cast and breathtaking orchestral arrangements.',
     category: 'THEATER',
     ticketPrice: 120.00,
