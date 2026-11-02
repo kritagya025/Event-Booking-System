@@ -84,4 +84,34 @@ public class PaymentController {
         List<PaymentResponseDTO> payments = paymentService.getAllPayments();
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
+
+    @PatchMapping("/{id}/refund")
+    @Operation(summary = "Refund payment by ID", description = "Refunds a completed payment transaction and marks booking cancelled")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Payment refunded successfully"),
+            @ApiResponse(responseCode = "400", description = "Payment already refunded or invalid state"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Payment not found")
+    })
+    public ResponseEntity<PaymentResponseDTO> refundPayment(
+            @Parameter(description = "Payment ID") @PathVariable Long id,
+            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        PaymentResponseDTO payment = paymentService.refundPayment(id, userDetails.getUser());
+        return new ResponseEntity<>(payment, HttpStatus.OK);
+    }
+
+    @PatchMapping("/booking/{bookingId}/refund")
+    @Operation(summary = "Refund payment by booking ID", description = "Refunds the payment associated with a booking")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Payment refunded successfully"),
+            @ApiResponse(responseCode = "400", description = "Payment already refunded or invalid state"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Payment or booking not found")
+    })
+    public ResponseEntity<PaymentResponseDTO> refundPaymentByBooking(
+            @Parameter(description = "Booking ID") @PathVariable Long bookingId,
+            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+        PaymentResponseDTO payment = paymentService.refundPaymentByBooking(bookingId, userDetails.getUser());
+        return new ResponseEntity<>(payment, HttpStatus.OK);
+    }
 }

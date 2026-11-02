@@ -192,4 +192,89 @@ class PaymentServiceTest {
         List<PaymentResponseDTO> payments = paymentService.getAllPayments();
         assertThat(payments).hasSize(2);
     }
+
+    @Test
+    @DisplayName("createPayment throws IllegalArgumentException for invalid payment method")
+    void testCreatePayment_InvalidPaymentMethod() {
+        PaymentRequestDTO request = new PaymentRequestDTO(100L, "BITCOIN");
+        when(bookingRepository.findById(100L)).thenReturn(Optional.of(booking));
+
+        assertThatThrownBy(() -> paymentService.createPayment(request, owner))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid payment method");
+    }
+
+    @Test
+    @DisplayName("createPayment throws IllegalStateException when booking is cancelled")
+    void testCreatePayment_CancelledBooking() {
+        booking.setBookingStatus(BookingStatus.CANCELLED);
+        PaymentRequestDTO request = new PaymentRequestDTO(100L, "CREDIT_CARD");
+        when(bookingRepository.findById(100L)).thenReturn(Optional.of(booking));
+
+        assertThatThrownBy(() -> paymentService.createPayment(request, owner))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Cannot process payment for a cancelled booking");
+    }
+
+    @Test
+    @DisplayName("createPayment throws IllegalStateException when payment already exists for booking")
+    void testCreatePayment_DuplicatePayment() {
+        Payment existingPayment = new Payment(new BigDecimal("120.00"), PaymentMethod.CREDIT_CARD,
+                PaymentStatus.COMPLETED, "TXN-EXISTING", booking);
+        PaymentRequestDTO request = new PaymentRequestDTO(100L, "CREDIT_CARD");
+
+        when(bookingRepository.findById(100L)).thenReturn(Optional.of(booking));
+        when(paymentRepository.findByBookingId(100L)).thenReturn(Optional.of(existingPayment));
+
+        assertThatThrownBy(() -> paymentService.createPayment(request, owner))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Payment has already been processed");
+    }
+
+    @Test
+    @DisplayName("refundPayment successfully refunds completed payment and cancels booking")
+    void testRefundPayment_Success_Owner() {
+        Payment payment = new Payment(new BigDecimal("120.00"), PaymentMethod.CREDIT_CARD,
+                PaymentStatus.COMPLETED, "TXN-12345", booking);
+        ReflectionTestUtils.setField(payment, "id", 500L);
+
+        when(paymentRepository.findById(500L)).thenReturn(Optional.of(payment));
+        when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        PaymentResponseDTO response = paymentService.refundPayment(500L, owner);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getPaymentStatus()).isEqualTo(PaymentStatus.REFUNDED.name());
+        assertThat(booking.getBookingStatus()).isEqualTo(BookingStatus.CANCELLED);
+        verify(paymentRepository).save(payment);
+        verify(bookingRepository).save(booking);
+        verify(auditLogger).logPaymentProcessed(eq(500L), eq(100L), eq("CREDIT_CARD"), eq("REFUNDED"), any());
+    }
+
+    @Test
+    @DisplayName("refundPayment throws IllegalStateException if payment already refunded")
+    void testRefundPayment_AlreadyRefunded() {
+        Payment payment = new Payment(new BigDecimal("120.00"), PaymentMethod.CREDIT_CARD,
+                PaymentStatus.REFUNDED, "TXN-12345", booking);
+        ReflectionTestUtils.setField(payment, "id", 500L);
+
+        when(paymentRepository.findById(500L)).thenReturn(Optional.of(payment));
+
+        assertThatThrownBy(() -> paymentService.refundPayment(500L, owner))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Payment has already been refunded");
+    }
+
+    @Test
+    @DisplayName("refundPayment throws AccessDeniedException when another user attempts refund")
+    void testRefundPayment_AccessDenied() {
+        Payment payment = new Payment(new BigDecimal("120.00"), PaymentMethod.CREDIT_CARD,
+                PaymentStatus.COMPLETED, "TXN-12345", booking);
+        ReflectionTestUtils.setField(payment, "id", 500L);
+
+        when(paymentRepository.findById(500L)).thenReturn(Optional.of(payment));
+
+        assertThatThrownBy(() -> paymentService.refundPayment(500L, otherUser))
+                .isInstanceOf(AccessDeniedException.class);
+    }
 }

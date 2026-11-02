@@ -54,9 +54,25 @@ public class PaymentService {
             throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to create payment for this booking.");
         }
 
+        if (booking.getBookingStatus() == BookingStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot process payment for a cancelled booking");
+        }
+
+        if (paymentRepository.findByBookingId(booking.getId()).isPresent()) {
+            throw new IllegalStateException("Payment has already been processed for booking ID: " + booking.getId());
+        }
+
+        PaymentMethod paymentMethod;
+        try {
+            paymentMethod = PaymentMethod.valueOf(request.getPaymentMethod().toUpperCase());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid payment method: " + request.getPaymentMethod() +
+                    ". Allowed values: CREDIT_CARD, DEBIT_CARD, UPI, NET_BANKING");
+        }
+
         Payment payment = new Payment(
                 booking.getTotalAmount(),
-                PaymentMethod.valueOf(request.getPaymentMethod()),
+                paymentMethod,
                 PaymentStatus.COMPLETED,
                 UUID.randomUUID().toString(),
                 booking
@@ -110,5 +126,46 @@ public class PaymentService {
                 .stream()
                 .map(PaymentMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public PaymentResponseDTO refundPayment(Long id, com.kritagya.event_booking_system.entity.User currentUser) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new PaymentNotFoundException(id));
+
+        if (currentUser != null && !payment.getBooking().getUser().getId().equals(currentUser.getId()) && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to refund this payment.");
+        }
+
+        if (payment.getPaymentStatus() == PaymentStatus.REFUNDED) {
+            throw new IllegalStateException("Payment has already been refunded");
+        }
+
+        payment.setPaymentStatus(PaymentStatus.REFUNDED);
+        Booking booking = payment.getBooking();
+        booking.setBookingStatus(BookingStatus.CANCELLED);
+        bookingRepository.save(booking);
+
+        Payment savedPayment = paymentRepository.save(payment);
+        auditLogger.logPaymentProcessed(savedPayment.getId(), booking.getId(),
+                savedPayment.getPaymentMethod().name(), PaymentStatus.REFUNDED.name(), savedPayment.getAmount());
+        log.info("Payment refunded successfully with ID: {} for booking ID: {}", savedPayment.getId(), booking.getId());
+
+        return PaymentMapper.toDTO(savedPayment);
+    }
+
+    @Transactional
+    public PaymentResponseDTO refundPaymentByBooking(Long bookingId, com.kritagya.event_booking_system.entity.User currentUser) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException(bookingId));
+
+        if (currentUser != null && !booking.getUser().getId().equals(currentUser.getId()) && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to refund payment for this booking.");
+        }
+
+        Payment payment = paymentRepository.findByBookingId(bookingId)
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found for booking id: " + bookingId));
+
+        return refundPayment(payment.getId(), currentUser);
     }
 }
