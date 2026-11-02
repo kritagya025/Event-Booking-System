@@ -8,6 +8,7 @@ import com.kritagya.event_booking_system.enums.PaymentMethod;
 import com.kritagya.event_booking_system.enums.PaymentStatus;
 import com.kritagya.event_booking_system.enums.BookingStatus;
 import com.kritagya.event_booking_system.exception.BookingNotFoundException;
+import com.kritagya.event_booking_system.exception.PaymentNotFoundException;
 import com.kritagya.event_booking_system.logging.AuditLogger;
 import com.kritagya.event_booking_system.mapper.PaymentMapper;
 import com.kritagya.event_booking_system.repository.BookingRepository;
@@ -78,7 +79,7 @@ public class PaymentService {
 
     public PaymentResponseDTO getPayment(Long id, com.kritagya.event_booking_system.entity.User currentUser) {
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
+                .orElseThrow(() -> new PaymentNotFoundException(id));
 
         if (currentUser != null && !payment.getBooking().getUser().getId().equals(currentUser.getId()) && currentUser.getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
             throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to view this payment.");
@@ -100,7 +101,7 @@ public class PaymentService {
         }
 
         Payment payment = paymentRepository.findByBookingId(bookingId)
-                .orElseThrow(() -> new RuntimeException("Payment not found for booking id: " + bookingId));
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found for booking id: " + bookingId));
         return PaymentMapper.toDTO(payment);
     }
 

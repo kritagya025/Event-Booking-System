@@ -10,6 +10,8 @@ import com.kritagya.event_booking_system.exception.ResourceNotFoundException;
 import com.kritagya.event_booking_system.mapper.TicketMapper;
 import com.kritagya.event_booking_system.repository.BookingRepository;
 import com.kritagya.event_booking_system.repository.TicketRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
+
+    private static final Logger log = LoggerFactory.getLogger(TicketService.class);
 
     private final TicketRepository ticketRepository;
     private final BookingRepository bookingRepository;
@@ -52,6 +56,7 @@ public class TicketService {
         // Prevent duplicate ticket generation
         List<Ticket> existingTickets = ticketRepository.findByBookingId(bookingId);
         if (!existingTickets.isEmpty()) {
+            log.info("Tickets already exist for booking ID: {}, returning {} existing tickets", bookingId, existingTickets.size());
             return existingTickets.stream()
                     .map(TicketMapper::toDTO)
                     .collect(Collectors.toList());
@@ -69,6 +74,7 @@ public class TicketService {
         }
 
         List<Ticket> savedTickets = ticketRepository.saveAll(tickets);
+        log.info("Generated {} tickets for booking ID: {}", savedTickets.size(), bookingId);
         return savedTickets.stream()
                 .map(TicketMapper::toDTO)
                 .collect(Collectors.toList());
@@ -110,6 +116,7 @@ public class TicketService {
     }
 
     public TicketResponseDTO validateTicket(String qrCode) {
+        log.debug("Validating ticket with QR code: {}", qrCode);
         Ticket ticket = ticketRepository.findByQrCode(qrCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with QR code: " + qrCode));
 
@@ -129,15 +136,18 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with QR code: " + qrCode));
 
         if (ticket.getTicketStatus() == TicketStatus.USED) {
+            log.warn("Ticket check-in rejected - already used. QR code: {}", qrCode);
             throw new IllegalArgumentException("Ticket has already been used for check-in");
         }
         if (ticket.getTicketStatus() == TicketStatus.CANCELLED) {
+            log.warn("Ticket check-in rejected - cancelled. QR code: {}", qrCode);
             throw new IllegalArgumentException("Cannot check in a cancelled ticket");
         }
 
         ticket.setTicketStatus(TicketStatus.USED);
         ticket.setCheckInTime(LocalDateTime.now());
         Ticket savedTicket = ticketRepository.save(ticket);
+        log.info("Ticket checked in successfully. QR code: {}, Booking ID: {}", qrCode, ticket.getBooking().getId());
         return TicketMapper.toDTO(savedTicket);
     }
 
@@ -204,6 +214,7 @@ public class TicketService {
         }
 
         if (ticket.getTicketStatus() == TicketStatus.CANCELLED || ticket.getBooking().getBookingStatus() == com.kritagya.event_booking_system.enums.BookingStatus.CANCELLED) {
+            log.warn("PDF generation rejected - ticket or booking cancelled. Ticket ID: {}", ticketId);
             throw new IllegalStateException("Cannot download PDF for a cancelled ticket");
         }
 
@@ -273,9 +284,11 @@ public class TicketService {
                     .setTextAlignment(com.itextpdf.layout.properties.TextAlignment.CENTER));
 
             document.close();
+            log.info("Generated PDF for ticket ID: {}", ticketId);
             return baos.toByteArray();
 
         } catch (Exception e) {
+            log.error("Failed to generate ticket PDF for ticket ID: {}", ticketId, e);
             throw new RuntimeException("Failed to generate ticket PDF", e);
         }
     }
@@ -294,6 +307,7 @@ public class TicketService {
         }
 
         if (booking.getBookingStatus() == com.kritagya.event_booking_system.enums.BookingStatus.CANCELLED) {
+            log.warn("PDF generation rejected - booking cancelled. Booking ID: {}", bookingId);
             throw new IllegalStateException("Cannot generate PDF for a cancelled booking");
         }
 
@@ -371,9 +385,11 @@ public class TicketService {
             }
 
             document.close();
+            log.info("Generated booking PDF for booking ID: {} with {} tickets", bookingId, tickets.size());
             return baos.toByteArray();
 
         } catch (Exception e) {
+            log.error("Failed to generate booking PDF for booking ID: {}", bookingId, e);
             throw new RuntimeException("Failed to generate booking PDF", e);
         }
     }
