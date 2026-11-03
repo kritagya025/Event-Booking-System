@@ -37,6 +37,10 @@ public class WaitlistService {
         Event event = eventRepository.findByIdAndDeletedFalse(eventId)
                 .orElseThrow(() -> new EventNotFoundException(eventId));
 
+        if (event.getAvailableSeats() != null && event.getAvailableSeats() > 0) {
+            throw new IllegalArgumentException("Waitlist is only available when the event is sold out.");
+        }
+
         if (waitlistRepository.existsByUserIdAndEventIdAndStatus(user.getId(), eventId, WaitlistStatus.WAITING)) {
             throw new IllegalArgumentException("You are already on the waitlist for this event.");
         }
@@ -51,8 +55,8 @@ public class WaitlistService {
     public void leaveWaitlist(Long eventId, User user) {
         Optional<Waitlist> optionalWaitlist = waitlistRepository.findByUserIdAndEventId(user.getId(), eventId);
 
-        if (optionalWaitlist.isEmpty()) {
-            throw new IllegalArgumentException("You are not on the waitlist for this event.");
+        if (optionalWaitlist.isEmpty() || optionalWaitlist.get().getStatus() != WaitlistStatus.WAITING) {
+            throw new IllegalArgumentException("You are not currently on the active waitlist for this event.");
         }
 
         Waitlist waitlist = optionalWaitlist.get();
@@ -93,5 +97,15 @@ public class WaitlistService {
     @Transactional(readOnly = true)
     public Long getWaitlistCount(Long eventId) {
         return waitlistRepository.countByEventIdAndStatus(eventId, WaitlistStatus.WAITING);
+    }
+
+    @Transactional(readOnly = true)
+    public String getUserWaitlistStatus(Long eventId, User user) {
+        if (user == null || user.getId() == null) {
+            return "NONE";
+        }
+        return waitlistRepository.findByUserIdAndEventId(user.getId(), eventId)
+                .map(w -> w.getStatus().name())
+                .orElse("NONE");
     }
 }
