@@ -169,4 +169,36 @@ class CouponServiceTest {
         List<CouponResponseDTO> list = couponService.getAllCoupons();
         assertThat(list).hasSize(2);
     }
+
+    @Test
+    @DisplayName("toggleCouponStatus toggles active state")
+    void testToggleCouponStatus_Success() {
+        when(couponRepository.findById(1L)).thenReturn(Optional.of(percentageCoupon));
+        when(couponRepository.save(any(Coupon.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        assertThat(percentageCoupon.isActive()).isTrue();
+        CouponResponseDTO toggled = couponService.toggleCouponStatus(1L);
+
+        assertThat(toggled.isActive()).isFalse();
+        verify(couponRepository).save(percentageCoupon);
+    }
+
+    @Test
+    @DisplayName("deleteCoupon deletes coupon when found")
+    void testDeleteCoupon_Success() {
+        when(couponRepository.findById(1L)).thenReturn(Optional.of(percentageCoupon));
+
+        couponService.deleteCoupon(1L);
+
+        verify(couponRepository).delete(percentageCoupon);
+    }
+
+    @Test
+    @DisplayName("deleteCoupon throws ResourceNotFoundException when coupon not found")
+    void testDeleteCoupon_NotFound() {
+        when(couponRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> couponService.deleteCoupon(999L))
+                .isInstanceOf(com.kritagya.event_booking_system.exception.ResourceNotFoundException.class);
+    }
 }

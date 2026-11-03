@@ -115,6 +115,26 @@ public class CouponService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public CouponResponseDTO toggleCouponStatus(Long id) {
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Coupon not found with id: " + id));
+
+        coupon.setActive(!coupon.isActive());
+        Coupon saved = couponRepository.save(coupon);
+        log.info("Coupon id={} code={} status toggled to active={}", saved.getId(), saved.getCode(), saved.isActive());
+        return mapToDTO(saved);
+    }
+
+    @Transactional
+    public void deleteCoupon(Long id) {
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Coupon not found with id: " + id));
+
+        couponRepository.delete(coupon);
+        log.info("Coupon id={} code={} deleted", coupon.getId(), coupon.getCode());
+    }
+
     private void validateCouponConstraints(Coupon coupon, BigDecimal bookingAmount) {
         if (!coupon.isActive()) {
             throw new IllegalArgumentException("Coupon is no longer active.");
