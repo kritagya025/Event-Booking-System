@@ -8,6 +8,8 @@ import com.kritagya.event_booking_system.exception.EventNotFoundException;
 import com.kritagya.event_booking_system.mapper.EventMapper;
 import com.kritagya.event_booking_system.repository.EventRepository;
 import com.kritagya.event_booking_system.repository.WishlistRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class WishlistService {
+
+    private static final Logger log = LoggerFactory.getLogger(WishlistService.class);
 
     private final WishlistRepository wishlistRepository;
     private final EventRepository eventRepository;
@@ -36,6 +40,7 @@ public class WishlistService {
 
         Wishlist wishlist = new Wishlist(user, event);
         wishlistRepository.save(wishlist);
+        log.info("Event {} added to wishlist by user {}", eventId, user.getEmail());
     }
 
     @Transactional
@@ -44,6 +49,7 @@ public class WishlistService {
             throw new EventNotFoundException(eventId);
         }
         wishlistRepository.deleteByUserIdAndEventId(user.getId(), eventId);
+        log.info("Event {} removed from wishlist by user {}", eventId, user.getEmail());
     }
 
     @Transactional(readOnly = true)
@@ -54,5 +60,13 @@ public class WishlistService {
                 .filter(e -> !e.isDeleted())
                 .map(EventMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isEventWishlisted(Long eventId, User user) {
+        if (user == null || user.getId() == null) {
+            return false;
+        }
+        return wishlistRepository.existsByUserIdAndEventId(user.getId(), eventId);
     }
 }
