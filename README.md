@@ -307,14 +307,14 @@ On application startup, `DataInitializerRunner` seeds the database with:
 | **Auth** | `/api/auth` | `POST /register`, `POST /login`, `POST /refresh`, `POST /logout`, `POST /forgot-password`, `POST /reset-password`, `GET /verify-email` |
 | **Events** | `/api/events` | `GET /`, `GET /{id}`, `GET /search`, `GET /popular`, `GET /trending`, `GET /recommendations`, `POST /`, `PUT /{id}`, `DELETE /{id}`, `PATCH /{id}/publish` |
 | **Bookings** | `/api/bookings` | `POST /`, `GET /`, `GET /{id}`, `GET /user/{userId}`, `PATCH /{id}/cancel` |
-| **Payments** | `/api/payments` | `POST /`, `GET /{id}`, `GET /booking/{bookingId}`, `GET /` |
+| **Payments** | `/api/payments` | `POST /`, `GET /{id}`, `GET /booking/{bookingId}`, `GET /`, `PATCH /{id}/refund`, `PATCH /booking/{bookingId}/refund` |
 | **Tickets** | `/api/tickets` | `POST /booking/{bookingId}`, `GET /booking/{bookingId}`, `GET /{id}`, `GET /{id}/qrcode`, `GET /{id}/pdf`, `GET /booking/{bookingId}/pdf` |
 | **Venues** | `/api/venues` | `POST /`, `GET /`, `GET /{id}`, `PUT /{id}`, `DELETE /{id}` |
 | **Seats** | `/api/seats` | `POST /`, `GET /`, `GET /{id}`, `GET /venue/{venueId}`, `GET /venue/{venueId}/available`, `PUT /{id}`, `DELETE /{id}` |
 | **Reviews** | `/api` | `POST /events/{eventId}/reviews`, `GET /events/{eventId}/reviews`, `PUT /reviews/{id}`, `DELETE /reviews/{id}` |
-| **Coupons** | `/api/coupons` | `POST /`, `POST /validate`, `GET /` |
-| **Wishlist** | `/api/wishlist` | `POST /{eventId}`, `DELETE /{eventId}`, `GET /` |
-| **Waitlist** | `/api/waitlist` | `POST /{eventId}`, `DELETE /{eventId}`, `GET /{eventId}/count` |
+| **Coupons** | `/api/coupons` | `POST /`, `POST /validate`, `GET /`, `PATCH /{id}/toggle-status`, `DELETE /{id}` |
+| **Wishlist** | `/api/wishlist` | `POST /{eventId}`, `DELETE /{eventId}`, `GET /`, `GET /{eventId}/status` |
+| **Waitlist** | `/api/waitlist` | `POST /{eventId}`, `DELETE /{eventId}`, `GET /{eventId}/count`, `GET /{eventId}/status` |
 | **Calendar** | `/api/events` | `GET /{id}/calendar.ics`, `GET /{id}/google-calendar-link` |
 | **Check-In** | `/api/checkin` | `POST /{ticketId}`, `GET /validate/{ticketId}` |
 | **Images** | `/api/images` | `POST /upload`, `GET /{filename}`, `DELETE /{filename}` |

@@ -436,6 +436,26 @@ Get payment by booking ID.
 
 Get all payments.
 
+### PATCH `/api/payments/{id}/refund`
+
+Refund a payment by payment ID and automatically cancel associated booking. **Requires**: `ADMIN` or booking owner.
+
+**Response** `200 OK`:
+```json
+{
+  "id": 1,
+  "amount": 170.00,
+  "paymentMethod": "CREDIT_CARD",
+  "paymentStatus": "REFUNDED",
+  "transactionId": "TXN-uuid-string",
+  "bookingId": 1
+}
+```
+
+### PATCH `/api/payments/booking/{bookingId}/refund`
+
+Refund payment for a booking and cancel the booking. **Requires**: `ADMIN` or booking owner.
+
 ---
 
 ## 5. Tickets
@@ -670,6 +690,31 @@ Validate a coupon. **Public**.
 
 List all coupons. **Requires**: `ADMIN`.
 
+### PATCH `/api/coupons/{id}/toggle-status`
+
+Toggle coupon active status between enabled and disabled. **Requires**: `ADMIN`.
+
+**Response** `200 OK`:
+```json
+{
+  "id": 1,
+  "code": "SAVE20",
+  "discountType": "PERCENTAGE",
+  "discountValue": 20.00,
+  "expiryDate": "2026-12-31",
+  "usageLimit": 100,
+  "usedCount": 5,
+  "minBookingAmount": 50.00,
+  "active": false
+}
+```
+
+### DELETE `/api/coupons/{id}`
+
+Permanently delete a coupon. **Requires**: `ADMIN`.
+
+**Response** `204 No Content`.
+
 ---
 
 ## 10. Wishlist
@@ -691,6 +736,17 @@ Remove event from wishlist. **Requires**: `ADMIN` or `CUSTOMER`.
 Get user's wishlist. **Requires**: `ADMIN` or `CUSTOMER`.
 
 **Response** `200 OK`: Array of `EventResponseDTO`.
+
+### GET `/api/wishlist/{eventId}/status`
+
+Check whether an event is bookmarked in user's wishlist. **Requires**: Authenticated.
+
+**Response** `200 OK`:
+```json
+{
+  "isWishlisted": true
+}
+```
 
 ---
 
@@ -723,6 +779,18 @@ Get waitlist count for an event.
   "waitlistCount": 15
 }
 ```
+
+### GET `/api/waitlist/{eventId}/status`
+
+Check authenticated user's current status on the waitlist. **Requires**: Authenticated.
+
+**Response** `200 OK`:
+```json
+{
+  "status": "WAITING"
+}
+```
+*Possible `status` values: `WAITING`, `NOTIFIED`, `NONE`.*
 
 ---
 

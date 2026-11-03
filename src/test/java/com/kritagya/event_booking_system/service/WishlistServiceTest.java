@@ -141,3 +141,4 @@ class WishlistServiceTest {
         assertThat(wishlistService.isEventWishlisted(200L, null)).isFalse();
     }
 }
+

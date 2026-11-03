@@ -173,3 +173,4 @@ class WaitlistServiceTest {
         assertThat(count).isEqualTo(4L);
     }
 }
+
