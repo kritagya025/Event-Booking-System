@@ -14,6 +14,8 @@ import com.kritagya.event_booking_system.exception.ResourceNotFoundException;
 import com.kritagya.event_booking_system.repository.BookingRepository;
 import com.kritagya.event_booking_system.repository.EventRepository;
 import com.kritagya.event_booking_system.repository.ReviewRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ import java.util.List;
 
 @Service
 public class ReviewService {
+
+    private static final Logger log = LoggerFactory.getLogger(ReviewService.class);
 
     private final ReviewRepository reviewRepository;
     private final EventRepository eventRepository;
@@ -57,6 +61,7 @@ public class ReviewService {
 
         Review review = new Review(request.getRating(), request.getComment(), user, event);
         Review savedReview = reviewRepository.save(review);
+        log.info("Review added for event {} by user {}: rating={}", eventId, user.getEmail(), request.getRating());
 
         return mapToDTO(savedReview);
     }
@@ -72,8 +77,9 @@ public class ReviewService {
 
         Double avgRating = reviewRepository.getAverageRatingByEventId(eventId);
         Long totalReviews = reviewRepository.countByEventId(eventId);
+        double roundedRating = (avgRating != null) ? Math.round(avgRating * 10.0) / 10.0 : 0.0;
 
-        return new EventReviewSummaryDTO(eventId, Math.round(avgRating * 10.0) / 10.0, totalReviews, reviews);
+        return new EventReviewSummaryDTO(eventId, roundedRating, totalReviews != null ? totalReviews : 0L, reviews);
     }
 
     @Transactional
@@ -88,6 +94,7 @@ public class ReviewService {
         review.setRating(request.getRating());
         review.setComment(request.getComment());
         Review updatedReview = reviewRepository.save(review);
+        log.info("Review {} updated by user {}", reviewId, user.getEmail());
 
         return mapToDTO(updatedReview);
     }
@@ -98,6 +105,12 @@ public class ReviewService {
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + reviewId));
 
         if (!review.getUser().getId().equals(user.getId()) && user.getRole() != Role.ADMIN) {
+            throw new org.springframework.security.access.AccessDeniedException("You are not authorized to delete this review.");
+        }
+
+        reviewRepository.delete(review);
+        log.info("Review {} deleted by user {}", reviewId, user.getEmail());
+    }
             throw new org.springframework.security.access.AccessDeniedException("You are not authorized to delete this review.");
         }
 
