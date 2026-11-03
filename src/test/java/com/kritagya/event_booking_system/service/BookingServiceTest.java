@@ -165,4 +165,29 @@ class BookingServiceTest {
         assertThatThrownBy(() -> bookingService.getBooking(99L))
                 .isInstanceOf(BookingNotFoundException.class);
     }
+
+    @Test
+    @DisplayName("Should reject booking when quantity exceeds maximum allowed limit")
+    void createBooking_QuantityExceedsLimit() {
+        requestDTO.setQuantity(11);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(eventRepository.findByIdAndDeletedFalseWithLock(1L)).thenReturn(Optional.of(event));
+
+        assertThatThrownBy(() -> bookingService.createBooking(requestDTO))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Maximum of 10 tickets allowed");
+    }
+
+    @Test
+    @DisplayName("Should reject booking when selected seat count does not match ticket quantity")
+    void createBooking_SeatCountMismatch() {
+        requestDTO.setQuantity(2);
+        requestDTO.setSeatIds(List.of(101L)); // Only 1 seat for 2 tickets
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(eventRepository.findByIdAndDeletedFalseWithLock(1L)).thenReturn(Optional.of(event));
+
+        assertThatThrownBy(() -> bookingService.createBooking(requestDTO))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("must match the booking quantity");
+    }
 }

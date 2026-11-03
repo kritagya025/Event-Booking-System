@@ -88,6 +88,16 @@ public class BookingService {
             throw new IllegalArgumentException("Not enough seats available");
         }
 
+        if (request.getQuantity() > 10) {
+            throw new IllegalArgumentException("Maximum of 10 tickets allowed per booking");
+        }
+
+        if (request.getSeatIds() != null && !request.getSeatIds().isEmpty()
+                && request.getSeatIds().size() != request.getQuantity()) {
+            throw new IllegalArgumentException("The number of selected seats (" + request.getSeatIds().size()
+                    + ") must match the booking quantity (" + request.getQuantity() + ")");
+        }
+
         BigDecimal originalTotal = event.getTicketPrice().multiply(BigDecimal.valueOf(request.getQuantity()));
         BigDecimal totalAmount = originalTotal;
 

@@ -1,5 +1,6 @@
 package com.kritagya.event_booking_system.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -15,6 +16,7 @@ public class BookingRequestDTO {
 
     @NotNull(message = "Quantity is required")
     @Positive(message = "Quantity must be greater than 0")
+    @Max(value = 10, message = "Maximum of 10 tickets allowed per booking")
     private Integer quantity;
 
     private List<Long> seatIds;
