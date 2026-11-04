@@ -247,8 +247,11 @@ Advanced event search with dynamic filters. **Public**.
 | `venueId` | Long | Filter by venue ID |
 | `minPrice` | BigDecimal | Minimum ticket price |
 | `maxPrice` | BigDecimal | Maximum ticket price |
+| `sort` | String | Sort by `eventDate,asc`, `ticketPrice,asc`, or `ticketPrice,desc` |
 | `page` | int | Page number |
 | `size` | int | Page size |
+
+Example: `/api/events/search?dateFrom=2026-11-01&maxPrice=50&sort=eventDate,asc`
 
 **Response** `200 OK`: Same paginated format as `GET /api/events`.
 

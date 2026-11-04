@@ -115,8 +115,11 @@ export default function App() {
     category: '',
     city: '',
     keyword: '',
+    dateFrom: '',
+    dateTo: '',
     minPrice: '',
-    maxPrice: ''
+    maxPrice: '',
+    sort: ''
   });
 
   const filtersRef = useRef(filters);
@@ -182,8 +185,8 @@ export default function App() {
 
       // Re-apply active search filters on master event catalog using live filtersRef
       const currentFilters = filtersRef.current;
-      if (currentFilters.keyword || currentFilters.category || currentFilters.city) {
-        applyLiveFilter(currentFilters.keyword, currentFilters.category, currentFilters.city, freshList);
+      if (hasActiveFilters(currentFilters) || currentFilters.sort) {
+        applyLiveFilter(currentFilters, freshList);
       } else {
         setEvents(freshList);
       }
@@ -205,20 +208,39 @@ export default function App() {
     }
   };
 
-  const applyLiveFilter = (kw = filters.keyword, cat = filters.category, ct = filters.city, sourceList = null) => {
+  const hasActiveFilters = (criteria) => Object.values(criteria).some((value) => value !== '');
+
+  const sortEvents = (list, sort = filters.sort) => {
+    if (!sort) return list;
+    const [field, direction] = sort.split(',');
+    const multiplier = direction === 'desc' ? -1 : 1;
+    return [...list].sort((left, right) => {
+      const leftValue = left[field];
+      const rightValue = right[field];
+      if (leftValue == null && rightValue == null) return 0;
+      if (leftValue == null) return 1;
+      if (rightValue == null) return -1;
+      const comparison = field === 'ticketPrice'
+        ? Number(leftValue) - Number(rightValue)
+        : String(leftValue).localeCompare(String(rightValue));
+      return comparison * multiplier;
+    });
+  };
+
+  const applyLiveFilter = (criteria = filters, sourceList = null) => {
     const masterSource = sourceList || (allMasterEventsRef.current.length > 0 ? allMasterEventsRef.current : (allMasterEvents.length > 0 ? allMasterEvents : mockEvents));
     let list = [...masterSource];
 
-    if (cat) {
-      list = list.filter((e) => e.category === cat);
+    if (criteria.category) {
+      list = list.filter((e) => e.category === criteria.category);
     }
-    if (ct && ct.trim()) {
-      const ctLower = ct.trim().toLowerCase();
+    if (criteria.city && criteria.city.trim()) {
+      const ctLower = criteria.city.trim().toLowerCase();
       list = list.filter((e) => e.venueAddress && e.venueAddress.toLowerCase().includes(ctLower));
     }
 
-    if (kw && kw.trim()) {
-      const tokens = kw.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (criteria.keyword && criteria.keyword.trim()) {
+      const tokens = criteria.keyword.trim().toLowerCase().split(/\s+/).filter(Boolean);
       list = list.filter((e) => {
         const searchableText = [
           e.name,
@@ -233,29 +255,38 @@ export default function App() {
       });
     }
 
-    setEvents(list);
+    if (criteria.dateFrom) list = list.filter((e) => e.eventDate >= criteria.dateFrom);
+    if (criteria.dateTo) list = list.filter((e) => e.eventDate <= criteria.dateTo);
+    if (criteria.minPrice !== '') list = list.filter((e) => Number(e.ticketPrice) >= Number(criteria.minPrice));
+    if (criteria.maxPrice !== '') list = list.filter((e) => Number(e.ticketPrice) <= Number(criteria.maxPrice));
+
+    setEvents(sortEvents(list, criteria.sort));
   };
 
-  const handleSearchAndFilter = async (searchKeywordOverride) => {
+  const handleSearchAndFilter = async (criteria = filters) => {
     setLoading(true);
-    const activeKeyword = searchKeywordOverride !== undefined ? searchKeywordOverride : filters.keyword;
     try {
       let query = '/events/search?';
-      if (filters.category) query += `category=${encodeURIComponent(filters.category)}&`;
-      if (filters.city) query += `city=${encodeURIComponent(filters.city)}&`;
-      if (activeKeyword) query += `keyword=${encodeURIComponent(activeKeyword)}&`;
+      if (criteria.category) query += `category=${encodeURIComponent(criteria.category)}&`;
+      if (criteria.city) query += `city=${encodeURIComponent(criteria.city)}&`;
+      if (criteria.keyword) query += `keyword=${encodeURIComponent(criteria.keyword)}&`;
+      if (criteria.dateFrom) query += `dateFrom=${encodeURIComponent(criteria.dateFrom)}&`;
+      if (criteria.dateTo) query += `dateTo=${encodeURIComponent(criteria.dateTo)}&`;
+      if (criteria.minPrice !== '') query += `minPrice=${encodeURIComponent(criteria.minPrice)}&`;
+      if (criteria.maxPrice !== '') query += `maxPrice=${encodeURIComponent(criteria.maxPrice)}&`;
+      if (criteria.sort) query += `sort=${encodeURIComponent(criteria.sort)}&`;
 
       const res = await apiFetch(query);
       if (res && Array.isArray(res.content)) {
-        setEvents(res.content);
+        setEvents(sortEvents(res.content, criteria.sort));
       } else {
-        applyLiveFilter(activeKeyword, filters.category, filters.city);
+        applyLiveFilter(criteria);
       }
-      if (activeKeyword || filters.category || filters.city) {
+      if (hasActiveFilters(criteria)) {
         scrollToResults();
       }
     } catch (err) {
-      applyLiveFilter(activeKeyword, filters.category, filters.city);
+      applyLiveFilter(criteria);
       scrollToResults();
     } finally {
       setLoading(false);
@@ -263,7 +294,10 @@ export default function App() {
   };
 
   const handleClearSearch = () => {
-    setFilters({ category: '', dateFrom: '', dateTo: '', city: '', keyword: '', minPrice: '', maxPrice: '' });
+    const clearedFilters = { category: '', dateFrom: '', dateTo: '', city: '', keyword: '', minPrice: '', maxPrice: '', sort: '' };
+    filtersRef.current = clearedFilters;
+    setFilters(clearedFilters);
+    setEvents(allMasterEventsRef.current.length > 0 ? allMasterEventsRef.current : mockEvents);
     fetchCatalogData();
   };
 
@@ -347,8 +381,9 @@ export default function App() {
     window.location.hash = finalTab;
 
     if (params.keyword !== undefined) {
-      setFilters((prev) => ({ ...prev, keyword: params.keyword }));
-      handleSearchAndFilter(params.keyword);
+      const nextFilters = { ...filtersRef.current, keyword: params.keyword };
+      setFilters(nextFilters);
+      handleSearchAndFilter(nextFilters);
     }
     if (tab === 'checkin') setIsCheckInOpen(true);
     if (tab === 'create-event') setIsCreateEventOpen(true);
@@ -417,8 +452,9 @@ export default function App() {
         onLogout={handleLogout}
         searchKeyword={filters.keyword}
         onSearchChange={(kw) => {
-          setFilters((prev) => ({ ...prev, keyword: kw }));
-          applyLiveFilter(kw, filters.category, filters.city);
+          const nextFilters = { ...filtersRef.current, keyword: kw };
+          setFilters(nextFilters);
+          applyLiveFilter(nextFilters);
         }}
       />
 
@@ -506,7 +542,7 @@ export default function App() {
                   onChange={(e) => {
                     const val = e.target.value;
                     setFilters({ ...filters, keyword: val });
-                    applyLiveFilter(val, filters.category, filters.city);
+                    applyLiveFilter({ ...filters, keyword: val });
                   }}
                   className="form-input-sb"
                   style={{ paddingLeft: '44px' }}
@@ -518,8 +554,9 @@ export default function App() {
                   value={filters.category} 
                   onChange={(e) => {
                     const cat = e.target.value;
-                    setFilters({ ...filters, category: cat });
-                    handleSearchAndFilter();
+                    const nextFilters = { ...filters, category: cat };
+                    setFilters(nextFilters);
+                    handleSearchAndFilter(nextFilters);
                   }} 
                   className="form-select-sb"
                   style={{ width: '100%' }}
@@ -544,11 +581,37 @@ export default function App() {
                 />
               </div>
 
+              <div style={{ flex: '1 1 140px' }}>
+                <input type="date" aria-label="Events from date" value={filters.dateFrom} max={filters.dateTo || undefined}
+                  onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })} className="form-input-sb" />
+              </div>
+              <div style={{ flex: '1 1 140px' }}>
+                <input type="date" aria-label="Events through date" value={filters.dateTo} min={filters.dateFrom || undefined}
+                  onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })} className="form-input-sb" />
+              </div>
+              <div style={{ flex: '1 1 120px' }}>
+                <input type="number" min="0" step="0.01" aria-label="Minimum ticket price" placeholder="Min price" value={filters.minPrice}
+                  onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })} className="form-input-sb" />
+              </div>
+              <div style={{ flex: '1 1 120px' }}>
+                <input type="number" min="0" step="0.01" aria-label="Maximum ticket price" placeholder="Max price" value={filters.maxPrice}
+                  onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })} className="form-input-sb" />
+              </div>
+              <div style={{ flex: '1 1 170px' }}>
+                <select aria-label="Sort events" value={filters.sort}
+                  onChange={(e) => setFilters({ ...filters, sort: e.target.value })} className="form-select-sb" style={{ width: '100%' }}>
+                  <option value="">Recommended order</option>
+                  <option value="eventDate,asc">Soonest first</option>
+                  <option value="ticketPrice,asc">Price: low to high</option>
+                  <option value="ticketPrice,desc">Price: high to low</option>
+                </select>
+              </div>
+
               <button type="submit" className="btn-sb-primary" style={{ padding: '12px 24px' }}>
                 Search <ArrowRight size={16} />
               </button>
 
-              {(filters.keyword || filters.category || filters.city) && (
+              {(hasActiveFilters(filters)) && (
                 <button type="button" onClick={handleClearSearch} className="btn-sb-outline" style={{ padding: '12px 18px', color: '#FF4D6D' }}>
                   Clear
                 </button>
@@ -570,8 +633,9 @@ export default function App() {
                     <button
                       key={cat.id}
                       onClick={() => {
-                        setFilters({ ...filters, category: cat.id });
-                        handleSearchAndFilter();
+                        const nextFilters = { ...filters, category: cat.id };
+                        setFilters(nextFilters);
+                        handleSearchAndFilter(nextFilters);
                       }}
                       style={{
                         borderRadius: 'var(--radius-full)',
@@ -605,7 +669,7 @@ export default function App() {
               </div>
 
             {/* Featured Spotlight Banner (when no search active) */}
-            {!(filters.keyword || filters.category || filters.city) && (
+            {!hasActiveFilters(filters) && (
               <div className="glass-panel" style={{ 
                 margin: '20px 0 48px 0', 
                 borderRadius: 'var(--radius-xl)', 
@@ -669,7 +733,7 @@ export default function App() {
             )}
 
             {/* Popular Events */}
-            {!(filters.keyword || filters.category || filters.city) && (
+            {!hasActiveFilters(filters) && (
               <div style={{ marginTop: '20px' }}>
                 <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                   <div>
@@ -697,10 +761,10 @@ export default function App() {
             )}
 
             {/* Full Catalog / Search Results */}
-            <div ref={catalogRef} style={{ marginTop: (filters.keyword || filters.category || filters.city) ? '30px' : '56px', scrollMarginTop: '100px' }}>
+            <div ref={catalogRef} style={{ marginTop: hasActiveFilters(filters) ? '30px' : '56px', scrollMarginTop: '100px' }}>
               
               {/* Header logic for normal vs active search */}
-              {!(filters.keyword || filters.category || filters.city) ? (
+              {!hasActiveFilters(filters) ? (
                 <div style={{ marginBottom: '24px' }}>
                   <h2 style={{ fontSize: '1.6rem', marginBottom: '4px' }}>Explore All Events</h2>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Select an event to view venue seat maps and book tickets</p>
@@ -749,7 +813,7 @@ export default function App() {
                   <Search size={36} color="var(--text-muted)" style={{ marginBottom: '12px' }} />
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '6px' }}>No events found matching your search</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>
-                    No events matched "{filters.keyword || filters.category || filters.city}". Try searching for another keyword or location.
+                    No events matched the selected filters. Try broadening your date range, price, keyword, or location.
                   </p>
                   <button onClick={handleClearSearch} className="btn btn-primary">
                     View All Events
