@@ -253,6 +253,8 @@ Advanced event search with dynamic filters. **Public**.
 
 Example: `/api/events/search?dateFrom=2026-11-01&maxPrice=50&sort=eventDate,asc`
 
+The endpoint returns `400 Bad Request` when `dateFrom` is after `dateTo`, either price is negative, or `minPrice` is greater than `maxPrice`.
+
 **Response** `200 OK`: Same paginated format as `GET /api/events`.
 
 ### GET `/api/events/{id}`

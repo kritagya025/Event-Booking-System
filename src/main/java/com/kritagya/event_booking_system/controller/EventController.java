@@ -64,7 +64,8 @@ public class EventController {
     @GetMapping("/search")
     @Operation(summary = "Search events with dynamic filters", description = "Filter events by category, date range, venue, city, keyword, and price limits")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Search results returned successfully")
+            @ApiResponse(responseCode = "200", description = "Search results returned successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid date or price range")
     })
     public ResponseEntity<Page<EventResponseDTO>> searchEvents(
             @Parameter(description = "Event category filter") @RequestParam(required = false) String category,
@@ -76,6 +77,18 @@ public class EventController {
             @Parameter(description = "Minimum ticket price") @RequestParam(required = false) BigDecimal minPrice,
             @Parameter(description = "Maximum ticket price") @RequestParam(required = false) BigDecimal maxPrice,
             @PageableDefault(size = 10) Pageable pageable) {
+        if (dateFrom != null && dateTo != null && dateFrom.isAfter(dateTo)) {
+            throw new IllegalArgumentException("dateFrom must be on or before dateTo");
+        }
+        if (minPrice != null && minPrice.signum() < 0) {
+            throw new IllegalArgumentException("minPrice must be zero or greater");
+        }
+        if (maxPrice != null && maxPrice.signum() < 0) {
+            throw new IllegalArgumentException("maxPrice must be zero or greater");
+        }
+        if (minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
+            throw new IllegalArgumentException("minPrice must be less than or equal to maxPrice");
+        }
         Page<EventResponseDTO> events = eventService.searchEvents(
                 category, dateFrom, dateTo, venueId, city, keyword, minPrice, maxPrice, pageable);
         return new ResponseEntity<>(events, HttpStatus.OK);
