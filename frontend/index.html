@@ -12,6 +12,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     
+    <!-- Theme Initializer (prevents flash) -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('sb-theme') || 'dark';
+          if (saved === 'light') {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     <!-- Tailwind CSS Script with Brutalist Acid-Zine Extension -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
@@ -20,18 +36,18 @@
         theme: {
           extend: {
             colors: {
-              "acid-yellow": "#eefc54",
-              "acid-yellow-hover": "#dbed2d",
-              "neon-magenta": "#ff1f6d",
-              "neon-magenta-dark": "#d40c50",
-              "electric-cobalt": "#1d4ed8",
-              "asphalt-black": "#0e0e11",
-              "asphalt-surface": "#16161c",
-              "asphalt-card": "#1b1c24",
-              "asphalt-border": "#2c2d3a",
-              "grit-white": "#f5f5f0",
-              "grit-dim": "#90929e",
-              "danger-red": "#ff3333"
+              "acid-yellow": "var(--acid-yellow)",
+              "acid-yellow-hover": "var(--acid-yellow-hover)",
+              "neon-magenta": "var(--neon-magenta)",
+              "neon-magenta-dark": "var(--neon-magenta-dark)",
+              "electric-cobalt": "var(--electric-cobalt)",
+              "asphalt-black": "var(--asphalt-black)",
+              "asphalt-surface": "var(--asphalt-surface)",
+              "asphalt-card": "var(--asphalt-card)",
+              "asphalt-border": "var(--asphalt-border)",
+              "grit-white": "var(--grit-white)",
+              "grit-dim": "var(--grit-dim)",
+              "danger-red": "var(--status-danger)"
             },
             fontFamily: {
               display: ["'Bebas Neue'", "sans-serif"],
@@ -45,7 +61,7 @@
     </script>
     <script>window.global = window;</script>
   </head>
-  <body class="bg-asphalt-black font-mono-zine text-grit-white antialiased selection:bg-acid-yellow selection:text-asphalt-black min-h-screen photocopy-grit border-t-4 border-acid-yellow dark">
+  <body class="bg-asphalt-black font-mono-zine text-grit-white antialiased selection:bg-acid-yellow selection:text-asphalt-black min-h-screen photocopy-grit border-t-4 border-acid-yellow transition-colors duration-150">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

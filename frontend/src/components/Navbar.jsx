@@ -16,10 +16,24 @@ export default function Navbar({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   useEffect(() => {
-    document.body.className = theme === 'dark' 
-      ? 'bg-asphalt-black font-mono-zine text-grit-white antialiased selection:bg-acid-yellow selection:text-asphalt-black min-h-screen photocopy-grit border-t-4 border-acid-yellow dark' 
-      : 'bg-asphalt-black font-mono-zine text-grit-white antialiased selection:bg-acid-yellow selection:text-asphalt-black min-h-screen photocopy-grit border-t-4 border-acid-yellow light';
-    localStorage.setItem('sb-theme', theme);
+    const root = document.documentElement;
+    const body = document.body;
+
+    if (theme === 'light') {
+      root.classList.remove('dark');
+      root.classList.add('light');
+      body.classList.remove('dark');
+      body.classList.add('light');
+    } else {
+      root.classList.remove('light');
+      root.classList.add('dark');
+      body.classList.remove('light');
+      body.classList.add('dark');
+    }
+
+    try {
+      localStorage.setItem('sb-theme', theme);
+    } catch {}
   }, [theme]);
 
   useEffect(() => {
@@ -190,7 +204,7 @@ export default function Navbar({
             {/* Theme Toggle */}
             <button 
               onClick={toggleTheme} 
-              className="w-8 h-8 bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-colors"
+              type="button" className="w-8 h-8 bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-colors cursor-pointer"
               title={`Switch Theme`}
             >
               {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
