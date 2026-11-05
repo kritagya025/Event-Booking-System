@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, QrCode, CheckCircle2, AlertTriangle, Search, Camera, CameraOff, RefreshCw } from 'lucide-react';
+import { X, CheckCircle2, AlertTriangle, Search, Camera, CameraOff, RefreshCw } from 'lucide-react';
 import { apiFetch } from '../services/api';
 
 export default function CheckInModal({ isOpen, onClose, showToast }) {
@@ -28,7 +28,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-    } catch (_err) {
+    } catch {
       showToast('CAMERA FEED UNAVAILABLE. PLEASE USE MANUAL CODE ENTRY.', 'info');
       setIsCameraActive(false);
     }

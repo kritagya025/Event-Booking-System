@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Cookie, ShieldCheck, Check, Settings } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function CookiesModal({ isOpen, onClose, showToast }) {
   const [preferences, setPreferences] = useState({

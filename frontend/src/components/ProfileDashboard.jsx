@@ -1,9 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  User, Mail, Phone, ShieldCheck, Ticket, Heart, Calendar, 
-  MapPin, Download, PlusCircle, QrCode, DollarSign, Edit3, X, CheckCircle, 
-  TrendingUp, Award, Layers, LogOut, Lock, Trash2, Radio
-} from 'lucide-react';
+import { Mail, Phone, Edit3, X, LogOut } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
 
@@ -85,7 +81,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
     }
   };
 
-  const handleDeleteManagedEvent = async (eventId, eventName) => {
+  const _handleDeleteManagedEvent = async (eventId, eventName) => {
     if (!window.confirm(`ARE YOU SURE YOU WANT TO REMOVE EVENT "${eventName || 'THIS EVENT'}"?`)) return;
     try {
       await apiFetch(`/events/${eventId}`, { method: 'DELETE' });
@@ -96,7 +92,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
     }
   };
 
-  const handleDownloadPdf = async (booking) => {
+  const _handleDownloadPdf = async (booking) => {
     if (booking.bookingStatus === 'CANCELLED') {
       showToast('CANNOT DOWNLOAD PASS FOR CANCELLED RESERVATION', 'error');
       return;

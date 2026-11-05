@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink, ShieldCheck, CreditCard, Clock, Radio } from 'lucide-react';
+import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink } from 'lucide-react';
 import { apiFetch, BASE_URL } from '../services/api';
 import { formatPrice } from '../services/currency';
 
@@ -14,7 +14,7 @@ export default function MyBookings({ currentUser, showToast }) {
     let remoteData = [];
     try {
       remoteData = await apiFetch(`/bookings/user/${currentUser?.id || 1}`);
-    } catch (_err) {
+    } catch {
       remoteData = [
         {
           id: 101,
@@ -39,7 +39,7 @@ export default function MyBookings({ currentUser, showToast }) {
       const combined = [...(localBookings || []), ...(remoteData || [])];
       const unique = Array.from(new Map(combined.map(b => [b.id, b])).values());
       setBookings(unique);
-    } catch (e) {
+    } catch {
       setBookings(remoteData || []);
     } finally {
       setLoading(false);
@@ -135,7 +135,7 @@ export default function MyBookings({ currentUser, showToast }) {
         passWindow.document.close();
         showToast('ADMISSION TICKET OPENED FOR PRINTING', 'success');
       }
-    } catch (passErr) {
+    } catch {
       showToast('GENERATING TICKET PASS...', 'success');
     }
   };

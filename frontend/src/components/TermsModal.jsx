@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ShieldCheck, FileText, CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function TermsModal({ isOpen, onClose }) {
   if (!isOpen) return null;

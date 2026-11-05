@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Shield, Lock, Eye, Server, RefreshCw } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function PrivacyModal({ isOpen, onClose }) {
   if (!isOpen) return null;

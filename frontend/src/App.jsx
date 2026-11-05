@@ -16,11 +16,7 @@ import DatabaseConsoleModal from './components/DatabaseConsoleModal';
 import CookiesModal from './components/CookiesModal';
 import ApiDocsModal from './components/ApiDocsModal';
 
-import { 
-  MapPin, Ticket, Heart, Search, Calendar, Tag, Zap,
-  Flame, ArrowRight, Bell, AlertCircle, Check, Trash2,
-  Music, Laptop, Film, Trophy, ShieldCheck, QrCode, Cpu, Layers
-} from 'lucide-react';
+import { Heart, Bell, AlertCircle, Check } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
 
@@ -124,6 +120,7 @@ export default function App() {
       clearInterval(interval);
       window.removeEventListener('auth-expired', handleLogout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showToast = (message, type = 'info') => {
@@ -162,7 +159,7 @@ export default function App() {
       if (popEv && Array.isArray(popEv) && popEv.length > 0) setPopularEvents(popEv);
       else setPopularEvents(mockEvents.slice(0, 3));
 
-    } catch (err) {
+    } catch {
       setAllMasterEvents(mockEvents);
       allMasterEventsRef.current = mockEvents;
       setEvents(mockEvents);
@@ -249,7 +246,7 @@ export default function App() {
       if (hasActiveFilters(criteria)) {
         scrollToResults();
       }
-    } catch (err) {
+    } catch {
       applyLiveFilter(criteria);
       scrollToResults();
     } finally {
@@ -281,7 +278,7 @@ export default function App() {
     try {
       await apiFetch(`/wishlist/${eventId}`, { method: 'POST' });
       showToast('Event saved to your wishlist', 'success');
-    } catch (err) {
+    } catch {
       showToast('Event is already in your wishlist', 'info');
     }
   };

@@ -50,7 +50,7 @@ function detectLocalCurrencySync() {
     if (timeZone.includes('America/Toronto') || timeZone.includes('America/Vancouver')) {
       return 'CAD';
     }
-  } catch (e) {
+  } catch {
     // fallback
   }
   return 'INR'; // Default to INR for regional Indian setup if detected, or USD
@@ -76,7 +76,7 @@ export async function initAutoLocationCurrency() {
         listeners.forEach((cb) => cb(activeCurrency));
       }
     }
-  } catch (err) {
+  } catch {
     // Keep sync detected currency
   }
 }

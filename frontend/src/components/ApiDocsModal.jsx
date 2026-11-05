@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Code2, Copy, Check, Terminal, FileCode } from 'lucide-react';
+import { X, Copy, Check } from 'lucide-react';
 
 export default function ApiDocsModal({ isOpen, onClose }) {
   const [copiedIndex, setCopiedIndex] = useState(null);

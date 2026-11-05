@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Activity, CheckCircle2, AlertTriangle, RefreshCw, Server, Database, ShieldCheck, Wifi, Clock, Cpu } from 'lucide-react';
+import { X, RefreshCw } from 'lucide-react';
 import { apiFetch } from '../services/api';
 
 export default function SystemStatusModal({ isOpen, onClose }) {
@@ -23,10 +23,10 @@ export default function SystemStatusModal({ isOpen, onClose }) {
         if (diag && diag.status) {
           setDiagnostics(diag);
         }
-      } catch (_e) {
+      } catch {
         // Non-admin fallback
       }
-    } catch (_err) {
+    } catch {
       setApiLatency(null);
       setApiStatus('degraded');
     } finally {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check, Tag, ArrowRight, Zap, ArrowLeft, CreditCard, Wallet, Smartphone, Landmark, Gift, ShieldCheck, QrCode } from 'lucide-react';
+import { X, Check, ArrowRight, ArrowLeft } from 'lucide-react';
 import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
@@ -40,6 +40,33 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
     setCouponCode('');
     setAvailableCount(event.availableSeats || 50);
 
+    const fetchVenueSeats = async () => {
+      const vId = event.venueId || event.venue?.id || 1;
+      setLoadingSeats(true);
+
+      try {
+        const data = await apiFetch(`/seats/venue/${vId}`).catch(() => null);
+        if (data && data.length > 0) {
+          let formatted = data.map(s => ({
+            ...s,
+            price: s.seatType === 'VIP' ? (event.ticketPrice * 1.5) : event.ticketPrice
+          }));
+
+          const targetCount = event.availableSeats !== undefined ? event.availableSeats : 40;
+          if (targetCount > formatted.length) {
+            formatted = expandSeatMap(formatted, targetCount);
+          }
+          setSeatMap(formatted);
+        } else {
+          generateSeatsForEvent();
+        }
+      } catch {
+        generateSeatsForEvent();
+      } finally {
+        setLoadingSeats(false);
+      }
+    };
+
     fetchVenueSeats();
 
     wsService.subscribeToSeatUpdates(event.id, (payload) => {
@@ -54,34 +81,8 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
     return () => {
       wsService.unsubscribe(event.id);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event, isOpen]);
-
-  const fetchVenueSeats = async () => {
-    const vId = event.venueId || event.venue?.id || 1;
-    setLoadingSeats(true);
-
-    try {
-      const data = await apiFetch(`/seats/venue/${vId}`).catch(() => null);
-      if (data && data.length > 0) {
-        let formatted = data.map(s => ({
-          ...s,
-          price: s.seatType === 'VIP' ? (event.ticketPrice * 1.5) : event.ticketPrice
-        }));
-
-        const targetCount = event.availableSeats !== undefined ? event.availableSeats : 40;
-        if (targetCount > formatted.length) {
-          formatted = expandSeatMap(formatted, targetCount);
-        }
-        setSeatMap(formatted);
-      } else {
-        generateSeatsForEvent();
-      }
-    } catch (err) {
-      generateSeatsForEvent();
-    } finally {
-      setLoadingSeats(false);
-    }
-  };
 
   const getRowLetter = (idx) => {
     if (idx < 26) return String.fromCharCode(65 + idx);
@@ -276,13 +277,13 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=TICKET-${bookingResult.id}-${event.id}`
         };
         localStorage.setItem('my_local_bookings', JSON.stringify([newBookingRecord, ...storedBookings]));
-      } catch (lsErr) {}
+      } catch {}
 
       try {
         if (typeof confetti === 'function') {
           confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
         }
-      } catch (cErr) {}
+      } catch {}
 
       showToast('BOOKING CONFIRMED // DIGITAL E-TICKET PASS ISSUED', 'success');
       if (onBookingSuccess) {

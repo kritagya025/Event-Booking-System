@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, KeyRound, ShieldAlert, Radio } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { apiFetch, setAuthSession } from '../services/api';
 
 export default function LoginPage({ onAuthSuccess, onNavigate, showToast }) {

@@ -16,7 +16,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
     try {
       const data = await apiFetch('/wishlist');
       setWishlistItems(data);
-    } catch (_err) {
+    } catch {
       setWishlistItems([
         {
           id: 1,

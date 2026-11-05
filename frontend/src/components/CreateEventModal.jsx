@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  X, PlusCircle, Image as ImageIcon, Upload, CheckCircle2, 
-  AlertCircle, Calendar, Clock, DollarSign, Users, MapPin, Tag, FileText, Trash2, Building 
-} from 'lucide-react';
+import { X, Upload, AlertCircle, Trash2 } from 'lucide-react';
 import { apiFetch, getStoredToken } from '../services/api';
 
 export default function CreateEventModal({ isOpen, onClose, showToast, onEventCreated }) {

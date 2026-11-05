@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Database, Server, RefreshCw, Table, Layers, HardDrive, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { X, RefreshCw } from 'lucide-react';
 import { apiFetch } from '../services/api';
 
 export default function DatabaseConsoleModal({ isOpen, onClose }) {
@@ -32,7 +32,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
         bookingsCount,
         usersCount
       }));
-    } catch (_err) {
+    } catch {
       // Fallback display
     } finally {
       setLoading(false);

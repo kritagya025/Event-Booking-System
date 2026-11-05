@@ -1,6 +1,5 @@
 package com.kritagya.event_booking_system.auth;
 
-import com.kritagya.event_booking_system.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

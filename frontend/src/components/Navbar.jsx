@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Ticket, Heart, PlusCircle, User, LogOut, ShieldCheck, QrCode, 
-  Sun, Moon, Home, Layers, Zap
+  Ticket, PlusCircle, User, LogOut, ShieldCheck, QrCode, 
+  Sun, Moon
 } from 'lucide-react';
 import { getActiveCurrency, setActiveCurrency, getAvailableCurrencies, subscribeCurrencyChange } from '../services/currency';
 

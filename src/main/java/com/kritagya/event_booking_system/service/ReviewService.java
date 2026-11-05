@@ -111,11 +111,6 @@ public class ReviewService {
         reviewRepository.delete(review);
         log.info("Review {} deleted by user {}", reviewId, user.getEmail());
     }
-            throw new org.springframework.security.access.AccessDeniedException("You are not authorized to delete this review.");
-        }
-
-        reviewRepository.delete(review);
-    }
 
     private ReviewResponseDTO mapToDTO(Review review) {
         String userName = review.getUser().getFirstName() + " " + review.getUser().getLastName();

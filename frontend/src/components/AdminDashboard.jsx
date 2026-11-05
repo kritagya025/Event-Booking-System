@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Users, Calendar, Ticket, Activity, BarChart2, Award, Trash2 } from 'lucide-react';
+import { Activity, Trash2 } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
 
 export default function AdminDashboard({ showToast }) {
   const [dashboardData, setDashboardData] = useState(null);
   const [revenueData, setRevenueData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchAdminData();
