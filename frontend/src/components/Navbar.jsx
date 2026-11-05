@@ -14,8 +14,6 @@ export default function Navbar({
   const [currency, setCurrency] = useState(getActiveCurrency());
   const [theme, setTheme] = useState(localStorage.getItem('sb-theme') || 'dark');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [shockwave, setShockwave] = useState(null);
-  const [themeToast, setThemeToast] = useState(null);
 
   useEffect(() => {
     const root = document.documentElement;

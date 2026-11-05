@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check, ArrowRight, ArrowLeft } from 'lucide-react';
+import { 
+  X, Check, ArrowRight, ArrowLeft,
+  Smartphone, CreditCard, Landmark, Gift, Wallet, AlertCircle
+} from 'lucide-react';
 import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
@@ -197,14 +200,76 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   };
 
   const calculateSubtotal = () => {
-    if (selectedSeats.length > 0) return selectedSeats.reduce((sum, s) => sum + s.price, 0);
-    return event.ticketPrice;
+    if (selectedSeats.length > 0) return selectedSeats.reduce((sum, s) => sum + (s.price || event.ticketPrice || 0), 0);
+    return 0;
   };
 
   const calculateFinalTotal = () => {
     const sub = calculateSubtotal();
+    if (sub === 0) return 0;
     if (discountInfo) return Math.max(0, sub - discountInfo.calculatedDiscount);
     return sub;
+  };
+
+  const handleProceedToReview = () => {
+    if (selectedSeats.length === 0) {
+      showToast('PLEASE SELECT AT LEAST ONE SEAT ON THE SEAT MAP TO PROCEED', 'error');
+      return;
+    }
+    setStep(2);
+  };
+
+  const handleProceedToPayment = () => {
+    if (selectedSeats.length === 0) {
+      showToast('NO SEATS SELECTED. PLEASE SELECT AT LEAST ONE SEAT FIRST.', 'error');
+      setStep(1);
+      return;
+    }
+    setStep(3);
+  };
+
+  const handleProceedToConfirm = () => {
+    if (selectedSeats.length === 0) {
+      showToast('NO SEATS SELECTED. PLEASE SELECT AT LEAST ONE SEAT.', 'error');
+      setStep(1);
+      return;
+    }
+
+    if (paymentMethod === 'UPI') {
+      if (upiSubOption === 'UPI_ID' && !paymentDetails.upiId?.trim()) {
+        showToast('PLEASE ENTER A VALID UPI ID OR SWITCH TO QR CODE SCAN', 'error');
+        return;
+      }
+    } else if (paymentMethod === 'CREDIT_CARD' || paymentMethod === 'DEBIT_CARD') {
+      if (!paymentDetails.cardHolder?.trim()) {
+        showToast('PLEASE ENTER CARDHOLDER NAME', 'error');
+        return;
+      }
+      if (!paymentDetails.cardNumber?.trim()) {
+        showToast('PLEASE ENTER 16-DIGIT CARD NUMBER', 'error');
+        return;
+      }
+      if (!paymentDetails.cardExpiry?.trim()) {
+        showToast('PLEASE ENTER CARD EXPIRY (MM/YY)', 'error');
+        return;
+      }
+      if (!paymentDetails.cardCvv?.trim()) {
+        showToast('PLEASE ENTER CVV CODE', 'error');
+        return;
+      }
+    } else if (paymentMethod === 'GIFT_CARD') {
+      if (!paymentDetails.giftCardCode?.trim() || !paymentDetails.giftCardPin?.trim()) {
+        showToast('PLEASE ENTER GIFT CARD CODE AND SECURITY PIN', 'error');
+        return;
+      }
+    } else if (paymentMethod === 'WALLET') {
+      if (!paymentDetails.walletPhone?.trim()) {
+        showToast('PLEASE ENTER REGISTERED MOBILE NUMBER FOR WALLET', 'error');
+        return;
+      }
+    }
+
+    setStep(4);
   };
 
   const handleDetailsChange = (e) => {
@@ -214,6 +279,12 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   const handleConfirmBooking = async () => {
     if (!currentUser) {
       showToast('PLEASE SIGN IN BEFORE COMPLETING RESERVATION', 'info');
+      return;
+    }
+
+    if (selectedSeats.length === 0) {
+      showToast('NO SEATS SELECTED. PLEASE SELECT AT LEAST ONE SEAT.', 'error');
+      setStep(1);
       return;
     }
 
@@ -227,7 +298,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         validPaymentMethod = 'UPI';
       }
 
-      const quantity = selectedSeats.length > 0 ? selectedSeats.length : 1;
+      const quantity = selectedSeats.length;
       const payload = {
         userId: currentUser.id || currentUser.userId || 1,
         eventId: event.id,
@@ -450,12 +521,16 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
               )}
 
               {/* Bottom Actions */}
-              <div className="mt-6 pt-4 border-t-2 border-asphalt-border flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t-2 border-asphalt-border flex items-center justify-between gap-4">
                 <div>
                   <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider block">
                     {selectedSeats.length > 0 
                       ? `${selectedSeats.length} SEAT(S) SELECTED: ${selectedSeats.map(s => s.seatNumber).join(', ')}`
-                      : 'GENERAL ADMISSION (1 TICKET)'}
+                      : (
+                        <span className="text-neon-magenta flex items-center gap-1 font-bold">
+                          <AlertCircle size={13} /> NO SEATS SELECTED — PLEASE CHOOSE YOUR SEATS
+                        </span>
+                      )}
                   </span>
                   <span className="font-display text-3xl text-acid-yellow font-bold leading-none">
                     {formatPrice(calculateSubtotal(), event.currency)}
@@ -463,8 +538,14 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 </div>
                 <button
                   type="button"
-                  onClick={() => setStep(2)}
-                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-lg uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
+                  onClick={handleProceedToReview}
+                  disabled={selectedSeats.length === 0}
+                  className={`font-impact tracking-wider text-lg uppercase px-5 py-2.5 border-2 border-asphalt-black flex items-center gap-2 transition-all ${
+                    selectedSeats.length > 0
+                      ? 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff] cursor-pointer'
+                      : 'bg-asphalt-card text-grit-dim/50 border-asphalt-border cursor-not-allowed opacity-50'
+                  }`}
+                  title={selectedSeats.length === 0 ? 'Select at least one seat to proceed' : 'Review Selected Seats'}
                 >
                   REVIEW BOOKING <ArrowRight size={16} />
                 </button>
@@ -540,8 +621,13 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 </button>
                 <button 
                   type="button"
-                  onClick={() => setStep(3)} 
-                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
+                  onClick={handleProceedToPayment} 
+                  disabled={selectedSeats.length === 0}
+                  className={`font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black flex items-center gap-2 transition-all ${
+                    selectedSeats.length > 0
+                      ? 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff] cursor-pointer'
+                      : 'bg-asphalt-card text-grit-dim/50 border-asphalt-border cursor-not-allowed opacity-50'
+                  }`}
                 >
                   PROCEED TO PAYMENT <ArrowRight size={16} />
                 </button>
@@ -731,7 +817,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 </button>
                 <button 
                   type="button"
-                  onClick={() => setStep(4)} 
+                  onClick={handleProceedToConfirm} 
                   className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
                 >
                   REVIEW ORDER <ArrowRight size={16} />
@@ -809,7 +895,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 <button 
                   type="button"
                   onClick={() => setStep(3)} 
-                  disabled={bookingLoading}
+                  disabled={bookingLoading || selectedSeats.length === 0}
                   className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
                 >
                   <ArrowLeft size={14} /> EDIT PAYMENT
@@ -817,7 +903,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 <button 
                   type="button"
                   onClick={handleConfirmBooking} 
-                  disabled={bookingLoading}
+                  disabled={bookingLoading || selectedSeats.length === 0}
                   className="bg-neon-magenta text-grit-white font-impact tracking-wider text-lg uppercase px-6 py-3 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer disabled:opacity-50"
                 >
                   {bookingLoading ? 'PROCESSING RESERVATION...' : `CONFIRM & PAY (${formatPrice(calculateFinalTotal(), event.currency)})`}
