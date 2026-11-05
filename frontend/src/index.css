@@ -198,6 +198,8 @@ h1, h2, h3, h4, .font-display {
   cursor: pointer;
   transition: all 0.12s ease;
   -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
