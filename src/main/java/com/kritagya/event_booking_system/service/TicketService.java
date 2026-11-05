@@ -80,10 +80,12 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<TicketResponseDTO> getTicketsByBooking(Long bookingId) {
         return getTicketsByBooking(bookingId, null);
     }
 
+    @Transactional(readOnly = true)
     public List<TicketResponseDTO> getTicketsByBooking(Long bookingId, com.kritagya.event_booking_system.entity.User currentUser) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException(bookingId));
@@ -98,10 +100,12 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public TicketResponseDTO getTicket(Long id) {
         return getTicket(id, null);
     }
 
+    @Transactional(readOnly = true)
     public TicketResponseDTO getTicket(Long id, com.kritagya.event_booking_system.entity.User currentUser) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + id));
@@ -115,6 +119,7 @@ public class TicketService {
         return TicketMapper.toDTO(ticket);
     }
 
+    @Transactional(readOnly = true)
     public TicketResponseDTO validateTicket(String qrCode) {
         log.debug("Validating ticket with QR code: {}", qrCode);
         Ticket ticket = ticketRepository.findByQrCode(qrCode)
@@ -151,14 +156,18 @@ public class TicketService {
         return TicketMapper.toDTO(savedTicket);
     }
 
+    @Transactional(readOnly = true)
     public TicketResponseDTO validateTicketById(Long ticketId) {
+        log.debug("Validating ticket by ID: {}", ticketId);
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
 
         if (ticket.getTicketStatus() == TicketStatus.USED) {
+            log.warn("Ticket validation rejected - already used. Ticket ID: {}", ticketId);
             throw new IllegalArgumentException("Ticket has already been used");
         }
         if (ticket.getTicketStatus() == TicketStatus.CANCELLED) {
+            log.warn("Ticket validation rejected - cancelled. Ticket ID: {}", ticketId);
             throw new IllegalArgumentException("Ticket has been cancelled");
         }
 
@@ -171,15 +180,18 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
 
         if (ticket.getTicketStatus() == TicketStatus.USED) {
+            log.warn("Ticket check-in rejected - already used. Ticket ID: {}", ticketId);
             throw new IllegalArgumentException("Ticket has already been used for check-in");
         }
         if (ticket.getTicketStatus() == TicketStatus.CANCELLED) {
+            log.warn("Ticket check-in rejected - cancelled. Ticket ID: {}", ticketId);
             throw new IllegalArgumentException("Cannot check in a cancelled ticket");
         }
 
         ticket.setTicketStatus(TicketStatus.USED);
         ticket.setCheckInTime(LocalDateTime.now());
         Ticket savedTicket = ticketRepository.save(ticket);
+        log.info("Ticket checked in successfully. Ticket ID: {}, Booking ID: {}", ticketId, ticket.getBooking().getId());
         return TicketMapper.toDTO(savedTicket);
     }
 
