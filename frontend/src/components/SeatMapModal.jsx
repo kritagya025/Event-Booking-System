@@ -149,7 +149,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
   const toggleSeatSelection = (seat) => {
     if (seat.status === 'BOOKED' || seat.status === 'LOCKED') {
-      showToast(`SECTOR TILE ${seat.seatNumber} IS OCCUPIED / LOCKED`, 'error');
+      showToast(`SEAT ${seat.seatNumber} IS CURRENTLY UNAVAILABLE OR HELD`, 'error');
       return;
     }
 
@@ -157,7 +157,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
       setSelectedSeats(selectedSeats.filter(s => s.id !== seat.id));
     } else {
       if (selectedSeats.length >= 6) {
-        showToast('MAXIMUM 6 WRISTBANDS PER TRANSMISSION', 'info');
+        showToast('MAXIMUM 6 SEATS PER BOOKING ORDER', 'info');
         return;
       }
       setSelectedSeats([...selectedSeats, seat]);
@@ -186,9 +186,9 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         calculatedDiscount: discountAmount
       });
 
-      showToast(`AUTH CIPHER ACCEPTED: DEDUCTED ${formatPrice(discountAmount, event.currency)}`, 'success');
+      showToast(`COUPON APPLIED: DEDUCTED ${formatPrice(discountAmount, event.currency)}`, 'success');
     } catch (err) {
-      showToast(err.message || 'INVALID CIPHER CODE', 'error');
+      showToast(err.message || 'INVALID PROMO COUPON CODE', 'error');
       setDiscountInfo(null);
     } finally {
       setValidatingCoupon(false);
@@ -212,7 +212,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
   const handleConfirmBooking = async () => {
     if (!currentUser) {
-      showToast('AUTHENTICATE IDENTITY BEFORE LOCKING TICKETS', 'info');
+      showToast('PLEASE SIGN IN BEFORE COMPLETING RESERVATION', 'info');
       return;
     }
 
@@ -243,7 +243,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           body: JSON.stringify(payload)
         });
       } catch (bErr) {
-        console.warn('Backend booking API notice, generating cryptographic wristband:', bErr);
+        console.warn('Backend booking API notice:', bErr);
       }
 
       if (!bookingResult || !bookingResult.id) {
@@ -284,14 +284,14 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         }
       } catch (cErr) {}
 
-      showToast('WRISTBAND PASS SECURED // ENCLAVE BARCODE ISSUED', 'success');
+      showToast('BOOKING CONFIRMED // DIGITAL E-TICKET PASS ISSUED', 'success');
       if (onBookingSuccess) {
         onBookingSuccess(bookingResult);
       }
       onClose();
     } catch (err) {
       console.error('Booking error:', err);
-      showToast('WRISTBAND PASS SECURED // ENCLAVE BARCODE ISSUED', 'success');
+      showToast('BOOKING CONFIRMED // DIGITAL E-TICKET PASS ISSUED', 'success');
       onClose();
     } finally {
       setBookingLoading(false);
@@ -308,7 +308,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
       >
         {/* Top Slanted Sticker */}
         <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          VAULT://BOUNCER_ENCLAVE
+          EVENTHUB // RESERVATION ENGINE
         </div>
 
         {/* Modal Header */}
@@ -316,18 +316,18 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-                LIVE_ADMITTANCE
+                LIVE SEAT RESERVATION
               </span>
               <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
-                STOMP NODE: {event.id}
+                STOMP TOPIC: /seat-locks/{event.id}
               </span>
             </div>
             <h3 className="font-display text-2xl md:text-3xl uppercase tracking-tight text-grit-white mt-1 leading-none">
               {event.name}
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              VENUE: {event.venueName || 'NORTH INDUSTRIAL DOCKS'} · {availableCount} WRISTBANDS REMAINING
+              VENUE: {event.venueName || 'MAIN ARENA'} · {availableCount} SEATS AVAILABLE
             </p>
           </div>
           <button 
@@ -342,19 +342,19 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         <div className="bg-asphalt-black border-b border-asphalt-border px-5 py-2.5 flex items-center justify-between text-xs font-ticker overflow-x-auto gap-2">
           <div className="flex items-center gap-2">
             <span className={step === 1 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
-              [01] PIT MATRIX
+              [01] SELECT SEATS
             </span>
             <span className="text-grit-dim">→</span>
             <span className={step === 2 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
-              [02] TARIFF REVIEW
+              [02] REVIEW BOOKING
             </span>
             <span className="text-grit-dim">→</span>
             <span className={step === 3 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
-              [03] SETTLE TARIFF
+              [03] PAYMENT METHOD
             </span>
             <span className="text-grit-dim">→</span>
             <span className={step === 4 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
-              [04] ENGRAVE PASS
+              [04] CONFIRMATION
             </span>
           </div>
         </div>
@@ -362,23 +362,23 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         {/* Modal Body */}
         <div className="p-5 md:p-6 max-h-[75vh] overflow-y-auto">
           
-          {/* STEP 1: SELECT SEATS / PIT FLOOR */}
+          {/* STEP 1: SELECT SEATS */}
           {step === 1 && (
             <div>
               {loadingSeats ? (
                 <div className="py-12 flex flex-col items-center justify-center gap-4">
                   <div className="animate-spin w-8 h-8 border-4 border-acid-yellow border-t-transparent"></div>
                   <span className="font-mono-zine text-xs text-acid-yellow uppercase tracking-widest animate-pulse">
-                    FETCHING PIT FLOOR COORD MATRIX...
+                    LOADING SEAT MAP & INVENTORY...
                   </span>
                 </div>
               ) : (
                 <div>
-                  {/* Stage Sound System Screen */}
+                  {/* Stage Screen Banner */}
                   <div className="mb-6 border-2 border-dashed border-asphalt-border bg-asphalt-black p-2.5 text-center">
                     <div className="hazard-tape h-2 w-full mb-2"></div>
                     <span className="font-impact text-grit-dim tracking-widest text-xs uppercase">
-                      ▲ [ 40KW SUBWOOFER WALL / SOUND RIG STAGE ] ▲
+                      ▲ [ STAGE / PERFORMANCE SCREEN ] ▲
                     </span>
                   </div>
 
@@ -430,19 +430,19 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   {/* Legend */}
                   <div className="flex justify-center gap-4 text-[11px] font-mono-zine text-grit-dim pt-4 border-t border-asphalt-border flex-wrap uppercase">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3.5 h-3.5 bg-neon-magenta/30 border border-neon-magenta"></div> VIP TIER
+                      <div className="w-3.5 h-3.5 bg-neon-magenta/30 border border-neon-magenta"></div> VIP SEAT
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3.5 h-3.5 bg-electric-blue/30 border border-electric-blue"></div> PREMIUM
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3.5 h-3.5 bg-asphalt-card border border-asphalt-border"></div> STANDING
+                      <div className="w-3.5 h-3.5 bg-asphalt-card border border-asphalt-border"></div> REGULAR
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3.5 h-3.5 bg-acid-yellow border border-grit-white"></div> LOCKED
+                      <div className="w-3.5 h-3.5 bg-acid-yellow border border-grit-white"></div> SELECTED
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3.5 h-3.5 bg-asphalt-card opacity-30 border border-transparent line-through"></div> ADMITTED
+                      <div className="w-3.5 h-3.5 bg-asphalt-card opacity-30 border border-transparent line-through"></div> BOOKED
                     </div>
                   </div>
                 </div>
@@ -453,8 +453,8 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 <div>
                   <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider block">
                     {selectedSeats.length > 0 
-                      ? `${selectedSeats.length} TILES: ${selectedSeats.map(s => s.seatNumber).join(', ')}`
-                      : 'GENERAL PIT ADMITTANCE (1)'}
+                      ? `${selectedSeats.length} SEAT(S) SELECTED: ${selectedSeats.map(s => s.seatNumber).join(', ')}`
+                      : 'GENERAL ADMISSION (1 TICKET)'}
                   </span>
                   <span className="font-display text-3xl text-acid-yellow font-bold leading-none">
                     {formatPrice(calculateSubtotal(), event.currency)}
@@ -465,7 +465,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   onClick={() => setStep(2)}
                   className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-lg uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
                 >
-                  AUDIT TARIFF <ArrowRight size={16} />
+                  REVIEW BOOKING <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -476,25 +476,25 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
             <div className="space-y-4">
               <div className="bg-asphalt-card border-2 border-asphalt-border p-4">
                 <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block mb-3">
-                  WRISTBAND ALLOCATION SPECIFICATION
+                  TICKET ORDER SUMMARY
                 </span>
                 <div className="space-y-2 font-mono-zine text-xs text-grit-dim uppercase">
                   <div className="flex justify-between">
-                    <span>GIG MANIFEST:</span>
+                    <span>EVENT:</span>
                     <strong className="text-grit-white">{event.name}</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span>TIMING & CURFEW:</span>
+                    <span>DATE & TIME:</span>
                     <span className="text-grit-white">{event.eventDate} @ {event.startTime}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>STOMP SECTOR TILES:</span>
+                    <span>SELECTED SEATS:</span>
                     <span className="text-acid-yellow font-bold">
-                      {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : 'GENERAL PIT (1 PASS)'}
+                      {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : 'GENERAL ADMISSION (1 TICKET)'}
                     </span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-asphalt-border text-sm">
-                    <span>NET TARIFF:</span>
+                    <span>TICKET SUBTOTAL:</span>
                     <strong className="text-grit-white font-impact text-lg">{formatPrice(calculateSubtotal(), event.currency)}</strong>
                   </div>
                 </div>
@@ -503,12 +503,12 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
               {/* Promo Code Input */}
               <div className="bg-asphalt-card border-2 border-asphalt-border p-4">
                 <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-2">
-                  AUTHORIZATION CIPHER / PROMO STAMP
+                  PROMO CODE / DISCOUNT COUPON
                 </label>
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="ENTER CIPHER (E.G. EARLYBIRD)"
+                    placeholder="ENTER COUPON CODE (E.G. EARLYBIRD)"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     className="flex-1 bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
@@ -519,12 +519,12 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     disabled={validatingCoupon}
                     className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black font-impact tracking-wider px-4 uppercase text-sm transition-colors cursor-pointer"
                   >
-                    {validatingCoupon ? 'VERIFYING...' : 'APPLY CIPHER'}
+                    {validatingCoupon ? 'VERIFYING...' : 'APPLY CODE'}
                   </button>
                 </div>
                 {discountInfo && (
                   <div className="mt-2 text-xs font-mono-zine text-acid-yellow flex items-center gap-1.5 uppercase">
-                    <Check size={14} /> CIPHER [{discountInfo.code}] APPLIED: -{formatPrice(discountInfo.calculatedDiscount, event.currency)}
+                    <Check size={14} /> COUPON [{discountInfo.code}] APPLIED: -{formatPrice(discountInfo.calculatedDiscount, event.currency)}
                   </div>
                 )}
               </div>
@@ -535,14 +535,14 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   onClick={() => setStep(1)} 
                   className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
                 >
-                  <ArrowLeft size={14} /> BACK TO MATRIX
+                  <ArrowLeft size={14} /> BACK TO SEATS
                 </button>
                 <button 
                   type="button"
                   onClick={() => setStep(3)} 
                   className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
                 >
-                  PROCEED TO SETTLEMENT <ArrowRight size={16} />
+                  PROCEED TO PAYMENT <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -552,18 +552,18 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           {step === 3 && (
             <div className="space-y-4">
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">
-                SELECT SETTLEMENT PIPELINE
+                SELECT PAYMENT METHOD
               </span>
 
               {/* Payment Method Selector Grid */}
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { id: 'UPI', label: 'UPI INSTANT', icon: Smartphone },
-                  { id: 'CREDIT_CARD', label: 'CREDIT CHIP', icon: CreditCard },
+                  { id: 'CREDIT_CARD', label: 'CREDIT CARD', icon: CreditCard },
                   { id: 'DEBIT_CARD', label: 'DEBIT CARD', icon: CreditCard },
-                  { id: 'NET_BANKING', label: 'WIRE TRANSFER', icon: Landmark },
-                  { id: 'GIFT_CARD', label: 'GIFT CIPHER', icon: Gift },
-                  { id: 'WALLET', label: 'DIGITAL WALLET', icon: Wallet }
+                  { id: 'NET_BANKING', label: 'NET BANKING', icon: Landmark },
+                  { id: 'GIFT_CARD', label: 'GIFT CARD', icon: Gift },
+                  { id: 'WALLET', label: 'WALLET', icon: Wallet }
                 ].map((item) => {
                   const IconComp = item.icon;
                   const isSel = paymentMethod === item.id;
@@ -599,14 +599,14 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             : 'bg-asphalt-surface text-grit-dim border-asphalt-border'
                         }`}
                       >
-                        INPUT VPA HANDLE
+                        ENTER UPI ID
                       </button>
                       <button
                         type="button"
                         onClick={() => {
                           setUpiSubOption('UPI_QR');
                           if (!paymentDetails.upiId) {
-                            setPaymentDetails((prev) => ({ ...prev, upiId: 'vault90s.qr@upi' }));
+                            setPaymentDetails((prev) => ({ ...prev, upiId: 'eventhub.qr@upi' }));
                           }
                         }}
                         className={`py-2 text-xs font-mono-zine uppercase border ${
@@ -615,39 +615,39 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             : 'bg-asphalt-surface text-grit-dim border-asphalt-border'
                         }`}
                       >
-                        SCAN LIVE QR
+                        SCAN UPI QR CODE
                       </button>
                     </div>
 
                     {upiSubOption === 'UPI_ID' ? (
                       <div>
                         <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">
-                          VIRTUAL PAYMENT ADDRESS (VPA) <span className="text-neon-magenta">*</span>
+                          VIRTUAL PAYMENT ADDRESS (VPA / PHONE) <span className="text-neon-magenta">*</span>
                         </label>
                         <input
                           type="text"
                           name="upiId"
                           required
-                          placeholder="HANDLE@OKAXIS / 9876543210@PAYTM"
+                          placeholder="username@okaxis / 9876543210@paytm"
                           value={paymentDetails.upiId}
                           onChange={handleDetailsChange}
-                          className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none uppercase"
+                          className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none"
                         />
                       </div>
                     ) : (
                       <div className="text-center py-4 bg-asphalt-black border border-asphalt-border p-4">
                         <span className="font-mono-zine text-xs text-grit-dim uppercase block mb-3">
-                          SCAN TRANSMISSION CIPHER WITH GPAY / PHONEPE / PAYTM
+                          SCAN WITH GPAY / PHONEPE / PAYTM / BHIM TO PAY INSTANTLY
                         </span>
                         <div className="inline-block p-3 bg-white border-2 border-grit-white shadow-[4px_4px_0px_#eefc54]">
                           <img 
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=vault90s@upi%26pn=Vault90s%26am=${calculateFinalTotal().toFixed(2)}%26cu=${event?.currency || 'INR'}`} 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=eventhub@upi%26pn=EventHub%26am=${calculateFinalTotal().toFixed(2)}%26cu=${event?.currency || 'INR'}`} 
                             alt="UPI QR"
                             className="w-36 h-36 block"
                           />
                         </div>
                         <span className="font-mono-zine text-xs text-acid-yellow block mt-3 font-bold">
-                          TARIFF AMOUNT: {formatPrice(calculateFinalTotal(), event?.currency)}
+                          TOTAL AMOUNT: {formatPrice(calculateFinalTotal(), event?.currency)}
                         </span>
                       </div>
                     )}
@@ -658,7 +658,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   <div className="space-y-3 font-mono-zine text-xs uppercase">
                     <div>
                       <label className="block text-grit-dim mb-1">CARDHOLDER NAME</label>
-                      <input type="text" name="cardHolder" required placeholder="J. DOE" value={paymentDetails.cardHolder} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none uppercase" />
+                      <input type="text" name="cardHolder" required placeholder="John Doe" value={paymentDetails.cardHolder} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
                     </div>
                     <div>
                       <label className="block text-grit-dim mb-1">CARD NUMBER</label>
@@ -679,12 +679,12 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
                 {paymentMethod === 'NET_BANKING' && (
                   <div>
-                    <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">SELECT CLEARING BANK</label>
+                    <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">SELECT BANK</label>
                     <select name="bankName" value={paymentDetails.bankName} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 outline-none uppercase">
-                      <option value="HDFC Bank">HDFC BANK INDUSTRIAL</option>
+                      <option value="HDFC Bank">HDFC BANK</option>
                       <option value="State Bank of India">STATE BANK OF INDIA (SBI)</option>
-                      <option value="ICICI Bank">ICICI PROTOCOL</option>
-                      <option value="Axis Bank">AXIS COMMERCE</option>
+                      <option value="ICICI Bank">ICICI BANK</option>
+                      <option value="Axis Bank">AXIS BANK</option>
                     </select>
                   </div>
                 )}
@@ -692,8 +692,8 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 {paymentMethod === 'GIFT_CARD' && (
                   <div className="grid grid-cols-2 gap-3 font-mono-zine text-xs uppercase">
                     <div>
-                      <label className="block text-grit-dim mb-1">GIFT CIPHER VOUCHER</label>
-                      <input type="text" name="giftCardCode" required placeholder="GIFT-90S-XXXX" value={paymentDetails.giftCardCode} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none uppercase" />
+                      <label className="block text-grit-dim mb-1">GIFT CARD VOUCHER</label>
+                      <input type="text" name="giftCardCode" required placeholder="GIFT-2026-XXXX" value={paymentDetails.giftCardCode} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
                     </div>
                     <div>
                       <label className="block text-grit-dim mb-1">SECURITY PIN</label>
@@ -705,7 +705,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 {paymentMethod === 'WALLET' && (
                   <div className="grid grid-cols-2 gap-3 font-mono-zine text-xs uppercase">
                     <div>
-                      <label className="block text-grit-dim mb-1">WALLET PROTOCOL</label>
+                      <label className="block text-grit-dim mb-1">WALLET PROVIDER</label>
                       <select name="walletType" value={paymentDetails.walletType} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none uppercase">
                         <option value="Paytm">PAYTM WALLET</option>
                         <option value="PhonePe">PHONEPE</option>
@@ -713,7 +713,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       </select>
                     </div>
                     <div>
-                      <label className="block text-grit-dim mb-1">REGISTERED COMM FREQ</label>
+                      <label className="block text-grit-dim mb-1">REGISTERED MOBILE NUMBER</label>
                       <input type="tel" name="walletPhone" required placeholder="+91 9876543210" value={paymentDetails.walletPhone} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
                     </div>
                   </div>
@@ -733,7 +733,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   onClick={() => setStep(4)} 
                   className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
                 >
-                  REVIEW FINAL PASS <ArrowRight size={16} />
+                  REVIEW ORDER <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -745,7 +745,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
               <div className="bg-asphalt-card border-4 border-grit-white p-5 shadow-[6px_6px_0px_#ff1f6d]">
                 <div className="flex justify-between items-center border-b border-asphalt-border pb-3 mb-3">
                   <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5 uppercase">
-                    CRYPTOGRAPHIC PASS DISPATCH
+                    ORDER CONFIRMATION & E-TICKET
                   </span>
                   <span className="font-ticker text-[10px] text-acid-yellow uppercase">
                     STOMP VERIFIED
@@ -754,21 +754,21 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
                 <div className="space-y-2 font-mono-zine text-xs text-grit-dim uppercase">
                   <div className="flex justify-between">
-                    <span>EVENT GIG:</span>
+                    <span>EVENT:</span>
                     <strong className="text-grit-white">{event.name}</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span>SECTOR TILES:</span>
+                    <span>RESERVED SEATS:</span>
                     <strong className="text-acid-yellow">
-                      {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : '1 GENERAL PIT WRISTBAND'}
+                      {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : '1 GENERAL ADMISSION TICKET'}
                     </strong>
                   </div>
                   <div className="flex justify-between">
-                    <span>SETTLEMENT METHOD:</span>
+                    <span>PAYMENT METHOD:</span>
                     <strong className="text-grit-white">{paymentMethod.replace('_', ' ')}</strong>
                   </div>
                   <div className="flex justify-between pt-3 border-t-2 border-dashed border-asphalt-border text-base font-bold">
-                    <span className="text-grit-white">FINAL PAYABLE TARIFF:</span>
+                    <span className="text-grit-white">TOTAL PAYABLE:</span>
                     <span className="text-acid-yellow font-display text-2xl">
                       {formatPrice(calculateFinalTotal(), event.currency)}
                     </span>
@@ -777,7 +777,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
                 {/* Decorative Barcode */}
                 <div className="mt-4 pt-3 border-t border-asphalt-border flex items-center justify-between opacity-50">
-                  <span className="font-ticker text-[9px] text-grit-dim uppercase">ENCLAVE BARCODE PASS #V90-{event.id}</span>
+                  <span className="font-ticker text-[9px] text-grit-dim uppercase">TICKET CODE #EHB-{event.id}</span>
                   <svg className="h-5 w-32" viewBox="0 0 128 20" fill="currentColor">
                     <rect x="0" y="0" width="3" height="20"/>
                     <rect x="5" y="0" width="2" height="20"/>
@@ -811,7 +811,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   disabled={bookingLoading}
                   className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
                 >
-                  <ArrowLeft size={14} /> EDIT SETTLEMENT
+                  <ArrowLeft size={14} /> EDIT PAYMENT
                 </button>
                 <button 
                   type="button"
@@ -819,7 +819,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   disabled={bookingLoading}
                   className="bg-neon-magenta text-grit-white font-impact tracking-wider text-lg uppercase px-6 py-3 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer disabled:opacity-50"
                 >
-                  {bookingLoading ? 'ENGRAVING WRISTBAND...' : `AUTHORIZE & ISSUE PASS (${formatPrice(calculateFinalTotal(), event.currency)})`}
+                  {bookingLoading ? 'PROCESSING RESERVATION...' : `CONFIRM & PAY (${formatPrice(calculateFinalTotal(), event.currency)})`}
                 </button>
               </div>
             </div>

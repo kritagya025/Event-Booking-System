@@ -23,7 +23,7 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
       >
         {/* Slanted Tape Badge */}
         <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          VAULT://SESSION_COOKIES
+          EVENTHUB://COOKIE_PREFERENCES
         </div>
 
         {/* Header */}
@@ -71,7 +71,7 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
             <div>
               <span className="font-impact text-base text-grit-white tracking-wider block">LOCAL PASS CACHING</span>
               <p className="text-[11px] text-grit-dim uppercase mt-1">
-                PRESERVES RECENTLY ENGRAVED WRISTBANDS IN BROWSER LOCALSTORAGE FOR OFFLINE SCANNING.
+                PRESERVES RECENT TICKET PASSES IN LOCALSTORAGE FOR FAST OFFLINE ACCESS.
               </p>
             </div>
             <input 
@@ -86,7 +86,7 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
             <div>
               <span className="font-impact text-base text-grit-white tracking-wider block">TELEMETRY DIAGNOSTICS</span>
               <p className="text-[11px] text-grit-dim uppercase mt-1">
-                MEASURES REST API ROUND-TRIP LATENCY AND SUBWOOFER CONCURRENCY SPIKES.
+                MEASURES REST API ROUND-TRIP LATENCY AND REAL-TIME SEAT LOCK CONCURRENCY.
               </p>
             </div>
             <input 

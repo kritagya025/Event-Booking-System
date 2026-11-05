@@ -29,10 +29,10 @@ export default function AdminDashboard({ showToast }) {
   };
 
   const handleDeleteEvent = async (eventId, eventName) => {
-    if (!window.confirm(`ARE YOU SURE YOU WANT TO REMOVE GIG "${eventName || 'THIS GIG'}" FROM THE ARCHIVE?`)) return;
+    if (!window.confirm(`ARE YOU SURE YOU WANT TO REMOVE EVENT "${eventName || 'THIS EVENT'}" FROM THE CATALOG?`)) return;
     try {
       await apiFetch(`/events/${eventId}`, { method: 'DELETE' });
-      showToast('GIG REMOVED FROM WAREHOUSE CATALOG', 'success');
+      showToast('EVENT REMOVED FROM EVENT CATALOG', 'success');
       fetchAdminData();
     } catch (err) {
       showToast(err.message || 'FAILED TO REMOVE EVENT', 'error');
@@ -48,9 +48,9 @@ export default function AdminDashboard({ showToast }) {
     upcomingEventsCount: 18,
     cancelledEventsCount: 2,
     popularEvents: [
-      { id: 1, name: 'MAHLER 203: RESURRECTION RAVE', category: 'TECHNO', ticketPrice: 30.00, availableSeats: 50 },
-      { id: 2, name: 'EURO-RACK NOISE BIENNALE', category: 'INDUSTRIAL', ticketPrice: 22.00, availableSeats: 37 },
-      { id: 3, name: 'KAVINSKY: REBORN WAREHOUSE', category: 'SYNTHWAVE', ticketPrice: 35.00, availableSeats: 66 }
+      { id: 1, name: 'GLOBAL DEVELOPER SUMMIT 2026', category: 'TECH', ticketPrice: 49.00, availableSeats: 50 },
+      { id: 2, name: 'SYMPHONIC LIVE ORCHESTRA', category: 'MUSIC', ticketPrice: 35.00, availableSeats: 37 },
+      { id: 3, name: 'AI & NEURAL ARCHITECTURE EXPO', category: 'TECH', ticketPrice: 75.00, availableSeats: 66 }
     ]
   };
 
@@ -77,18 +77,18 @@ export default function AdminDashboard({ showToast }) {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
-              VAULT://ADMIN_RIG
+              EVENTHUB://ADMIN_CONSOLE
             </span>
             <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
-              LIVE STOMP METRICS NODE
+              LIVE PLATFORM METRICS
             </span>
           </div>
           <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
-            SYSTEM TELEMETRY & TARIFF AUDIT
+            SYSTEM TELEMETRY & REVENUE AUDIT
           </h1>
           <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
-            DATABASE TRANSACTIONS, WRISTBAND COUNTERS, AND SUBWOOFER CONCURRENCY LOGS
+            DATABASE TRANSACTIONS, TICKET RESERVATIONS, AND SEAT LOCK CONCURRENCY
           </p>
         </div>
 
@@ -96,14 +96,14 @@ export default function AdminDashboard({ showToast }) {
           onClick={fetchAdminData} 
           className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer flex items-center gap-1.5"
         >
-          <Activity size={14} /> RE-SCAN TELEMETRY
+          <Activity size={14} /> REFRESH TELEMETRY
         </button>
       </div>
 
       {/* 4 Brutalist Metric Stamps */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-asphalt-surface border-4 border-grit-white p-5 shadow-[6px_6px_0px_#eefc54] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL TARIFF REVENUE</span>
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PLATFORM REVENUE</span>
           <span className="font-display text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
             {formatPrice(displayTotalRevenue)}
           </span>
@@ -113,32 +113,32 @@ export default function AdminDashboard({ showToast }) {
         </div>
 
         <div className="bg-asphalt-surface border-4 border-grit-white p-5 shadow-[6px_6px_0px_#ff1f6d] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">WRISTBANDS ISSUED</span>
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TICKETS ISSUED</span>
           <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {dbBookingsCount.toLocaleString()}
           </span>
           <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
-            STOMP VERIFIED ADMITTANCE
+            STOMP VERIFIED RESERVATIONS
           </span>
         </div>
 
         <div className="bg-asphalt-surface border-4 border-grit-white p-5 shadow-[6px_6px_0px_#1d4ed8] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">CREW HANDLES</span>
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">REGISTERED USERS</span>
           <span className="font-display text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
             {dbUsersCount.toLocaleString()}
           </span>
           <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
-            REGISTERED RAVERS & SOUND RIGS
+            REGISTERED ATTENDEES & ORGANIZERS
           </span>
         </div>
 
         <div className="bg-asphalt-surface border-4 border-grit-white p-5 shadow-[6px_6px_0px_#ffffff] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">CATALOGED GIGS</span>
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">PUBLISHED EVENTS</span>
           <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {dbEventsCount}
           </span>
           <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
-            ACTIVE WAREHOUSE SESSIONS
+            ACTIVE LIVE EVENTS
           </span>
         </div>
       </div>
@@ -149,7 +149,7 @@ export default function AdminDashboard({ showToast }) {
         {/* Top Performing Events */}
         <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#eefc54]">
           <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-acid-yellow"></span> TOP HIGH-VOLTAGE GIGS
+            <span className="w-2.5 h-2.5 bg-acid-yellow"></span> TOP POPULAR EVENTS
           </h3>
           <div className="space-y-3">
             {metrics.popularEvents?.map((event, idx) => (
@@ -191,7 +191,7 @@ export default function AdminDashboard({ showToast }) {
         {/* System Infrastructure */}
         <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#ff1f6d]">
           <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-neon-magenta"></span> RIG PROTOCOL & HARDWARE STATE
+            <span className="w-2.5 h-2.5 bg-neon-magenta"></span> SYSTEM PROTOCOL & INFRASTRUCTURE STATE
           </h3>
           <div className="space-y-2.5 font-mono-zine text-xs uppercase">
             <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
@@ -201,19 +201,19 @@ export default function AdminDashboard({ showToast }) {
               </span>
             </div>
             <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
-              <span className="text-grit-dim">STOMP SEAT CACHE</span>
+              <span className="text-grit-dim">SEAT LOCK CACHE</span>
               <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs">
-                REDIS ISOLATED LOCKS
+                REDIS DISTRIBUTED LOCKS
               </span>
             </div>
             <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
-              <span className="text-grit-dim">AUTH DISPATCH PIPELINE</span>
+              <span className="text-grit-dim">AUTH SECURITY PIPELINE</span>
               <span className="bg-neon-magenta text-grit-white font-impact px-2 py-0.5 text-xs">
                 HTTPONLY JWT COOKIE
               </span>
             </div>
             <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
-              <span className="text-grit-dim">SOCKET CONCURRENCY</span>
+              <span className="text-grit-dim">WEBSOCKET CONCURRENCY</span>
               <span className="text-acid-yellow font-bold">
                 100% OPERATIONAL (10 REQ/MIN)
               </span>

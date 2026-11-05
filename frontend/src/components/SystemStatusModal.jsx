@@ -78,7 +78,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
       >
         {/* Slanted Tape Badge */}
         <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          VAULT://TELEMETRY_RIG
+          EVENTHUB://SYSTEM_TELEMETRY
         </div>
 
         {/* Header */}
@@ -117,10 +117,10 @@ export default function SystemStatusModal({ isOpen, onClose }) {
               <div className="w-3.5 h-3.5 bg-acid-yellow animate-pulse"></div>
               <div>
                 <div className="font-impact text-base uppercase text-grit-white tracking-wider">
-                  {apiStatus === 'operational' ? 'ALL SOUND RIG SYSTEMS NOMINAL' : 'BACKEND RIG STANDBY / TESTING'}
+                  {apiStatus === 'operational' ? 'ALL PLATFORM SERVICES OPERATIONAL' : 'BACKEND SERVICES STANDBY / TESTING'}
                 </div>
                 <div className="font-mono-zine text-[11px] text-grit-dim uppercase">
-                  ZERO PACKET LOSS DETECTED ON CORE WAREHOUSE BUS
+                  ZERO PACKET LOSS DETECTED ACROSS INFRASTRUCTURE NODES
                 </div>
               </div>
             </div>

@@ -48,12 +48,12 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   const tables = [
-    { name: 'EVENTS', rows: stats.eventsCount || 12, description: 'CATALOG OF LIVE RAVES, DOCK SESSIONS & FLYERS' },
-    { name: 'BOOKINGS', rows: stats.bookingsCount || 48, description: 'ATTENDEE WRISTBAND ALLOCATIONS & STOMP LOGS' },
-    { name: 'TICKETS', rows: (stats.bookingsCount || 48) * 2, description: 'CRYPTOGRAPHIC BARCODE & QR PASS WATERMARKS' },
-    { name: 'USERS', rows: stats.usersCount || 15, description: 'AUTHENTICATED CREW IDENTITIES & SOUND RIGS' },
-    { name: 'VENUES', rows: 8, description: 'NORTH DOCKS WAREHOUSES, REFRIGERATOR SQUATS & BAYS' },
-    { name: 'SEATS', rows: 240, description: 'PIT FLOOR SUB-ARRAY COORD MATRIX (F1, M2, B3)' }
+    { name: 'EVENTS', rows: stats.eventsCount || 12, description: 'CATALOG OF LIVE CONCERTS, CONFERENCES & WORKSHOPS' },
+    { name: 'BOOKINGS', rows: stats.bookingsCount || 48, description: 'ATTENDEE TICKET RESERVATIONS & STOMP LOGS' },
+    { name: 'TICKETS', rows: (stats.bookingsCount || 48) * 2, description: 'CRYPTOGRAPHIC BARCODE & QR ADMISSION PASSES' },
+    { name: 'USERS', rows: stats.usersCount || 15, description: 'AUTHENTICATED ATTENDEE & ORGANIZER ACCOUNTS' },
+    { name: 'VENUES', rows: 8, description: 'ARENAS, CONVENTION CENTERS, THEATERS & AUDITORIUMS' },
+    { name: 'SEATS', rows: 240, description: 'VENUE SEATING MATRIX & RESERVATION TILES' }
   ];
 
   return (
@@ -64,7 +64,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
       >
         {/* Slanted Tape Badge */}
         <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          VAULT://SQL_CONSOLE
+          EVENTHUB://DB_CONSOLE
         </div>
 
         {/* Header */}

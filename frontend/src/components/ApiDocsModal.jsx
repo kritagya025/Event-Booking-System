@@ -12,40 +12,40 @@ export default function ApiDocsModal({ isOpen, onClose }) {
       method: 'POST',
       path: '/api/auth/login',
       category: 'Auth',
-      summary: 'CREW AUTHENTICATION',
+      summary: 'USER AUTHENTICATION',
       description: 'AUTHENTICATES USER CREDENTIALS AND ISSUES HTTPONLY SESSION ACCESS COOKIES.',
-      body: '{\n  "email": "crew@underground.net",\n  "password": "passphrase"\n}'
+      body: '{\n  "email": "user@eventhub.com",\n  "password": "passphrase"\n}'
     },
     {
       method: 'POST',
       path: '/api/auth/register',
       category: 'Auth',
-      summary: 'IDENTITY PASS REGISTRATION',
-      description: 'CREATES A NEW CUSTOMER OR ORGANIZER SOUND RIG PROFILE.',
-      body: '{\n  "firstName": "Alex",\n  "lastName": "Kane",\n  "email": "alex@underground.net",\n  "role": "CUSTOMER"\n}'
+      summary: 'ACCOUNT REGISTRATION',
+      description: 'CREATES A NEW CUSTOMER OR EVENT ORGANIZER PROFILE.',
+      body: '{\n  "firstName": "Alex",\n  "lastName": "Kane",\n  "email": "alex@eventhub.com",\n  "role": "CUSTOMER"\n}'
     },
     {
       method: 'GET',
       path: '/api/events',
       category: 'Events',
-      summary: 'WAREHOUSE FLYER CATALOG',
-      description: 'RETURNS PAGINATED GIGS WITH INDUSTRIAL VENUE AND TARIFF SPECIFICATIONS.',
+      summary: 'EVENT CATALOG DISPATCH',
+      description: 'RETURNS PAGINATED EVENTS WITH VENUE AND TICKET PRICING SPECIFICATIONS.',
       queryParams: '?category=MUSIC&minPrice=20'
     },
     {
       method: 'POST',
       path: '/api/bookings',
       category: 'Bookings',
-      summary: 'LOCK WRISTBANDS & ALLOCATE TILES',
-      description: 'ENGRAVES STOMP SECTOR TILES FOR 10 MINUTES WITH CRYPTOGRAPHIC WATERMARK.',
+      summary: 'RESERVE TICKETS & LOCK SEATS',
+      description: 'LOCKS SEATS FOR 10 MINUTES VIA STOMP CONCURRENCY WITH CRYPTOGRAPHIC WATERMARK.',
       body: '{\n  "eventId": 1,\n  "seatIds": [1, 2],\n  "couponCode": "EARLYBIRD"\n}'
     },
     {
       method: 'GET',
       path: '/api/checkin/validate/{code}',
       category: 'Gate Entry',
-      summary: 'BOUNCER SCANNER CIPHER AUDIT',
-      description: 'VERIFIES OPTICAL QR BARCODE SIGNATURE AT WAREHOUSE DOCK ADMITTANCE GATE.'
+      summary: 'GATE QR TICKET VERIFICATION',
+      description: 'VERIFIES OPTICAL QR BARCODE SIGNATURE AT VENUE ADMISSION GATE.'
     }
   ];
 
@@ -68,7 +68,7 @@ export default function ApiDocsModal({ isOpen, onClose }) {
       >
         {/* Slanted Tape Badge */}
         <div className="absolute -top-4 -right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          VAULT://REST_SPEC
+          EVENTHUB://REST_API
         </div>
 
         {/* Header */}
@@ -83,10 +83,10 @@ export default function ApiDocsModal({ isOpen, onClose }) {
               </span>
             </div>
             <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
-              REST & STOMP CIPHER PROTOCOL
+              REST & WEBSOCKET STOMP API
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              ENDPOINTS FOR SOUND RIGS, BOUNCER SCANNERS & HARDWARE CLIENTS
+              API SPECIFICATION FOR FRONTEND CLIENTS, GATE SCANNERS & ORGANIZERS
             </p>
           </div>
           <button 

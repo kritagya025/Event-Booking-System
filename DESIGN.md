@@ -1,31 +1,34 @@
-# VAULT://90s Underground Warehouse Acid-Zine Protocol
+# EVENTHUB: Brutalist Live Event Ticketing & Seat Reservation System
 ## Design System & Component Architecture Specification
 
 ---
 
 ## 1. Executive Summary & Design Vision
 
-**VAULT://90s** is a raw, brutalist, underground warehouse club flyer & acid-zine design system engineered for an uncompromising industrial event booking experience. Departing completely from modern sanitized SaaS software and generic AI-generated interface tropes, VAULT://90s captures the visceral energy of 1990s illegal warehouse raves, DIY photocopied fanzines, magnetic tape cassette dubs, concrete subwoofer clusters, and high-voltage industrial machinery.
+**EVENTHUB** is a high-impact, raw brutalist live event ticketing and real-time seat reservation platform. Engineered to break away from sanitized, generic AI-generated SaaS templates, EventHub combines high-contrast industrial aesthetics (hazard tapes, solid offset drop-shadow stamps, monospaced typography, and sharp 0px borders) with enterprise-grade ticketing capabilities:
 
-Every pixel is textured with photocopy grit, high-contrast monochrome printing artifacts, diagonal hazard warning tapes, and cryptographic pass stubs.
+- **Distributed Concurrency**: 10-minute isolated seat holds via real-time WebSocket STOMP messaging backed by Redis mutex locks.
+- **Cryptographic Admission**: Unique tamper-proof QR code generation, PDF export stubs, and sub-second optical gate scanners.
+- **Full Catalog Dispatch**: Multi-category live event discovery (Concerts, Conferences, Theater, Sports, and Workshops) with real-time seat inventory counters.
+- **Role-Based Workflows**: Dedicated dashboards for attendees (My Bookings, QR Tickets, Wishlist) and event organizers (Event Creation, Capacity Quotas, Sales Telemetry).
 
 ---
 
 ## 2. Anti-AI Design Compliance
 
-VAULT://90s explicitly systematically eliminates common AI-generated interface tropes:
+EVENTHUB deliberately eliminates common AI-generated design tells:
 
-| AI Interface Tell | Replacement in VAULT://90s |
+| AI Interface Tell | Replacement in EVENTHUB |
 | :--- | :--- |
 | Harsh generic purple gradients | Asphalt Black (`#0e0e11`) with Acid Yellow (`#eefc54`) & Neon Magenta (`#ff1f6d`) |
-| Pure white backgrounds | Photocopy grit & asphalt surface textures |
-| Heavy drop shadows & liquid glass | Hard 3D offset solid black/white/acid shadow stamps (`shadow-[4px_4px_0px_#ffffff]`) |
-| Generic soft rounded corners | Strict rectangular geometry (`rounded-none` or sharp 0px borders) |
-| Standard Inter/Geist/Space Grotesk | Tripartite brutalist fonts: `Bebas Neue` (display), `Oswald` (impact), `Courier Prime` (mono-zine), `JetBrains Mono` (ticker) |
-| Floating radial gradient orbs | Repeating hazard tape stripes (`#eefc54` & `#0e0e11` at -45deg) and halftone dots |
-| Bento grids & 3 pricing tiers | Industrial Pit Floor standing matrix, flyer decks, and real-time STOMP mutex lockers |
-| Fake testimonials & sparkle icons | Live telemetry: 40KW subwoofer peak dB SPL, active WebSocket channels, and cryptographic verification |
-| Generic Lucide emojis | Industrial vector symbols and monospaced technical stubs |
+| Pure white backgrounds | High-contrast asphalt surfaces with subtle tactile grit texture |
+| Heavy liquid glass drop shadows | Hard 3D offset solid black/white/acid shadow stamps (`shadow-[4px_4px_0px_#ffffff]`) |
+| Soft generic rounded corners | Strict rectangular geometry (`rounded-none` and sharp 0px borders) |
+| Standard Inter / Geist / Space Grotesk | Tripartite brutalist typography: `Bebas Neue` (display), `Oswald` (impact/buttons), `Courier Prime` (monospace labels), `JetBrains Mono` (real-time telemetry) |
+| Floating radial gradient orbs | Repeating diagonal hazard warning stripes (`#eefc54` & `#0e0e11` at -45deg) |
+| Bento grids & 3 pricing tiers | Real-time interactive seating matrix, perforated admission stubs, and STOMP concurrency hold indicators |
+| Fake testimonials & sparkle icons | Live telemetry: real-time database health, active WebSocket connection counters, and cryptographic QR signatures |
+| Default generic Lucide emojis | Clean industrial vector icons, technical badges, and monospaced timestamps |
 
 ---
 
@@ -37,16 +40,16 @@ VAULT://90s explicitly systematically eliminates common AI-generated interface t
 | :--- | :--- | :--- |
 | `acid-yellow` | `#eefc54` | Primary high-voltage accent, ticket highlights, primary CTA stamps |
 | `acid-yellow-hover` | `#dbed2d` | Active interactive hover state for acid yellow controls |
-| `neon-magenta` | `#ff1f6d` | Admittance urgency, VIP passes, secret gate warnings, security badges |
+| `neon-magenta` | `#ff1f6d` | Booking status badges, VIP passes, gate scanners, urgent warnings |
 | `neon-magenta-dark` | `#d40c50` | Active state for magenta controls |
-| `electric-cobalt` | `#1d4ed8` | Sound rig telemetry, STOMP socket indicators, cassette edition tags |
+| `electric-cobalt` | `#1d4ed8` | System telemetry badges, active WebSocket indicators, category tags |
 | `asphalt-black` | `#0e0e11` | Primary base canvas, high-contrast dark room background |
-| `asphalt-surface` | `#16161c` | Elevated card container frames, navigation bars, bouncer enclave |
+| `asphalt-surface` | `#16161c` | Elevated card container frames, navigation bars, modal overlays |
 | `asphalt-card` | `#1b1c24` | Input fields, sub-panels, perforated tear stub backing |
 | `asphalt-border` | `#2c2d3a` | Dividers, structural grid borders, dashed perforations |
-| `grit-white` | `#f5f5f0` | High-contrast photocopy typography, bold borders, sharp shadows |
-| `grit-dim` | `#90929e` | Monospace metadata, secondary coordinates, ticket specs |
-| `danger-red` | `#ff3333` | Hard gate denial, invalid cipher codes, ticket cancellation |
+| `grit-white` | `#f5f5f0` | High-contrast typography, bold structural borders, sharp offset stamps |
+| `grit-dim` | `#90929e` | Monospace metadata, secondary location coordinates, ticket specifications |
+| `danger-red` | `#ff3333` | Gate entry denial, invalid ticket codes, booking cancellations |
 
 ---
 
@@ -55,66 +58,65 @@ VAULT://90s explicitly systematically eliminates common AI-generated interface t
 ```
 Display Headings  →  'Bebas Neue', sans-serif (Tight letter spacing, uppercase, bold)
 Impact & Badges   →  'Oswald', sans-serif (Heavyweight industrial stamps, button CTAs)
-Body & Manifesto  →  'Courier Prime', monospace (Raw typewriter fanzine text)
-Ticker & Stubs    →  'JetBrains Mono', monospace (Real-time telemetry, barcodes, serials)
+Monospace Labels  →  'Courier Prime', monospace (Technical specs, event descriptions)
+Telemetry Tickers →  'JetBrains Mono', monospace (Real-time seat timers, barcodes, serials)
 ```
 
 | Hierarchy | Font | Size | Weight | Application |
 | :--- | :--- | :--- | :--- | :--- |
-| Zine Hero Title | `Bebas Neue` | `clamp(2.5rem, 7vw, 5.5rem)` | 800 | Top hero manifesto banner |
-| Section Header | `Bebas Neue` | `2.25rem - 3.5rem` | 700 | Flyer deck, Stage bouncer titles |
-| Flyer Title | `Oswald` | `1.35rem - 1.65rem` | 700 | Event card names, modal headings |
-| Button CTA | `Oswald` | `1.05rem - 1.25rem` | 700 | "LOCK WRISTBAND", "CLAIM PASS" |
-| Zine Manifesto | `Courier Prime` | `0.85rem - 0.95rem` | 400 | Rules of engagement, event manifests |
+| Hero Title | `Bebas Neue` | `clamp(2.5rem, 7vw, 5.5rem)` | 800 | Main hero headline banner |
+| Section Header | `Bebas Neue` | `2.25rem - 3.5rem` | 700 | Upcoming events, Seat matrix headers |
+| Card Title | `Oswald` | `1.35rem - 1.65rem` | 700 | Event card names, modal headings |
+| Button CTA | `Oswald` | `1.05rem - 1.25rem` | 700 | "BOOK TICKETS", "SELECT SEATS" |
+| Specifications | `Courier Prime` | `0.85rem - 0.95rem` | 400 | Event details, venue addresses |
 | Barcode Stub | `JetBrains Mono` | `0.70rem - 0.75rem` | 700 | Live socket counters, ticket serials |
 
 ---
 
 ## 5. Structural Components
 
-### 5.1 High Voltage Hazard Warning Marquee
-- Top sticky ribbon with repeating diagonal yellow/black warning tape (`-45deg`).
-- Continuous CSS keyframe marquee announcing sound system safety regulations, no-camera policies, and curfew times.
+### 5.1 Platform Protocol Notice Marquee
+- Sticky top ribbon with repeating diagonal yellow/black warning tape (`-45deg`).
+- Continuous CSS marquee announcing live STOMP seat mutex active, 10-minute hold window, cryptographic QR tickets, and multi-currency exchange rates.
 
-### 5.2 Brutalist Rave Navigation Bar
-- Stamped `VAULT://90s` brand logo tilted `-2deg` with neon magenta 3D drop shadow.
-- Stamped flyer navigation pills (`FLYER ARCHIVE`, `LINEUP & GIGS`, `40KW RIG STATUS`, `SECRET COORDS`).
-- Role-based tabs: `SAVED TAPES`, `MY WRISTBANDS`, `HOST RAVE`, `GATE SCANNER`, `ADMIN RIG`.
-- Currency converter dropdown with brutalist offset shadow.
-- Live wristband availability counter (`#992 / 1200`).
+### 5.2 Brutalist Navigation Bar
+- Stamped `EVENTHUB` brand logo tilted `-2deg` with neon magenta 3D drop shadow.
+- Real-time platform status indicator (`REAL-TIME SEAT RESERVATION & PASSES`).
+- Role-based tabs: `EXPLORE EVENTS`, `ALL CATALOG`, `WISHLIST`, `MY TICKETS`, `CREATE EVENT`, `GATE SCANNER`, `ADMIN DASHBOARD`.
+- Multi-currency selector (USD, EUR, GBP, JPY, CAD, AUD, INR) with instant dynamic rate conversions.
+- Live inventory counter displaying verified tickets available.
 
-### 5.3 90s Acid-Zine Hero Section
-- Raw photocopy grit texture overlay.
-- Tilted magenta stamp: `★ ALL NIGHT LONG // NO GUESTLIST ★`.
-- Concrete industrial sound system specs: `40KW FUNKTION`, `32-MG SOCKET`, `OH OVERDRIVEN`, `TAPE / QR PASS`.
-- Interactive spinning C-90 chrome cassette graphic with spinning tape reels, tape counter, and cryptographic verification tag.
+### 5.3 High-Impact Hero Section
+- Clean brutalist headline: `LIVE EVENT TICKETING & SEAT RESERVATIONS.`
+- Technical metadata stamps: `SPRING BOOT 3.4`, `10-MIN MUTEX`, `POSTGRESQL TLS`, `QR + PDF PASS`.
+- Interactive Digital Admission Pass graphic with spinning reels, ticket serial `#EHB-PASS-2026-90`, and verified security seal.
 
-### 5.4 High-Voltage Rave Radar (Search & Filtering)
+### 5.4 Live Inventory Search & Radar
 - Acid-yellow search capsule with monospaced inputs:
-  - Genre / Collective / Gig keyword search
-  - Squats & Docks location selector
-  - Curfew window selector (`MIDNIGHT TO 06:00 AM (RAW)`)
-  - "RAVE RADAR" neon-magenta trigger button
+  - Event title / Performer keyword search
+  - Venue location selector (All Venues, Arenas, Convention Centers)
+  - Date & Schedule filter
+  - "DISPATCH RADAR" trigger button
 
-### 5.5 Flyer Deck Admittance Cards
-- Tilted angular badges (`17-OCT // DECAY 01`, `HARDCORE ONLY`, `10*TAPE DROPPED`).
-- High-contrast grayscale event imagery with industrial photocopy grain.
-- Perforated hazard tear lines separating the upper artwork from the admittance stub.
-- Monospaced tariff display, available wristband counter, and high-density SVG barcode strips.
-- "RUSH ENTRY" action button.
+### 5.5 Event Admission Cards
+- Tilted angular badges (`FEATURED EVENT`, `SELLING FAST`, `VIP AVAILABLE`).
+- Grayscale event imagery with high-contrast filter.
+- Perforated dashed lines separating upper banner artwork from admission ticket details.
+- Monospaced price display, remaining seat count, and SVG barcode validation strips.
+- Direct CTA: "SELECT SEATS" triggering interactive seat map modal.
 
-### 5.6 Stage Bouncer Pit Floor Conclave (Interactive Seat Matrix)
-- Interactive grid of Pit Floor Standing Tiles (`F1`, `M2`, `B3`, etc.).
-- Real-time STOMP WebSocket status synchronization (Available, Selected, Locked, Booked).
-- 10-minute isolated seat lock countdown timer.
-- Live tariff calculation and "LOCK WRISTBAND & GET COORDS" checkout button.
+### 5.6 Interactive Seat Map & Lock System
+- Real-time grid of Stage & Arena Floor Seating (`ROW A`, `ROW B`, `ROW C`).
+- Visual seat states: Available, Selected, Locked by other users, Booked.
+- Distributed 10-minute reservation countdown timer synchronized via STOMP WebSockets.
+- Dynamic order summary with coupon validation, subtotal calculation, and instant booking submission.
 
-### 5.7 The Warehouse Rules of Engagement
-- Four brutalist numbered stickers (`01`, `02`, `03`, `04`):
-  - 01: NO CAMERAS / NO FLASH (Phone lenses sealed at gate)
-  - 02: 40KW SUBWOOFER PRIORITY (Acoustic pressure peaks at 132.8 dB-C)
-  - 03: SECRET GATE DISPATCH (Coordinates released 2 hours prior via encrypted comm)
-  - 04: ANALOG CASSETTE DUBS (Live sessions recorded straight to magnetic tape)
+### 5.7 Ticketing Guarantees & Security Pillars
+- Four brutalist numbered guarantee cards:
+  - 01: 100% VERIFIED PASSES (Cryptographic QR verification prevents fraud)
+  - 02: REAL-TIME SEAT HOLD (10-minute isolated lock prevents double-booking)
+  - 03: INSTANT DIGITAL PASSES (Instant PDF download and Google Calendar sync)
+  - 04: RAPID GATE SCANNER (Sub-second camera scanner for venue staff)
 
 ---
 

@@ -12,7 +12,7 @@ export default function TermsModal({ isOpen, onClose }) {
       >
         {/* Slanted Tape Badge */}
         <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          VAULT://MANIFESTO_PROTOCOL
+          EVENTHUB://TERMS_OF_SERVICE
         </div>
 
         {/* Header */}
@@ -20,17 +20,17 @@ export default function TermsModal({ isOpen, onClose }) {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-                TERMS_OF_ENGAGEMENT
+                TERMS_OF_SERVICE
               </span>
               <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
                 DOC REV 2026.09
               </span>
             </div>
             <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
-              WAREHOUSE RULES OF ENGAGEMENT
+              TERMS OF SERVICE & ATTENDANCE POLICY
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              PROTOCOL REQUIREMENTS FOR ATTENDEES, RAVERS & SOUND SYSTEM OPERATORS
+              LEGAL TERMS & CONDITIONS FOR EVENT TICKET HOLDERS AND ORGANIZERS
             </p>
           </div>
           <button 
@@ -45,37 +45,37 @@ export default function TermsModal({ isOpen, onClose }) {
         <div className="p-6 overflow-y-auto space-y-5 text-xs text-grit-dim uppercase leading-relaxed font-mono-zine">
           <section className="bg-asphalt-card border border-asphalt-border p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
-              01. NO CAMERAS / NO FLASH RECORDING
+              01. VERIFIED TICKETING & DIGITAL ADMISSION
             </h4>
             <p>
-              VAULT OPERATES STRICT ANALOG DANCEFLOOR SANCTUARY PROTOCOLS. OPTICAL SENSORS, FLASH RECORDINGS, AND PHONE LIVESTREAMS ARE PROHIBITED BEYOND THE DOCK ENTRANCE. PHONE LENSES MUST BE SEALED AT GATE ADMITTANCE.
+              ALL TICKETS ISSUED THROUGH EVENTHUB ARE DIGITALLY WATERMARKED AND CRYPTOGRAPHICALLY VALIDATED. ATTENDEES MUST PRESENT THEIR UNIQUE QR CODE AT GATE ENTRY. PASSES CANNOT BE TRANSFERRED THROUGH UNAUTHORIZED THIRD-PARTY RESALE EXCHANGES.
             </p>
           </section>
 
           <section className="bg-asphalt-card border border-asphalt-border p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
-              02. 40KW SUBWOOFER PRIORITY & HEARING SAFETY
+              02. REAL-TIME SEAT MUTEX & RESERVATION POLICY
             </h4>
             <p>
-              ACOUSTIC PRESSURE LEVELS MAY PEAK AT 132.8 DB-C. ATTENDEES ASSUME RESPONSIBILITY FOR AUDITORY SAFETY. HIGH-FIDELITY FOAM FILTERS ARE DISTRIBUTED GRATIS AT BOUNCER GATE ENTRY.
+              SEAT SELECTIONS ARE TEMPORARILY LOCKED FOR 10 MINUTES VIA DISTRIBUTED WEBSOCKET PROTOCOL. IF CHECKOUT IS NOT COMPLETED WITHIN THE 10-MINUTE HOLD WINDOW, LOCKED SEATS ARE AUTOMATICALLY RELEASED BACK TO PUBLIC INVENTORY.
             </p>
           </section>
 
           <section className="bg-asphalt-card border border-asphalt-border p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
-              03. WRISTBAND CONCURRENCY & ZERO SECONDARY TICKETING
+              03. ZERO TOLERANCE SCALPING & BOT PROHIBITION
             </h4>
             <p>
-              ALL WRISTBANDS ARE DIGITALLY LOCKED TO STOMP PROTOCOL NODES. SCALPING, BOT RESERVATIONS, AND FORGERY VOID ALL PASS WATERMARKS INSTANTLY WITHOUT TARIFF REFUND.
+              AUTOMATED BOT RESERVATIONS, SCRAPING, AND FRAUDULENT TICKET CORNERING ARE STRICTLY FORBIDDEN. EVENTHUB ENFORCES REAL-TIME CONCURRENCY LOCKS TO ENSURE FAIR, DIRECT ACCESS AT FACE VALUE.
             </p>
           </section>
 
           <section className="bg-asphalt-card border border-asphalt-border p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
-              04. SECRET GATE COORDINATES CURFEW
+              04. CANCELLATION, REFUNDS & VENUE ADMISSION RULES
             </h4>
             <p>
-              VENUE COORDINATES ARE DISPATCHED 02 HOURS PRIOR TO CURFEW VIA ENCRYPTED COMM CHANNELS. ADMITTANCE DOORS SHUT AT MIDNIGHT EXACTLY; LATECOMERS SHALL BE DENIED ENTRY.
+              REFUND AND CANCELLATION POLICIES ARE GOVERNED BY THE DESIGNATED EVENT ORGANIZER AND JURISDICTION REGULATIONS. ATTENDEES MUST ADHERE TO ALL VENUE SECURITY PROTOCOLS, SAFETY STANDARDS, AND CODES OF CONDUCT.
             </p>
           </section>
         </div>
@@ -83,13 +83,13 @@ export default function TermsModal({ isOpen, onClose }) {
         {/* Footer */}
         <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
           <span className="font-ticker text-[10px] text-grit-dim uppercase">
-            SEC_STATUS: RATIFIED BY WAREHOUSE CONSORTIUM
+            LEGAL STATUS: RATIFIED BY EVENTHUB PLATFORM
           </span>
           <button 
             onClick={onClose} 
             className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] cursor-pointer"
           >
-            ACKNOWLEDGE & RATIFY
+            I ACCEPT TERMS OF SERVICE
           </button>
         </div>
       </div>

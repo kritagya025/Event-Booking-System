@@ -26,10 +26,10 @@ export default function RegisterPage({ onNavigate, showToast }) {
         method: 'POST',
         body: JSON.stringify(formData)
       });
-      showToast('WRISTBAND REGISTRATION INITIATED. CHECK COMM FOR VERIFICATION.', 'success');
+      showToast('ACCOUNT CREATED SUCCESSFULLY! CHECK YOUR EMAIL TO VERIFY.', 'success');
       onNavigate('login');
     } catch (err) {
-      showToast(err.message || 'REGISTRATION REJECTED BY GATEWAY', 'error');
+      showToast(err.message || 'REGISTRATION FAILED: PLEASE CHECK YOUR INPUTS', 'error');
     } finally {
       setLoading(false);
     }
@@ -42,20 +42,20 @@ export default function RegisterPage({ onNavigate, showToast }) {
 
       {/* Background Graphic Watermark */}
       <div className="absolute inset-0 pointer-events-none opacity-5 flex items-center justify-center select-none overflow-hidden">
-        <span className="font-display text-[22vw] leading-none tracking-tighter text-grit-white font-black">ENCLAVE</span>
+        <span className="font-display text-[22vw] leading-none tracking-tighter text-grit-white font-black">EVENTHUB</span>
       </div>
 
       <button 
         onClick={() => onNavigate('home')} 
-        className="absolute top-8 left-6 z-20 flex items-center gap-2 bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 font-mono-zine text-xs uppercase tracking-wider font-bold shadow-[4px_4px_0px_#0e0e11] transition-all"
+        className="absolute top-8 left-6 z-20 flex items-center gap-2 bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 font-mono-zine text-xs uppercase tracking-wider font-bold shadow-[4px_4px_0px_#0e0e11] transition-all cursor-pointer"
       >
-        <span className="text-acid-yellow hover:text-asphalt-black font-bold">←</span> RETURN TO FLYER DECK
+        <span className="text-acid-yellow hover:text-asphalt-black font-bold">←</span> RETURN TO EVENTS
       </button>
 
       <div className="w-full max-w-lg relative z-10 my-12">
         {/* Slanted Tape Badges */}
         <div className="absolute -top-4 -right-3 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-20">
-          WRISTBAND DISPATCH // ALLOCATION OPEN
+          USER ONBOARDING // REAL-TIME PASSES
         </div>
 
         <div className="bg-asphalt-surface border-4 border-grit-white p-6 md:p-8 shadow-[8px_8px_0px_#ff1f6d] relative">
@@ -64,7 +64,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
           <div className="border-b-2 border-asphalt-border pb-5 mb-6 text-left">
             <div className="flex items-center justify-between mb-2">
               <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
-                CREW_ONBOARDING
+                REGISTER_PORTAL
               </span>
               <span className="text-[10px] font-ticker text-grit-dim uppercase tracking-widest flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-neon-magenta animate-pulse"></span>
@@ -72,10 +72,10 @@ export default function RegisterPage({ onNavigate, showToast }) {
               </span>
             </div>
             <h1 className="font-display text-4xl uppercase tracking-tight text-grit-white leading-none mt-2">
-              CREATE IDENTITY
+              CREATE AN ACCOUNT
             </h1>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
-              REGISTER TO SECURE CRYPTOGRAPHIC WRISTBANDS, TAPE PASSES, AND STOMP SEAT MATRIX ACCESS
+              REGISTER TO RESERVE SEATS, SECURE VERIFIED QR CODE PASSES, AND TRACK LIVE EVENTS
             </p>
           </div>
 
@@ -84,7 +84,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">
-                  FIRST IDENTIFIER <span className="text-neon-magenta">*</span>
+                  FIRST NAME <span className="text-neon-magenta">*</span>
                 </label>
                 <input
                   type="text"
@@ -92,14 +92,14 @@ export default function RegisterPage({ onNavigate, showToast }) {
                   required
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="ALEX"
-                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none placeholder:text-grit-dim/40 transition-colors uppercase"
+                  placeholder="Jane"
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none placeholder:text-grit-dim/40 transition-colors"
                 />
               </div>
 
               <div>
                 <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">
-                  SURNAME / HANDLE <span className="text-neon-magenta">*</span>
+                  LAST NAME <span className="text-neon-magenta">*</span>
                 </label>
                 <input
                   type="text"
@@ -107,15 +107,15 @@ export default function RegisterPage({ onNavigate, showToast }) {
                   required
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="KANE"
-                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none placeholder:text-grit-dim/40 transition-colors uppercase"
+                  placeholder="Doe"
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none placeholder:text-grit-dim/40 transition-colors"
                 />
               </div>
             </div>
 
             <div>
               <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">
-                COMM_ADDRESS (EMAIL) <span className="text-neon-magenta">*</span>
+                EMAIL ADDRESS <span className="text-neon-magenta">*</span>
               </label>
               <input
                 type="email"
@@ -123,14 +123,14 @@ export default function RegisterPage({ onNavigate, showToast }) {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="CREW_HANDLE@UNDERGROUND.NET"
-                className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none placeholder:text-grit-dim/40 transition-colors uppercase"
+                placeholder="name@example.com"
+                className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none placeholder:text-grit-dim/40 transition-colors"
               />
             </div>
 
             <div>
               <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">
-                SECURE PASSPHRASE <span className="text-neon-magenta">*</span>
+                PASSWORD <span className="text-neon-magenta">*</span>
               </label>
               <input
                 type="password"
@@ -146,7 +146,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">
-                  FREQ / TELEPHONE
+                  PHONE NUMBER
                 </label>
                 <input
                   type="tel"
@@ -154,13 +154,13 @@ export default function RegisterPage({ onNavigate, showToast }) {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none placeholder:text-grit-dim/40 transition-colors uppercase"
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none placeholder:text-grit-dim/40 transition-colors"
                 />
               </div>
 
               <div>
                 <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">
-                  CREW ROLE <span className="text-neon-magenta">*</span>
+                  ACCOUNT TYPE <span className="text-neon-magenta">*</span>
                 </label>
                 <select
                   name="role"
@@ -168,8 +168,8 @@ export default function RegisterPage({ onNavigate, showToast }) {
                   onChange={handleChange}
                   className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none transition-colors uppercase"
                 >
-                  <option value="CUSTOMER">ATTENDEE / RAVER</option>
-                  <option value="ORGANIZER">PROMOTER / SOUND RIG</option>
+                  <option value="CUSTOMER">ATTENDEE / CUSTOMER</option>
+                  <option value="ORGANIZER">EVENT ORGANIZER</option>
                 </select>
               </div>
             </div>
@@ -180,10 +180,10 @@ export default function RegisterPage({ onNavigate, showToast }) {
               className="w-full mt-4 bg-neon-magenta text-grit-white font-impact tracking-wider text-xl uppercase py-3 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {loading ? (
-                <span className="animate-pulse">ENGRAVING WRISTBAND PASS...</span>
+                <span className="animate-pulse">CREATING ACCOUNT...</span>
               ) : (
                 <>
-                  <span>INITIALIZE IDENTITY PASS</span>
+                  <span>CREATE ACCOUNT</span>
                   <ArrowRight size={18} />
                 </>
               )}
@@ -192,7 +192,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
 
           {/* Quick Switch */}
           <div className="mt-6 pt-4 border-t border-asphalt-border text-center font-mono-zine text-xs text-grit-dim uppercase tracking-wider">
-            EXISTING WRISTBAND HOLDER?{' '}
+            ALREADY HAVE AN ACCOUNT?{' '}
             <button 
               onClick={() => onNavigate('login')} 
               className="text-acid-yellow hover:text-grit-white font-bold underline ml-1 cursor-pointer"
@@ -203,7 +203,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
 
           {/* Barcode Watermark Footer */}
           <div className="mt-6 pt-3 flex justify-between items-center opacity-40 select-none">
-            <span className="font-ticker text-[9px] text-grit-dim uppercase">SYS_REG: ENCRYPTED_STOMP_NODE</span>
+            <span className="font-ticker text-[9px] text-grit-dim uppercase">SEC_REGISTER // EVENTHUB</span>
             <svg className="h-6 w-36" viewBox="0 0 144 24" fill="currentColor">
               <rect x="0" y="0" width="4" height="24"/>
               <rect x="6" y="0" width="2" height="24"/>

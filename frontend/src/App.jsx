@@ -419,17 +419,17 @@ export default function App() {
         }}
       />
 
-      {/* Top Diagonal Stamp Ribbon */}
+      {/* Top Protocol Status Ribbon */}
       <div className="w-full bg-asphalt-surface border-b border-asphalt-border py-2 px-4">
         <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between text-xs font-ticker gap-2">
           <div className="flex items-center gap-2 text-grit-dim">
-            <span className="bg-neon-magenta text-grit-white font-bold px-1.5 py-0.2 -rotate-2">ZINE DISPATCH</span>
-            <span className="text-grit-white font-mono-zine">ISSUE NO. 88 // NORTH INDUSTRIAL DOCKS // RECLAIMED REFRIGERATOR PLANT</span>
+            <span className="bg-neon-magenta text-grit-white font-bold px-1.5 py-0.2 -rotate-2">LIVE PLATFORM</span>
+            <span className="text-grit-white font-mono-zine">REAL-TIME STOMP SEAT CONCURRENCY // DISTRIBUTED EVENT TICKETING PLATFORM</span>
           </div>
           <div className="flex items-center gap-3 text-grit-dim">
-            <span className="text-acid-yellow">⚡ VOLTAGE: 380V 3-PHASE</span>
+            <span className="text-acid-yellow">⚡ 10-MIN SEAT LOCK GUARANTEE</span>
             <span>|</span>
-            <span className="text-grit-white">SPL PEAK: 132.8 dB-C</span>
+            <span className="text-grit-white">99.98% CLUSTER UPTIME</span>
           </div>
         </div>
       </div>
@@ -452,14 +452,14 @@ export default function App() {
         <main className="w-full relative overflow-hidden pb-16">
           <div className="max-w-[1360px] mx-auto px-4 md:px-6 pt-8">
             
-            {/* 2. ACID-ZINE HERO SECTION WITH COLLAGE STAMPS */}
+            {/* 2. BRUTALIST HERO SECTION */}
             <section className="relative mb-12 border-4 border-grit-white bg-asphalt-surface p-6 md:p-10 shadow-[8px_8px_0px_#eefc54]">
-              {/* Background Raw Photocopy Noise Artifacts */}
+              {/* Slanted Badges */}
               <div className="absolute -top-5 -right-4 bg-neon-magenta text-grit-white font-display text-xl sm:text-2xl px-4 py-1.5 rotate-3 border-2 border-asphalt-black shadow-[4px_4px_0px_#0e0e11] z-20">
-                ★ ALL NIGHT LONG // NO GUESTLIST ★
+                ★ 100% VERIFIED TICKETS & PASSES ★
               </div>
               <div className="absolute -bottom-4 -left-3 bg-electric-cobalt text-acid-yellow font-ticker text-xs font-black px-3 py-1 -rotate-3 border-2 border-grit-white z-20">
-                DESTRUCTIVE AUDIO COMPRESSION: ZERO
+                ZERO SECONDARY SCALPING // STOMP LOCKS
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
@@ -467,72 +467,72 @@ export default function App() {
                   <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-3 py-1 stamp-slant-1">
                     <span className="w-2.5 h-2.5 bg-acid-yellow animate-pulse" />
                     <span className="font-ticker text-xs font-bold uppercase text-acid-yellow tracking-widest">
-                      PIRATE TRANSMISSION • TAPE-CASSETTE ARCHIVE
+                      EVENT TICKETING & SEAT RESERVATION PLATFORM
                     </span>
                   </div>
 
                   <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.9]">
-                    UNDERGROUND <span className="text-acid-yellow underline decoration-neon-magenta decoration-4">WAREHOUSE</span><br/>
-                    ACID-ZINE PROTOCOL.
+                    LIVE EVENT <span className="text-acid-yellow underline decoration-neon-magenta decoration-4">TICKETING</span><br/>
+                    & SEAT RESERVATIONS.
                   </h1>
 
                   <p className="font-mono-zine text-sm sm:text-base text-grit-dim max-w-2xl leading-relaxed">
-                    RAW CASSETTE STUBS, CONCRETE SUBWOOFER CLUSTERS, INDUSTRIAL DOCK RIGS, AND CRYPTOGRAPHIC TICKET WATERMARKS. ZERO VIP BOOTHS. PURE SONIC FORCE OPERATING FROM SUNSET TO 08:00 AM.
+                    RESERVE VERIFIED SEATS IN REAL TIME. INSTANT DIGITAL PASSES, DYNAMIC CURRENCY CONVERSION, TAMPER-PROOF QR CODE VALIDATION, AND ZERO DOUBLE BOOKINGS ACROSS CONCERTS, CONFERENCES, THEATER, AND SPORTS.
                   </p>
 
                   {/* Telemetry Badges / Specs */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
                     <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">BASS ENGINE</span>
-                      <span className="font-display text-xl text-acid-yellow">40KW FUNKTION</span>
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">REST API ENGINE</span>
+                      <span className="font-display text-xl text-acid-yellow">SPRING BOOT 3.4</span>
                     </div>
                     <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">GATE LOCKOUT</span>
-                      <span className="font-display text-xl text-neon-magenta">12MS SOCKET</span>
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">SEAT CONCURRENCY</span>
+                      <span className="font-display text-xl text-neon-magenta">10-MIN MUTEX</span>
                     </div>
                     <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">LIMITER STATUS</span>
-                      <span className="font-display text-xl text-electric-cobalt">OVERRIDDEN</span>
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">DATABASE CLUSTER</span>
+                      <span className="font-display text-xl text-electric-cobalt">POSTGRESQL TLS</span>
                     </div>
                     <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">ENTRY MEDIUM</span>
-                      <span className="font-display text-xl text-grit-white">TAPE / QR PASS</span>
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">ADMISSION PASS</span>
+                      <span className="font-display text-xl text-grit-white">QR + PDF PASS</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Side: Cassette Tape Graphic / Stamp Badge */}
+                {/* Right Side: Digital Ticket Pass Graphic */}
                 <div className="lg:col-span-4 flex flex-col items-center justify-center">
                   <div className="w-full max-w-xs bg-asphalt-black border-4 border-grit-white p-4 shadow-[6px_6px_0px_#ff1f6d] rotate-1 group hover:rotate-0 transition-transform">
-                    {/* Cassette Header */}
+                    {/* Pass Header */}
                     <div className="bg-acid-yellow text-asphalt-black p-1.5 text-center font-display text-xl tracking-wider border-2 border-asphalt-black mb-3">
-                      C-90 CHROME CASSETTE PASS
+                      DIGITAL ADMISSION PASS
                     </div>
-                    {/* Cassette Wheels cutout mimic */}
+                    {/* Pass Reels graphic */}
                     <div className="bg-asphalt-card border-2 border-asphalt-border rounded p-3 mb-3 flex items-center justify-around">
                       <div className="w-12 h-12 rounded-full border-4 border-grit-white bg-asphalt-black flex items-center justify-center animate-spin" style={{ animationDuration: '9s' }}>
                         <div className="w-3 h-3 bg-neon-magenta rounded-full" />
                       </div>
-                      <div className="h-6 w-24 bg-asphalt-surface border border-asphalt-border flex items-center justify-center text-[10px] font-ticker text-acid-yellow">
-                        A: 45:00 MIN
+                      <div className="h-6 w-24 bg-asphalt-surface border border-asphalt-border flex items-center justify-center text-[10px] font-ticker text-acid-yellow font-bold">
+                        ROW A: SEAT 05
                       </div>
                       <div className="w-12 h-12 rounded-full border-4 border-grit-white bg-asphalt-black flex items-center justify-center animate-spin" style={{ animationDuration: '9s' }}>
                         <div className="w-3 h-3 bg-neon-magenta rounded-full" />
                       </div>
                     </div>
-                    {/* Cassette Magnetic Strip info */}
+                    {/* Pass Info */}
                     <div className="text-[11px] font-ticker space-y-1 text-grit-dim">
                       <div className="flex justify-between">
                         <span>PASS_ID:</span>
-                        <span className="text-grit-white font-bold">#CASSETTE-088-RAW</span>
+                        <span className="text-grit-white font-bold">#EHB-PASS-2026-90</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>WRISTBAND:</span>
-                        <span className="text-neon-magenta font-bold">TYVEK NEON PINK</span>
+                        <span>ADMISSION:</span>
+                        <span className="text-neon-magenta font-bold">VIP STAGE ACCESS</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>VERIFICATION:</span>
-                        <span className="text-acid-yellow font-bold">ZXING ECDSA SIGNED</span>
+                        <span>VALIDATION:</span>
+                        <span className="text-acid-yellow font-bold">CRYPTOGRAPHIC QR</span>
                       </div>
                     </div>
                   </div>
@@ -540,23 +540,23 @@ export default function App() {
               </div>
             </section>
 
-            {/* 3. HIGH VOLTAGE SEARCH & DISPATCH CAPSULE (FLYER STYLE) */}
+            {/* 3. EVENT SEARCH & DISPATCH CAPSULE */}
             <section className="mb-14">
               <div className="bg-acid-yellow p-3 sm:p-4 border-4 border-asphalt-black shadow-[6px_6px_0px_#ffffff]">
                 <div className="flex items-center justify-between pb-2 mb-2 border-b-2 border-asphalt-black font-ticker text-xs font-bold text-asphalt-black">
                   <span className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-sm">search</span>
-                    SCAN WAREHOUSE FREQUENCIES // RADAR COORD DISPATCH
+                    SEARCH EVENTS & VENUES // LIVE INVENTORY DISPATCH
                   </span>
-                  <span className="bg-asphalt-black text-acid-yellow px-2 py-0.5">DISPATCH_FILTER_V4</span>
+                  <span className="bg-asphalt-black text-acid-yellow px-2 py-0.5">FILTER_ENGINE_V4</span>
                 </div>
                 <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} className="grid grid-cols-1 md:grid-cols-4 gap-3 text-asphalt-black">
                   {/* Keyword */}
                   <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
-                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">GENRE / COLLECTIVE / RIG</label>
+                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT / ARTIST / KEYWORD</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. ACID TECHNO, NOISE..." 
+                      placeholder="e.g. Cyber Music, Tech Summit, Symphony..." 
                       value={filters.keyword}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -567,9 +567,9 @@ export default function App() {
                     />
                   </div>
 
-                  {/* Sector / Category */}
+                  {/* Category */}
                   <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
-                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">SECTOR / CATEGORY</label>
+                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT CATEGORY</label>
                     <select 
                       value={filters.category}
                       onChange={(e) => {
@@ -580,21 +580,21 @@ export default function App() {
                       }}
                       className="bg-transparent font-impact text-lg text-asphalt-black focus:outline-none w-full cursor-pointer appearance-none border-none p-0"
                     >
-                      <option value="">ALL SQUATS & DOCKS (BAY AREA)</option>
-                      <option value="MUSIC">TB-303 ACID TECHNO & HARDWARE</option>
-                      <option value="TECH">MODULAR SYNTH & TECH SUMMIT</option>
-                      <option value="THEATER">DARK INDUSTRIAL THEATER</option>
-                      <option value="SPORTS">WAREHOUSE COMBAT & SKATE</option>
-                      <option value="WORKSHOP">TAPE MOD & DUB WORKSHOP</option>
+                      <option value="">ALL CATEGORIES (ALL EVENTS)</option>
+                      <option value="MUSIC">MUSIC CONCERTS & FESTIVALS</option>
+                      <option value="TECH">TECH & AI CONFERENCES</option>
+                      <option value="THEATER">THEATER & PERFORMING ARTS</option>
+                      <option value="SPORTS">SPORTS & TOURNAMENTS</option>
+                      <option value="WORKSHOP">HANDS-ON WORKSHOPS</option>
                     </select>
                   </div>
 
                   {/* City / Location */}
                   <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
-                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">CURFEW WINDOW / CITY</label>
+                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">CITY / VENUE LOCATION</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. San Francisco, Berlin, Tokyo" 
+                      placeholder="e.g. San Francisco, New York, London..." 
                       value={filters.city}
                       onChange={(e) => setFilters({ ...filters, city: e.target.value })}
                       className="bg-transparent font-impact text-lg text-asphalt-black placeholder:text-asphalt-black/50 focus:outline-none w-full border-none p-0" 
@@ -607,8 +607,8 @@ export default function App() {
                       type="submit"
                       className="flex-1 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white border-2 border-asphalt-black p-2 flex items-center justify-center gap-2 font-display text-2xl tracking-wider uppercase transition-colors shadow-[3px_3px_0px_#0e0e11] cursor-pointer"
                     >
-                      <span>RAVE RADAR</span>
-                      <span className="material-symbols-outlined font-bold">radar</span>
+                      <span>SEARCH EVENTS</span>
+                      <span className="material-symbols-outlined font-bold">search</span>
                     </button>
                     {hasActiveFilters(filters) && (
                       <button 
@@ -631,15 +631,15 @@ export default function App() {
                 <div>
                   <div className="font-ticker text-xs font-bold text-neon-magenta uppercase tracking-widest flex items-center gap-2">
                     <span className="inline-block w-2.5 h-2.5 bg-neon-magenta animate-pulse" />
-                    UNDERGROUND PRINT ARCHIVE
+                    LIVE EVENT CATALOG
                   </div>
                   <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white">
-                    FLYER DECK • ADMITTANCE STUBS
+                    UPCOMING EVENTS & TICKETS
                   </h2>
                 </div>
                 <div className="flex items-center gap-2 font-ticker text-xs">
-                  <span className="bg-acid-yellow text-asphalt-black font-bold px-2 py-1 -rotate-2">SECTOR 9 LIVE</span>
-                  <span className="bg-electric-cobalt text-grit-white font-bold px-2 py-1 rotate-1">{events.length} SESSIONS LOCKED</span>
+                  <span className="bg-acid-yellow text-asphalt-black font-bold px-2 py-1 -rotate-2">INVENTORY LIVE</span>
+                  <span className="bg-electric-cobalt text-grit-white font-bold px-2 py-1 rotate-1">{events.length} EVENTS AVAILABLE</span>
                 </div>
               </div>
 
@@ -656,9 +656,9 @@ export default function App() {
                 </div>
               ) : events.length === 0 ? (
                 <div className="bg-asphalt-card border-3 border-grit-white p-12 text-center shadow-[6px_6px_0px_#ff1f6d]">
-                  <h3 className="font-display text-3xl text-acid-yellow mb-2">NO RADAR TRANSMISSIONS FOUND</h3>
-                  <p className="font-mono-zine text-sm text-grit-dim mb-4">No underground sessions match your active radar criteria.</p>
-                  <button onClick={handleClearSearch} className="btn btn-primary">RESET RADAR</button>
+                  <h3 className="font-display text-3xl text-acid-yellow mb-2">NO EVENTS DISCOVERED</h3>
+                  <p className="font-mono-zine text-sm text-grit-dim mb-4">No live events match your search and filter criteria.</p>
+                  <button onClick={handleClearSearch} className="btn btn-primary">RESET SEARCH</button>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -678,28 +678,28 @@ export default function App() {
               )}
             </section>
 
-            {/* 5. RAW WAREHOUSE BOUNCER / PIT INTERACTIVE CONCURRENCY CONSOLE */}
+            {/* 5. INTERACTIVE CONCURRENCY CONSOLE */}
             <section className="mb-16 border-4 border-grit-white bg-asphalt-surface p-6 md:p-8 shadow-[8px_8px_0px_#ff1f6d]" id="sound-engine">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 {/* Rig Telemetry Manifesto */}
                 <div className="lg:col-span-5 space-y-4">
                   <div className="inline-block bg-neon-magenta text-grit-white font-display text-sm tracking-widest px-2 py-0.5 -rotate-2">
-                    RIG_CONTROLLER // SUB-BASS ISOLATION
+                    CONCURRENCY_ENGINE // STOMP WEBSOCKET
                   </div>
                   <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white leading-none">
-                    STAGE BOUNCER • REALTIME TICKET ENCLAVE
+                    INTERACTIVE SEAT MAP & LOCK SYSTEM
                   </h2>
                   <p className="font-mono-zine text-xs sm:text-sm text-grit-dim leading-relaxed">
-                    NO SCALPERS. DIRECT OPTIMISTIC HARDWARE LOCKS ASSIGNED TO INDIVIDUAL TYVEK WRISTBANDS. TAPPING A STANDING TILE IMMEDIATELY SENDS A SUB-12MS STOMP SOCKET BURST TO PREVENT OVERCROWDING.
+                    ZERO DOUBLE BOOKINGS. WHEN YOU SELECT A SEAT TILE, OUR BACKEND IMMEDIATELY SENDS A SUB-15MS STOMP WEBSOCKET BURST AND LOCKS THE SEAT FOR 10 MINUTES TO PREVENT CONFLICTS WHILE YOU COMPLETE CHECKOUT.
                   </p>
                   <div className="space-y-2 font-ticker text-xs">
                     <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
-                      <span className="text-grit-dim">RIG PROTOCOL:</span>
+                      <span className="text-grit-dim">SOCKET PROTOCOL:</span>
                       <span className="text-acid-yellow font-bold">RFC-7118 / STOMP v1.2</span>
                     </div>
                     <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
-                      <span className="text-grit-dim">SUBWOOFER AMP:</span>
-                      <span className="text-grit-white font-bold">40,000W CLASS-D MONO</span>
+                      <span className="text-grit-dim">SEAT MUTEX TIMEOUT:</span>
+                      <span className="text-grit-white font-bold">10-MINUTE HOLD WINDOW</span>
                     </div>
                     <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
                       <span className="text-grit-dim">CONCURRENCY STAMP:</span>
@@ -708,25 +708,25 @@ export default function App() {
                   </div>
                   <div className="pt-2 flex items-center gap-2 font-ticker text-xs text-acid-yellow">
                     <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping" />
-                    ACTIVE BOUNCER RADAR: 64 SENSORS LIVE
+                    LIVE INVENTORY SYNC: REAL-TIME WEBSOCKET ACTIVE
                   </div>
                 </div>
 
-                {/* Interactive Pit / Warehouse Floor Grid */}
+                {/* Interactive Pit / Floor Grid */}
                 <div className="lg:col-span-7 bg-asphalt-black p-4 sm:p-6 border-3 border-grit-white shadow-[6px_6px_0px_#eefc54]">
                   <HeroProductDemo onOpenBooking={() => openBookingModal(popularEvents[0] || events[0])} />
                 </div>
               </div>
             </section>
 
-            {/* 6. RAW DIY ZINE MANIFESTO PILLARS */}
+            {/* 6. PLATFORM COMMITMENTS */}
             <section className="mb-16">
               <div className="mb-6">
                 <div className="font-ticker text-xs font-bold text-acid-yellow uppercase tracking-widest">
-                  MANIFESTO // ZERO CORPORATE SPONSORSHIP
+                  PLATFORM COMMITMENTS // TRUST & RELIABILITY
                 </div>
                 <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white">
-                  THE WAREHOUSE RULES OF ENGAGEMENT
+                  OUR TICKETING GUARANTEES
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -735,12 +735,12 @@ export default function App() {
                   <div className="w-10 h-10 bg-acid-yellow text-asphalt-black flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
                     01
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">NO CAMERAS / NO FLASH</h3>
+                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">100% VERIFIED PASSES</h3>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
-                    Stickers placed over smartphone lenses at gate dispatch. Protect the dance floor and communal anonymity.
+                    Official digital passes equipped with tamper-proof cryptographic QR codes. Zero fake or duplicate tickets.
                   </p>
                   <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-neon-magenta">
-                    RULE: STRICT IMMEDIATE REMOVAL
+                    GUARANTEE: 100% VALID GATE ENTRY
                   </div>
                 </div>
 
@@ -749,12 +749,12 @@ export default function App() {
                   <div className="w-10 h-10 bg-neon-magenta text-grit-white flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
                     02
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">40KW SUBWOOFER PRIORITY</h3>
+                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">REAL-TIME SEAT HOLD</h3>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
-                    Acoustic pressure calibrated to 32Hz fundamentals. Complimentary foam hearing protection stocked at bar.
+                    Once selected, your seat is held exclusively for 10 minutes so no other buyer can claim it during checkout.
                   </p>
                   <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-acid-yellow">
-                    SPL: 130DB SUSTAINED SUB-BASS
+                    CONCURRENCY: 10-MIN HOLD WINDOW
                   </div>
                 </div>
 
@@ -763,12 +763,12 @@ export default function App() {
                   <div className="w-10 h-10 bg-electric-cobalt text-grit-white flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
                     03
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">SECRET GATE DISPATCH</h3>
+                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">INSTANT DIGITAL PASSES</h3>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
-                    GPS pin coordinates dropped via automated encrypted SMS exactly two hours prior to soundcheck.
+                    Digital passes generated immediately upon payment with printable PDF download and ICS calendar sync.
                   </p>
                   <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-grit-white">
-                    DELIVERY: 22:00 SHARP DISPATCH
+                    DELIVERY: REAL-TIME CONFIRMATION
                   </div>
                 </div>
 
@@ -777,18 +777,18 @@ export default function App() {
                   <div className="w-10 h-10 bg-grit-white text-asphalt-black flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
                     04
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">ANALOG CASSETTE DUBS</h3>
+                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">RAPID GATE SCANNER</h3>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
-                    Live master sets recorded straight to magnetic tape. Limited run cassettes traded at merch table after sunrise.
+                    Organizers scan attendee tickets in milliseconds using the built-in optical camera scanner or manual cipher code.
                   </p>
                   <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-neon-magenta">
-                    EDITIONS: 50 TAPES PER NIGHT
+                    ACCESS: HIGH-SPEED GATE ADMISSION
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* 7. SECRET GATECOORDINATES CALLOUT BOX */}
+            {/* 7. ORGANIZER PORTAL CALLOUT */}
             <section className="bg-asphalt-black border-4 border-acid-yellow p-6 md:p-8 relative shadow-[8px_8px_0px_#ffffff] mb-12" id="gatekeeper">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
@@ -797,13 +797,13 @@ export default function App() {
                   </div>
                   <div>
                     <div className="font-ticker text-xs font-bold text-neon-magenta uppercase tracking-wider mb-1">
-                      ENCRYPTED COMM CHANNEL
+                      ORGANIZER & PROMOTER PORTAL
                     </div>
                     <h3 className="font-display text-3xl uppercase tracking-wide text-grit-white">
-                      NEED DIRECT SOUND SYSTEM INTEGRATION?
+                      HOSTING A CONCERT, CONFERENCE, OR MATCH?
                     </h3>
                     <p className="font-mono-zine text-xs text-grit-dim">
-                      Submit your hardware live rig or hook directly into the underground STOMP gatekeeper network.
+                      Publish your event, define tiered seating maps, set ticket tariffs, and access live gate check-in scanners.
                     </p>
                   </div>
                 </div>
@@ -813,14 +813,14 @@ export default function App() {
                     onClick={() => setIsCheckInOpen(true)}
                     className="w-full md:w-auto px-6 py-3 bg-acid-yellow hover:bg-acid-yellow-hover text-asphalt-black font-display text-2xl tracking-wider uppercase border-2 border-asphalt-black shadow-[4px_4px_0px_#ff1f6d] font-bold cursor-pointer"
                   >
-                    BOUNCER CONSOLE
+                    GATE SCANNER
                   </button>
                   <button 
                     type="button"
                     onClick={() => setIsApiDocsOpen(true)}
                     className="w-full md:w-auto px-6 py-3 bg-asphalt-card hover:bg-asphalt-surface text-grit-white font-display text-2xl tracking-wider uppercase border-2 border-grit-white shadow-[4px_4px_0px_#eefc54] font-bold cursor-pointer"
                   >
-                    TAPE SPECS
+                    API DOCS
                   </button>
                 </div>
               </div>
@@ -828,68 +828,68 @@ export default function App() {
 
           </div>
 
-          {/* 8. RAW UNDERGROUND COMMUNITY FOOTER */}
+          {/* 8. FOOTER */}
           <footer className="w-full bg-asphalt-black border-t-4 border-grit-white mt-12">
             <div className="max-w-[1360px] mx-auto px-4 md:px-6 py-10">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div>
-                  <div className="bg-acid-yellow text-asphalt-black px-2 py-0.5 font-display text-2xl tracking-wider -rotate-2 border-2 border-grit-white inline-block mb-3">
-                    VAULT://90s
+                  <div className="bg-acid-yellow text-asphalt-black px-2.5 py-0.5 font-display text-2xl tracking-wider -rotate-2 border-2 border-grit-white inline-block mb-3">
+                    EVENTHUB
                   </div>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
-                    UNDERGROUND ACID-ZINE • DIY HARDWARE TAPE REPAIR • UNLICENSED WAREHOUSE PROTOCOL • ZERO RESPECT FOR CORPORATE CONCERT MONOPOLIES.
+                    MODERN LIVE EVENT TICKETING PLATFORM • REAL-TIME SEAT CONCURRENCY • SECURE QR CODE ADMISSION • TRANSPARENT MULTI-CURRENCY BOOKINGS.
                   </p>
                 </div>
                 <div>
                   <div className="font-display text-xl uppercase tracking-wider text-acid-yellow mb-3">
-                    TRANSMISSION CHANNELS
+                    PLATFORM NAVIGATION
                   </div>
                   <ul className="space-y-1.5 font-ticker text-xs text-grit-dim">
-                    <li onClick={() => handleNavigate('events')} className="hover:text-grit-white transition-colors cursor-pointer">• 40KW SUBWOOFER CLUSTER</li>
-                    <li onClick={() => handleNavigate('create-event')} className="hover:text-grit-white transition-colors cursor-pointer">• HOST NEW RAVE</li>
+                    <li onClick={() => handleNavigate('events')} className="hover:text-grit-white transition-colors cursor-pointer">• EXPLORE EVENTS CATALOG</li>
+                    <li onClick={() => handleNavigate('create-event')} className="hover:text-grit-white transition-colors cursor-pointer">• CREATE & PUBLISH EVENT</li>
                     <li onClick={() => handleNavigate('checkin')} className="hover:text-grit-white transition-colors cursor-pointer">• GATE QR SCANNER</li>
-                    <li onClick={() => setIsApiDocsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• PIRATE FM 89.9 RELAY</li>
+                    <li onClick={() => setIsApiDocsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• REST & STOMP API DOCS</li>
                   </ul>
                 </div>
                 <div>
                   <div className="font-display text-xl uppercase tracking-wider text-neon-magenta mb-3">
-                    ZINE ARCHIVES
+                    LEGAL & POLICIES
                   </div>
                   <ul className="space-y-1.5 font-ticker text-xs text-grit-dim">
-                    <li onClick={() => setIsTermsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• ISSUE 87: WAREHOUSE SQUATS (TERMS)</li>
-                    <li onClick={() => setIsPrivacyOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• ISSUE 86: 303 ACID BASSLINES (PRIVACY)</li>
-                    <li onClick={() => setIsApiDocsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• ZXING SCANNER SOURCE CODE (API)</li>
-                    <li onClick={() => setIsSystemStatusOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• EMERGENCY POLICE MONITORS (HEALTH)</li>
+                    <li onClick={() => setIsTermsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• TERMS OF SERVICE</li>
+                    <li onClick={() => setIsPrivacyOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• PRIVACY POLICY</li>
+                    <li onClick={() => setIsCookiesOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• COOKIE PREFERENCES</li>
+                    <li onClick={() => setIsSystemStatusOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• SYSTEM STATUS & HEALTH</li>
                   </ul>
                 </div>
                 <div>
                   <div className="font-display text-xl uppercase tracking-wider text-electric-cobalt mb-3">
-                    HARDWARE RIG STATUS
+                    PLATFORM TELEMETRY
                   </div>
                   <div className="bg-asphalt-surface p-3 border-2 border-asphalt-border space-y-1.5 font-ticker text-xs">
                     <div className="flex justify-between">
-                      <span className="text-grit-dim">SOCKET ENGINE:</span>
-                      <span className="text-acid-yellow font-bold">ONLINE // 0ms</span>
+                      <span className="text-grit-dim">REST ENGINE:</span>
+                      <span className="text-acid-yellow font-bold">ONLINE // 200 OK</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-grit-dim">DECIBEL MONITOR:</span>
-                      <span className="text-neon-magenta font-bold">PEAK 132.8 dB</span>
+                      <span className="text-grit-dim">DATABASE CLUSTER:</span>
+                      <span className="text-neon-magenta font-bold">POSTGRESQL ACTIVE</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-grit-dim">SECTOR NODE:</span>
-                      <span className="text-grit-white font-bold">SF-PIER-TERMINAL</span>
+                      <span className="text-grit-dim">WEBSOCKET BROKER:</span>
+                      <span className="text-grit-white font-bold">STOMP v1.2 READY</span>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="pt-6 border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-4 font-ticker text-xs text-grit-dim">
                 <div>
-                  © 1994-2026 VAULT_UNDERGROUND ACID FLYER COLLECTIVE. ALL TAPE PASSES GUARANTEED AUTHENTIC.
+                  © 2026 EVENTHUB TICKETING PLATFORM. ALL RIGHTS RESERVED.
                 </div>
                 <div className="flex items-center gap-4">
-                  <a href="#apidocs" onClick={(e) => { e.preventDefault(); setIsApiDocsOpen(true); }} className="text-acid-yellow hover:underline">FLYER_PDF_DOWNLOAD</a>
+                  <a href="#apidocs" onClick={(e) => { e.preventDefault(); setIsApiDocsOpen(true); }} className="text-acid-yellow hover:underline">API_DOCUMENTATION</a>
                   <span>•</span>
-                  <a href="#terms" onClick={(e) => { e.preventDefault(); setIsTermsOpen(true); }} className="text-neon-magenta hover:underline">BOUNCER_RULES</a>
+                  <a href="#terms" onClick={(e) => { e.preventDefault(); setIsTermsOpen(true); }} className="text-neon-magenta hover:underline">TERMS_OF_SERVICE</a>
                   <span>•</span>
                   <a href="#privacy" onClick={(e) => { e.preventDefault(); setIsPrivacyOpen(true); }} className="text-grit-white hover:underline">PRIVACY_POLICY</a>
                 </div>
@@ -953,7 +953,7 @@ export default function App() {
   );
 }
 
-// Interactive Bouncer & Pit Floor Standing Tile Enclave
+// Interactive Seat Matrix Product Demo
 function HeroProductDemo({ onOpenBooking }) {
   const [selectedTile, setSelectedTile] = useState('F1-05');
   const [tariff, setTariff] = useState(30);
@@ -1010,24 +1010,24 @@ function HeroProductDemo({ onOpenBooking }) {
     <div>
       <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-asphalt-border">
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-acid-yellow text-lg">speaker_group</span>
-          <span className="font-display text-2xl uppercase tracking-wider text-grit-white">PIT FLOOR SECTOR A: FRONT SUB-ARRAY</span>
+          <span className="material-symbols-outlined text-acid-yellow text-lg">event_seat</span>
+          <span className="font-display text-2xl uppercase tracking-wider text-grit-white">SEAT CONCURRENCY MATRIX // STAGE FLOOR</span>
         </div>
         <span className="font-ticker text-[10px] bg-neon-magenta text-grit-white px-2 py-0.5 font-bold uppercase">
-          WS://40KW STREAM LIVE
+          WS://STOMP SEAT STREAM LIVE
         </span>
       </div>
 
       <div className="w-full py-2 hazard-tape text-center border-2 border-asphalt-black mb-4 select-none">
         <span className="font-impact text-sm tracking-widest text-asphalt-black uppercase bg-acid-yellow px-2 py-0.5 font-black">
-          [ 40KW SUBWOOFER WALL • NO EARPLUGS NO ENTRY ]
+          [ STAGE / PERFORMANCE SCREEN ]
         </span>
       </div>
 
       <div className="space-y-2 mb-4 select-none">
         {/* Row 1 */}
         <div className="flex items-center gap-2">
-          <span className="font-ticker text-xs font-bold text-neon-magenta w-6">F1</span>
+          <span className="font-ticker text-xs font-bold text-neon-magenta w-6">ROW A</span>
           <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
             {tilesRow1.map((t) => (
               <button
@@ -1051,7 +1051,7 @@ function HeroProductDemo({ onOpenBooking }) {
 
         {/* Row 2 */}
         <div className="flex items-center gap-2">
-          <span className="font-ticker text-xs font-bold text-acid-yellow w-6">M2</span>
+          <span className="font-ticker text-xs font-bold text-acid-yellow w-6">ROW B</span>
           <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
             {tilesRow2.map((t) => (
               <button
@@ -1075,7 +1075,7 @@ function HeroProductDemo({ onOpenBooking }) {
 
         {/* Row 3 */}
         <div className="flex items-center gap-2">
-          <span className="font-ticker text-xs font-bold text-grit-dim w-6">B3</span>
+          <span className="font-ticker text-xs font-bold text-grit-dim w-6">ROW C</span>
           <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
             {tilesRow3.map((t) => (
               <button
@@ -1101,17 +1101,17 @@ function HeroProductDemo({ onOpenBooking }) {
       {/* Legend Bar */}
       <div className="flex flex-wrap items-center justify-between text-xs font-ticker pt-2 border-t border-asphalt-border text-grit-dim gap-2">
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-asphalt-card border border-grit-white/40" /> OPEN TILE</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-asphalt-card border border-grit-white/40" /> AVAILABLE</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 bg-acid-yellow border border-asphalt-black" /> SELECTED</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-asphalt-surface border border-asphalt-border opacity-40" /> MOSH-CLAIMED</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-asphalt-surface border border-asphalt-border opacity-40" /> OCCUPIED</span>
         </div>
-        <span className="text-neon-magenta font-bold">1 WRISTBAND HELD (LOCK #OP-9821)</span>
+        <span className="text-neon-magenta font-bold">1 SEAT SELECTED (10-MIN HOLD WINDOW)</span>
       </div>
 
       {/* Total Calculation & Commit Button */}
       <div className="mt-4 pt-3 bg-asphalt-card p-3 border-2 border-grit-white flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          <span className="block text-[10px] font-ticker text-grit-dim uppercase">TOTAL WRISTBAND TARIFF</span>
+          <span className="block text-[10px] font-ticker text-grit-dim uppercase">TICKET SUBTOTAL</span>
           <span className="font-display text-3xl text-acid-yellow">${tariff}.00 USD</span>
         </div>
         <button 
@@ -1119,7 +1119,7 @@ function HeroProductDemo({ onOpenBooking }) {
           onClick={handleLock}
           className="w-full sm:w-auto px-6 py-2.5 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white font-display text-2xl tracking-wider uppercase border-2 border-asphalt-black shadow-[3px_3px_0px_#eefc54] active:translate-y-0.5 transition-all flex items-center justify-center gap-2 font-bold cursor-pointer"
         >
-          <span>{lockedSuccess ? 'WRISTBAND LOCKED // OPENING PASS' : 'LOCK WRISTBAND & GET COORDS'}</span>
+          <span>{lockedSuccess ? 'SEAT RESERVED // OPENING CHECKOUT' : 'SELECT SEAT & PROCEED TO CHECKOUT'}</span>
           <span className="material-symbols-outlined text-lg">{lockedSuccess ? 'check_circle' : 'lock'}</span>
         </button>
       </div>
@@ -1127,12 +1127,12 @@ function HeroProductDemo({ onOpenBooking }) {
   );
 }
 
-// Raw 90s Brutalist Rave Flyer Deck Card
+// Brutalist Event Pass Flyer Card
 function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
   const isSoldOut = event.availableSeats === 0;
   const canDelete = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER');
 
-  const badgeTitles = ['TB-303 OVERDRIVE', 'HARDWARE ONLY', 'OUTRUN CHOPPER', 'JAPANOISE RITUAL', 'ACID SUMMIT', 'INDUSTRIAL RIG'];
+  const badgeTitles = ['FEATURED EVENT', 'SELLING FAST', 'VIP AVAILABLE', 'TOP RATED', 'LIMITED PASSES', 'POPULAR SHOW'];
   const badgeTitle = badgeTitles[index % badgeTitles.length];
 
   const badgeStyles = [
@@ -1161,12 +1161,12 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
   };
 
   const formatEventDate = (dateStr) => {
-    if (!dateStr) return '18.OCT // 23:00 - 07:00';
+    if (!dateStr) return '18.OCT // 19:00';
     try {
       const d = new Date(dateStr);
       const day = String(d.getDate()).padStart(2, '0');
       const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
-      return `${day}.${month} // 23:00 - 07:00`;
+      return `${day} ${month} • 19:00`;
     } catch {
       return dateStr;
     }
@@ -1174,28 +1174,28 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
 
   return (
     <div className={`bg-asphalt-card border-3 border-grit-white relative group hover:-translate-y-1 transition-all ${shadowStyle} flex flex-col justify-between`}>
-      {/* Angular Flyer Sticker Overlay */}
+      {/* Event Sticker Overlay */}
       <div className={`absolute -top-3 -right-2 ${badgeStyle} font-display text-sm tracking-wider px-2.5 py-0.5 border border-asphalt-black z-30 shadow-md`}>
         {badgeTitle}
       </div>
 
-      {/* Upper Artwork with Photocopy Monochrome Texture */}
+      {/* Upper Artwork */}
       <div className="relative h-60 w-full overflow-hidden bg-asphalt-black border-b-3 border-grit-white">
         <img 
           src={getImageForEvent(event)} 
           alt={event.name} 
-          className="w-full h-full object-cover grayscale contrast-200 brightness-90 group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover grayscale contrast-125 brightness-95 group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-asphalt-black/40 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-asphalt-black/30 mix-blend-multiply" />
 
-        {/* Sticker Tag */}
+        {/* Date Tag */}
         <div className="absolute top-2 left-2 bg-acid-yellow text-asphalt-black font-ticker text-[10px] font-black px-1.5 py-0.5 -rotate-3 border border-asphalt-black">
           DATE: {formatEventDate(event.eventDate)}
         </div>
 
         <div className="absolute bottom-2 left-2 bg-asphalt-black/90 text-grit-white font-ticker text-[10px] px-2 py-0.5 border border-grit-white/50">
-          SOUND RIG: 40KW FUNKTION
+          VENUE: {event.venueName || 'MAIN ARENA'}
         </div>
 
         {/* Quick Actions (Wishlist & Delete) */}
@@ -1214,7 +1214,7 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
             type="button"
             onClick={onWishlist}
             className="bg-asphalt-black/80 hover:bg-neon-magenta text-grit-white p-1 border border-grit-white text-xs cursor-pointer"
-            title="Save tape to wishlist"
+            title="Save to wishlist"
           >
             <Heart size={13} />
           </button>
@@ -1225,7 +1225,7 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
       <div className={`h-4 ${index % 2 === 0 ? 'hazard-tape' : 'hazard-tape-magenta'} relative flex items-center justify-between border-y-2 border-asphalt-black select-none`}>
         <div className="w-3 h-4 bg-asphalt-black -ml-1 border-r-2 border-grit-white" />
         <div className="font-ticker text-[9px] font-black text-asphalt-black tracking-widest uppercase">
-          TEAR LINE /// NO REFUNDS
+          OFFICIAL ADMISSION PASS /// EVENTHUB
         </div>
         <div className="w-3 h-4 bg-asphalt-black -mr-1 border-l-2 border-grit-white" />
       </div>
@@ -1234,28 +1234,28 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
       <div className="p-4 flex-1 flex flex-col justify-between bg-asphalt-card">
         <div>
           <div className="text-[10px] font-ticker text-neon-magenta uppercase tracking-wider mb-1 font-bold">
-            GATE_0{((event.id || 1) % 4) + 1} // SEC {event.category || 'INDUSTRIAL BASIN'}
+            SECTOR: {event.category || 'LIVE EVENT'} // TIER 01
           </div>
           <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white group-hover:text-acid-yellow transition-colors leading-tight mb-1">
             {event.name}
           </h3>
           <p className="font-mono-zine text-xs text-grit-dim mb-3">
-            {event.venueName || 'PIER 80 COLD SHED'} • {event.city || '4200 ILLINOIS ST'}
+            {event.venueName || 'Main Arena'} • {event.city || 'Convention Center'}
           </p>
         </div>
 
         <div>
           <div className="bg-asphalt-black p-2 border border-asphalt-border mb-3 flex items-center justify-between">
             <div>
-              <span className="block text-[9px] font-ticker text-grit-dim">WRISTBAND TARIFF</span>
+              <span className="block text-[9px] font-ticker text-grit-dim">TICKET PRICE</span>
               <span className="font-display text-2xl text-acid-yellow">
                 {formatPrice(event.ticketPrice, event.currency)}
               </span>
             </div>
             <div className="text-right">
-              <span className="block text-[9px] font-ticker text-grit-dim">CAPACITY</span>
+              <span className="block text-[9px] font-ticker text-grit-dim">AVAILABLE SEATS</span>
               <span className="font-ticker text-xs font-bold text-neon-magenta">
-                {isSoldOut ? 'SOLD OUT' : `${event.availableSeats} LEFT`}
+                {isSoldOut ? 'SOLD OUT' : `${event.availableSeats} SEATS LEFT`}
               </span>
             </div>
           </div>
@@ -1274,17 +1274,17 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
               onClick={onBook}
               className="w-full py-2 bg-acid-yellow hover:bg-acid-yellow-hover text-asphalt-black font-display text-xl uppercase tracking-wider font-black border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] transition-all flex items-center justify-center gap-1 cursor-pointer"
             >
-              <span>RUSH ENTRY</span>
-              <span className="material-symbols-outlined text-base">bolt</span>
+              <span>SELECT SEATS</span>
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
             </button>
           )}
 
-          {/* Dense Barcode Strip */}
+          {/* Barcode Strip */}
           <div className="mt-3 pt-2 border-t border-asphalt-border/60 flex flex-col items-center">
             <svg className="w-full h-4 text-grit-dim fill-current opacity-70" preserveAspectRatio="none" viewBox="0 0 100 20">
               <rect height="20" width="2" x="0" y="0"></rect><rect height="20" width="1" x="4" y="0"></rect><rect height="20" width="3" x="7" y="0"></rect><rect height="20" width="2" x="12" y="0"></rect><rect height="20" width="4" x="16" y="0"></rect><rect height="20" width="1" x="22" y="0"></rect><rect height="20" width="2" x="25" y="0"></rect><rect height="20" width="3" x="29" y="0"></rect><rect height="20" width="1" x="34" y="0"></rect><rect height="20" width="4" x="37" y="0"></rect><rect height="20" width="2" x="43" y="0"></rect><rect height="20" width="1" x="47" y="0"></rect><rect height="20" width="3" x="50" y="0"></rect><rect height="20" width="2" x="55" y="0"></rect><rect height="20" width="4" x="59" y="0"></rect><rect height="20" width="1" x="65" y="0"></rect><rect height="20" width="3" x="68" y="0"></rect><rect height="20" width="2" x="73" y="0"></rect><rect height="20" width="4" x="77" y="0"></rect><rect height="20" width="1" x="83" y="0"></rect><rect height="20" width="2" x="86" y="0"></rect><rect height="20" width="4" x="90" y="0"></rect><rect height="20" width="1" x="96" y="0"></rect>
             </svg>
-            <span className="text-[9px] font-ticker text-grit-dim tracking-widest mt-0.5">AUTH_SIG // WAREHOUSE_303</span>
+            <span className="text-[9px] font-ticker text-grit-dim tracking-widest mt-0.5">E-TICKET CIPHER // EVENTHUB</span>
           </div>
         </div>
       </div>

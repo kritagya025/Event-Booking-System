@@ -77,7 +77,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
       const data = await res.json();
       const finalUrl = data.imageUrl.startsWith('http') ? data.imageUrl : `http://localhost:8080${data.imageUrl}`;
       setBannerUrl(finalUrl);
-      showToast('GIG FLYER ARTWORK DISPATCHED SUCCESSFULLY', 'success');
+      showToast('EVENT BANNER IMAGE UPLOADED', 'success');
     } catch (err) {
       const errMsg = err.message || 'Artwork upload failed. Select another file.';
       setUploadError(errMsg);
@@ -98,15 +98,15 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      showToast('SPECIFY GIG / FLYER TITLE', 'error');
+      showToast('PLEASE ENTER AN EVENT TITLE', 'error');
       return;
     }
     if (!formData.venueName.trim()) {
-      showToast('SPECIFY WAREHOUSE / SQUAT VENUE NAME', 'error');
+      showToast('PLEASE ENTER A VENUE NAME', 'error');
       return;
     }
     if (!formData.venueAddress.trim()) {
-      showToast('SPECIFY SECRET DOCK / VENUE COORDINATES', 'error');
+      showToast('PLEASE ENTER A VENUE ADDRESS', 'error');
       return;
     }
 
@@ -124,13 +124,13 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
       }).catch(() => null);
 
       const formatTime = (t) => {
-        if (!t) return '23:00:00';
+        if (!t) return '19:00:00';
         return t.length === 5 ? `${t}:00` : t;
       };
 
       const payload = {
         name: formData.name.trim(),
-        description: formData.description.trim() || `${formData.name.trim()} live warehouse session`,
+        description: formData.description.trim() || `${formData.name.trim()} live event`,
         eventDate: formData.eventDate,
         startTime: formatTime(formData.startTime),
         endTime: formatTime(formData.endTime),
@@ -149,11 +149,11 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
         body: JSON.stringify(payload)
       });
 
-      showToast(`GIG '${newEvent.name}' DISPATCHED TO FLYER DECK!`, 'success');
+      showToast(`EVENT '${newEvent.name}' PUBLISHED SUCCESSFULLY!`, 'success');
       if (onEventCreated) onEventCreated(newEvent);
       onClose();
     } catch (err) {
-      showToast(err.message || 'FAILED TO DISPATCH GIG FLYER', 'error');
+      showToast(err.message || 'FAILED TO PUBLISH EVENT', 'error');
     } finally {
       setLoading(false);
     }
@@ -167,7 +167,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
       >
         {/* Slanted Tape Badge */}
         <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          PROMOTER DISPATCH RIG
+          ORGANIZER EVENT PORTAL
         </div>
 
         {/* Header */}
@@ -175,18 +175,18 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
           <div>
             <div className="flex items-center gap-2">
               <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-                HOST_RAVE://FLYER_GEN
+                EVENTHUB://PUBLISH_EVENT
               </span>
               <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-neon-magenta animate-pulse"></span>
-                ZINE DISPATCH ENCLAVE
+                LIVE EVENT CREATOR
               </span>
             </div>
             <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white mt-1 leading-none">
-              DISPATCH NEW GIG FLYER
+              CREATE & PUBLISH LIVE EVENT
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              ENGRAVE SOUND RIG, SUBWOOFER SPECS, AND WRISTBAND QUOTA
+              CONFIGURE EVENT DETAILS, VENUE INFORMATION & TICKET PRICING
             </p>
           </div>
           <button 
@@ -201,11 +201,11 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
         <div className="p-5 md:p-6 max-h-[75vh] overflow-y-auto">
           <form onSubmit={handleSubmit} className="space-y-4">
             
-            {/* GIG TITLE & CATEGORY */}
+            {/* EVENT TITLE & CATEGORY */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="md:col-span-2">
                 <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
-                  GIG / RAVE TITLE <span className="text-neon-magenta">*</span>
+                  EVENT TITLE <span className="text-neon-magenta">*</span>
                 </label>
                 <input
                   type="text"
@@ -213,14 +213,14 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="E.G. ACID TEST 009: DOCKSIDE INCLINE"
+                  placeholder="E.G. GLOBAL DEVELOPER SUMMIT 2026"
                   className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
-                  GENRE / RADAR <span className="text-neon-magenta">*</span>
+                  EVENT CATEGORY <span className="text-neon-magenta">*</span>
                 </label>
                 <select 
                   name="category" 
@@ -228,21 +228,21 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                   onChange={handleChange} 
                   className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
                 >
-                  <option value="MUSIC">ACID TECHNO / NOISE</option>
-                  <option value="TECH">CYBERNETICS / LIVE-RIG</option>
-                  <option value="THEATER">DARK AV PERFORMANCE</option>
-                  <option value="SPORTS">INDUSTRIAL FLOOR</option>
-                  <option value="WORKSHOP">HARDWARE MOD LAB</option>
-                  <option value="OTHER">UNCLASSIFIED SOUND</option>
+                  <option value="MUSIC">MUSIC CONCERT & FESTIVAL</option>
+                  <option value="TECH">TECH & AI CONFERENCE</option>
+                  <option value="THEATER">THEATER & PERFORMING ARTS</option>
+                  <option value="SPORTS">SPORTS & TOURNAMENTS</option>
+                  <option value="WORKSHOP">WORKSHOPS & MASTERCLASSES</option>
+                  <option value="OTHER">COMMUNITY & NETWORKING</option>
                 </select>
               </div>
             </div>
 
-            {/* VENUE NAME & SECRET COORDINATES */}
+            {/* VENUE NAME & VENUE ADDRESS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
-                  WAREHOUSE / SQUAT LOCATION <span className="text-neon-magenta">*</span>
+                  VENUE NAME <span className="text-neon-magenta">*</span>
                 </label>
                 <input
                   type="text"
@@ -250,14 +250,14 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                   required
                   value={formData.venueName}
                   onChange={handleChange}
-                  placeholder="E.G. PIER 44 COLD SHED"
+                  placeholder="E.G. METROPOLITAN CONVENTION CENTER"
                   className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
-                  SECRET COORDINATES / STREET ADDRESS <span className="text-neon-magenta">*</span>
+                  VENUE ADDRESS / LOCATION <span className="text-neon-magenta">*</span>
                 </label>
                 <input
                   type="text"
@@ -265,7 +265,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                   required
                   value={formData.venueAddress}
                   onChange={handleChange}
-                  placeholder="E.G. 4241 ILLINOIS ST, BAY A1"
+                  placeholder="E.G. 4241 INNOVATION BLVD, DOWNTOWN"
                   className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
                 />
               </div>
@@ -274,7 +274,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
             {/* TIMING */}
             <div className="bg-asphalt-card border-2 border-asphalt-border p-3.5 space-y-2">
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">
-                CURFEW & TIMING PROTOCOL
+                SCHEDULE & TIMING PROTOCOL
               </span>
               <div className="grid grid-cols-3 gap-3">
                 <div>
@@ -282,11 +282,11 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                   <input type="date" name="eventDate" required value={formData.eventDate} onChange={handleChange} className="w-full bg-asphalt-surface border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-mono-zine text-grit-dim uppercase mb-1">CURFEW START</label>
+                  <label className="block text-[11px] font-mono-zine text-grit-dim uppercase mb-1">START TIME</label>
                   <input type="time" name="startTime" required value={formData.startTime} onChange={handleChange} className="w-full bg-asphalt-surface border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-mono-zine text-grit-dim uppercase mb-1">CURFEW END</label>
+                  <label className="block text-[11px] font-mono-zine text-grit-dim uppercase mb-1">END TIME</label>
                   <input type="time" name="endTime" required value={formData.endTime} onChange={handleChange} className="w-full bg-asphalt-surface border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none" />
                 </div>
               </div>
@@ -296,13 +296,13 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
-                  WRISTBAND TARIFF ($ USD) <span className="text-neon-magenta">*</span>
+                  TICKET PRICE ($ USD) <span className="text-neon-magenta">*</span>
                 </label>
                 <input type="number" name="ticketPrice" required step="0.01" value={formData.ticketPrice} onChange={handleChange} className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-sm outline-none" />
               </div>
               <div>
                 <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
-                  PIT CAPACITY QUOTA <span className="text-neon-magenta">*</span>
+                  AVAILABLE SEAT CAPACITY <span className="text-neon-magenta">*</span>
                 </label>
                 <input type="number" name="availableSeats" required min="1" value={formData.availableSeats} onChange={handleChange} className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-sm outline-none" />
               </div>
@@ -311,14 +311,14 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
             {/* DESCRIPTION */}
             <div>
               <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
-                GIG MANIFEST & SOUND SYSTEM RIG SPECIFICATIONS
+                EVENT DESCRIPTION & DETAILS
               </label>
               <textarea
                 name="description"
                 rows="2"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="40KW SUBWOOFERS, CUSTOM HORN ENCLOSURES, STRICT 06:00 AM CURFEW..."
+                placeholder="ENTER COMPLETE EVENT AGENDA, LINEUP, OR SPECIAL ATTENDEE INSTRUCTIONS..."
                 className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none uppercase"
               />
             </div>
@@ -326,7 +326,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
             {/* BANNER ARTWORK DROPZONE */}
             <div>
               <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
-                PHOTOCOPY FLYER ARTWORK (MAX 20MB)
+                EVENT BANNER IMAGE (MAX 20MB)
               </label>
 
               {!bannerUrl ? (
@@ -336,7 +336,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                 >
                   <Upload size={24} className="text-grit-dim mx-auto mb-2" />
                   <span className="block text-xs font-impact tracking-wider text-grit-white uppercase">
-                    {uploadingImage ? 'TRANSMITTING FLYER ARTWORK...' : 'CLICK TO SELECT PHOTOCOPY FLYER'}
+                    {uploadingImage ? 'UPLOADING BANNER ARTWORK...' : 'CLICK TO SELECT BANNER IMAGE'}
                   </span>
                   <span className="text-[10px] text-grit-dim uppercase block mt-1">
                     JPG, PNG, WEBP UP TO 20MB
@@ -377,14 +377,14 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                 onClick={onClose} 
                 className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-grit-white font-mono-zine text-xs px-4 py-2 uppercase cursor-pointer"
               >
-                ABORT
+                CANCEL
               </button>
               <button
                 type="submit"
                 disabled={loading || uploadingImage}
                 className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] cursor-pointer disabled:opacity-50"
               >
-                {loading ? 'ENGRAVING GIG...' : 'DISPATCH GIG FLYER TO WAREHOUSE'}
+                {loading ? 'PUBLISHING EVENT...' : 'PUBLISH LIVE EVENT'}
               </button>
             </div>
 

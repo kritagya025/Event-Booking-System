@@ -76,20 +76,20 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       });
       setProfile(updated);
       if (onUpdateUser) onUpdateUser(updated);
-      showToast('CREW IDENTITY SPECIFICATIONS UPDATED', 'success');
+      showToast('PROFILE SPECIFICATIONS UPDATED', 'success');
       setIsEditOpen(false);
     } catch (err) {
-      showToast(err.message || 'FAILED TO UPDATE IDENTITY', 'error');
+      showToast(err.message || 'FAILED TO UPDATE PROFILE', 'error');
     } finally {
       setSavingProfile(false);
     }
   };
 
   const handleDeleteManagedEvent = async (eventId, eventName) => {
-    if (!window.confirm(`ARE YOU SURE YOU WANT TO REMOVE GIG "${eventName || 'THIS GIG'}"?`)) return;
+    if (!window.confirm(`ARE YOU SURE YOU WANT TO REMOVE EVENT "${eventName || 'THIS EVENT'}"?`)) return;
     try {
       await apiFetch(`/events/${eventId}`, { method: 'DELETE' });
-      showToast('GIG REMOVED FROM WAREHOUSE CATALOG', 'success');
+      showToast('EVENT REMOVED FROM CATALOG', 'success');
       setManagedEvents((prev) => prev.filter((e) => e.id !== eventId));
     } catch (err) {
       showToast(err.message || 'FAILED TO REMOVE EVENT', 'error');
@@ -98,7 +98,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
 
   const handleDownloadPdf = async (booking) => {
     if (booking.bookingStatus === 'CANCELLED') {
-      showToast('CANNOT DOWNLOAD PASS FOR VOIDED RESERVATION', 'error');
+      showToast('CANNOT DOWNLOAD PASS FOR CANCELLED RESERVATION', 'error');
       return;
     }
     try {
@@ -110,12 +110,12 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `VAULT90S-Pass-${booking.id}.pdf`;
+      link.download = `EVENTHUB-Pass-${booking.id}.pdf`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      showToast('WRISTBAND PASS DISPATCHED', 'success');
+      showToast('TICKET ADMISSION PASS DOWNLOADED', 'success');
     } catch (err) {
       showToast(err.message || 'FAILED TO DOWNLOAD PASS', 'error');
     }
@@ -124,13 +124,13 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
   if (!currentUser) {
     return (
       <div className="w-full max-w-md mx-auto py-24 text-center font-mono-zine text-grit-white">
-        <h3 className="font-display text-3xl uppercase mb-4">AUTHENTICATE IDENTITY</h3>
-        <p className="text-xs text-grit-dim uppercase mb-6">SIGN IN TO ACCESS YOUR ENCLAVE PROFILE AND WRISTBAND LOGS</p>
+        <h3 className="font-display text-3xl uppercase mb-4">AUTHENTICATION REQUIRED</h3>
+        <p className="text-xs text-grit-dim uppercase mb-6">SIGN IN TO ACCESS YOUR PROFILE, BOOKINGS, AND TICKET PASSES</p>
         <button 
           onClick={() => onNavigate('login')} 
           className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff] cursor-pointer"
         >
-          SIGN IN TO ENCLAVE
+          SIGN IN
         </button>
       </div>
     );
@@ -186,13 +186,13 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
               onClick={() => setIsEditOpen(true)} 
               className="bg-asphalt-card border-2 border-asphalt-border hover:border-acid-yellow text-grit-white font-impact tracking-wider text-xs px-4 py-2 uppercase flex items-center gap-1.5 cursor-pointer transition-all"
             >
-              <Edit3 size={13} /> EDIT CIPHER
+              <Edit3 size={13} /> EDIT PROFILE
             </button>
             <button 
               onClick={onLogout} 
               className="bg-asphalt-card border-2 border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-impact tracking-wider text-xs px-4 py-2 uppercase flex items-center gap-1.5 cursor-pointer transition-all"
             >
-              <LogOut size={13} /> TERMINATE SESSION
+              <LogOut size={13} /> LOG OUT
             </button>
           </div>
 
@@ -204,41 +204,41 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
         {!isOrganizer ? (
           <>
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54]">
-              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PASSES</span>
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL BOOKINGS</span>
               <span className="font-display text-3xl text-grit-white font-bold leading-none mt-1 block">{bookings.length}</span>
-              <span className="text-[10px] text-acid-yellow uppercase block mt-1">{activeBookingsCount} ACTIVE WRISTBANDS</span>
+              <span className="text-[10px] text-acid-yellow uppercase block mt-1">{activeBookingsCount} CONFIRMED PASSES</span>
             </div>
 
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d]">
-              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TARIFF INVESTED</span>
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL SPENT</span>
               <span className="font-display text-3xl text-acid-yellow font-bold leading-none mt-1 block">{formatPrice(totalSpent)}</span>
-              <span className="text-[10px] text-grit-dim uppercase block mt-1">LOCKED DISPATCH VALUE</span>
+              <span className="text-[10px] text-grit-dim uppercase block mt-1">CONFIRMED RESERVATIONS</span>
             </div>
 
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8]">
-              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">SAVED TAPES</span>
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">SAVED EVENTS</span>
               <span className="font-display text-3xl text-blue-400 font-bold leading-none mt-1 block">{wishlist.length}</span>
-              <span className="text-[10px] text-grit-dim uppercase block mt-1">FLYER BOOKMARKS</span>
+              <span className="text-[10px] text-grit-dim uppercase block mt-1">WISHLIST BOOKMARKS</span>
             </div>
           </>
         ) : (
           <>
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54]">
-              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">MANAGED GIGS</span>
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">HOSTED EVENTS</span>
               <span className="font-display text-3xl text-grit-white font-bold leading-none mt-1 block">{managedEvents.length}</span>
-              <span className="text-[10px] text-acid-yellow uppercase block mt-1">CATALOG FLYERS ACTIVE</span>
+              <span className="text-[10px] text-acid-yellow uppercase block mt-1">ACTIVE LIVE EVENTS</span>
             </div>
 
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d]">
-              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">WRISTBANDS ALLOCATED</span>
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TICKETS ALLOCATED</span>
               <span className="font-display text-3xl text-acid-yellow font-bold leading-none mt-1 block">{totalTicketsSold}</span>
-              <span className="text-[10px] text-grit-dim uppercase block mt-1">ACROSS MANAGED FLOORS</span>
+              <span className="text-[10px] text-grit-dim uppercase block mt-1">ACROSS HOSTED EVENTS</span>
             </div>
 
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8]">
-              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">ESTIMATED VOLUME</span>
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">ESTIMATED REVENUE</span>
               <span className="font-display text-3xl text-blue-400 font-bold leading-none mt-1 block">{formatPrice(estimatedRevenue)}</span>
-              <span className="text-[10px] text-grit-dim uppercase block mt-1">GROSS TARIFF COLLECTED</span>
+              <span className="text-[10px] text-grit-dim uppercase block mt-1">GROSS TICKET SALES</span>
             </div>
           </>
         )}
@@ -254,7 +254,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
               : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
           }`}
         >
-          {isOrganizer ? 'PROMOTER DISPATCH LOG' : 'IDENTITY OVERVIEW'}
+          {isOrganizer ? 'ORGANIZER DASHBOARD' : 'ACCOUNT OVERVIEW'}
         </button>
 
         {!isOrganizer ? (
@@ -267,7 +267,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                   : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
               }`}
             >
-              MY WRISTBANDS ({bookings.length})
+              MY TICKETS ({bookings.length})
             </button>
             <button
               onClick={() => setActiveTab('wishlist')}
@@ -277,7 +277,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                   : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
               }`}
             >
-              SAVED TAPES ({wishlist.length})
+              SAVED EVENTS ({wishlist.length})
             </button>
           </>
         ) : (
@@ -289,7 +289,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                 : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
             }`}
           >
-            MANAGED FLYERS ({managedEvents.length})
+            MANAGED EVENTS ({managedEvents.length})
           </button>
         )}
       </div>
@@ -299,23 +299,23 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#eefc54]">
             <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4">
-              COMM IDENTIFIER SPECS
+              ACCOUNT PROFILE DETAILS
             </h3>
             <div className="space-y-3 font-mono-zine text-xs uppercase">
               <div className="flex justify-between border-b border-asphalt-border pb-2">
-                <span className="text-grit-dim">REGISTERED HANDLE:</span>
+                <span className="text-grit-dim">FULL NAME:</span>
                 <span className="text-grit-white font-bold">{profile.firstName} {profile.lastName}</span>
               </div>
               <div className="flex justify-between border-b border-asphalt-border pb-2">
-                <span className="text-grit-dim">COMM ADDRESS:</span>
+                <span className="text-grit-dim">EMAIL ADDRESS:</span>
                 <span className="text-grit-white font-bold">{profile.email}</span>
               </div>
               <div className="flex justify-between border-b border-asphalt-border pb-2">
-                <span className="text-grit-dim">FREQ / PHONE:</span>
+                <span className="text-grit-dim">PHONE NUMBER:</span>
                 <span className="text-grit-white font-bold">{profile.phone || 'NONE SPECIFIED'}</span>
               </div>
               <div className="flex justify-between border-b border-asphalt-border pb-2">
-                <span className="text-grit-dim">CREW CLEARANCE:</span>
+                <span className="text-grit-dim">ACCOUNT ROLE:</span>
                 <span className="text-acid-yellow font-bold">{profile.role}</span>
               </div>
             </div>
@@ -323,14 +323,14 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
 
           <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#ff1f6d]">
             <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4">
-              ENCLAVE WATERMARK
+              SECURITY PROTOCOL
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase mb-4 leading-relaxed">
-              THIS IDENTITY CIPHER IS TIED TO ENCRYPTED STOMP PROTOCOL NODES. SESSIONS ARE AUTOMATICALLY RENEWED VIA SECURE HTTPO NLY COOKIES.
+              THIS ACCOUNT IS SECURED VIA HTTPONLY JWT COOKIES AND REAL-TIME STOMP PROTOCOL LOCKS.
             </p>
             <div className="hazard-tape h-3 w-full mb-4"></div>
             <div className="text-[10px] font-ticker text-grit-dim uppercase">
-              CIPHER NODE: V90S_ID_{profile.id || 1} // POSTGRES_TLS_VERIFIED
+              SECURE NODE: EHB_USR_{profile.id || 1} // POSTGRES_TLS_VERIFIED
             </div>
           </div>
         </div>
@@ -341,7 +341,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
         <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] p-6 relative font-mono-zine">
             <div className="flex justify-between items-center border-b-2 border-asphalt-border pb-3 mb-4">
-              <h3 className="font-display text-2xl uppercase">EDIT CREW CIPHER</h3>
+              <h3 className="font-display text-2xl uppercase">EDIT ACCOUNT PROFILE</h3>
               <button onClick={() => setIsEditOpen(false)} className="text-grit-dim hover:text-neon-magenta p-1">
                 <X size={18} />
               </button>
@@ -349,7 +349,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
 
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <div>
-                <label className="block text-xs text-grit-dim uppercase mb-1">FIRST IDENTIFIER</label>
+                <label className="block text-xs text-grit-dim uppercase mb-1">FIRST NAME</label>
                 <input
                   type="text"
                   value={editForm.firstName}
@@ -359,7 +359,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
               </div>
 
               <div>
-                <label className="block text-xs text-grit-dim uppercase mb-1">SURNAME / HANDLE</label>
+                <label className="block text-xs text-grit-dim uppercase mb-1">LAST NAME</label>
                 <input
                   type="text"
                   value={editForm.lastName}
@@ -369,7 +369,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
               </div>
 
               <div>
-                <label className="block text-xs text-grit-dim uppercase mb-1">FREQ / TELEPHONE</label>
+                <label className="block text-xs text-grit-dim uppercase mb-1">PHONE NUMBER</label>
                 <input
                   type="tel"
                   value={editForm.phone}
@@ -384,14 +384,14 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                   onClick={() => setIsEditOpen(false)} 
                   className="bg-asphalt-card border border-asphalt-border text-grit-white font-mono-zine text-xs px-3 py-1.5 uppercase"
                 >
-                  ABORT
+                  CANCEL
                 </button>
                 <button
                   type="submit"
                   disabled={savingProfile}
                   className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-5 py-2 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[2px_2px_0px_#ffffff]"
                 >
-                  {savingProfile ? 'SAVING...' : 'COMMIT CIPHER'}
+                  {savingProfile ? 'SAVING...' : 'SAVE CHANGES'}
                 </button>
               </div>
             </form>

@@ -56,21 +56,21 @@ export default function Navbar({
       {/* ─── 0. HIGH VOLTAGE HAZARD WARNING HEADER MARQUEE ─── */}
       <div className="h-7 w-full hazard-tape overflow-hidden flex items-center border-b-2 border-asphalt-black select-none">
         <div className="animate-marquee items-center gap-6 text-asphalt-black font-ticker font-extrabold text-[12px] tracking-widest uppercase py-0.5">
-          <span>⚠️ VAULT_UNDERGROUND // NO CAMERAS // SOUND REINFORCEMENT: 40KW FUNKTION-ONE ⚠️</span>
+          <span>⚡ EVENTHUB // REAL-TIME STOMP SEAT CONCURRENCY ENGINE // 10-MINUTE SEAT LOCK PROTOCOL ⚡</span>
           <span>•</span>
-          <span>SECRET GATE COORDS SENT 120M PRIOR // CASH OR SECURE WRISTBAND AT ENTRANCE</span>
+          <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
           <span>•</span>
-          <span>DIY HARDWARE SYNTH / ACID CORE / INDUSTRIAL TAPE CASSETTE DUB MATRIX</span>
+          <span>CONCERTS, TECH CONFERENCES, THEATER PRODUCTIONS & INDUSTRIAL WORKSHOPS</span>
           <span>•</span>
-          <span>CURFEW: UNTIL INDEFINITE MORNING LIGHT // OVERDRIVE LIMITER BYPASSED</span>
+          <span>DIRECT ORGANIZER GATE SCANNER VALIDATION // 99.98% DISTRIBUTED UPTIME</span>
           <span>•</span>
-          <span>⚠️ VAULT_UNDERGROUND // NO CAMERAS // SOUND REINFORCEMENT: 40KW FUNKTION-ONE ⚠️</span>
+          <span>⚡ EVENTHUB // REAL-TIME STOMP SEAT CONCURRENCY ENGINE // 10-MINUTE SEAT LOCK PROTOCOL ⚡</span>
           <span>•</span>
-          <span>SECRET GATE COORDS SENT 120M PRIOR // CASH OR SECURE WRISTBAND AT ENTRANCE</span>
+          <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
           <span>•</span>
-          <span>DIY HARDWARE SYNTH / ACID CORE / INDUSTRIAL TAPE CASSETTE DUB MATRIX</span>
+          <span>CONCERTS, TECH CONFERENCES, THEATER PRODUCTIONS & INDUSTRIAL WORKSHOPS</span>
           <span>•</span>
-          <span>CURFEW: UNTIL INDEFINITE MORNING LIGHT // OVERDRIVE LIMITER BYPASSED</span>
+          <span>DIRECT ORGANIZER GATE SCANNER VALIDATION // 99.98% DISTRIBUTED UPTIME</span>
         </div>
       </div>
 
@@ -84,33 +84,33 @@ export default function Navbar({
               onClick={() => handleNavClick('home')} 
               className="flex items-center gap-2 group cursor-pointer"
             >
-              <div className="bg-acid-yellow text-asphalt-black px-2 py-0.5 font-display text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
-                VAULT://90s
+              <div className="bg-acid-yellow text-asphalt-black px-2.5 py-0.5 font-display text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
+                EVENTHUB
               </div>
               <div className="hidden sm:flex flex-col font-ticker leading-none">
-                <span className="text-xs font-bold text-grit-white tracking-widest uppercase">ACID_ZINE_SYSTEM</span>
-                <span className="text-[10px] text-neon-magenta tracking-tight">TAPE ARCHIVE & WAREHOUSE PASSES</span>
+                <span className="text-xs font-bold text-grit-white tracking-widest uppercase">TICKETING_PROTOCOL</span>
+                <span className="text-[10px] text-neon-magenta tracking-tight">REAL-TIME SEAT RESERVATION & PASSES</span>
               </div>
             </div>
             <span className="hidden lg:inline-block font-ticker text-[10px] bg-electric-cobalt text-grit-white px-2 py-0.5 uppercase font-bold border border-grit-white/40 stamp-slant-2">
-              CASSETTE ED. #04
+              PLATFORM V2.4
             </span>
           </div>
 
-          {/* Navigation Flyers Tabs */}
+          {/* Navigation Tabs */}
           <nav className="hidden md:flex items-center gap-2 font-display text-lg tracking-wider">
             <button 
               onClick={() => handleNavClick('home')}
               className={`px-3 py-1 font-bold border-2 transition-all -rotate-1 ${activeTab === 'home' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[2px_2px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
             >
-              FLYER ARCHIVE
+              EXPLORE EVENTS
             </button>
 
             <button 
               onClick={() => handleNavClick('events')}
               className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'events' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[2px_2px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
             >
-              LINEUP & GIGS
+              ALL CATALOG
             </button>
 
             {/* CUSTOMER ROLE LINKS */}
@@ -120,14 +120,14 @@ export default function Navbar({
                   onClick={() => handleNavClick('wishlist')}
                   className={`px-3 py-1 border transition-all -rotate-1 ${activeTab === 'wishlist' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta'}`}
                 >
-                  SAVED TAPES
+                  WISHLIST
                 </button>
 
                 <button 
                   onClick={() => handleNavClick('my-bookings')}
                   className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'my-bookings' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
                 >
-                  MY WRISTBANDS
+                  MY TICKETS
                 </button>
               </>
             )}
@@ -139,7 +139,7 @@ export default function Navbar({
                   onClick={() => handleNavClick('create-event')}
                   className={`px-3 py-1 border transition-all -rotate-1 ${activeTab === 'create-event' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
                 >
-                  HOST RAVE
+                  CREATE EVENT
                 </button>
 
                 <button 
@@ -157,14 +157,14 @@ export default function Navbar({
                 onClick={() => handleNavClick('admin')}
                 className={`px-3 py-1 border transition-all ${activeTab === 'admin' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
               >
-                ADMIN RIG
+                ADMIN DASHBOARD
               </button>
             )}
           </nav>
 
           {/* Header Actions & Live Counter */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Currency Hack Selector */}
+            {/* Currency Selector */}
             <div className="relative flex items-center">
               <select 
                 value={currency} 
@@ -180,10 +180,10 @@ export default function Navbar({
               <span className="material-symbols-outlined text-acid-yellow pointer-events-none absolute right-1 text-xs font-bold">arrow_drop_down</span>
             </div>
 
-            {/* High-Entropy Wristband Counter */}
+            {/* Live Inventory Counter */}
             <div className="hidden sm:flex items-center gap-1.5 bg-asphalt-card border border-asphalt-border px-2.5 py-1">
               <span className="w-2 h-2 rounded-full bg-neon-magenta animate-ping" />
-              <span className="font-ticker text-[11px] text-grit-dim">WRISTBANDS:</span>
+              <span className="font-ticker text-[11px] text-grit-dim">AVAILABLE SEATS:</span>
               <span className="font-ticker text-[11px] font-bold text-acid-yellow">#992 / 1200</span>
             </div>
 
@@ -238,7 +238,7 @@ export default function Navbar({
                           onClick={() => { handleNavClick('my-bookings'); setProfileDropdownOpen(false); }}
                           className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
                         >
-                          <Ticket size={13} /> My Wristbands
+                          <Ticket size={13} /> My Tickets
                         </button>
                       )}
 
@@ -249,7 +249,7 @@ export default function Navbar({
                             onClick={() => { handleNavClick('create-event'); setProfileDropdownOpen(false); }}
                             className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
                           >
-                            <PlusCircle size={13} /> Host New Rave
+                            <PlusCircle size={13} /> Create New Event
                           </button>
                           <button
                             type="button"
@@ -296,7 +296,7 @@ export default function Navbar({
                   onClick={() => handleNavClick('register')} 
                   className="bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white px-3 sm:px-4 py-1.5 font-display text-base tracking-wider uppercase border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] active:translate-x-0.5 active:translate-y-0.5 transition-all"
                 >
-                  CLAIM PASS
+                  REGISTER
                 </button>
               </div>
             )}

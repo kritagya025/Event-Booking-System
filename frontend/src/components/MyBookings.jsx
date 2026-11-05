@@ -24,11 +24,11 @@ export default function MyBookings({ currentUser, showToast }) {
           totalAmount: 60.00,
           event: {
             id: 1,
-            name: 'MAHLER 203: RESURRECTION RAVE',
+            name: 'GLOBAL DEVELOPER SUMMIT 2026',
             eventDate: '2026-09-15',
-            startTime: '23:00',
-            category: 'TECHNO',
-            venue: { name: 'PIER 44 COLD SHED', address: '4241 ILLINOIS ST' }
+            startTime: '10:00',
+            category: 'TECH',
+            venue: { name: 'METROPOLITAN CONVENTION CENTER', address: '4241 INNOVATION BLVD' }
           }
         }
       ];
@@ -53,11 +53,11 @@ export default function MyBookings({ currentUser, showToast }) {
   }, [currentUser, fetchUserBookings]);
 
   const handleCancelBooking = async (bookingId) => {
-    if (!window.confirm('VOID WRISTBAND PASS? ALLOCATED SECTOR WILL RETURN TO LIVE INVENTORY.')) return;
+    if (!window.confirm('CANCEL THIS BOOKING? ALLOCATED SEATS WILL RETURN TO LIVE INVENTORY.')) return;
 
     try {
       await apiFetch(`/bookings/${bookingId}/cancel`, { method: 'PATCH' });
-      showToast('WRISTBAND PASS VOIDED AND ARCHIVED', 'info');
+      showToast('BOOKING CANCELLED AND SEATS RELEASED', 'info');
       fetchUserBookings();
     } catch (err) {
       showToast(err.message || 'FAILED TO CANCEL BOOKING', 'error');
@@ -66,7 +66,7 @@ export default function MyBookings({ currentUser, showToast }) {
 
   const handleDownloadPdf = async (booking) => {
     if (booking.bookingStatus === 'CANCELLED') {
-      showToast('CANNOT DISPATCH PASS FOR VOIDED RESERVATION', 'error');
+      showToast('CANNOT DOWNLOAD PASS FOR CANCELLED RESERVATION', 'error');
       return;
     }
 
@@ -80,19 +80,19 @@ export default function MyBookings({ currentUser, showToast }) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `VAULT90S-Pass-${booking.id}.pdf`;
+        link.download = `EVENTHUB-Ticket-${booking.id}.pdf`;
         document.body.appendChild(link);
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
-        showToast('WRISTBAND ENCLAVE PASS DISPATCHED', 'success');
+        showToast('TICKET ADMISSION PASS DOWNLOADED', 'success');
         return;
       }
     } catch (e) {
       console.warn('PDF API notice:', e);
     }
 
-    // 90s Acid-Zine Printable Pass Stub
+    // EventHub Brutalist Printable Pass Stub
     try {
       const passWindow = window.open('', '_blank');
       if (passWindow) {
@@ -100,7 +100,7 @@ export default function MyBookings({ currentUser, showToast }) {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>VAULT://90s PASS #${booking.id}</title>
+            <title>EVENTHUB TICKET #${booking.id}</title>
             <style>
               body { font-family: 'Courier New', monospace; background: #0e0e11; color: #f5f5f0; padding: 40px; text-align: center; }
               .pass-card { max-width: 480px; margin: 0 auto; background: #16161c; border: 4px solid #f5f5f0; padding: 24px; box-shadow: 10px 10px 0px #eefc54; text-align: left; }
@@ -117,32 +117,32 @@ export default function MyBookings({ currentUser, showToast }) {
           <body>
             <div class="pass-card">
               <div class="hazard"></div>
-              <span class="badge">VAULT://90S OFFICIAL WRISTBAND PASS</span>
-              <h2>${booking.event?.name || 'UNDERGROUND RAVE'}</h2>
-              <p>${booking.event?.eventDate || '2026-09-15'} · ${booking.event?.venue?.name || 'NORTH INDUSTRIAL DOCKS'}</p>
+              <span class="badge">EVENTHUB OFFICIAL ADMISSION PASS</span>
+              <h2>${booking.event?.name || 'LIVE EVENT'}</h2>
+              <p>${booking.event?.eventDate || '2026-09-15'} · ${booking.event?.venue?.name || 'MAIN CONCERT ARENA'}</p>
               <div class="qr-container">
-                <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VAULT90S-PASS-${booking.id}`}" class="qr-img" alt="Pass QR" />
+                <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=EVENTHUB-PASS-${booking.id}`}" class="qr-img" alt="Pass QR" />
               </div>
               <div class="info-row">
-                <div><span>RAVER ATTENDEE</span><br><strong>${currentUser?.firstName || 'ANON'} ${currentUser?.lastName || 'CREW'}</strong></div>
-                <div style="text-align:right"><span>SECTOR TILES</span><br><strong>${booking.selectedSeats || 'GENERAL PIT'}</strong></div>
+                <div><span>ATTENDEE</span><br><strong>${currentUser?.firstName || 'GUEST'} ${currentUser?.lastName || 'ATTENDEE'}</strong></div>
+                <div style="text-align:right"><span>SEATS / ROW</span><br><strong>${booking.selectedSeats || 'GENERAL ADMISSION'}</strong></div>
               </div>
-              <button class="print-btn" onclick="window.print()">PRINT / EXPORT PASS</button>
+              <button class="print-btn" onclick="window.print()">PRINT / EXPORT TICKET</button>
             </div>
           </body>
           </html>
         `);
         passWindow.document.close();
-        showToast('ADMISSION PASS OPENED FOR PRINTING', 'success');
+        showToast('ADMISSION TICKET OPENED FOR PRINTING', 'success');
       }
     } catch (passErr) {
-      showToast('DISPATCHING TICKET PASS...', 'success');
+      showToast('GENERATING TICKET PASS...', 'success');
     }
   };
 
   const handleDownloadCalendar = (eventId) => {
     window.open(`${BASE_URL}/events/${eventId}/calendar.ics`, '_blank');
-    showToast('DISPATCHING ICS CALENDAR FILE...', 'info');
+    showToast('DOWNLOADING ICS CALENDAR FILE...', 'info');
   };
 
   const handleOpenGoogleCalendar = async (eventId, eventData) => {
@@ -157,9 +157,9 @@ export default function MyBookings({ currentUser, showToast }) {
       console.warn('Backend calendar link fallback:', err);
     }
 
-    const title = encodeURIComponent(eventData?.name || 'VAULT Rave');
-    const details = encodeURIComponent(`Admittance Pass for ${eventData?.name || 'Underground Warehouse Gig'}`);
-    const location = encodeURIComponent(eventData?.venue?.name || 'North Docks');
+    const title = encodeURIComponent(eventData?.name || 'EventHub Live Event');
+    const details = encodeURIComponent(`Admission Ticket for ${eventData?.name || 'Live Event'}`);
+    const location = encodeURIComponent(eventData?.venue?.name || 'Main Arena');
     const dateFormatted = (eventData?.eventDate || '2026-09-15').replace(/-/g, '');
     const gUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dateFormatted}T230000Z/${dateFormatted}T060000Z`;
     window.open(gUrl, '_blank');
@@ -201,17 +201,17 @@ export default function MyBookings({ currentUser, showToast }) {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-              VAULT://ARCHIVE_DECK
+              EVENTHUB://TICKETS_PORTAL
             </span>
             <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
-              COMM IDENTIFIER: {currentUser?.email || 'ANON_USER'}
+              ACCOUNT: {currentUser?.email || 'ANON_USER'}
             </span>
           </div>
           <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
-            WRISTBANDS & TICKET PASS ARCHIVE
+            MY BOOKINGS & DIGITAL TICKETS
           </h1>
           <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
-            CRYPTOGRAPHIC ADMITTANCE PASSES, STOMP MATRIX RESERVATIONS & PERFORATED TEAR STUBS
+            VERIFIED EVENT PASSES, REAL-TIME SEAT RESERVATIONS & QR ADMISSION TICKETS
           </p>
         </div>
 
@@ -219,35 +219,35 @@ export default function MyBookings({ currentUser, showToast }) {
           onClick={fetchUserBookings} 
           className="self-start md:self-auto bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer"
         >
-          REFRESH ARCHIVE
+          REFRESH BOOKINGS
         </button>
       </div>
 
       {/* 4 Brutalist Metric Stamps */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PASSES</span>
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL BOOKINGS</span>
           <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {stats.totalCount}
           </span>
         </div>
 
         <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">ACTIVE WRISTBANDS</span>
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">CONFIRMED PASSES</span>
           <span className="font-display text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
             {stats.confirmedCount}
           </span>
         </div>
 
         <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">UPCOMING RAVES</span>
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">UPCOMING EVENTS</span>
           <span className="font-display text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
             {stats.upcomingCount}
           </span>
         </div>
 
         <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ffffff] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TARIFF COMMITTED</span>
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL AMOUNT SPENT</span>
           <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {formatPrice(stats.totalSpent)}
           </span>
@@ -276,7 +276,7 @@ export default function MyBookings({ currentUser, showToast }) {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-grit-dim" />
           <input
             type="text"
-            placeholder="FILTER GIG / VENUE / PASS #ID..."
+            placeholder="FILTER EVENT / VENUE / PASS #ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-asphalt-card border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine pl-9 pr-3 py-1.5 text-xs uppercase outline-none"
@@ -289,7 +289,7 @@ export default function MyBookings({ currentUser, showToast }) {
         <div className="py-16 text-center">
           <div className="animate-spin w-8 h-8 border-4 border-acid-yellow border-t-transparent mx-auto mb-3"></div>
           <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider animate-pulse">
-            AUDITING CIPHER WRISTBAND INVENTORY...
+            AUDITING TICKET PASS INVENTORY...
           </span>
         </div>
       ) : filteredBookings.length === 0 ? (
@@ -298,8 +298,8 @@ export default function MyBookings({ currentUser, showToast }) {
           <h3 className="font-impact text-2xl uppercase text-grit-white tracking-wider">NO PASSES DISCOVERED</h3>
           <p className="font-mono-zine text-xs text-grit-dim uppercase mt-1">
             {searchQuery || statusFilter !== 'ALL'
-              ? 'NO WRISTBAND RECORDS MATCH FILTER CRITERIA'
-              : 'EXPLORE THE FLYER DECK AND LOCK YOUR FIRST ADMITTANCE PASS'}
+              ? 'NO TICKET RECORDS MATCH FILTER CRITERIA'
+              : 'EXPLORE EVENTS AND BOOK YOUR FIRST ADMITTANCE PASS'}
           </p>
         </div>
       ) : (
@@ -321,36 +321,36 @@ export default function MyBookings({ currentUser, showToast }) {
               {/* Pass Content */}
               <div className="p-5">
                 <div className="text-[10px] font-ticker text-grit-dim uppercase tracking-wider mb-2">
-                  WRISTBAND #{b.id} // SEC_NODE
+                  TICKET #{b.id} // SEC_NODE
                 </div>
 
                 <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-tight mb-4 pr-16">
-                  {b.event?.name || 'UNDERGROUND GIG'}
+                  {b.event?.name || 'LIVE EVENT'}
                 </h3>
 
                 <div className="space-y-1.5 font-mono-zine text-xs text-grit-dim uppercase mb-4">
                   <div className="flex items-center gap-2">
                     <Calendar size={13} className="text-acid-yellow" />
-                    <span>{b.event?.eventDate} @ {b.event?.startTime || '23:00'}</span>
+                    <span>{b.event?.eventDate} @ {b.event?.startTime || '19:00'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin size={13} className="text-acid-yellow" />
-                    <span>{b.event?.venue?.name || 'NORTH INDUSTRIAL DOCKS'}</span>
+                    <span>{b.event?.venue?.name || 'CONCERT ARENA'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Ticket size={13} className="text-acid-yellow" />
                     <span>
-                      {b.quantity} PASS(ES) · {b.selectedSeats ? `TILES: ${b.selectedSeats}` : 'GENERAL PIT'}
+                      {b.quantity} PASS(ES) · {b.selectedSeats ? `SEATS: ${b.selectedSeats}` : 'GENERAL ADMISSION'}
                     </span>
                   </div>
                   <div className="pt-2 border-t border-asphalt-border font-impact text-lg text-grit-white">
-                    TARIFF: {formatPrice(b.totalAmount, b.event?.currency)}
+                    TOTAL AMOUNT: {formatPrice(b.totalAmount, b.event?.currency)}
                   </div>
                 </div>
 
                 {/* Perforated Barcode Line */}
                 <div className="pt-3 border-t-2 border-dashed border-asphalt-border flex items-center justify-between opacity-50 select-none">
-                  <span className="font-ticker text-[8px] text-grit-dim uppercase">PASS_BARCODE_CIPHER</span>
+                  <span className="font-ticker text-[8px] text-grit-dim uppercase">PASS_BARCODE_VERIFIED</span>
                   <svg className="h-4 w-28" viewBox="0 0 112 16" fill="currentColor">
                     <rect x="0" y="0" width="3" height="16"/>
                     <rect x="5" y="0" width="2" height="16"/>
@@ -384,7 +384,7 @@ export default function MyBookings({ currentUser, showToast }) {
                     onClick={() => handleDownloadPdf(b)} 
                     className="flex-1 bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase py-2 px-3 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <Download size={13} /> PRINT WRISTBAND PASS
+                    <Download size={13} /> PRINT TICKET PASS
                   </button>
                 )}
 
@@ -408,9 +408,9 @@ export default function MyBookings({ currentUser, showToast }) {
                   <button 
                     onClick={() => handleCancelBooking(b.id)} 
                     className="bg-asphalt-surface border border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-mono-zine text-xs px-2.5 py-1.5 uppercase cursor-pointer transition-colors"
-                    title="Void wristband pass"
+                    title="Cancel booking"
                   >
-                    <XCircle size={13} /> VOID
+                    <XCircle size={13} /> CANCEL
                   </button>
                 )}
               </div>
