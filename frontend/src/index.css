@@ -120,81 +120,21 @@ html.light, body.light, .light {
   box-sizing: border-box;
 }
 
-/* ─── Circular Aperture View Transition & Laser Shockwave ─── */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-  z-index: 1;
-}
-
-::view-transition-new(root) {
-  z-index: 9999;
-}
-
-@keyframes themeLaserRing {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 1;
-    border-width: 8px;
-  }
-  60% {
-    opacity: 0.95;
-    border-width: 4px;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0;
-    border-width: 1px;
-  }
-}
-
-.theme-laser-ring {
-  position: fixed;
-  border-radius: 9999px;
-  border: 4px solid var(--neon-magenta);
-  box-shadow: 0 0 30px var(--acid-yellow), inset 0 0 30px var(--neon-magenta);
-  pointer-events: none;
-  z-index: 10000;
-  animation: themeLaserRing 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes crtBeamPass {
-  0% {
-    top: 0%;
-    opacity: 0.9;
-  }
-  100% {
-    top: 100%;
-    opacity: 0;
-  }
-}
-
-.theme-crt-beam {
-  position: fixed;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: linear-gradient(90deg, transparent, var(--acid-yellow), var(--neon-magenta), var(--acid-yellow), transparent);
-  box-shadow: 0 0 25px var(--neon-magenta), 0 0 50px var(--acid-yellow);
-  pointer-events: none;
-  z-index: 10001;
-  animation: crtBeamPass 0.45s ease-out forwards;
-}
-
-/* ─── Smooth Theme Transition ─── */
-html.theme-transitioning,
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
-  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transition-delay: 0s !important;
+/* ─── Ultra-Smooth Hardware-Accelerated Theme Transition (60-120 FPS) ─── */
+body,
+header,
+footer,
+nav,
+section,
+main,
+aside,
+[class*="bg-asphalt"],
+[class*="border-asphalt"],
+[class*="border-grit"],
+[class*="text-grit"] {
+  transition: background-color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body {
@@ -206,7 +146,6 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ─── Hazard Tape Patterns ─── */
