@@ -55,13 +55,13 @@ public class AdminService {
 
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
         BigDecimal todayRevenue = allBookings.stream()
-                .filter(b -> b.getBookingStatus() == BookingStatus.CONFIRMED && b.getBookingDate().isAfter(startOfToday))
+                .filter(b -> b.getBookingStatus() == BookingStatus.CONFIRMED && b.getBookingDate() != null && b.getBookingDate().isAfter(startOfToday))
                 .map(Booking::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         List<Event> allEvents = eventRepository.findAll();
         long upcomingEventsCount = allEvents.stream()
-                .filter(e -> !e.isDeleted() && e.getEventDate().isAfter(LocalDate.now()))
+                .filter(e -> !e.isDeleted() && e.getEventDate() != null && e.getEventDate().isAfter(LocalDate.now()))
                 .count();
 
         long cancelledEventsCount = allEvents.stream()
@@ -105,28 +105,31 @@ public class AdminService {
 
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
         BigDecimal todayRevenue = confirmedBookings.stream()
-                .filter(b -> b.getBookingDate().isAfter(startOfToday))
+                .filter(b -> b.getBookingDate() != null && b.getBookingDate().isAfter(startOfToday))
                 .map(Booking::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         BigDecimal monthlyRevenue = confirmedBookings.stream()
-                .filter(b -> b.getBookingDate().isAfter(startOfMonth))
+                .filter(b -> b.getBookingDate() != null && b.getBookingDate().isAfter(startOfMonth))
                 .map(Booking::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Map<String, BigDecimal> revenueByCategory = new HashMap<>();
         for (Booking b : confirmedBookings) {
-            String category = b.getEvent().getCategory();
+            String category = (b.getEvent() != null && b.getEvent().getCategory() != null)
+                    ? b.getEvent().getCategory() : "Uncategorized";
             revenueByCategory.put(category,
                     revenueByCategory.getOrDefault(category, BigDecimal.ZERO).add(b.getTotalAmount()));
         }
 
         Map<String, BigDecimal> dailyRevenueTrend = new TreeMap<>();
         for (Booking b : confirmedBookings) {
-            String dateStr = b.getBookingDate().toLocalDate().toString();
-            dailyRevenueTrend.put(dateStr,
-                    dailyRevenueTrend.getOrDefault(dateStr, BigDecimal.ZERO).add(b.getTotalAmount()));
+            if (b.getBookingDate() != null) {
+                String dateStr = b.getBookingDate().toLocalDate().toString();
+                dailyRevenueTrend.put(dateStr,
+                        dailyRevenueTrend.getOrDefault(dateStr, BigDecimal.ZERO).add(b.getTotalAmount()));
+            }
         }
 
         return new RevenueAnalyticsDTO(totalRevenue, todayRevenue, monthlyRevenue, revenueByCategory, dailyRevenueTrend);
@@ -170,13 +173,14 @@ public class AdminService {
         long totalEvents = events.stream().filter(e -> !e.isDeleted()).count();
         long published = events.stream().filter(e -> !e.isDeleted() && e.getStatus() == EventStatus.PUBLISHED).count();
         long draft = events.stream().filter(e -> !e.isDeleted() && e.getStatus() == EventStatus.DRAFT).count();
-        long upcoming = events.stream().filter(e -> !e.isDeleted() && e.getEventDate().isAfter(LocalDate.now())).count();
+        long upcoming = events.stream().filter(e -> !e.isDeleted() && e.getEventDate() != null && e.getEventDate().isAfter(LocalDate.now())).count();
         long cancelled = events.stream().filter(e -> e.getStatus() == EventStatus.CANCELLED).count();
 
         Map<String, Long> eventsByCategory = new HashMap<>();
         for (Event e : events) {
             if (!e.isDeleted()) {
-                eventsByCategory.put(e.getCategory(), eventsByCategory.getOrDefault(e.getCategory(), 0L) + 1);
+                String cat = e.getCategory() != null ? e.getCategory() : "Uncategorized";
+                eventsByCategory.put(cat, eventsByCategory.getOrDefault(cat, 0L) + 1);
             }
         }
 
