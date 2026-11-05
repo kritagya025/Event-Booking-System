@@ -8,8 +8,6 @@ import com.kritagya.event_booking_system.entity.User;
 import com.kritagya.event_booking_system.enums.BookingStatus;
 import com.kritagya.event_booking_system.enums.Role;
 import com.kritagya.event_booking_system.enums.TicketStatus;
-import com.kritagya.event_booking_system.exception.BookingNotFoundException;
-import com.kritagya.event_booking_system.exception.ResourceNotFoundException;
 import com.kritagya.event_booking_system.repository.BookingRepository;
 import com.kritagya.event_booking_system.repository.TicketRepository;
 import org.junit.jupiter.api.BeforeEach;

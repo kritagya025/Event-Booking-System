@@ -263,4 +263,8 @@ public class BookingService {
 
         return BookingMapper.toDTO(cancelledBooking);
     }
+
+    public int getSeatLockTimeoutMinutes() {
+        return seatLockTimeoutMinutes;
+    }
 }

@@ -13,8 +13,15 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import com.kritagya.event_booking_system.security.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -40,7 +47,7 @@ public class PaymentController {
     })
     public ResponseEntity<PaymentResponseDTO> createPayment(
             @Valid @RequestBody PaymentRequestDTO request,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         PaymentResponseDTO response = paymentService.createPayment(request, userDetails.getUser());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -54,7 +61,7 @@ public class PaymentController {
     })
     public ResponseEntity<PaymentResponseDTO> getPayment(
             @Parameter(description = "Payment ID") @PathVariable Long id,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         PaymentResponseDTO payment = paymentService.getPayment(id, userDetails.getUser());
         return new ResponseEntity<>(payment, HttpStatus.OK);
     }
@@ -68,7 +75,7 @@ public class PaymentController {
     })
     public ResponseEntity<PaymentResponseDTO> getPaymentByBooking(
             @Parameter(description = "Booking ID") @PathVariable Long bookingId,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         PaymentResponseDTO payment = paymentService.getPaymentByBooking(bookingId, userDetails.getUser());
         return new ResponseEntity<>(payment, HttpStatus.OK);
     }
@@ -95,7 +102,7 @@ public class PaymentController {
     })
     public ResponseEntity<PaymentResponseDTO> refundPayment(
             @Parameter(description = "Payment ID") @PathVariable Long id,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         PaymentResponseDTO payment = paymentService.refundPayment(id, userDetails.getUser());
         return new ResponseEntity<>(payment, HttpStatus.OK);
     }
@@ -110,7 +117,7 @@ public class PaymentController {
     })
     public ResponseEntity<PaymentResponseDTO> refundPaymentByBooking(
             @Parameter(description = "Booking ID") @PathVariable Long bookingId,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         PaymentResponseDTO payment = paymentService.refundPaymentByBooking(bookingId, userDetails.getUser());
         return new ResponseEntity<>(payment, HttpStatus.OK);
     }

@@ -7,7 +7,6 @@ import com.kritagya.event_booking_system.entity.Venue;
 import com.kritagya.event_booking_system.enums.SeatStatus;
 import com.kritagya.event_booking_system.enums.SeatType;
 import com.kritagya.event_booking_system.exception.SeatNotFoundException;
-import com.kritagya.event_booking_system.exception.VenueNotFoundException;
 import com.kritagya.event_booking_system.repository.SeatRepository;
 import com.kritagya.event_booking_system.repository.VenueRepository;
 import org.junit.jupiter.api.BeforeEach;

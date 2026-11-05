@@ -11,21 +11,8 @@
 	<groupId>com.kritagya</groupId>
 	<artifactId>event-booking-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<name>event-booking-system</name>
+	<description>Event Booking System</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

@@ -2,6 +2,7 @@ package com.kritagya.event_booking_system.controller;
 
 import com.kritagya.event_booking_system.dto.BookingRequestDTO;
 import com.kritagya.event_booking_system.dto.BookingResponseDTO;
+import com.kritagya.event_booking_system.enums.Role;
 import com.kritagya.event_booking_system.service.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,8 +14,15 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import com.kritagya.event_booking_system.security.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -40,8 +48,8 @@ public class BookingController {
     })
     public ResponseEntity<BookingResponseDTO> createBooking(
             @Valid @RequestBody BookingRequestDTO request,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
-        if (userDetails.getUser().getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails.getUser().getRole() != Role.ADMIN) {
             request.setUserId(userDetails.getUser().getId());
         } else if (request.getUserId() == null) {
             request.setUserId(userDetails.getUser().getId());
@@ -71,7 +79,7 @@ public class BookingController {
     })
     public ResponseEntity<BookingResponseDTO> getBooking(
             @Parameter(description = "ID of the booking to retrieve") @PathVariable Long id,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         BookingResponseDTO booking = bookingService.getBooking(id, userDetails.getUser());
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
@@ -84,8 +92,8 @@ public class BookingController {
     })
     public ResponseEntity<List<BookingResponseDTO>> getBookingsByUser(
             @Parameter(description = "ID of the user whose bookings to fetch") @PathVariable Long userId,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
-        if (!userId.equals(userDetails.getUser().getId()) && userDetails.getUser().getRole() != com.kritagya.event_booking_system.enums.Role.ADMIN) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (!userId.equals(userDetails.getUser().getId()) && userDetails.getUser().getRole() != Role.ADMIN) {
             throw new org.springframework.security.access.AccessDeniedException("Access denied: You are not authorized to view bookings for another user.");
         }
         List<BookingResponseDTO> bookings = bookingService.getBookingsByUser(userId);
@@ -102,7 +110,7 @@ public class BookingController {
     })
     public ResponseEntity<BookingResponseDTO> cancelBooking(
             @Parameter(description = "ID of the booking to cancel") @PathVariable Long id,
-            @AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         BookingResponseDTO booking = bookingService.cancelBooking(id, userDetails.getUser());
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }

@@ -58,9 +58,6 @@ public class SecurityFixesTest {
     @Autowired
     private ImageStorageService imageStorageService;
 
-    @Autowired
-    private RateLimitingFilter rateLimitingFilter;
-
     private User customer1;
     private User customer2;
 

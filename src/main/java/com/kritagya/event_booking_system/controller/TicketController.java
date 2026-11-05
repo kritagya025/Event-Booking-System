@@ -8,11 +8,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.kritagya.event_booking_system.security.CustomUserDetails;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -37,7 +44,7 @@ public class TicketController {
     })
     public ResponseEntity<List<TicketResponseDTO>> generateTickets(
             @Parameter(description = "Booking ID") @PathVariable Long bookingId,
-            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         List<TicketResponseDTO> tickets = ticketService.generateTickets(bookingId, userDetails.getUser());
         return new ResponseEntity<>(tickets, HttpStatus.CREATED);
     }
@@ -52,7 +59,7 @@ public class TicketController {
     })
     public ResponseEntity<List<TicketResponseDTO>> getTicketsByBooking(
             @Parameter(description = "Booking ID") @PathVariable Long bookingId,
-            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         List<TicketResponseDTO> tickets = ticketService.getTicketsByBooking(bookingId, userDetails.getUser());
         return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
@@ -67,7 +74,7 @@ public class TicketController {
     })
     public ResponseEntity<TicketResponseDTO> getTicket(
             @Parameter(description = "Ticket ID") @PathVariable Long id,
-            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         TicketResponseDTO ticket = ticketService.getTicket(id, userDetails.getUser());
         return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
@@ -106,7 +113,7 @@ public class TicketController {
     })
     public ResponseEntity<byte[]> getTicketQrCode(
             @Parameter(description = "Ticket ID") @PathVariable Long id,
-            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         byte[] qrCode = ticketService.generateTicketQrCode(id, userDetails != null ? userDetails.getUser() : null);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
@@ -121,11 +128,11 @@ public class TicketController {
     })
     public ResponseEntity<byte[]> downloadTicketPdf(
             @Parameter(description = "Ticket ID") @PathVariable Long id,
-            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         byte[] pdf = ticketService.generateTicketPdf(id, userDetails != null ? userDetails.getUser() : null);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "ticket-" + id + ".pdf");
+        headers.setContentDisposition(ContentDisposition.attachment().filename("ticket-" + id + ".pdf").build());
         return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
 
@@ -137,11 +144,11 @@ public class TicketController {
     })
     public ResponseEntity<byte[]> downloadBookingPdf(
             @Parameter(description = "Booking ID") @PathVariable Long bookingId,
-            @org.springframework.security.core.annotation.AuthenticationPrincipal com.kritagya.event_booking_system.security.CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         byte[] pdf = ticketService.generateBookingPdf(bookingId, userDetails != null ? userDetails.getUser() : null);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "booking-" + bookingId + ".pdf");
+        headers.setContentDisposition(ContentDisposition.attachment().filename("booking-" + bookingId + ".pdf").build());
         return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
 }
