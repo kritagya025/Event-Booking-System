@@ -1,400 +1,278 @@
-# 🔒 Security Policy — Event Booking System
+# Security Architecture and Policy
 
-This document describes the security architecture, authentication mechanisms, vulnerability handling, and security best practices implemented in the Event Booking System.
+This document details the security architecture, threat model, authentication mechanisms, authorization boundaries, cryptographic standards, and vulnerability reporting procedures implemented in the Event Booking System.
 
 ---
 
 ## Table of Contents
 
-- [Security Overview](#security-overview)
-- [Authentication](#authentication)
-- [Authorization](#authorization)
-- [Password Security](#password-security)
-- [Token Security](#token-security)
-- [Rate Limiting](#rate-limiting)
-- [Input Validation](#input-validation)
-- [Data Protection](#data-protection)
-- [CORS Policy](#cors-policy)
-- [Audit Logging](#audit-logging)
-- [Dependency Security](#dependency-security)
-- [Reporting Vulnerabilities](#reporting-vulnerabilities)
-- [Security Checklist](#security-checklist)
+- [Security Model Overview](#security-model-overview)
+- [Authentication Architecture](#authentication-architecture)
+  - [JSON Web Tokens (JWT)](#json-web-tokens-jwt)
+  - [Refresh Token Rotation](#refresh-token-rotation)
+  - [Session Lifecycle](#session-lifecycle)
+- [Authorization and Access Control](#authorization-and-access-control)
+  - [Role Hierarchy](#role-hierarchy)
+  - [Endpoint Security Matrix](#endpoint-security-matrix)
+  - [Method-Level Security](#method-level-security)
+- [Credential Management](#credential-management)
+  - [Password Hashing](#password-hashing)
+  - [Legacy Password Migration](#legacy-password-migration)
+  - [Password Reset Protocol](#password-reset-protocol)
+- [Traffic Filtering and Rate Limiting](#traffic-filtering-and-rate-limiting)
+- [Input Validation and Sanitization](#input-validation-and-sanitization)
+- [Data Protection and Privacy](#data-protection-and-privacy)
+- [Cross-Origin Resource Sharing (CORS)](#cross-origin-resource-sharing-cors)
+- [Structured Audit Logging](#structured-audit-logging)
+- [Dependency Scanning and Supply Chain](#dependency-scanning-and-supply-chain)
+- [Vulnerability Disclosure Policy](#vulnerability-disclosure-policy)
+- [Production Hardening Checklist](#production-hardening-checklist)
 
 ---
 
-## Security Overview
+## Security Model Overview
 
-The Event Booking System implements a defense-in-depth security model:
+The system enforces defense-in-depth across transport, gateway, application, and persistence tiers:
 
 ```
-Request → Rate Limiting → JWT Auth → RBAC → Input Validation → Business Logic → Audit Log
+Inbound HTTP Request
+  |
+  v
+Transport Security (TLS 1.2 / 1.3 Termination)
+  |
+  v
+Bucket4j Rate Limiting Filter (IP-scoped token bucket)
+  |
+  v
+JWT Authentication Filter (HMAC-SHA256 signature and expiration check)
+  |
+  v
+Spring Security Filter Chain (Role-Based Access Control)
+  |
+  v
+Method Security (@PreAuthorize checks)
+  |
+  v
+Input Validation (Jakarta Bean Validation constraints)
+  |
+  v
+Service Domain Execution (Optimistic concurrency control)
+  |
+  v
+Audit Logging (Structured event recording)
 ```
 
-| Layer | Implementation |
+| Security Layer | Technical Mechanism |
 |---|---|
-| Transport | HTTPS (production), CORS restrictions |
-| Rate Limiting | Bucket4j per-IP token bucket |
-| Authentication | JWT Bearer tokens (HMAC-SHA256) |
-| Authorization | Spring Security RBAC + method-level `@PreAuthorize` |
-| Input Validation | Jakarta Bean Validation |
-| Data Protection | BCrypt password hashing, parameterized queries |
-| Audit | Structured audit logging for security-relevant events |
-| Concurrency | Optimistic locking to prevent race conditions |
+| Transport | Mandatory TLS 1.2+ in production; strict CORS policy |
+| Edge Filtering | Bucket4j token bucket rate limiting on sensitive routes |
+| Authentication | Stateless HMAC-SHA256 signed JWTs with HttpOnly cookie support |
+| Authorization | Spring Security 6 RBAC with granular `@PreAuthorize` guards |
+| Input Validation | Jakarta Validation (`@Valid`) preventing injection and malformed input |
+| Persistence | Parameterized queries via Spring Data JPA / Hibernate |
+| Auditing | Immutable audit trail via `AuditingEntityListener` and `AuditLogger` |
+| Concurrency Control | Version-checked optimistic locking preventing race exploitation |
 
 ---
 
-## Authentication
+## Authentication Architecture
 
-### JWT Token Flow
+### JSON Web Tokens (JWT)
+User authentication is entirely stateless:
 
-1. **Login**: User submits credentials → receives `accessToken` + `refreshToken`
-2. **API Access**: Include `Authorization: Bearer <accessToken>` on all authenticated requests
-3. **Token Refresh**: When access token expires, use refresh token to obtain new token pair
-4. **Logout**: All refresh tokens for the user are revoked
-
-### Token Configuration
-
-| Token | Default Expiry | Configurable Via |
-|---|---|---|
-| Access Token | 24 hours (86400000 ms) | `JWT_EXPIRATION` |
-| Refresh Token | 7 days (604800000 ms) | `JWT_REFRESH_EXPIRATION` |
-
-### Token Implementation
-
-- **Library**: JJWT 0.12.6
-- **Algorithm**: HMAC-SHA256
-- **Claims**: `sub` (email), `role` (authority), `iat` (issued at), `exp` (expiration)
-- **Signing Key**: Base64-encoded secret via `JWT_SECRET` environment variable
+- **Algorithm**: HMAC-SHA256 (JJWT 0.12.6)
+- **Token Claims**: `sub` (user email), `role` (assigned authority), `iat` (issued timestamp), `exp` (expiration timestamp)
+- **Access Token TTL**: 24 hours (`86,400,000` ms, configurable via `JWT_EXPIRATION`)
+- **Transport**: `Authorization: Bearer <token>` HTTP header or secure HttpOnly cookie
 
 ### Refresh Token Rotation
+To mitigate the risk of long-lived credential compromise, the system enforces single-use refresh token rotation:
 
-On every refresh:
-1. Old refresh token is **revoked** (marked `revoked=true`)
-2. New access token + new refresh token are issued
-3. This prevents refresh token reuse attacks
+1. Initial login issues an access token and an opaque UUID refresh token recorded in the `refresh_token` table.
+2. Refresh tokens carry a 7-day expiration (`604,800,000` ms, configurable via `JWT_REFRESH_EXPIRATION`).
+3. When `POST /api/auth/refresh` is invoked, the supplied refresh token is validated, marked `revoked = true`, and superseded by an entirely new access and refresh token pair.
+4. Any attempt to reuse a revoked refresh token fails immediately with `HTTP 401 Unauthorized`.
 
-### Session Management
+### Session Lifecycle
 
-- **Stateless**: `SessionCreationPolicy.STATELESS` — no server-side sessions
-- No cookies used for authentication
-- Each request is independently authenticated via JWT
+| Event Trigger | Scope of Revocation |
+|---|---|
+| Successful Token Refresh | Target refresh token revoked; replacement issued |
+| Explicit User Logout | All active refresh tokens belonging to the user are revoked |
+| Password Reset Completion | All existing refresh tokens belonging to the user are revoked |
+| Administrative Role Change | Existing sessions invalidated upon access token expiration |
 
 ---
 
-## Authorization
+## Authorization and Access Control
 
-### Role-Based Access Control (RBAC)
+### Role Hierarchy
+The platform defines three authorization roles via `Role.java`:
 
-Three roles with hierarchical permissions:
+- `ADMIN`: Unrestricted operational and administrative access, including user role updates, system analytics, financial reports, and global catalog management.
+- `ORGANIZER`: Restricted management access covering venue administration, event authoring, seat layout definition, and gate check-in validation.
+- `CUSTOMER`: End-user access permitting event browsing, seat selection, booking creation, payments, and ticket retrieval.
 
-| Role | Description |
-|---|---|
-| `ADMIN` | Full system access |
-| `ORGANIZER` | Event and venue management |
-| `CUSTOMER` | Booking, payment, ticket access |
+### Endpoint Security Matrix
 
-### Endpoint Authorization Matrix
-
-| Endpoint Pattern | ADMIN | ORGANIZER | CUSTOMER | Anonymous |
+| Endpoint Route Pattern | Anonymous | Customer | Organizer | Administrator |
 |---|---|---|---|---|
-| `POST /api/auth/**` | ✅ | ✅ | ✅ | ✅ |
-| `GET /api/events/**` | ✅ | ✅ | ✅ | ✅ |
-| `GET /api/venues/**` | ✅ | ✅ | ✅ | ✅ |
-| `POST /api/events` | ✅ | ✅ | ✅ | ❌ |
-| `PUT/DELETE /api/events/**` | ✅ | ✅ | ❌ | ❌ |
-| `POST /api/bookings` | ✅ | ❌ | ✅ | ❌ |
-| `POST /api/payments` | ✅ | ❌ | ✅ | ❌ |
-| `/api/admin/**` | ✅ | ❌ | ❌ | ❌ |
-| `/api/users/**` (CRUD) | ✅ | ❌ | ❌ | ❌ |
-| `GET /api/users/me` | ✅ | ✅ | ✅ | ❌ |
-| `/api/checkin/**` | ✅ | ✅ | ❌ | ❌ |
-| `/api/wishlist/**` | ✅ | ❌ | ✅ | ❌ |
+| `POST /api/auth/register` | Allowed | Allowed | Allowed | Allowed |
+| `POST /api/auth/login` | Allowed | Allowed | Allowed | Allowed |
+| `POST /api/auth/refresh` | Allowed | Allowed | Allowed | Allowed |
+| `POST /api/auth/logout` | Denied | Allowed | Allowed | Allowed |
+| `GET /api/events/**` | Allowed | Allowed | Allowed | Allowed |
+| `POST /api/events` | Denied | Denied | Allowed | Allowed |
+| `PUT/DELETE /api/events/**` | Denied | Denied | Allowed (Own) | Allowed |
+| `GET /api/venues/**` | Allowed | Allowed | Allowed | Allowed |
+| `POST/PUT /api/venues/**` | Denied | Denied | Allowed | Allowed |
+| `POST /api/bookings` | Denied | Allowed | Denied | Allowed |
+| `PATCH /api/bookings/{id}/cancel` | Denied | Allowed (Own) | Denied | Allowed |
+| `POST /api/payments` | Denied | Allowed | Denied | Allowed |
+| `PATCH /api/payments/{id}/refund` | Denied | Allowed (Own) | Denied | Allowed |
+| `POST /api/checkin/**` | Denied | Denied | Allowed | Allowed |
+| `GET /api/admin/**` | Denied | Denied | Denied | Allowed |
+| `GET /api/users/me` | Denied | Allowed | Allowed | Allowed |
+| `PUT /api/users/{id}/role` | Denied | Denied | Denied | Allowed |
 
 ### Method-Level Security
-
-`@PreAuthorize` is used for fine-grained access control:
+Granular operation security is declared directly on controllers and services via `@PreAuthorize`:
 
 ```java
-@PreAuthorize("hasRole('ADMIN')")          // Admin only
-@PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")  // Admin or Organizer
+@PreAuthorize("hasRole('ADMIN')")
+public ResponseEntity<List<PaymentResponseDTO>> getAllPayments() { ... }
+
+@PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+public ResponseEntity<TicketResponseDTO> checkInTicket(...) { ... }
 ```
 
 ---
 
-## Password Security
+## Credential Management
 
-### Hashing
+### Password Hashing
+- **Algorithm**: BCrypt (`BCryptPasswordEncoder`)
+- **Cost Factor**: 10 rounds (adaptive key derivation)
+- Credentials are salted and hashed prior to persistence. Plaintext passwords never enter log streams or database records.
 
-- **Algorithm**: BCrypt via `BCryptPasswordEncoder`
-- **Cost Factor**: Default (10 rounds)
-- Passwords are **never** stored or transmitted in plain text
+### Legacy Password Migration
+The startup runner `PasswordMigrationRunner` audits persistent user accounts on initialization. If an unhashed credential legacy record is detected, it is immediately converted to a BCrypt hash, safely skipping hashes prefixed with `$2a$` or `$2b$`.
 
-### Password Migration
-
-`PasswordMigrationRunner` automatically detects plain-text passwords on startup and re-hashes them with BCrypt. It safely skips already-hashed passwords (starting with `$2a$` or `$2b$`).
-
-### Password Reset Flow
-
-1. User requests reset via `POST /api/auth/forgot-password`
-2. Server generates UUID token with 1-hour expiry
-3. Reset link sent via email
-4. User submits new password with token via `POST /api/auth/reset-password`
-5. Token is consumed and all refresh tokens are revoked
-6. Response is always generic to prevent email enumeration
-
-### Password Validation
-
-- Minimum 6 characters (`@Size(min=6)`)
-- Required field (`@NotBlank`)
+### Password Reset Protocol
+1. User invokes `POST /api/auth/forgot-password`.
+2. The response always returns `HTTP 200 OK` with a uniform message to prevent account enumeration.
+3. If the account exists, a cryptographically secure UUID token with a 60-minute TTL is generated and emailed.
+4. Submission of `POST /api/auth/reset-password` validates token expiration, updates the password hash, voids the token, and revokes all active refresh tokens for the account.
 
 ---
 
-## Token Security
+## Traffic Filtering and Rate Limiting
 
-### Access Token
+The application incorporates in-memory rate limiting via Bucket4j:
 
-- Short-lived (24h default)
-- Contains: email, role, issued time, expiry
-- Validated on every request by `JwtAuthenticationFilter`
-- Invalid tokens silently rejected (no authentication set)
-
-### Refresh Token
-
-- Stored in `refresh_token` table with:
-  - `revoked` flag (prevents reuse)
-  - `expiry_date` (prevents indefinite use)
-- Rotation on every refresh (old token revoked, new token issued)
-- All tokens revoked on password reset and logout
-
-### Token Revocation
-
-| Action | Tokens Revoked |
-|---|---|
-| Logout | All refresh tokens for the user |
-| Password Reset | All refresh tokens for the user |
-| Token Refresh | Only the used refresh token |
+- **Filter Scope**: Applied in `RateLimitingFilter` ahead of security processing.
+- **Protected Paths**: `/api/auth/**`, `/api/bookings/**`, `/api/payments/**`.
+- **Bucket Capacity**: 10 tokens per client IP address.
+- **Replenishment Rate**: 10 tokens per minute.
+- **Rejection Behavior**: Responds with `HTTP 429 Too Many Requests` and includes header `X-Rate-Limit-Retry-After-Seconds: 60`.
 
 ---
 
-## Rate Limiting
+## Input Validation and Sanitization
 
-### Implementation
+### Declarative Validation Constraints
+Incoming DTO payloads enforce Jakarta Bean Validation constraints:
+- Non-blank string verification: `@NotBlank`
+- Structural email conformance: `@Email`
+- Sizing bounds: `@Size(min = 6, max = 100)`
+- Numeric thresholds: `@Min(1)`, `@Max(5)` on review ratings
+- Complex object inspection: `@Valid`
 
-- **Library**: Bucket4j 8.10.1
-- **Strategy**: Per-IP token bucket
-- **Storage**: In-memory `ConcurrentHashMap`
+### SQL Injection Mitigation
+Database interactions are mediated exclusively through Spring Data JPA repositories and Hibernate ORM. No dynamic SQL concatenation is permitted. Dynamic search queries construct type-safe `Predicate` instances via `CriteriaBuilder`.
 
-### Configuration
-
-```properties
-app.rate-limiting.enabled=true
-app.rate-limiting.capacity=10         # Max burst
-app.rate-limiting.tokens-per-minute=10  # Refill rate
-```
-
-### Protected Endpoints
-
-| Path Pattern | Description |
-|---|---|
-| `/api/auth/**` | Authentication endpoints |
-| `/api/bookings` | Booking creation |
-| `/api/payments` | Payment processing |
-
-### Rate Limit Response
-
-```http
-HTTP/1.1 429 Too Many Requests
-X-Rate-Limit-Retry-After-Seconds: 60
-Content-Type: application/json
-
-{
-  "status": 429,
-  "message": "Too Many Requests. Rate limit exceeded. Please try again in 1 minute."
-}
-```
+### Upload Security
+- **Size Bounds**: Maximum 20MB enforced by Spring multipart configuration (`spring.servlet.multipart.max-file-size=20MB`).
+- **Filename Sanitization**: Uploaded files are renamed using generated UUID strings, preventing directory traversal attacks.
+- **Storage Boundary**: Stored outside application binary directories with restricted execution permissions.
 
 ---
 
-## Input Validation
+## Data Protection and Privacy
 
-### Server-Side Validation
-
-Jakarta Bean Validation annotations are used on all DTOs:
-
-| Annotation | Usage |
-|---|---|
-| `@NotBlank` | Required string fields |
-| `@NotNull` | Required non-string fields |
-| `@Email` | Email format validation |
-| `@Size(min, max)` | String length constraints |
-| `@Min`, `@Max` | Numeric range (e.g., rating 1-5) |
-| `@Valid` | Triggers nested DTO validation |
-
-### SQL Injection Prevention
-
-- All database queries use JPA parameterized queries
-- No raw SQL string concatenation
-- JPA Specifications use `CriteriaBuilder` for dynamic queries
-
-### File Upload Validation
-
-- Maximum file size: 20MB
-- Configured via:
-  ```properties
-  spring.servlet.multipart.max-file-size=20MB
-  spring.servlet.multipart.max-request-size=20MB
-  ```
-- File type validation in `ImageStorageService`
-- UUID-based filenames prevent path traversal
+- **Cryptographic Secrets**: Secrets (`JWT_SECRET`, database passwords) must be injected via environment variables.
+- **PII Protection**: Customer passwords, tokens, and email addresses are omitted from unauthenticated responses and error payloads.
+- **Error Obfuscation**: `GlobalExceptionHandler` intercepts exceptions and returns sanitized JSON error payloads, preventing stack traces or database schema disclosures in production.
 
 ---
 
-## Data Protection
+## Cross-Origin Resource Sharing (CORS)
 
-### Sensitive Data
+Configured within `SecurityConfig.java`:
 
-| Data | Protection |
-|---|---|
-| Passwords | BCrypt hashed |
-| JWT Secret | Environment variable (not in source) |
-| Database credentials | Environment variables |
-| Email credentials | Environment variables |
-| Refresh tokens | UUID-based, stored with expiry + revocation |
-| Password reset tokens | UUID-based, 1-hour expiry, single-use |
-
-### Database Security
-
-- Parameterized queries (JPA/Hibernate)
-- Database credentials via environment variables
-- `@Column(unique = true)` constraints prevent duplicates
-- Optimistic locking prevents concurrent data corruption
+- **Permitted Origins**: Sourced from `CORS_ALLOWED_ORIGINS` environment variable.
+- **Allowed Methods**: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`.
+- **Allowed Headers**: Standard headers including `Authorization`, `Content-Type`, `X-Requested-With`.
+- **Credentials Support**: `allowCredentials(true)` for HttpOnly cookie authentication.
+- **Preflight Cache**: Max age set to 3600 seconds.
 
 ---
 
-## CORS Policy
+## Structured Audit Logging
 
-### Configuration
-
-```properties
-app.cors.allowed-origins=${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
-```
-
-### Settings
-
-| Setting | Value |
-|---|---|
-| Allowed Origins | Configurable via environment variable |
-| Allowed Methods | `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS` |
-| Allowed Headers | `*` (all) |
-| Allow Credentials | `true` |
-| Max Age | 3600 seconds (1 hour) |
-| Applied To | `/api/**` |
-
-### Production
-
-Update `CORS_ALLOWED_ORIGINS` to your production frontend domain only:
-
-```properties
-CORS_ALLOWED_ORIGINS=https://yourdomain.com
-```
-
----
-
-## Audit Logging
-
-### Audited Events
-
-| Event | Data Logged |
-|---|---|
-| Login | Email, success/failure, IP, timestamp |
-| Booking Created | Booking ID, user email, event ID, quantity, amount |
-| Booking Cancelled | Booking ID, user email, event ID |
-| Event Created | Event ID, name, organizer email |
-| Event Updated | Event ID, name, updated by |
-| Payment Processed | Payment ID, booking ID, method, status, amount |
-
-### Log Format
+The `AuditLogger` component records security-relevant events with structured metadata:
 
 ```
-[AUDIT] EVENT=LOGIN | EMAIL=john@example.com | SUCCESS=true | IP=192.168.1.1 | TIMESTAMP=2026-08-03T14:30:00
+[AUDIT] EVENT=LOGIN | EMAIL=organizer@example.com | SUCCESS=true | IP=198.51.100.24 | TIMESTAMP=2026-11-05T12:00:00
+[AUDIT] EVENT=BOOKING_CANCELLED | BOOKING_ID=42 | USER=customer@example.com | TIMESTAMP=2026-11-05T12:05:00
+[AUDIT] EVENT=PAYMENT_REFUNDED | PAYMENT_ID=101 | AMOUNT=250.00 | ADMIN=admin@eventhub.com | TIMESTAMP=2026-11-05T12:10:00
 ```
 
-### Request Logging
-
-`RequestLoggingFilter` logs HTTP method, URI, status code, and response time for every request.
+Audited events include:
+- Authentication attempts (success and failure)
+- Account registration and role elevation
+- Booking reservation and cancellation
+- Payment authorization and refunds
+- Event creation, publication, and deletion
 
 ---
 
-## Dependency Security
+## Dependency Scanning and Supply Chain
 
-### Key Security Dependencies
-
-| Dependency | Version | Purpose |
-|---|---|---|
-| `spring-boot-starter-security` | 3.4.1 | Security framework |
-| `jjwt-api` / `jjwt-impl` / `jjwt-jackson` | 0.12.6 | JWT token handling |
-| `bucket4j-core` | 8.10.1 | Rate limiting |
-| `spring-boot-starter-validation` | 3.4.1 | Input validation |
-
-### Keeping Dependencies Updated
+Maintain repository dependencies using standardized build checks:
 
 ```bash
-# Check for outdated dependencies
+# Verify available updates
 ./mvnw versions:display-dependency-updates
 
-# Check for security vulnerabilities
+# Execute OWASP dependency vulnerability check
 ./mvnw org.owasp:dependency-check-maven:check
 ```
 
 ---
 
-## Reporting Vulnerabilities
+## Vulnerability Disclosure Policy
 
-### Responsible Disclosure
+If you identify a security defect, follow responsible disclosure practices:
 
-If you discover a security vulnerability, please report it responsibly:
-
-1. **Do NOT** create a public GitHub issue
-2. Email: kritagya@example.com with subject: `[SECURITY] Event Booking System`
-3. Include:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if any)
-4. We will acknowledge within 48 hours
-5. We will provide a fix timeline within 7 days
-
-### Scope
-
-In scope:
-- Authentication/authorization bypass
-- SQL injection
-- Cross-site scripting (XSS)
-- Rate limiting bypass
-- Privilege escalation
-- Data exposure
-- JWT token vulnerabilities
-
-Out of scope:
-- Denial of service (DoS)
-- Social engineering
-- Issues in third-party dependencies (report upstream)
+1. Do not file public GitHub issues for security vulnerabilities.
+2. Direct all vulnerability reports to `security@eventhub.com` with the subject line `[SECURITY REPORT] Event Booking System`.
+3. Include clear reproduction steps, request/response samples, and impact assessment.
+4. Maintainers will acknowledge receipt within 48 hours and provide a remediation timeline within 7 calendar days.
 
 ---
 
-## Security Checklist
+## Production Hardening Checklist
 
-### Production Deployment
+Prior to production deployment, verify the following configuration controls:
 
-- [ ] Change `JWT_SECRET` to a cryptographically random 256-bit key
-- [ ] Set strong `DB_PASSWORD`
-- [ ] Configure HTTPS (SSL/TLS) termination
-- [ ] Restrict `CORS_ALLOWED_ORIGINS` to production frontend domain
-- [ ] Set `spring.jpa.show-sql=false`
-- [ ] Restrict `/actuator/**` endpoints
-- [ ] Configure firewall rules (only expose 80/443)
-- [ ] Enable Redis for rate limiting persistence (multi-instance)
-- [ ] Configure email SMTP credentials for password reset flow
-- [ ] Review and rotate secrets periodically
-- [ ] Set up log monitoring for `[AUDIT]` events
-- [ ] Run OWASP dependency check before deployment
+- [ ] Cryptographically random 256-bit key supplied to `JWT_SECRET`.
+- [ ] Database credentials updated to dedicated unprivileged accounts.
+- [ ] Profile active set to `production` (`spring.jpa.hibernate.ddl-auto=validate`).
+- [ ] SQL echo logging disabled (`spring.jpa.show-sql=false`).
+- [ ] Reverse proxy enforces TLS termination with valid certificates.
+- [ ] CORS origins strictly limited to production frontend domain.
+- [ ] Actuator monitoring endpoints restricted to internal private networks.
+- [ ] Operating system firewall limits ingress to ports 80 and 443.
+- [ ] Bucket4j rate limiting thresholds verified against expected load.
+- [ ] Log aggregation configured for ingestion of `[AUDIT]` streams.

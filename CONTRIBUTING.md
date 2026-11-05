@@ -1,337 +1,219 @@
-# 🤝 Contributing — Event Booking System
+# Contributing Guidelines
 
-Thank you for your interest in contributing to the Event Booking System! This document provides guidelines and instructions for contributing to this project.
+Guidelines and engineering standards for contributing to the Event Booking System repository.
 
 ---
 
 ## Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
 - [Development Setup](#development-setup)
-- [Project Structure](#project-structure)
-- [Coding Standards](#coding-standards)
-- [Git Workflow](#git-workflow)
-- [Commit Convention](#commit-convention)
-- [Pull Request Process](#pull-request-process)
-- [Testing Guidelines](#testing-guidelines)
-- [Reporting Issues](#reporting-issues)
+- [Repository Organization](#repository-organization)
+- [Engineering Standards](#engineering-standards)
+  - [Java Backend](#java-backend)
+  - [React Frontend](#react-frontend)
+- [Git Workflow and Branch Strategy](#git-workflow-and-branch-strategy)
+- [Commit Message Specifications](#commit-message-specifications)
+- [Pull Request Requirements](#pull-request-requirements)
+- [Testing Standards](#testing-standards)
+- [Issue Reporting](#issue-reporting)
 
 ---
 
 ## Code of Conduct
 
-This project adheres to the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). By participating, you are expected to uphold this code. Please report unacceptable behavior to the maintainers.
-
----
-
-## Getting Started
-
-1. **Fork** the repository on GitHub
-2. **Clone** your fork locally:
-   ```bash
-   git clone https://github.com/<your-username>/Event-Booking-System.git
-   cd Event-Booking-System
-   ```
-3. **Add upstream remote**:
-   ```bash
-   git remote add upstream https://github.com/kritagya025/Event-Booking-System.git
-   ```
-4. **Create a feature branch**:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+All contributors and maintainers are expected to adhere to the Contributor Covenant Code of Conduct. Please report unacceptable behavior or harassment to the repository administrators.
 
 ---
 
 ## Development Setup
 
 ### Prerequisites
+- OpenJDK 17 or higher
+- Node.js 18 or higher with npm
+- PostgreSQL 16 or higher
+- Redis 7 (optional; defaults to in-memory cache)
+- Git 2.30 or higher
 
-- Java JDK 17+
-- Node.js 18+
-- PostgreSQL 16+
-- Redis 7+ (optional)
-- Maven 3.9+ (wrapper included)
+### Local Initialization
 
-### 1. Database Setup
+1. Fork and clone the repository:
+   ```bash
+   git clone https://github.com/<your-username>/Event-Booking-System.git
+   cd Event-Booking-System
+   ```
 
-```sql
-CREATE DATABASE event_booking_db;
-```
+2. Provision the local development database:
+   ```sql
+   CREATE DATABASE event_booking_db;
+   ```
 
-### 2. Backend Setup
+3. Build and launch backend services:
+   ```bash
+   ./mvnw clean install -DskipTests
+   ./mvnw spring-boot:run
+   ```
 
-```bash
-# From project root
-./mvnw clean install -DskipTests
-./mvnw spring-boot:run
-```
+4. Install frontend dependencies and launch dev server:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-### 3. Frontend Setup
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### 4. Run Both Together
-
-```bash
-npm install     # Install root dependencies
-npm run dev     # Starts backend + frontend concurrently
-```
-
-### 5. Verify Setup
-
-- Backend: http://localhost:8080/actuator/health
-- Frontend: http://localhost:5173
-- Swagger: http://localhost:8080/swagger-ui.html
+5. Confirm service health:
+   - Backend Actuator: `http://localhost:8080/actuator/health`
+   - Frontend Application: `http://localhost:5173`
+   - OpenAPI Documentation: `http://localhost:8080/swagger-ui.html`
 
 ---
 
-## Project Structure
+## Repository Organization
 
 ```
-event-booking-system/
-├── src/main/java/com/kritagya/event_booking_system/
-│   ├── auth/           # Authentication module
-│   ├── config/         # Application configuration
-│   ├── controller/     # REST controllers
-│   ├── dto/            # Data Transfer Objects
-│   ├── entity/         # JPA entities
-│   ├── enums/          # Enum types
-│   ├── exception/      # Exception handling
-│   ├── logging/        # Audit logging
-│   ├── mapper/         # Entity ↔ DTO mappers
-│   ├── repository/     # JPA repositories
-│   ├── scheduler/      # Scheduled tasks
-│   ├── security/       # Security configuration
-│   ├── service/        # Business logic
-│   ├── specification/  # JPA Specifications
-│   └── websocket/      # WebSocket publishers
-├── src/main/resources/
-│   └── application.properties
-├── src/test/
-├── frontend/
-│   ├── src/
-│   │   ├── components/ # React components
-│   │   ├── services/   # API & WebSocket clients
-│   │   ├── App.jsx     # Main application
-│   │   └── index.css   # Global styles
-│   └── package.json
-└── pom.xml
+Event-Booking-System/
+|-- src/main/java/com/kritagya/event_booking_system/
+|   |-- auth/           # Authentication controllers and token handling
+|   |-- config/         # Spring infrastructure beans (Security, Redis, STOMP)
+|   |-- controller/     # REST controllers (15)
+|   |-- dto/            # Data transfer models and admin metrics
+|   |-- entity/         # JPA entities extending BaseEntity
+|   |-- enums/          # Enumerated business types
+|   |-- exception/      # Centralized exception handling advice
+|   |-- logging/        # Structured audit logger
+|   |-- mapper/         # Explicit DTO-Entity mappers
+|   |-- repository/     # Spring Data JPA repositories
+|   |-- scheduler/      # Background execution tasks
+|   |-- security/       # JWT filters, rate limiters, security config
+|   |-- service/        # Domain services and transaction boundaries
+|   |-- specification/  # Dynamic JPA Specifications
+|   `-- websocket/      # STOMP seat state publishers
+|-- src/main/resources/ # Configuration profiles
+|-- src/test/           # Automated test suites
+|-- frontend/           # React 19 single-page application
+`-- pom.xml             # Maven dependencies
 ```
 
 ---
 
-## Coding Standards
+## Engineering Standards
 
-### Java (Backend)
+### Java Backend
 
-- **Java Version**: 17 (use modern language features)
-- **Formatting**: 4-space indentation, 120 character line width
-- **Naming**:
-  - Classes: `PascalCase` (e.g., `EventService`, `BookingResponseDTO`)
-  - Methods/Variables: `camelCase` (e.g., `createEvent`, `totalAmount`)
-  - Constants: `UPPER_SNAKE_CASE` (e.g., `QR_WIDTH`)
-  - Packages: `lowercase` (e.g., `com.kritagya.event_booking_system.service`)
-- **Annotations**: Place on separate lines above the annotated element
-- **DTOs**: Use separate Request and Response DTOs; never expose entities directly
-- **Services**: Keep business logic in service layer, not controllers
-- **Repositories**: Use Spring Data JPA conventions; custom queries via `@Query`
-- **Exceptions**: Create specific exception classes; handle in `GlobalExceptionHandler`
-- **Validation**: Use Jakarta Bean Validation annotations (`@NotBlank`, `@Min`, `@Email`)
-- **Transactions**: Use `@Transactional` on service methods that modify data
+- **Language Version**: Java 17. Use records, pattern matching, and text blocks where appropriate.
+- **Formatting**: 4 spaces indentation, maximum line length of 120 characters.
+- **Layering Principles**:
+  - Keep controllers thin. Controllers must only parse requests, validate DTOs via `@Valid`, invoke services, and return `ResponseEntity`.
+  - Service classes must define transactional boundaries (`@Transactional`). Read-only methods should explicitly specify `@Transactional(readOnly = true)`.
+  - Never expose JPA entities in controller method signatures or return types. Use explicit DTOs.
+  - Implement custom exceptions mapped to appropriate HTTP status codes in `GlobalExceptionHandler`.
+- **Naming Conventions**:
+  - Classes: `PascalCase` (`BookingService`, `SeatController`)
+  - Methods and fields: `camelCase` (`findAvailableSeats`, `totalAmount`)
+  - Constants: `UPPER_SNAKE_CASE` (`DEFAULT_PAGE_SIZE`)
 
-### React (Frontend)
+### React Frontend
 
-- **Framework**: React 19 with functional components and hooks
-- **Styling**: Vanilla CSS (no TailwindCSS)
-- **State**: `useState` and `useEffect` (no external state management)
-- **API Calls**: Use the centralized `api.js` service
-- **Components**: One component per file, named with PascalCase
-
-### General
-
-- Write self-documenting code with meaningful names
-- Add comments only for non-obvious logic
-- Keep functions focused and short (single responsibility)
-- Don't leave `console.log` statements in production code
-- Don't commit secrets, credentials, or `.env` files
+- **Language and Version**: React 19 functional components with standard hooks (`useState`, `useEffect`, `useCallback`).
+- **Styling**: Standard CSS tokens defined in `index.css`. Do not introduce third-party utility-class CSS frameworks without architectural alignment.
+- **API Communication**: All network operations must funnel through the unified `frontend/src/services/api.js` client.
 
 ---
 
-## Git Workflow
+## Git Workflow and Branch Strategy
 
-We use a **feature branch workflow**:
+We operate using a structured feature-branch model based on `main`:
 
-1. Keep `main` branch always deployable
-2. Create feature branches from `main`
-3. Use descriptive branch names:
-   - `feature/add-waitlist-notifications`
-   - `bugfix/fix-seat-locking-race-condition`
-   - `docs/update-api-documentation`
-   - `refactor/extract-payment-service`
-4. Keep branches focused on a single feature or fix
-5. Rebase on `main` before creating a PR
-
-```bash
-# Sync with upstream
-git fetch upstream
-git rebase upstream/main
-
-# Push feature branch
-git push origin feature/your-feature-name
-```
+1. Ensure your local `main` is current with upstream:
+   ```bash
+   git fetch upstream
+   git rebase upstream/main
+   ```
+2. Create an isolated feature or fix branch:
+   ```bash
+   git checkout -b feat/seat-lock-timeout
+   ```
+3. Naming conventions for branches:
+   - `feat/<short-description>`: New functional features
+   - `fix/<short-description>`: Defect repairs
+   - `docs/<short-description>`: Documentation additions
+   - `refactor/<short-description>`: Code structure refactoring
+   - `test/<short-description>`: Test suite expansion
 
 ---
 
-## Commit Convention
+## Commit Message Specifications
 
-Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+Commits must follow the Conventional Commits specification:
 
 ```
-<type>(<scope>): <description>
+<type>(<scope>): <subject>
 
-[optional body]
+[optional body explaining technical rationale]
 
-[optional footer]
+[optional footer referencing issue or breaking changes]
 ```
 
-### Types
-
-| Type | Description |
-|---|---|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation changes |
-| `style` | Code style changes (formatting, semicolons) |
-| `refactor` | Code refactoring (no feature/fix) |
-| `test` | Adding or modifying tests |
-| `chore` | Build, CI, dependency updates |
-| `perf` | Performance improvements |
+### Recognized Types
+- `feat`: Addition of user-facing functionality.
+- `fix`: Resolution of a defect or bug.
+- `docs`: Documentation modifications only.
+- `refactor`: Code restructuring without functional behavior modification.
+- `test`: Addition or modification of automated tests.
+- `chore`: Build tooling, dependency management, or internal scripts.
+- `perf`: Optimizations targeted at execution latency or memory footprint.
 
 ### Examples
-
-```
-feat(booking): add coupon code validation during booking creation
-fix(seat): resolve race condition in concurrent seat locking
-docs(api): add missing query parameters to search endpoint
-refactor(auth): extract token rotation logic into separate method
-test(event): add unit tests for EventService search functionality
-```
+- `feat(seat): add temporary seat lock endpoint and background scheduler`
+- `fix(booking): prevent double-booking race condition via optimistic locking`
+- `docs(api): document missing query parameters for event search`
 
 ---
 
-## Pull Request Process
+## Pull Request Requirements
 
-### Before Submitting
+Before opening a pull request, complete the following verification steps:
 
-1. ✅ Ensure your code compiles: `./mvnw compile`
-2. ✅ Run backend tests: `./mvnw test`
-3. ✅ Frontend builds successfully: `cd frontend && npm run build`
-4. ✅ No new warnings or lint errors
-5. ✅ Update documentation if adding/changing API endpoints
-6. ✅ Add tests for new functionality
-
-### PR Template
-
-```markdown
-## Description
-Brief description of changes.
-
-## Type of Change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Breaking change
-- [ ] Documentation update
-
-## Testing
-- [ ] Backend tests pass
-- [ ] Frontend builds
-- [ ] Manual testing completed
-
-## Screenshots (if UI changes)
-```
-
-### Review Process
-
-1. Submit PR against `main` branch
-2. Ensure CI checks pass
-3. Address review feedback
-4. Maintainer approves and merges
+1. Confirm compilation succeeds cleanly:
+   ```bash
+   ./mvnw test-compile
+   ```
+2. Execute the backend test suite:
+   ```bash
+   ./mvnw test
+   ```
+3. Confirm the frontend bundles without errors:
+   ```bash
+   cd frontend && npm run build
+   ```
+4. Verify working tree is clean and commits are logically grouped.
+5. Provide a clear pull request description outlining:
+   - The problem or feature addressed
+   - Technical approach taken
+   - Automated tests added or modified
 
 ---
 
-## Testing Guidelines
+## Testing Standards
 
-### Backend Tests
-
-```bash
-# Run all tests
-./mvnw test
-
-# Run specific test class
-./mvnw test -Dtest=EventServiceTest
-
-# Run with test coverage
-./mvnw test jacoco:report
-```
-
-### Test Structure
-
-```
-src/test/java/com/kritagya/event_booking_system/
-├── controller/     # Controller integration tests
-├── repository/     # Repository tests
-├── service/        # Service unit tests
-└── EventBookingSystemApplicationTests.java
-```
-
-### Testing Conventions
-
-- Use H2 in-memory database for tests (already configured)
-- Mock external dependencies (email, file storage)
-- Test both success and failure paths
-- Use descriptive test method names: `shouldCreateBookingWhenSeatsAreAvailable()`
-- Follow Arrange-Act-Assert (AAA) pattern
-
-### Frontend Tests
-
-Currently using manual testing. Consider adding:
-- Component tests with React Testing Library
-- API integration tests
+- **Backend**: Every service mutation and controller endpoint must have corresponding test coverage.
+- **Fixtures**: Use the embedded H2 database configuration for integration tests to ensure test isolation.
+- **Mocking**: Isolate third-party services (SMTP email delivery, filesystem storage) using Mockito mocks (`@MockitoBean`).
+- **Structure**: Organize tests using the Arrange-Act-Assert (AAA) pattern with descriptive method names.
 
 ---
 
-## Reporting Issues
+## Issue Reporting
 
-### Bug Reports
+### Defect Reports
+When filing an issue, provide sufficient context for reproduction:
+- Operating system and Java runtime version
+- Database engine and deployment topology
+- Exact reproduction steps with sample payloads
+- Stack trace extracts from application log files
 
-When filing a bug, include:
-
-1. **Environment**: OS, Java version, Node version, browser
-2. **Steps to reproduce**: Exact steps to trigger the bug
-3. **Expected behavior**: What should happen
-4. **Actual behavior**: What actually happens
-5. **Screenshots/Logs**: If applicable
-6. **Error messages**: Full stack traces
-
-### Feature Requests
-
-When requesting a feature:
-
-1. **Problem statement**: What problem does this solve?
-2. **Proposed solution**: Your suggested approach
-3. **Alternatives considered**: Other solutions you thought of
-4. **Use case**: Who benefits and how?
-
----
-
-## Questions?
-
-If you have questions about contributing, feel free to open an issue with the `question` label or reach out to the maintainers.
-
-Thank you for contributing! 🎉
+### Feature Inquiries
+For functional changes, outline:
+- Use case and domain motivation
+- Proposed endpoint or interface design
+- Potential concurrency or data migration implications

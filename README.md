@@ -1,485 +1,337 @@
-<p align="center">
-  <h1 align="center">🎫 Event Booking System</h1>
-  <p align="center">
-    A production-grade event management and ticket booking platform built with <strong>Spring Boot 3</strong>, <strong>React 19</strong>, and <strong>PostgreSQL</strong>.
-    <br />
-    Featuring JWT auth with refresh-token rotation, real-time seat updates via WebSocket, QR-coded e-tickets, PDF generation, and a full admin analytics dashboard.
-    <br /><br />
-    <a href="#-features"><strong>Features</strong></a> · <a href="#-tech-stack"><strong>Tech Stack</strong></a> · <a href="#-getting-started"><strong>Getting Started</strong></a> · <a href="API_DOCUMENTATION.md"><strong>API Docs</strong></a> · <a href="ARCHITECTURE.md"><strong>Architecture</strong></a>
-  </p>
-</p>
+# Event Booking System
+
+A distributed event management and ticket reservation platform built with Spring Boot 3, React 19, and PostgreSQL. The system supports seat selection and locking, QR-coded ticket generation, real-time seat availability over WebSocket (STOMP), payment processing, and administrative analytics.
 
 ---
 
-![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.1-brightgreen?logo=springboot)
-![React](https://img.shields.io/badge/React-19-blue?logo=react)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql)
-![Redis](https://img.shields.io/badge/Redis-7-red?logo=redis)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Endpoints](https://img.shields.io/badge/API%20Endpoints-88-informational)
-![Tests](https://img.shields.io/badge/Tests-24%20suites-success)
+## Table of Contents
 
-## 📋 Table of Contents
+- [Overview](#overview)
+- [System Architecture](#system-architecture)
+- [Core Features](#core-features)
+- [Technology Stack](#technology-stack)
+- [Repository Structure](#repository-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Database Initialization](#database-initialization)
+  - [Configuration](#configuration)
+  - [Installation and Execution](#installation-and-execution)
+- [Testing](#testing)
+- [Seed Data](#seed-data)
+- [API Overview](#api-overview)
+- [Documentation Index](#documentation-index)
+- [Contributing](#contributing)
+- [License](#license)
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Running the Application](#-running-the-application)
-- [Testing](#-testing)
-- [Default Seed Data](#-default-seed-data)
-- [API Reference](#-api-reference)
-- [Environment Variables](#-environment-variables)
-- [Project Documentation](#-project-documentation)
-- [Contributing](#-contributing)
-- [License](#-license)
+---
 
-## 🎯 Overview
+## Overview
 
-The **Event Booking System** is a comprehensive, full-stack platform that lets organizers create and manage events with venue-based seating, while customers can browse, search, book tickets, and receive QR-coded e-tickets — all backed by enterprise-grade infrastructure.
+The Event Booking System provides end-to-end event management, ticket booking, and attendee admission workflows:
 
-### What makes it production-ready
+- **Organizers and Administrators** can create venues, configure seat arrangements, publish events, monitor sales analytics, and validate attendee tickets at check-in.
+- **Customers** can browse and filter events, view interactive seat maps, reserve seats with temporary locks, complete payments, and download QR-coded PDF tickets.
 
-- **88 REST endpoints** across 15 controllers covering the entire event lifecycle
-- **JWT authentication** with HttpOnly cookie transport and refresh-token rotation
-- **Optimistic locking** (`@Version`) on Booking, Event, and Seat entities to prevent double-booking under concurrency
-- **Real-time seat availability** pushed to connected clients via STOMP over WebSocket
-- **Scheduled tasks** for automatic seat-lock expiration and event reminder notifications
-- **Redis caching** with transparent `ConcurrentMapCache` fallback when Redis is unavailable
-- **Bucket4j rate limiting** (10 requests/minute on sensitive endpoints)
-- **JPA Auditing** with `createdAt`, `updatedAt`, `createdBy`, `updatedBy` on all entities
-- **Structured audit logging** for authentication, bookings, payments, and event operations
-- **24 test suites** spanning controllers, services, repositories, and security policies
+The backend is built as a modular Spring Boot 3 monolith adhering to domain-driven layer boundaries. Concurrency controls (optimistic locking via `@Version`), distributed cache fallback (Redis with in-memory fallback), rate limiting via Bucket4j, and structured audit logging ensure safe operation under concurrent load.
 
-## ✨ Features
+---
 
-### 🔐 Authentication & Authorization
-- JWT-based stateless auth with access + refresh token rotation and HttpOnly cookies
-- Three roles with granular `@PreAuthorize` checks: **ADMIN**, **ORGANIZER**, **CUSTOMER**
-- Email verification flow with configurable token expiry
-- Password reset via email with time-limited tokens
-- BCrypt password hashing with automatic plain-text migration on startup (`PasswordMigrationRunner`)
-- Rate-limited login and registration endpoints
+## System Architecture
 
-### 🎪 Event Management
-- Full CRUD with organizer assignment and soft-delete support
-- Event lifecycle: `DRAFT` → `PUBLISHED` → `COMPLETED` / `CANCELLED`
-- Publish and unpublish actions with status validation
-- Advanced search using JPA Specifications: filter by category, date range, venue, city, keyword, and price range
-- Case-insensitive, tokenized keyword matching across multiple fields
-- Discovery endpoints: `/popular`, `/trending`, `/recommendations`
-- Per-event analytics and view-count tracking
-- Banner image upload (up to 20 MB) with UUID-based storage
+The platform uses a decoupled client-server architecture:
 
-### 🏟️ Venue & Seat Management
-- Venue CRUD with capacity tracking
-- Seat-level management with row/number, type (`VIP`, `PREMIUM`, `REGULAR`), and status (`AVAILABLE`, `LOCKED`, `BOOKED`)
-- Temporary seat locking with configurable timeout (default 10 minutes)
-- `SeatLockScheduler` automatically expires stale locks every 60 seconds
-- Real-time seat availability broadcast via `SeatUpdatePublisher` over STOMP/WebSocket
-- Composite database indexes on `(venue_id, status)` and `(event_id)` for fast availability queries
+```
++-------------------------------------------------------------+
+|                     Client Tier (Browser)                   |
+|         React 19 SPA (Vite)  *  STOMP over SockJS           |
++------------------------------+------------------------------+
+                               | HTTP / WebSocket
++------------------------------v------------------------------+
+|                    Application Tier (Spring Boot)           |
+|                                                             |
+|  Security Filters:                                          |
+|    RateLimitingFilter -> JwtAuthenticationFilter -> CORS    |
+|                                                             |
+|  Web Layer:                                                 |
+|    15 REST Controllers (88 Endpoints)                       |
+|                                                             |
+|  Business Layer:                                            |
+|    17 Services + Event Reminder & Seat Lock Schedulers      |
+|                                                             |
+|  Persistence Layer:                                         |
+|    12 Spring Data JPA Repositories + JPA Specifications     |
++------------------------------+------------------------------+
+                               |
+            +------------------+------------------+
+            |                                     |
++-----------v-----------+             +-----------v-----------+
+|      PostgreSQL       |             |         Redis         |
+|     (Primary DB)      |             |    (Cache Layer)      |
++-----------------------+             +-----------------------+
+```
 
-### 🎟️ Booking & Ticketing
-- Atomic booking creation with seat allocation and validation
-- Optimistic locking (`@Version`) prevents double-booking under concurrent requests
-- Booking cancellation with automatic seat release
-- Ticket generation with unique QR codes (Google ZXing)
-- Individual ticket PDF and booking summary PDF downloads (iText 8)
-- Ticket validation and attendee check-in via QR code scan (ADMIN/ORGANIZER only)
+---
 
-### 💳 Payment Processing
-- One-to-one Payment ↔ Booking relationship
-- Methods: `CREDIT_CARD`, `DEBIT_CARD`, `UPI`, `NET_BANKING`
-- Status tracking: `PENDING` → `COMPLETED` / `FAILED` / `REFUNDED`
-- Refund by payment ID or booking ID
-- Audit logging for all payment state transitions
+## Core Features
 
-### 🏷️ Coupons & Discounts
-- Coupon types: `PERCENTAGE`, `FIXED`, `EARLY_BIRD`
-- Validation rules: usage limits, expiry dates, minimum booking amount
-- Admin-only creation with public validation endpoint
-- Toggle active/inactive status
+### Authentication and Access Control
+- Stateless JWT authentication using HMAC-SHA256 tokens transported via HttpOnly cookies and authorization headers.
+- Automatic refresh token rotation: old tokens are revoked upon token refresh, password resets, or logout.
+- Role-based authorization: `ADMIN`, `ORGANIZER`, and `CUSTOMER`.
+- BCrypt password hashing with startup migration runner for legacy credentials.
+- Configurable email verification and password reset workflows.
 
-### 📋 Waitlist & Wishlist
-- Join and leave waitlists for sold-out events
-- Waitlist status progression: `WAITING` → `NOTIFIED` → `PROMOTED` / `CANCELLED`
-- Automatic promotion notifications when seats become available
-- Personal wishlist for saving events with status checks
+### Event Lifecycle and Discovery
+- Status state machine: `DRAFT` -> `PUBLISHED` -> `COMPLETED` / `CANCELLED`.
+- Dynamic query filtering via JPA Specifications (category, date range, venue, city, price range, and keyword tokenization).
+- Trending, popular, and recommendation discovery feeds.
+- Soft deletion preserving auditability for historical bookings.
+- Multipart banner image upload with validation and local UUID storage.
 
-### ⭐ Reviews & Ratings
-- 1–5 star ratings with optional comments (up to 1,000 characters)
-- One review per user per event (enforced by unique constraint)
-- Paginated review listings with average-rating summaries
-- Edit and delete own reviews
+### Seat Management and Concurrency Control
+- Venue-based seat configuration across `VIP`, `PREMIUM`, and `REGULAR` tiers.
+- Temporary seat locking with configurable lock duration (default: 10 minutes).
+- Automated background expiration scheduler releasing expired seat locks every 60 seconds.
+- Real-time seat status broadcasts over WebSocket (`/topic/events/{id}/seats`) using STOMP.
+- Optimistic concurrency control (`@Version`) on Booking, Event, and Seat entities to prevent race conditions during high-demand sales.
 
-### 📊 Admin Dashboard & Analytics
-- System-wide dashboard: total users, events, bookings, revenue
-- Revenue analytics with booking trends and cancellation rates
-- User and event statistics breakdowns
-- Comprehensive reports endpoint
-- Live system health diagnostics (JVM memory, threads, uptime)
+### Booking, Invoicing, and Ticketing
+- Atomic seat reservation workflow.
+- PDF e-ticket generation and booking summaries with embedded QR codes (Google ZXing, iText 8).
+- High-throughput check-in validation via QR code scanning or ticket ID lookup.
+- Booking cancellation with automated seat restoration.
 
-### 📅 Calendar Integration
-- iCalendar (`.ics`) file download per event
-- Google Calendar deep-link generation for one-click calendar adds
+### Payments and Financials
+- Integrated payment processing supporting `CREDIT_CARD`, `DEBIT_CARD`, `UPI`, and `NET_BANKING`.
+- Full and partial refund management with booking status synchronization.
+- Coupon engine supporting `PERCENTAGE`, `FIXED`, and `EARLY_BIRD` discounts with minimum spend and redemption thresholds.
 
-### ⚡ Real-Time Features
-- STOMP over WebSocket with `/topic` message broker
-- SockJS fallback for broad browser compatibility
-- `SeatUpdatePublisher` broadcasts seat status changes to all subscribed clients
-- Frontend `websocket.js` service for automatic reconnection
+### Administrative Analytics
+- Operational dashboard displaying revenue, ticket volume, active users, and event metrics.
+- Exportable reports and booking trend analysis.
+- Live system diagnostics endpoint exposing JVM memory, active threads, and system uptime.
 
-### 🔧 Infrastructure & DevOps
-- Redis caching with `ConcurrentMapCacheManager` fallback (caches: `events`, `popularEvents`, `adminStats`)
-- Bucket4j rate limiting on auth, booking, and payment endpoints
-- Spring Actuator: health, info, and metrics endpoints exposed
-- OpenAPI 3.0 / Swagger UI interactive documentation
-- Structured request logging via `RequestLoggingFilter`
-- `EventReminderScheduler` for automated event reminder notifications
-- CORS configuration for frontend development origins
+---
 
-## 🛠️ Tech Stack
+## Technology Stack
 
 ### Backend
-
-| Technology | Version | Purpose |
-|---|---|---|
-| Java | 17 | Language runtime |
-| Spring Boot | 3.4.1 | Application framework |
-| Spring Security | 6.x | Authentication & authorization |
-| Spring Data JPA | 3.x | ORM & data access |
-| Spring WebSocket | 3.x | Real-time STOMP communication |
-| Spring Mail | 3.x | Email notifications |
-| Spring Cache | 3.x | Caching abstraction |
-| Spring Retry | 2.x | Retry with exponential backoff |
-| Spring AOP | 3.x | Cross-cutting concerns |
-| Spring Actuator | 3.x | Monitoring & health checks |
-| PostgreSQL | 16+ | Primary relational database |
-| Redis | 7+ | Distributed caching layer |
-| H2 | — | In-memory test database |
-| jjwt | 0.12.6 | JWT token creation & validation |
-| Bucket4j | 8.10.1 | Token-bucket rate limiting |
-| Google ZXing | 3.5.3 | QR code generation |
-| iText | 8.0.5 | PDF document generation |
-| SpringDoc OpenAPI | 2.7.0 | API documentation & Swagger UI |
-| Lombok | Latest | Boilerplate reduction |
-| Maven | 3.9+ | Build & dependency management |
+- **Runtime**: Java 17
+- **Framework**: Spring Boot 3.4.1
+- **Security**: Spring Security 6, JJWT 0.12.6
+- **Persistence**: Spring Data JPA, Hibernate 6, PostgreSQL JDBC Driver
+- **Caching**: Spring Cache, Redis 7 (via Spring Data Redis), with in-memory fallback
+- **Real-Time**: Spring WebSocket, STOMP, SockJS
+- **Rate Limiting**: Bucket4j 8.10.1
+- **Document Generation**: iText Core 8.0.5, Google ZXing 3.5.3
+- **API Documentation**: SpringDoc OpenAPI 2.7.0 (OpenAPI 3.0)
+- **Build Tool**: Maven 3.9+ (wrapper included)
 
 ### Frontend
+- **Framework**: React 19.2.8
+- **Build Tool**: Vite 8.2.0
+- **Networking**: Axios, STOMP.js 7.3.0, SockJS Client 1.6.1
+- **Icons**: Lucide React
+- **Linter**: OxLint 1.75.0
 
-| Technology | Version | Purpose |
-|---|---|---|
-| React | 19.2.8 | UI framework |
-| Vite | 8.2.0 | Build tool & dev server |
-| STOMP.js | 7.3.0 | WebSocket client |
-| SockJS Client | 1.6.1 | WebSocket fallback transport |
-| Lucide React | 1.28.0 | Icon library |
-| Canvas Confetti | 1.9.4 | Booking success animations |
-| OxLint | 1.75.0 | Fast JavaScript linter |
+---
 
-## 🏗️ Architecture
-
-The application follows a **layered monolithic architecture** with clear separation of concerns:
+## Repository Structure
 
 ```
-┌───────────────────────────────────────────────────────────┐
-│                   React 19 Frontend (Vite)                │
-│         20 Components · REST Client · STOMP WebSocket     │
-└────────────────────────────┬──────────────────────────────┘
-                             │ HTTP / WS
-┌────────────────────────────▼──────────────────────────────┐
-│                  Spring Boot 3.4.1 Backend                │
-│  ┌──────────────────────────────────────────────────────┐ │
-│  │  Security Filters                                    │ │
-│  │  JWT Auth · Rate Limiting · Request Logging · CORS   │ │
-│  ├──────────────────────────────────────────────────────┤ │
-│  │  Controller Layer (15 controllers · 88 endpoints)    │ │
-│  ├──────────────────────────────────────────────────────┤ │
-│  │  Service Layer (17 services · business logic)        │ │
-│  ├──────────────────────────────────────────────────────┤ │
-│  │  Repository Layer (12 Spring Data JPA repositories)  │ │
-│  ├──────────────────────────────────────────────────────┤ │
-│  │  Entity Layer (13 JPA entities · JPA Auditing)       │ │
-│  └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│  ┌─────────────┐  ┌─────────────┐  ┌──────────────────┐  │
-│  │  Schedulers  │  │  WebSocket  │  │   Audit Logger   │  │
-│  │  Seat Lock   │  │  STOMP Pub  │  │   Structured     │  │
-│  │  Reminders   │  │  SockJS     │  │   Event Logging  │  │
-│  └─────────────┘  └─────────────┘  └──────────────────┘  │
-└──────────┬────────────────────────────────┬───────────────┘
-           │                                │
-  ┌────────▼────────┐             ┌─────────▼──────────┐
-  │   PostgreSQL    │             │      Redis         │
-  │   Primary DB    │             │   Cache Layer      │
-  │   13 Tables     │             │   (optional)       │
-  └─────────────────┘             └────────────────────┘
+.
+|-- src/main/java/com/kritagya/event_booking_system/
+|   |-- auth/               # Authentication controllers, services, and token DTOs
+|   |-- config/             # Spring configuration (Security, Redis, WebSocket, OpenAPI)
+|   |-- controller/         # REST API endpoints (15 controllers)
+|   |-- dto/                # Request and response transfer models
+|   |   `-- admin/          # Reporting, analytics, and diagnostics DTOs
+|   |-- entity/             # JPA entity definitions extending BaseEntity
+|   |-- enums/              # Domain enumerations (Role, Statuses, Types)
+|   |-- exception/          # Global exception advice and domain exceptions
+|   |-- logging/            # Structured audit logging
+|   |-- mapper/             # Entity-DTO mapping components
+|   |-- repository/         # Spring Data JPA repositories
+|   |-- scheduler/          # Background tasks for seat expiration and event reminders
+|   |-- security/           # Token filters, rate limiting, and user principals
+|   |-- service/            # Core business domain services
+|   |-- specification/      # Dynamic JPA Criteria queries for event search
+|   `-- websocket/          # WebSocket publishers for real-time seat status
+|-- src/main/resources/
+|   |-- application.properties          # Base settings
+|   |-- application-dev.properties      # Development overrides (seed data, DDL update)
+|   `-- application-prod.properties     # Production profile (DDL validate)
+|-- src/test/java/                      # 24 automated unit and integration test suites
+|-- frontend/                           # React 19 single-page application
+`-- pom.xml                             # Maven build configuration
 ```
 
-> For a detailed architectural breakdown, design decisions, and data flow diagrams, see [ARCHITECTURE.md](ARCHITECTURE.md).
+---
 
-## 📁 Project Structure
-
-```
-Event-Booking-System/
-├── src/main/java/com/kritagya/event_booking_system/
-│   ├── auth/                    # Auth controller, service, and DTOs
-│   ├── config/                  # Redis, WebSocket, JPA Auditing, OpenAPI, data seeding
-│   ├── controller/              # 14 REST controllers
-│   ├── dto/                     # 22 request/response DTOs
-│   │   └── admin/               # 7 admin analytics DTOs
-│   ├── entity/                  # 13 JPA entities with BaseEntity auditing
-│   ├── enums/                   # 10 enums (Role, BookingStatus, EventStatus, etc.)
-│   ├── exception/               # Global exception handler + 10 custom exceptions
-│   ├── logging/                 # AuditLogger for structured event logging
-│   ├── mapper/                  # 7 entity ↔ DTO mappers
-│   ├── repository/              # 12 Spring Data JPA repositories
-│   ├── scheduler/               # SeatLockScheduler, EventReminderScheduler
-│   ├── security/                # JWT filter, rate limiter, user details, security config
-│   ├── service/                 # 17 service interfaces + implementations
-│   ├── specification/           # JPA Specification for dynamic event queries
-│   └── websocket/               # SeatUpdatePublisher (STOMP broadcasts)
-├── src/main/resources/
-│   ├── application.properties          # Base configuration
-│   ├── application-dev.properties      # Dev profile (seed data, show SQL)
-│   └── application-prod.properties     # Prod profile (validate schema, no seed)
-├── src/test/java/                      # 24 test suites
-├── frontend/                           # React 19 SPA
-│   ├── src/components/                 # 20 React components
-│   ├── src/services/                   # API, WebSocket, and currency utilities
-│   └── package.json
-├── pom.xml
-└── docs/                               # Architecture, API, DB, deployment, security docs
-```
-
-> For a complete file listing, see [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md).
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
+- Java Development Kit (JDK) 17 or higher
+- Node.js 18.x or higher and npm
+- PostgreSQL 16 or higher
+- Redis 7.x (optional; defaults to in-memory cache if absent)
 
-| Requirement | Version | Notes |
-|---|---|---|
-| Java JDK | 17+ | Required |
-| Node.js | 18+ | For the React frontend |
-| PostgreSQL | 16+ | Primary database |
-| Redis | 7+ | Optional — falls back to in-memory cache automatically |
-| Maven | 3.9+ | Maven Wrapper (`mvnw`) is included |
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/kritagya025/Event-Booking-System.git
-cd Event-Booking-System
-```
-
-### 2. Database Setup
-
-Create the PostgreSQL database:
+### Database Initialization
+Connect to your local PostgreSQL instance and provision the application database:
 
 ```sql
 CREATE DATABASE event_booking_db;
 ```
 
-> The schema is auto-managed by Hibernate. In `dev` profile, `ddl-auto=update` creates tables on first run. In `prod`, `ddl-auto=validate` expects an existing schema.
+### Configuration
+The application reads settings from environment variables or Spring property profiles. Default development values are defined in `src/main/resources/application-dev.properties`.
 
-### 3. Configure Environment
+| Variable | Required in Production | Default (Development) | Purpose |
+|---|---|---|---|
+| `SPRING_PROFILES_ACTIVE` | Yes | `dev` | Active environment profile (`dev` or `prod`) |
+| `DB_URL` | Yes | `jdbc:postgresql://localhost:5432/event_booking_db` | JDBC connection string |
+| `DB_USERNAME` | Yes | `postgres` | Database username |
+| `DB_PASSWORD` | Yes | `kritagya` | Database password |
+| `JWT_SECRET` | Yes | Configured in dev properties | Base64-encoded secret key (256-bit minimum) |
+| `JWT_EXPIRATION` | No | `86400000` (24 hours) | Access token validity in milliseconds |
+| `JWT_REFRESH_EXPIRATION` | No | `604800000` (7 days) | Refresh token validity in milliseconds |
+| `CACHE_TYPE` | No | `simple` | Caching provider (`simple` or `redis`) |
+| `REDIS_HOST` | No | `localhost` | Redis server hostname |
+| `REDIS_PORT` | No | `6379` | Redis server port |
+| `CORS_ALLOWED_ORIGINS` | No | `http://localhost:3000,http://localhost:5173` | Allowed cross-origin domains |
+| `APP_SEED_DATA` | No | `true` (dev) / `false` (prod) | Whether to populate demo records on start |
 
-For development, the defaults in `application-dev.properties` work out of the box with a local PostgreSQL instance. For production, set the required environment variables listed in the [Environment Variables](#-environment-variables) section.
+### Installation and Execution
 
-### 4. Install Frontend Dependencies
+#### Combined Execution (Development)
+The root `package.json` provides scripts to launch both backend and frontend concurrently:
 
 ```bash
-cd frontend
 npm install
-cd ..
-```
-
-## ▶️ Running the Application
-
-### Option 1: Run Both Together (Recommended)
-
-```bash
-npm install        # Install root-level dependencies (concurrently)
-npm run dev        # Starts backend on :8080 and frontend on :5173
-```
-
-### Option 2: Run Separately
-
-**Backend** (port 8080):
-```bash
-./mvnw spring-boot:run
-```
-
-**Frontend** (port 5173):
-```bash
-cd frontend
 npm run dev
 ```
 
-### 🌐 Access Points
+#### Individual Service Execution
 
-| Service | URL |
-|---|---|
-| Frontend | http://localhost:5173 |
-| Backend API | http://localhost:8080/api |
-| Swagger UI | http://localhost:8080/swagger-ui.html |
-| API Docs (JSON) | http://localhost:8080/api-docs |
-| Actuator Health | http://localhost:8080/actuator/health |
-| WebSocket (STOMP) | ws://localhost:8080/ws |
-
-## 🧪 Testing
-
-The project includes **24 test suites** covering controllers, services, repositories, and security policies. Tests use H2 in-memory database, MockMvc for controller integration tests, and Mockito for service-layer unit tests.
-
+**Backend**:
 ```bash
-# Run all tests
-./mvnw test
-
-# Run a specific test class
-./mvnw test -Dtest=BookingControllerTest
-
-# Run multiple test classes
-./mvnw test -Dtest=BookingControllerTest,PaymentControllerTest,SeatServiceTest
-
-# Compile tests without running (fast verification)
-./mvnw test-compile
+./mvnw spring-boot:run
 ```
+The server will start on port `8080`.
 
-### Test Coverage
+**Frontend**:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+The client will be available at `http://localhost:5173`.
 
-| Layer | Test Suites |
+#### Service Access Points
+
+| Service | Address |
 |---|---|
-| **Controllers** | AdminControllerTest, AuthControllerTest, BookingControllerTest, CalendarControllerTest, EventControllerTest, PaymentControllerTest |
-| **Services** | AdminServiceTest, BookingServiceTest, CalendarServiceTest, CouponServiceTest, EventServiceTest, PaymentServiceTest, QrCodeServiceTest, ReviewServiceTest, SeatServiceTest, TicketServiceTest, UserServiceTest, VenueServiceTest, WaitlistServiceTest, WishlistServiceTest |
-| **Repositories** | BookingRepositoryTest, EventRepositoryTest |
-| **Security** | SecurityFixesTest |
-| **Application** | EventBookingSystemApplicationTests |
-
-## 🌱 Default Seed Data
-
-When running with the `dev` profile, `DataInitializerRunner` automatically seeds the database:
-
-### Default Users
-
-| Email | Password | Role |
-|---|---|---|
-| `admin@eventhub.com` | `Admin@123` | ADMIN |
-| `customer@eventhub.com` | `Customer@123` | CUSTOMER |
-
-### Seed Events
-
-| Event | Price | Seats |
-|---|---|---|
-| Neon Horizon Cyber Music Festival | $85 | 120 |
-| Global AI & Autonomous Tech Summit | $299 | 45 |
-| Phantom of the Opera — Broadway Revival | $120 | 40 |
-| Grand Prix eSports World Championship | $45 | 300 |
-
-### Venues
-
-15 venues across 6 regions: USA (4), India (5), UK/Europe (4), Australia (1), Japan (1). Each event's primary venue is auto-seeded with VIP front-row and Regular seats.
-
-> Seed data is controlled by the `app.seed-data` property (`true` in dev, `false` in prod).
-
-## 📡 API Reference
-
-The system exposes **88 REST endpoints** across 15 controllers. All endpoints require JWT authentication unless noted otherwise.
-
-| Module | Base Path | Endpoints | Auth |
-|---|---|---|---|
-| **Auth** | `/api/auth` | `POST /register` · `POST /login` · `POST /refresh` · `POST /logout` · `POST /forgot-password` · `POST /reset-password` · `GET /verify-email` | Public |
-| **Events** | `/api/events` | `POST /` · `GET /` · `GET /search` · `GET /{id}` · `GET /{id}/analytics` · `GET /popular` · `GET /trending` · `GET /recommendations` · `GET /venue/{venueId}` · `PUT /{id}` · `DELETE /{id}` · `PATCH /{id}/publish` · `PATCH /{id}/unpublish` | Mixed |
-| **Bookings** | `/api/bookings` | `POST /` · `GET /` · `GET /{id}` · `GET /user/{userId}` · `PATCH /{id}/cancel` | JWT |
-| **Payments** | `/api/payments` | `POST /` · `GET /{id}` · `GET /booking/{bookingId}` · `GET /` · `PATCH /{id}/refund` · `PATCH /booking/{bookingId}/refund` | JWT |
-| **Tickets** | `/api/tickets` | `POST /booking/{bookingId}` · `GET /booking/{bookingId}` · `GET /{id}` · `GET /validate/{qrCode}` · `POST /checkin/{qrCode}` · `GET /{id}/qrcode` · `GET /{id}/pdf` · `GET /booking/{bookingId}/pdf` | JWT |
-| **Venues** | `/api/venues` | `POST /` · `GET /` · `GET /{id}` · `PUT /{id}` · `DELETE /{id}` | JWT |
-| **Seats** | `/api/seats` | `POST /` · `GET /` · `GET /{id}` · `GET /venue/{venueId}` · `GET /venue/{venueId}/available` · `PUT /{id}` · `DELETE /{id}` · `POST /lock` · `POST /unlock` | JWT |
-| **Reviews** | `/api` | `POST /events/{eventId}/reviews` · `GET /events/{eventId}/reviews` · `PUT /reviews/{id}` · `DELETE /reviews/{id}` | JWT |
-| **Coupons** | `/api/coupons` | `POST /` · `POST /validate` · `GET /` · `PATCH /{id}/toggle-status` · `DELETE /{id}` | JWT |
-| **Wishlist** | `/api/wishlist` | `POST /{eventId}` · `DELETE /{eventId}` · `GET /` · `GET /{eventId}/status` | JWT |
-| **Waitlist** | `/api/waitlist` | `POST /{eventId}` · `DELETE /{eventId}` · `GET /{eventId}/count` · `GET /{eventId}/status` | JWT |
-| **Calendar** | `/api/events` | `GET /{id}/calendar.ics` · `GET /{id}/google-calendar-link` | JWT |
-| **Check-In** | `/api/checkin` | `POST /{ticketId}` · `GET /validate/{ticketId}` | ADMIN/ORG |
-| **Images** | `/api/images` | `POST /upload` · `GET /{filename}` · `DELETE /{filename}` | JWT |
-| **Admin** | `/api/admin` | `GET /dashboard` · `GET /analytics/revenue` · `GET /analytics/bookings` · `GET /statistics/users` · `GET /statistics/events` · `GET /reports` · `GET /system-health` | ADMIN |
-| **Users** | `/api/users` | `GET /me` · `PUT /me` · `POST /` · `GET /` · `GET /{id}` · `PUT /{id}` · `PUT /{id}/role` · `DELETE /{id}` | JWT |
-
-> For complete request/response schemas and example payloads, see [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
-
-## ⚙️ Environment Variables
-
-| Variable | Required | Description | Default (Dev) |
-|---|---|---|---|
-| `SPRING_PROFILES_ACTIVE` | Yes | Active profile: `dev` or `prod` | `dev` |
-| `DB_URL` | Yes | PostgreSQL JDBC URL | `jdbc:postgresql://localhost:5432/event_booking_db` |
-| `DB_USERNAME` | Yes | Database username | `postgres` |
-| `DB_PASSWORD` | Yes | Database password | `kritagya` |
-| `JWT_SECRET` | Yes | Base64-encoded signing key (min 256 bits) | Dev fallback provided |
-| `JWT_EXPIRATION` | No | Access token TTL in ms | `86400000` (24h) |
-| `JWT_REFRESH_EXPIRATION` | No | Refresh token TTL in ms | `604800000` (7d) |
-| `REDIS_HOST` | No | Redis hostname | `localhost` |
-| `REDIS_PORT` | No | Redis port | `6379` |
-| `CACHE_TYPE` | No | `redis` or `simple` (in-memory fallback) | `simple` |
-| `MAIL_HOST` | No | SMTP server hostname | `smtp.gmail.com` |
-| `MAIL_PORT` | No | SMTP server port | `587` |
-| `MAIL_USERNAME` | No | SMTP username | `noreply@eventbookingsystem.com` |
-| `MAIL_PASSWORD` | No | SMTP password | — |
-| `CORS_ALLOWED_ORIGINS` | No | Comma-separated allowed origins | `http://localhost:3000,http://localhost:5173` |
-| `TRUSTED_PROXIES` | No | Trusted reverse-proxy IPs | `127.0.0.1,0:0:0:0:0:0:0:1` |
-| `APP_SEED_DATA` | No | Enable demo data seeding | `true` (dev) / `false` (prod) |
-
-> **Production note**: `JWT_SECRET` has no fallback in the `prod` profile — the application will fail to start without it. See [DEPLOYMENT.md](DEPLOYMENT.md) for production setup.
-
-## 📚 Project Documentation
-
-| Document | Description |
-|---|---|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture, design patterns, and data flow |
-| [API_DOCUMENTATION.md](API_DOCUMENTATION.md) | Complete REST API reference with schemas |
-| [DATABASE.md](DATABASE.md) | Entity-relationship diagrams and schema details |
-| [DEPLOYMENT.md](DEPLOYMENT.md) | Production deployment guide |
-| [SECURITY.md](SECURITY.md) | Security policies, JWT flow, and threat model |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guidelines and code standards |
-| [CHANGELOG.md](CHANGELOG.md) | Version history and release notes |
-| [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | Complete project file tree |
-
-## 🗄️ Data Model
-
-The system uses **13 JPA entities** with a shared `BaseEntity` providing audit fields:
-
-```
-User ──┬── 1:N ── Event (as organizer)
-       ├── 1:N ── Booking ──┬── N:M ── Seat
-       │                    ├── 1:1 ── Payment
-       │                    └── 1:N ── Ticket
-       ├── 1:N ── Review
-       ├── 1:N ── Wishlist
-       ├── 1:N ── Waitlist
-       └── 1:N ── RefreshToken
-
-Venue ──┬── 1:N ── Event
-        └── 1:N ── Seat
-
-Coupon (standalone)
-```
-
-> For full schema details and column definitions, see [DATABASE.md](DATABASE.md).
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) guide for code standards, branch naming conventions, and PR requirements before submitting a pull request.
-
-## 📄 License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+| Web Application | `http://localhost:5173` |
+| REST API Base | `http://localhost:8080/api` |
+| Swagger UI | `http://localhost:8080/swagger-ui.html` |
+| OpenAPI Specification | `http://localhost:8080/api-docs` |
+| Actuator Health Check | `http://localhost:8080/actuator/health` |
+| STOMP WebSocket | `ws://localhost:8080/ws` |
 
 ---
 
-<p align="center">
-  Built with ❤️ by <a href="https://github.com/kritagya025">Kritagya</a>
-</p>
+## Testing
+
+The backend includes 24 automated test suites covering controllers, business logic, persistence layers, and security configurations. Tests execute against an embedded H2 database.
+
+```bash
+# Execute entire test suite
+./mvnw test
+
+# Run a specific test suite
+./mvnw test -Dtest=BookingControllerTest
+
+# Run all controller tests
+./mvnw test -Dtest=*ControllerTest
+
+# Verify compilation without executing test runtime
+./mvnw test-compile
+```
+
+### Test Suite Structure
+
+| Component Layer | Suites |
+|---|---|
+| Controllers | `AdminControllerTest`, `AuthControllerTest`, `BookingControllerTest`, `CalendarControllerTest`, `EventControllerTest`, `PaymentControllerTest` |
+| Services | `AdminServiceTest`, `BookingServiceTest`, `CalendarServiceTest`, `CouponServiceTest`, `EventServiceTest`, `PaymentServiceTest`, `QrCodeServiceTest`, `ReviewServiceTest`, `SeatServiceTest`, `TicketServiceTest`, `UserServiceTest`, `VenueServiceTest`, `WaitlistServiceTest`, `WishlistServiceTest` |
+| Persistence | `BookingRepositoryTest`, `EventRepositoryTest` |
+| Security | `SecurityFixesTest` |
+| Context | `EventBookingSystemApplicationTests` |
+
+---
+
+## Seed Data
+
+When started with the `dev` profile and `APP_SEED_DATA=true`, the `DataInitializerRunner` populates test records:
+
+### Default Accounts
+
+| Email | Password | Role |
+|---|---|---|
+| `admin@eventhub.com` | `Admin@123` | `ADMIN` |
+| `customer@eventhub.com` | `Customer@123` | `CUSTOMER` |
+
+### Sample Records
+- **Venues**: 15 locations across North America, Europe, Asia, and Australia.
+- **Events**: 4 featured events with configured ticket pricing, categories, and seating layouts.
+- **Seats**: Automatically generated seat maps with VIP and regular tiers for each active venue.
+
+---
+
+## API Overview
+
+The platform exposes 88 REST endpoints. Full request/response schemas and authentication requirements are detailed in [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
+
+| Namespace | Base Path | Endpoints | Access Policy |
+|---|---|---|---|
+| Authentication | `/api/auth` | Register, login, token refresh, logout, password recovery | Public |
+| Events | `/api/events` | Event CRUD, search, recommendations, analytics, publishing | Public / Organizer / Admin |
+| Bookings | `/api/bookings` | Create reservation, view user bookings, cancel reservation | Authenticated |
+| Payments | `/api/payments` | Process payment, inspect transactions, issue refunds | Authenticated / Admin |
+| Tickets | `/api/tickets` | Generate tickets, QR download, PDF download, check-in | Authenticated / Staff |
+| Venues | `/api/venues` | Venue CRUD and capacity management | Public / Admin |
+| Seats | `/api/seats` | Seat availability, layouts, manual lock/unlock | Public / Authenticated |
+| Check-In | `/api/checkin` | Ticket check-in and QR validation | Organizer / Admin |
+| Coupons | `/api/coupons` | Validation and discount management | Public / Admin |
+| Reviews | `/api` | Submit, edit, delete, and list event reviews | Authenticated |
+| Wishlist | `/api/wishlist` | Saved event management | Authenticated |
+| Waitlist | `/api/waitlist` | Waitlist enrollment and status checks | Authenticated |
+| Calendar | `/api/events` | ICS file export, Google Calendar integration | Public |
+| Images | `/api/images` | Banner upload, retrieval, and deletion | Authenticated |
+| Admin | `/api/admin` | Operational metrics, revenue analytics, system diagnostics | Admin |
+| Users | `/api/users` | Profile management and role assignment | Authenticated / Admin |
+
+---
+
+## Documentation Index
+
+- [Architecture Reference](ARCHITECTURE.md): System design, component interactions, caching, and concurrency control.
+- [API Reference](API_DOCUMENTATION.md): Complete catalog of REST endpoints, request payloads, and status codes.
+- [Database Schema](DATABASE.md): Entity-relationship definitions, indexes, constraints, and audit structure.
+- [Deployment Guide](DEPLOYMENT.md): Production setup using Docker, Nginx reverse proxying, and systemd.
+- [Security Policy](SECURITY.md): Threat mitigation, token security, rate limiting, and vulnerability reporting.
+- [Project Structure](PROJECT_STRUCTURE.md): Detailed inventory of files and architectural packages.
+- [Contribution Guidelines](CONTRIBUTING.md): Git branch strategies, coding style, and pull request procedures.
+- [Changelog](CHANGELOG.md): Historical record of versions and breaking changes.
+
+---
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for code style guidelines, testing requirements, and branch workflows prior to opening a pull request.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for terms.

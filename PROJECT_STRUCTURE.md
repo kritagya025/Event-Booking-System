@@ -1,276 +1,251 @@
-# 📁 Project Structure — Event Booking System
+# Project Structure and Directory Layout
 
-Complete file tree of the Event Booking System repository.
+Complete inventory of the directory hierarchy, source modules, and configuration components of the Event Booking System.
 
 ---
+
+## Directory Tree
 
 ```
 event-booking-system/
-│
-├── 📄 README.md                          # Project overview & setup guide
-├── 📄 ARCHITECTURE.md                    # System architecture documentation
-├── 📄 API_DOCUMENTATION.md              # Complete REST API reference
-├── 📄 DATABASE.md                        # Database schema documentation
-├── 📄 DEPLOYMENT.md                      # Production deployment guide
-├── 📄 CONTRIBUTING.md                    # Contribution guidelines
-├── 📄 SECURITY.md                        # Security policies
-├── 📄 CHANGELOG.md                       # Version history
-├── 📄 PROJECT_STRUCTURE.md              # This file
-│
-├── 📄 pom.xml                            # Maven build configuration
-├── 📄 mvnw / mvnw.cmd                   # Maven Wrapper (Unix/Windows)
-├── 📄 package.json                       # Root package (concurrently scripts)
-├── 📄 .gitignore                         # Git ignore rules
-│
-├── 📂 .mvn/                              # Maven Wrapper configuration
-│
-├── 📂 src/
-│   ├── 📂 main/
-│   │   ├── 📂 java/com/kritagya/event_booking_system/
-│   │   │   │
-│   │   │   ├── 📄 EventBookingSystemApplication.java    # Spring Boot entry point
-│   │   │   │                                             # @EnableScheduling, @EnableAsync, @EnableRetry
-│   │   │   │
-│   │   │   ├── 📂 auth/                                 # Authentication Module
-│   │   │   │   ├── 📄 AuthController.java               # POST /api/auth/** endpoints
-│   │   │   │   ├── 📄 AuthService.java                  # Register, login, refresh, logout, password reset
-│   │   │   │   ├── 📄 AuthResponseDTO.java              # Auth response (tokens + user info)
-│   │   │   │   ├── 📄 LoginRequestDTO.java              # Login request (email, password)
-│   │   │   │   ├── 📄 RegisterRequestDTO.java           # Registration request
-│   │   │   │   ├── 📄 RefreshTokenRequestDTO.java       # Token refresh request
-│   │   │   │   ├── 📄 ForgotPasswordRequestDTO.java     # Forgot password request
-│   │   │   │   └── 📄 ResetPasswordRequestDTO.java      # Reset password request
-│   │   │   │
-│   │   │   ├── 📂 config/                               # Application Configuration
-│   │   │   │   ├── 📄 DataInitializerRunner.java        # Seeds demo venues, events, seats on startup
-│   │   │   │   ├── 📄 JpaAuditingConfig.java            # Enables JPA auditing with AuditorAware
-│   │   │   │   ├── 📄 OpenApiConfig.java                # Swagger/OpenAPI configuration
-│   │   │   │   ├── 📄 PasswordMigrationRunner.java      # Migrates plain-text passwords to BCrypt
-│   │   │   │   ├── 📄 RedisConfig.java                  # Redis cache + simple cache fallback
-│   │   │   │   └── 📄 WebSocketConfig.java              # STOMP WebSocket configuration
-│   │   │   │
-│   │   │   ├── 📂 controller/                           # REST API Controllers (15)
-│   │   │   │   ├── 📄 AdminController.java              # GET /api/admin/** (ADMIN only)
-│   │   │   │   ├── 📄 BookingController.java            # /api/bookings CRUD
-│   │   │   │   ├── 📄 CalendarController.java           # GET /api/events/{id}/calendar.ics
-│   │   │   │   ├── 📄 CheckInController.java            # POST /api/checkin/{ticketId}
-│   │   │   │   ├── 📄 CouponController.java             # /api/coupons management
-│   │   │   │   ├── 📄 EventController.java              # /api/events CRUD + search + analytics
-│   │   │   │   ├── 📄 ImageController.java              # /api/images upload/download/delete
-│   │   │   │   ├── 📄 PaymentController.java            # /api/payments processing
-│   │   │   │   ├── 📄 ReviewController.java             # /api/events/{id}/reviews, /api/reviews
-│   │   │   │   ├── 📄 SeatController.java               # /api/seats CRUD
-│   │   │   │   ├── 📄 TicketController.java             # /api/tickets generation, QR, PDF
-│   │   │   │   ├── 📄 UserController.java               # /api/users CRUD + /me profile
-│   │   │   │   ├── 📄 VenueController.java              # /api/venues CRUD
-│   │   │   │   ├── 📄 WaitlistController.java           # /api/waitlist join/leave/count
-│   │   │   │   └── 📄 WishlistController.java           # /api/wishlist add/remove/list
-│   │   │   │
-│   │   │   ├── 📂 dto/                                  # Data Transfer Objects (21)
-│   │   │   │   ├── 📄 BookingRequestDTO.java
-│   │   │   │   ├── 📄 BookingResponseDTO.java
-│   │   │   │   ├── 📄 CouponRequestDTO.java
-│   │   │   │   ├── 📄 CouponResponseDTO.java
-│   │   │   │   ├── 📄 EventAnalyticsDTO.java
-│   │   │   │   ├── 📄 EventRequestDTO.java
-│   │   │   │   ├── 📄 EventResponseDTO.java
-│   │   │   │   ├── 📄 EventReviewSummaryDTO.java
-│   │   │   │   ├── 📄 PaymentRequestDTO.java
-│   │   │   │   ├── 📄 PaymentResponseDTO.java
-│   │   │   │   ├── 📄 ReviewRequestDTO.java
-│   │   │   │   ├── 📄 ReviewResponseDTO.java
-│   │   │   │   ├── 📄 SeatRequestDTO.java
-│   │   │   │   ├── 📄 SeatResponseDTO.java
-│   │   │   │   ├── 📄 SeatUpdateDTO.java                # WebSocket payload for real-time seat updates
-│   │   │   │   ├── 📄 TicketResponseDTO.java
-│   │   │   │   ├── 📄 UserProfileUpdateDTO.java
-│   │   │   │   ├── 📄 UserRequestDTO.java
-│   │   │   │   ├── 📄 UserResponseDTO.java
-│   │   │   │   ├── 📄 VenueRequestDTO.java
-│   │   │   │   ├── 📄 VenueResponseDTO.java
-│   │   │   │   └── 📂 admin/                            # Admin-specific DTOs (6)
-│   │   │   │       ├── 📄 AdminDashboardDTO.java
-│   │   │   │       ├── 📄 BookingAnalyticsDTO.java
-│   │   │   │       ├── 📄 EventStatisticsDTO.java
-│   │   │   │       ├── 📄 ReportsDTO.java
-│   │   │   │       ├── 📄 RevenueAnalyticsDTO.java
-│   │   │   │       └── 📄 UserStatisticsDTO.java
-│   │   │   │
-│   │   │   ├── 📂 entity/                               # JPA Entities (13)
-│   │   │   │   ├── 📄 BaseEntity.java                   # Abstract base with audit fields
-│   │   │   │   ├── 📄 Booking.java                      # Booking with seats (M:N) + @Version
-│   │   │   │   ├── 📄 Coupon.java                       # Discount coupons
-│   │   │   │   ├── 📄 Event.java                        # Events with organizer + venue + @Version
-│   │   │   │   ├── 📄 Payment.java                      # Payment (1:1 with Booking)
-│   │   │   │   ├── 📄 RefreshToken.java                 # JWT refresh tokens
-│   │   │   │   ├── 📄 Review.java                       # Event reviews (1-5 stars)
-│   │   │   │   ├── 📄 Seat.java                         # Venue seats with lock timeout + @Version
-│   │   │   │   ├── 📄 Ticket.java                       # E-tickets with QR codes
-│   │   │   │   ├── 📄 User.java                         # User accounts (app_user table)
-│   │   │   │   ├── 📄 Venue.java                        # Event venues
-│   │   │   │   ├── 📄 Waitlist.java                     # Waitlist entries
-│   │   │   │   └── 📄 Wishlist.java                     # Wishlist entries
-│   │   │   │
-│   │   │   ├── 📂 enums/                                # Enum Types (10)
-│   │   │   │   ├── 📄 BookingStatus.java                # PENDING, CONFIRMED, CANCELLED
-│   │   │   │   ├── 📄 DiscountType.java                 # PERCENTAGE, FIXED, EARLY_BIRD
-│   │   │   │   ├── 📄 EventStatus.java                  # DRAFT, PUBLISHED, CANCELLED, COMPLETED
-│   │   │   │   ├── 📄 PaymentMethod.java                # CREDIT_CARD, DEBIT_CARD, UPI, NET_BANKING
-│   │   │   │   ├── 📄 PaymentStatus.java                # PENDING, COMPLETED, FAILED, REFUNDED
-│   │   │   │   ├── 📄 Role.java                         # ADMIN, ORGANIZER, CUSTOMER
-│   │   │   │   ├── 📄 SeatStatus.java                   # AVAILABLE, BOOKED, LOCKED
-│   │   │   │   ├── 📄 SeatType.java                     # REGULAR, VIP, PREMIUM
-│   │   │   │   ├── 📄 TicketStatus.java                 # ACTIVE, USED, CANCELLED
-│   │   │   │   └── 📄 WaitlistStatus.java               # WAITING, NOTIFIED, PROMOTED, CANCELLED
-│   │   │   │
-│   │   │   ├── 📂 exception/                            # Exception Handling (11)
-│   │   │   │   ├── 📄 BookingNotFoundException.java
-│   │   │   │   ├── 📄 DuplicateEmailException.java
-│   │   │   │   ├── 📄 DuplicateResourceException.java
-│   │   │   │   ├── 📄 ErrorResponse.java                # Standardized error response body
-│   │   │   │   ├── 📄 EventNotFoundException.java
-│   │   │   │   ├── 📄 GlobalExceptionHandler.java       # @ControllerAdvice — centralized error handling
-│   │   │   │   ├── 📄 ResourceNotFoundException.java
-│   │   │   │   ├── 📄 SeatNotFoundException.java
-│   │   │   │   ├── 📄 TokenExpiredException.java
-│   │   │   │   ├── 📄 UserNotFoundException.java
-│   │   │   │   └── 📄 VenueNotFoundException.java
-│   │   │   │
-│   │   │   ├── 📂 logging/                              # Audit Logging
-│   │   │   │   └── 📄 AuditLogger.java                  # Structured audit events (login, booking, payment)
-│   │   │   │
-│   │   │   ├── 📂 mapper/                               # Entity ↔ DTO Mappers (7)
-│   │   │   │   ├── 📄 BookingMapper.java
-│   │   │   │   ├── 📄 EventMapper.java
-│   │   │   │   ├── 📄 PaymentMapper.java
-│   │   │   │   ├── 📄 SeatMapper.java
-│   │   │   │   ├── 📄 TicketMapper.java
-│   │   │   │   ├── 📄 UserMapper.java
-│   │   │   │   └── 📄 VenueMapper.java
-│   │   │   │
-│   │   │   ├── 📂 repository/                           # JPA Repositories (12)
-│   │   │   │   ├── 📄 BookingRepository.java
-│   │   │   │   ├── 📄 CouponRepository.java
-│   │   │   │   ├── 📄 EventRepository.java
-│   │   │   │   ├── 📄 PaymentRepository.java
-│   │   │   │   ├── 📄 RefreshTokenRepository.java
-│   │   │   │   ├── 📄 ReviewRepository.java
-│   │   │   │   ├── 📄 SeatRepository.java
-│   │   │   │   ├── 📄 TicketRepository.java
-│   │   │   │   ├── 📄 UserRepository.java
-│   │   │   │   ├── 📄 VenueRepository.java
-│   │   │   │   ├── 📄 WaitlistRepository.java
-│   │   │   │   └── 📄 WishlistRepository.java
-│   │   │   │
-│   │   │   ├── 📂 scheduler/                            # Background Scheduled Tasks (2)
-│   │   │   │   ├── 📄 EventReminderScheduler.java       # Daily 8 AM — sends event reminder emails
-│   │   │   │   └── 📄 SeatLockScheduler.java            # Every 60s — releases expired seat locks
-│   │   │   │
-│   │   │   ├── 📂 security/                             # Security Configuration (8)
-│   │   │   │   ├── 📄 CustomUserDetails.java            # UserDetails implementation
-│   │   │   │   ├── 📄 CustomUserDetailsService.java     # Loads user from database
-│   │   │   │   ├── 📄 JwtAuthenticationEntryPoint.java  # 401 handler for unauthenticated requests
-│   │   │   │   ├── 📄 JwtAuthenticationFilter.java      # Extracts & validates JWT from requests
-│   │   │   │   ├── 📄 JwtUtil.java                      # JWT generation, parsing, validation
-│   │   │   │   ├── 📄 RateLimitingFilter.java           # Bucket4j per-IP rate limiting
-│   │   │   │   ├── 📄 RequestLoggingFilter.java         # HTTP request/response logging
-│   │   │   │   └── 📄 SecurityConfig.java               # Security filter chain + CORS + auth rules
-│   │   │   │
-│   │   │   ├── 📂 service/                              # Business Logic Services (16 + 1 impl)
-│   │   │   │   ├── 📄 AdminService.java                 # Dashboard, analytics, reports
-│   │   │   │   ├── 📄 BookingService.java               # Booking CRUD with seat allocation
-│   │   │   │   ├── 📄 CalendarService.java              # iCal & Google Calendar generation
-│   │   │   │   ├── 📄 CouponService.java                # Coupon CRUD and validation
-│   │   │   │   ├── 📄 EmailService.java                 # Email interface (7 methods)
-│   │   │   │   ├── 📄 EventService.java                 # Event CRUD, search, analytics
-│   │   │   │   ├── 📄 ImageStorageService.java          # File upload/download/delete
-│   │   │   │   ├── 📄 PaymentService.java               # Payment processing
-│   │   │   │   ├── 📄 QrCodeService.java                # QR code image generation (ZXing)
-│   │   │   │   ├── 📄 ReviewService.java                # Review CRUD with summaries
-│   │   │   │   ├── 📄 SeatService.java                  # Seat CRUD and locking
-│   │   │   │   ├── 📄 TicketService.java                # Ticket gen, validation, check-in, PDF
-│   │   │   │   ├── 📄 UserService.java                  # User CRUD and profile
-│   │   │   │   ├── 📄 VenueService.java                 # Venue CRUD
-│   │   │   │   ├── 📄 WaitlistService.java              # Waitlist management + promotion
-│   │   │   │   ├── 📄 WishlistService.java              # Wishlist management
-│   │   │   │   └── 📂 impl/
-│   │   │   │       └── 📄 EmailServiceImpl.java         # Email implementation (Spring Mail + Retry)
-│   │   │   │
-│   │   │   ├── 📂 specification/                        # JPA Specifications
-│   │   │   │   └── 📄 EventSpecification.java           # Dynamic query builder for event search
-│   │   │   │
-│   │   │   └── 📂 websocket/                            # WebSocket Publishers
-│   │   │       └── 📄 SeatUpdatePublisher.java          # Publishes seat updates to STOMP
-│   │   │
-│   │   └── 📂 resources/
-│   │       ├── 📄 application.properties                # Application configuration
-│   │       ├── 📂 static/                               # Static files
-│   │       └── 📂 templates/                            # Template files
-│   │
-│   └── 📂 test/
-│       └── 📂 java/com/kritagya/event_booking_system/
-│           ├── 📄 EventBookingSystemApplicationTests.java  # Application context test
-│           ├── 📂 controller/                              # Controller integration tests
-│           ├── 📂 repository/                              # Repository tests
-│           └── 📂 service/                                 # Service unit tests
-│
-├── 📂 frontend/                                          # React Frontend (Vite)
-│   ├── 📄 package.json                                   # Frontend dependencies
-│   ├── 📄 vite.config.js                                 # Vite configuration
-│   ├── 📄 index.html                                     # HTML entry point
-│   └── 📂 src/
-│       ├── 📄 main.jsx                                   # React entry point
-│       ├── 📄 App.jsx                                    # Main application (routing, state, layout)
-│       ├── 📄 App.css                                    # App-specific styles
-│       ├── 📄 index.css                                  # Global design system
-│       ├── 📂 assets/                                    # Static assets (images)
-│       ├── 📂 components/                                # React Components (11)
-│       │   ├── 📄 AdminDashboard.jsx                     # Admin analytics dashboard
-│       │   ├── 📄 AuthModal.jsx                          # Login/register modal
-│       │   ├── 📄 CheckInModal.jsx                       # Ticket check-in interface
-│       │   ├── 📄 CreateEventModal.jsx                   # Event creation form
-│       │   ├── 📄 LoginPage.jsx                          # Standalone login page
-│       │   ├── 📄 MyBookings.jsx                         # User booking history
-│       │   ├── 📄 Navbar.jsx                             # Top navigation + avatar dropdown
-│       │   ├── 📄 ProfileDashboard.jsx                   # User profile management
-│       │   ├── 📄 RegisterPage.jsx                       # Standalone registration page
-│       │   ├── 📄 SeatMapModal.jsx                       # Seat selection + booking + payment
-│       │   └── 📄 Wishlist.jsx                           # Saved events wishlist
-│       └── 📂 services/                                  # Frontend Services (3)
-│           ├── 📄 api.js                                 # HTTP client with JWT interceptor
-│           ├── 📄 currency.js                            # Multi-currency formatting
-│           └── 📄 websocket.js                           # STOMP WebSocket client
-│
-├── 📂 uploads/                                           # Image upload directory (runtime)
-│
-├── 📂 postman/                                           # Postman Collection
-│   ├── 📂 collections/                                   # API collections
-│   ├── 📂 environments/                                  # Environment configs
-│   ├── 📂 flows/                                         # Test flows
-│   ├── 📂 globals/                                       # Global variables
-│   ├── 📂 mocks/                                         # Mock servers
-│   └── 📂 specs/                                         # API specifications
-│
-└── 📂 target/                                            # Maven build output (gitignored)
+|-- README.md                          # Project overview and rapid setup guide
+|-- ARCHITECTURE.md                    # System architecture and data flow documentation
+|-- API_DOCUMENTATION.md              # Complete REST API reference specification
+|-- DATABASE.md                        # Database schema, table definitions, and indexes
+|-- DEPLOYMENT.md                      # Production deployment and configuration guide
+|-- CONTRIBUTING.md                    # Engineering standards and git workflow
+|-- SECURITY.md                        # Security policies and threat model
+|-- CHANGELOG.md                       # Version release history
+|-- PROJECT_STRUCTURE.md              # File and directory inventory
+|
+|-- pom.xml                            # Maven build descriptor
+|-- mvnw / mvnw.cmd                   # Maven Wrapper scripts (Linux / Windows)
+|-- package.json                       # Root script orchestrator (concurrent dev execution)
+|-- .gitignore                         # Version control ignore definitions
+|
+|-- .mvn/                              # Maven Wrapper binary configuration
+|
+|-- src/
+|   |-- main/
+|   |   |-- java/com/kritagya/event_booking_system/
+|   |   |   |
+|   |   |   |-- EventBookingSystemApplication.java    # Spring Boot application entry point
+|   |   |   |
+|   |   |   |-- auth/                                 # Authentication Subsystem
+|   |   |   |   |-- AuthController.java               # Auth endpoints (/api/auth/**)
+|   |   |   |   |-- AuthService.java                  # Credential verification & token lifecycle
+|   |   |   |   |-- AuthResponseDTO.java              # Token delivery payload
+|   |   |   |   |-- LoginRequestDTO.java              # User login payload
+|   |   |   |   |-- RegisterRequestDTO.java           # Registration payload
+|   |   |   |   |-- RefreshTokenRequestDTO.java       # Token rotation payload
+|   |   |   |   |-- ForgotPasswordRequestDTO.java     # Reset request payload
+|   |   |   |   `-- ResetPasswordRequestDTO.java      # Reset confirmation payload
+|   |   |   |
+|   |   |   |-- config/                               # Infrastructure Configuration
+|   |   |   |   |-- DataInitializerRunner.java        # Dev seed data initialization
+|   |   |   |   |-- JpaAuditingConfig.java            # JPA auditing and AuditorAware bean
+|   |   |   |   |-- OpenApiConfig.java                # OpenAPI 3.0 / Swagger UI definition
+|   |   |   |   |-- PasswordMigrationRunner.java      # Plaintext to BCrypt migration runner
+|   |   |   |   |-- RedisConfig.java                  # Redis and in-memory cache managers
+|   |   |   |   `-- WebSocketConfig.java              # STOMP over WebSocket broker config
+|   |   |   |
+|   |   |   |-- controller/                           # REST API Controllers (15)
+|   |   |   |   |-- AdminController.java              # Administrative metrics & health endpoints
+|   |   |   |   |-- BookingController.java            # Reservation operations
+|   |   |   |   |-- CalendarController.java           # iCalendar & Google Calendar link generation
+|   |   |   |   |-- CheckInController.java            # Gate admission check-in endpoints
+|   |   |   |   |-- CouponController.java             # Discount coupon administration
+|   |   |   |   |-- EventController.java              # Event CRUD, publishing, and search
+|   |   |   |   |-- ImageController.java              # Banner file upload & retrieval
+|   |   |   |   |-- PaymentController.java            # Payment execution & refunds
+|   |   |   |   |-- ReviewController.java             # Event review management
+|   |   |   |   |-- SeatController.java               # Seat layout & manual lock/unlock
+|   |   |   |   |-- TicketController.java             # Ticket issuance, QR, and PDF generation
+|   |   |   |   |-- UserController.java               # Profile & user administration
+|   |   |   |   |-- VenueController.java              # Venue management
+|   |   |   |   |-- WaitlistController.java           # Sold-out event waitlist queue
+|   |   |   |   `-- WishlistController.java           # Customer event bookmarking
+|   |   |   |
+|   |   |   |-- dto/                                  # Data Transfer Objects (22)
+|   |   |   |   |-- BookingRequestDTO.java
+|   |   |   |   |-- BookingResponseDTO.java
+|   |   |   |   |-- CouponRequestDTO.java
+|   |   |   |   |-- CouponResponseDTO.java
+|   |   |   |   |-- EventAnalyticsDTO.java
+|   |   |   |   |-- EventRequestDTO.java
+|   |   |   |   |-- EventResponseDTO.java
+|   |   |   |   |-- EventReviewSummaryDTO.java
+|   |   |   |   |-- PaymentRequestDTO.java
+|   |   |   |   |-- PaymentResponseDTO.java
+|   |   |   |   |-- ReviewRequestDTO.java
+|   |   |   |   |-- ReviewResponseDTO.java
+|   |   |   |   |-- SeatLockRequestDTO.java
+|   |   |   |   |-- SeatRequestDTO.java
+|   |   |   |   |-- SeatResponseDTO.java
+|   |   |   |   |-- SeatUpdateDTO.java                # WebSocket real-time payload
+|   |   |   |   |-- TicketResponseDTO.java
+|   |   |   |   |-- UserProfileUpdateDTO.java
+|   |   |   |   |-- UserRequestDTO.java
+|   |   |   |   |-- UserResponseDTO.java
+|   |   |   |   |-- VenueRequestDTO.java
+|   |   |   |   |-- VenueResponseDTO.java
+|   |   |   |   `-- admin/                            # Administrative DTOs (7)
+|   |   |   |       |-- AdminDashboardDTO.java
+|   |   |   |       |-- BookingAnalyticsDTO.java
+|   |   |   |       |-- EventStatisticsDTO.java
+|   |   |   |       |-- ReportsDTO.java
+|   |   |   |       |-- RevenueAnalyticsDTO.java
+|   |   |   |       |-- SystemHealthDTO.java
+|   |   |   |       `-- UserStatisticsDTO.java
+|   |   |   |
+|   |   |   |-- entity/                               # Persistent Domain Model (13)
+|   |   |   |   |-- BaseEntity.java                   # Abstract mapped superclass with audit fields
+|   |   |   |   |-- Booking.java                      # Booking entity with @Version
+|   |   |   |   |-- Coupon.java                       # Discount rules
+|   |   |   |   |-- Event.java                        # Event entity with @Version
+|   |   |   |   |-- Payment.java                      # 1:1 transaction record
+|   |   |   |   |-- RefreshToken.java                 # Cryptographic refresh token
+|   |   |   |   |-- Review.java                       # User event rating & comment
+|   |   |   |   |-- Seat.java                         # Seat entity with lock duration & @Version
+|   |   |   |   |-- Ticket.java                       # Admission pass with unique QR token
+|   |   |   |   |-- User.java                         # User account (app_user table)
+|   |   |   |   |-- Venue.java                        # Venue facility & capacity
+|   |   |   |   |-- Waitlist.java                     # Queue entry
+|   |   |   |   `-- Wishlist.java                     # Bookmark entry
+|   |   |   |
+|   |   |   |-- enums/                                # Domain Enumerations (10)
+|   |   |   |   |-- BookingStatus.java                # PENDING, CONFIRMED, CANCELLED
+|   |   |   |   |-- DiscountType.java                 # PERCENTAGE, FIXED, EARLY_BIRD
+|   |   |   |   |-- EventStatus.java                  # DRAFT, PUBLISHED, CANCELLED, COMPLETED
+|   |   |   |   |-- PaymentMethod.java                # CREDIT_CARD, DEBIT_CARD, UPI, NET_BANKING
+|   |   |   |   |-- PaymentStatus.java                # PENDING, COMPLETED, FAILED, REFUNDED
+|   |   |   |   |-- Role.java                         # ADMIN, ORGANIZER, CUSTOMER
+|   |   |   |   |-- SeatStatus.java                   # AVAILABLE, BOOKED, LOCKED
+|   |   |   |   |-- SeatType.java                     # REGULAR, VIP, PREMIUM
+|   |   |   |   |-- TicketStatus.java                 # ACTIVE, USED, CANCELLED
+|   |   |   |   `-- WaitlistStatus.java               # WAITING, NOTIFIED, PROMOTED, CANCELLED
+|   |   |   |
+|   |   |   |-- exception/                            # Exception Handling Architecture (11)
+|   |   |   |   |-- BookingNotFoundException.java
+|   |   |   |   |-- DuplicateEmailException.java
+|   |   |   |   |-- DuplicateResourceException.java
+|   |   |   |   |-- ErrorResponse.java                # Standardized JSON error response model
+|   |   |   |   |-- EventNotFoundException.java
+|   |   |   |   |-- GlobalExceptionHandler.java       # Centralized @RestControllerAdvice
+|   |   |   |   |-- ResourceNotFoundException.java
+|   |   |   |   |-- SeatNotFoundException.java
+|   |   |   |   |-- TokenExpiredException.java
+|   |   |   |   |-- UserNotFoundException.java
+|   |   |   |   `-- VenueNotFoundException.java
+|   |   |   |
+|   |   |   |-- logging/                              # Operational Logging
+|   |   |   |   `-- AuditLogger.java                  # Structured operational audit emitter
+|   |   |   |
+|   |   |   |-- mapper/                               # Explicit DTO Mappers (7)
+|   |   |   |   |-- BookingMapper.java
+|   |   |   |   |-- EventMapper.java
+|   |   |   |   |-- PaymentMapper.java
+|   |   |   |   |-- SeatMapper.java
+|   |   |   |   |-- TicketMapper.java
+|   |   |   |   |-- UserMapper.java
+|   |   |   |   `-- VenueMapper.java
+|   |   |   |
+|   |   |   |-- repository/                           # Spring Data JPA Repositories (12)
+|   |   |   |   |-- BookingRepository.java
+|   |   |   |   |-- CouponRepository.java
+|   |   |   |   |-- EventRepository.java
+|   |   |   |   |-- PaymentRepository.java
+|   |   |   |   |-- RefreshTokenRepository.java
+|   |   |   |   |-- ReviewRepository.java
+|   |   |   |   |-- SeatRepository.java
+|   |   |   |   |-- TicketRepository.java
+|   |   |   |   |-- UserRepository.java
+|   |   |   |   |-- VenueRepository.java
+|   |   |   |   |-- WaitlistRepository.java
+|   |   |   |   `-- WishlistRepository.java
+|   |   |   |
+|   |   |   |-- scheduler/                            # Background Schedulers (2)
+|   |   |   |   |-- EventReminderScheduler.java       # Morning event notification dispatcher
+|   |   |   |   `-- SeatLockScheduler.java            # Recurring 60-second lock release task
+|   |   |   |
+|   |   |   |-- security/                             # Security Infrastructure (8)
+|   |   |   |   |-- CustomUserDetails.java            # Spring Security UserDetails adapter
+|   |   |   |   |-- CustomUserDetailsService.java     # User retrieval service
+|   |   |   |   |-- JwtAuthenticationEntryPoint.java  # 401 Unauthorized handler
+|   |   |   |   |-- JwtAuthenticationFilter.java      # Request JWT extraction and validation filter
+|   |   |   |   |-- JwtUtil.java                      # Cryptographic token operations
+|   |   |   |   |-- RateLimitingFilter.java           # Bucket4j token bucket rate limiter
+|   |   |   |   |-- RequestLoggingFilter.java         # HTTP request/response metrics logger
+|   |   |   |   `-- SecurityConfig.java               # SecurityFilterChain and CORS definitions
+|   |   |   |
+|   |   |   |-- service/                              # Business Logic Interfaces (16)
+|   |   |   |   |-- AdminService.java
+|   |   |   |   |-- BookingService.java
+|   |   |   |   |-- CalendarService.java
+|   |   |   |   |-- CouponService.java
+|   |   |   |   |-- EmailService.java
+|   |   |   |   |-- EventService.java
+|   |   |   |   |-- ImageStorageService.java
+|   |   |   |   |-- PaymentService.java
+|   |   |   |   |-- QrCodeService.java
+|   |   |   |   |-- ReviewService.java
+|   |   |   |   |-- SeatService.java
+|   |   |   |   |-- TicketService.java
+|   |   |   |   |-- UserService.java
+|   |   |   |   |-- VenueService.java
+|   |   |   |   |-- WaitlistService.java
+|   |   |   |   |-- WishlistService.java
+|   |   |   |   `-- impl/
+|   |   |   |       `-- EmailServiceImpl.java         # Email delivery implementation
+|   |   |   |
+|   |   |   |-- specification/                        # Composable Query Criteria
+|   |   |   |   `-- EventSpecification.java           # Multi-predicate dynamic search builder
+|   |   |   |
+|   |   |   `-- websocket/                            # Real-Time Telemetry
+|   |   |       `-- SeatUpdatePublisher.java          # STOMP message broadcaster
+|   |   |
+|   |   `-- resources/
+|   |       |-- application.properties                # Base application properties
+|   |       |-- application-dev.properties            # Development overrides & seed toggle
+|   |       `-- application-prod.properties           # Production deployment configuration
+|   |
+|   `-- test/                                         # Test Source Hierarchy (24 Test Suites)
+|       `-- java/com/kritagya/event_booking_system/
+|           |-- EventBookingSystemApplicationTests.java
+|           |-- controller/                           # Controller integration test suites
+|           |-- repository/                           # JPA repository test suites
+|           |-- security/                             # Security filter & policy test suites
+|           `-- service/                              # Domain service unit test suites
+|
+|-- frontend/                                         # React Single-Page Application
+|   |-- package.json                                  # NPM dependencies & scripts
+|   |-- vite.config.js                                # Vite bundler configuration
+|   |-- index.html                                    # Browser HTML entry template
+|   `-- src/
+|       |-- main.jsx                                  # React DOM bootstrap
+|       |-- App.jsx                                   # Root layout & routing coordinator
+|       |-- App.css                                   # Component layout styles
+|       |-- index.css                                 # Core design tokens
+|       |-- components/                               # UI Component Library (20)
+|       `-- services/                                 # HTTP, WebSocket, & currency clients
+|
+`-- target/                                           # Maven build output directory (ignored)
 ```
 
 ---
 
-## File Counts Summary
+## Architectural Metrics
 
-| Category | Count |
-|---|---|
-| **Entities** | 13 |
-| **Enums** | 10 |
-| **Controllers** | 15 + 1 Auth |
-| **Services** | 16 + 1 Implementation |
-| **Repositories** | 12 |
-| **DTOs** | 21 + 6 Admin |
-| **Mappers** | 7 |
-| **Exceptions** | 10 + 1 Handler |
-| **Config Classes** | 6 |
-| **Security Classes** | 8 |
-| **Schedulers** | 2 |
-| **React Components** | 11 |
-| **Frontend Services** | 3 |
-| **Total Java Files** | ~100+ |
+| Category | Count | Primary Technologies |
+|---|---|---|
+| JPA Entities | 13 | Hibernate 6, PostgreSQL |
+| REST Controllers | 15 | Spring Web MVC |
+| REST Endpoints | 88 | SpringDoc OpenAPI 3.0 |
+| Service Interfaces | 16 | Spring Transaction Management |
+| Data Transfer Objects | 29 | Jakarta Bean Validation |
+| Repositories | 12 | Spring Data JPA |
+| Background Schedulers | 2 | Spring Task Scheduling |
+| Automated Test Suites | 24 | JUnit 5, Mockito, MockMvc, H2 |
+| React Components | 20 | React 19, Lucide |
+| Real-Time Transports | 1 | STOMP over SockJS |
+| Primary Database Tables | 13 | PostgreSQL 16+ |

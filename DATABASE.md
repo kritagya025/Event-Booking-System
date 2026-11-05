@@ -1,44 +1,44 @@
-# 🗄️ Database Documentation — Event Booking System
+# Database Schema and Persistence Reference
 
-This document describes the complete database schema, entity relationships, indexing strategy, and audit conventions used in the Event Booking System.
+This document provides a technical specification of the database architecture, table definitions, relational constraints, indexing strategies, and concurrency controls implemented in the Event Booking System.
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Database Configuration](#database-configuration)
+- [Datasource Configuration](#datasource-configuration)
 - [Entity-Relationship Diagram](#entity-relationship-diagram)
 - [Table Definitions](#table-definitions)
-- [Indexes](#indexes)
-- [Enums](#enums)
-- [Audit Fields](#audit-fields)
-- [Concurrency Control](#concurrency-control)
-- [Seed Data](#seed-data)
+- [Indexes and Optimization](#indexes-and-optimization)
+- [Enumerated Types](#enumerated-types)
+- [Audit and Lifecycle Tracking](#audit-and-lifecycle-tracking)
+- [Concurrency Management](#concurrency-management)
+- [Data Initialization](#data-initialization)
 
 ---
 
 ## Overview
 
-| Property | Value |
+| Configuration Parameter | Specification |
 |---|---|
-| **Database** | PostgreSQL 16+ |
-| **ORM** | Spring Data JPA / Hibernate |
-| **Schema Management** | `spring.jpa.hibernate.ddl-auto=update` (auto-migration) |
-| **Dialect** | `org.hibernate.dialect.PostgreSQLDialect` |
-| **Auditing** | Spring Data JPA Auditing (`@CreatedDate`, `@LastModifiedDate`, `@CreatedBy`, `@LastModifiedBy`) |
-| **Concurrency** | Optimistic locking via `@Version` on `Booking`, `Event`, `Seat` |
+| Database Engine | PostgreSQL 16+ |
+| Object-Relational Mapping | Spring Data JPA / Hibernate Core 6 |
+| Schema Management | `spring.jpa.hibernate.ddl-auto=update` (Dev) / `validate` (Prod) |
+| SQL Dialect | `org.hibernate.dialect.PostgreSQLDialect` |
+| Auditing Framework | Spring Data JPA Auditing (`AuditingEntityListener`) |
+| Concurrency Strategy | Optimistic locking via `@Version` columns |
 
 ---
 
-## Database Configuration
+## Datasource Configuration
 
 ```properties
 spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/event_booking_db}
 spring.datasource.username=${DB_USERNAME:postgres}
 spring.datasource.password=${DB_PASSWORD:kritagya}
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+spring.jpa.show-sql=false
 spring.jpa.properties.hibernate.format_sql=true
 ```
 
@@ -47,100 +47,76 @@ spring.jpa.properties.hibernate.format_sql=true
 ## Entity-Relationship Diagram
 
 ```
-┌──────────────┐       ┌──────────────┐       ┌──────────────┐
-│   app_user   │       │    venue     │       │    coupon    │
-│──────────────│       │──────────────│       │──────────────│
-│ id (PK)      │       │ id (PK)      │       │ id (PK)      │
-│ first_name   │       │ name         │       │ code (UQ)    │
-│ last_name    │       │ address      │       │ discount_type│
-│ email (UQ)   │       │ capacity     │       │ discount_val │
-│ password     │       │ description  │       │ expiry_date  │
-│ phone        │       │ audit fields │       │ usage_limit  │
-│ role         │       └──────┬───────┘       │ used_count   │
-│ email_verified│              │               │ min_amount   │
-│ verification_│              │               │ active       │
-│   token (UQ) │              │               │ audit fields │
-│ reset_token  │     ┌────────▼────────┐      └──────────────┘
-│ reset_expiry │     │     event      │
-│ audit fields │     │────────────────│
-└──────┬───────┘     │ id (PK)        │
-       │             │ name           │
-       │             │ description    │
-       │             │ event_date     │
-       │             │ start_time     │
-       │             │ end_time       │
-       │             │ category       │
-       │             │ status         │
-       │             │ ticket_price   │
-       │             │ currency       │
-       │             │ available_seats│
-       │             │ reg_deadline   │
-       │             │ deleted        │
-       │             │ view_count     │
-       │             │ banner_url     │
-       │             │ version        │
-       │             │ venue_id (FK)  │
-       │             │ organizer_id(FK)│
-       │             │ audit fields   │
-       │             └──────┬─────────┘
-       │                    │
-  ┌────▼────────────────────▼──────┐
-  │           booking              │
-  │────────────────────────────────│
-  │ id (PK)                        │
-  │ booking_date                   │
-  │ booking_status                 │
-  │ quantity                       │
-  │ total_amount                   │
-  │ version                        │
-  │ user_id (FK → app_user)        │
-  │ event_id (FK → event)          │
-  │ audit fields                   │
-  └─────┬────────────┬─────────────┘
-        │            │
-        │     ┌──────▼────────┐
-        │     │ booking_seats │ (Join Table)
-        │     │───────────────│
-        │     │ booking_id(FK)│
-        │     │ seat_id (FK)  │
-        │     └───────────────┘
-        │
-  ┌─────▼─────────┐     ┌──────────────┐
-  │    ticket     │     │   payment    │
-  │───────────────│     │──────────────│
-  │ id (PK)       │     │ id (PK)      │
-  │ qr_code (UQ)  │     │ amount       │
-  │ issue_date    │     │ payment_     │
-  │ check_in_time │     │   method     │
-  │ ticket_status │     │ payment_     │
-  │ booking_id(FK)│     │   status     │
-  │ audit fields  │     │ transaction_ │
-  └───────────────┘     │   id         │
-                        │ booking_id(FK)│
-                        │ audit fields │
-                        └──────────────┘
-
-  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-  │    seat      │     │   review     │     │  wishlist    │
-  │──────────────│     │──────────────│     │──────────────│
-  │ id (PK)      │     │ id (PK)      │     │ id (PK)      │
-  │ seat_number  │     │ rating       │     │ user_id (FK) │
-  │ row_number   │     │ comment      │     │ event_id(FK) │
-  │ seat_type    │     │ user_id (FK) │     │ audit fields │
-  │ status       │     │ event_id(FK) │     └──────────────┘
-  │ locked_until │     │ audit fields │
-  │ version      │     └──────────────┘     ┌──────────────┐
-  │ venue_id(FK) │                          │  waitlist    │
-  │ event_id(FK) │     ┌──────────────┐     │──────────────│
-  │ audit fields │     │refresh_token │     │ id (PK)      │
-  └──────────────┘     │──────────────│     │ user_id (FK) │
-                       │ id (PK)      │     │ event_id(FK) │
-                       │ token (UQ)   │     │ status       │
-                       │ expiry_date  │     │ audit fields │
-                       │ revoked      │     └──────────────┘
-                       │ user_id (FK) │
-                       │ audit fields │
-                       └──────────────┘
++----------------+       +----------------+       +----------------+
+|    app_user    |       |     venue      |       |     coupon     |
+|----------------|       |----------------|       |----------------|
+| id (PK)        |       | id (PK)        |       | id (PK)        |
+| first_name     |       | name           |       | code (UQ)      |
+| last_name      |       | address        |       | discount_type  |
+| email (UQ)     |       | capacity       |       | discount_val   |
+| password       |       | description    |       | expiry_date    |
+| phone          |       | audit fields   |       | usage_limit    |
+| role           |       +-------+--------+       | used_count     |
+| email_verified |               |                | min_amount     |
+| audit fields   |               | 1              | active         |
++-------+--------+               |                +----------------+
+        |                        |
+        | 1                      | N
+        |                +-------v--------+
+        |                |     event      |
+        |                |----------------|
+        |                | id (PK)        |
+        |                | name           |
+        |                | event_date     |
+        |                | ticket_price   |
+        |                | available_seats|
+        |                | status         |
+        |                | version        |
+        |                | venue_id (FK)  |
+        |                | organizer_id(FK|
+        |                | audit fields   |
+        |                +-------+--------+
+        |                        |
+        | 1                      | 1
+        |                        |
+        | N                      | N
++-------v--------+       +-------v--------+
+|    booking     |       |      seat      |
+|----------------|       |----------------|
+| id (PK)        |       | id (PK)        |
+| booking_date   |       | seat_number    |
+| booking_status |       | row_number     |
+| quantity       |       | seat_type      |
+| total_amount   |       | status         |
+| version        |       | locked_until   |
+| user_id (FK)   |       | version        |
+| event_id (FK)  |       | venue_id (FK)  |
++-------+--------+       | event_id (FK)  |
+        |                +----------------+
+        | 1                      |
+        |                        |
+        | N (via join table)     |
++-------v------------------------v--------+
+|             booking_seats               |
+|-----------------------------------------|
+| booking_id (FK)                         |
+| seat_id (FK)                            |
++-----------------------------------------+
+        |
+        +-------------------+
+        | 1                 | 1
+        |                   |
+        | 1                 | N
++-------v--------+  +-------v--------+
+|    payment     |  |     ticket     |
+|----------------|  |----------------|
+| id (PK)        |  | id (PK)        |
+| amount         |  | qr_code (UQ)   |
+| payment_method |  | issue_date     |
+| payment_status |  | check_in_time  |
+| transaction_id |  | ticket_status  |
+| booking_id(FK) |  | booking_id(FK) |
++----------------+  +----------------+
 ```
 
 ---
@@ -148,340 +124,322 @@ spring.jpa.properties.hibernate.format_sql=true
 ## Table Definitions
 
 ### `app_user`
+Stores account identities, authorization roles, and credential verification tokens.
 
-User accounts for all roles.
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | User ID |
-| `first_name` | `VARCHAR(255)` | — | First name |
-| `last_name` | `VARCHAR(255)` | — | Last name |
-| `email` | `VARCHAR(255)` | UNIQUE, NOT NULL | Login email |
-| `password` | `VARCHAR(255)` | — | BCrypt hashed password |
-| `phone` | `VARCHAR(255)` | — | Phone number |
-| `role` | `VARCHAR(255)` | — | `ADMIN`, `ORGANIZER`, `CUSTOMER` |
-| `email_verified` | `BOOLEAN` | DEFAULT `false` | Email verification status |
-| `email_verification_token` | `VARCHAR(255)` | UNIQUE | Verification token |
-| `password_reset_token` | `VARCHAR(255)` | — | Password reset token |
-| `password_reset_token_expiry` | `TIMESTAMP` | — | Reset token expiry |
-| `created_at` | `TIMESTAMP` | NOT NULL, immutable | Audit: creation time |
-| `updated_at` | `TIMESTAMP` | — | Audit: last modified |
-| `created_by` | `VARCHAR(255)` | immutable | Audit: creator |
-| `updated_by` | `VARCHAR(255)` | — | Audit: last modifier |
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Internal user identifier |
+| `first_name` | `VARCHAR(255)` | Yes | None | Given name |
+| `last_name` | `VARCHAR(255)` | Yes | None | Family name |
+| `email` | `VARCHAR(255)` | No | Unique Index | Authentication identifier |
+| `password` | `VARCHAR(255)` | Yes | None | BCrypt password hash |
+| `phone` | `VARCHAR(255)` | Yes | None | Primary contact number |
+| `role` | `VARCHAR(255)` | Yes | None | Enum: `ADMIN`, `ORGANIZER`, `CUSTOMER` |
+| `email_verified` | `BOOLEAN` | Yes | Default: `false` | Verification state |
+| `email_verification_token` | `VARCHAR(255)` | Yes | Unique | Activation token |
+| `password_reset_token` | `VARCHAR(255)` | Yes | None | Password reset token |
+| `password_reset_token_expiry`| `TIMESTAMP` | Yes | None | Reset token expiration time |
+| `created_at` | `TIMESTAMP` | No | Immutable | Audit creation timestamp |
+| `updated_at` | `TIMESTAMP` | Yes | None | Audit modification timestamp |
+| `created_by` | `VARCHAR(255)` | Yes | None | Audit creator principal |
+| `updated_by` | `VARCHAR(255)` | Yes | None | Audit modifier principal |
 
 ### `event`
+Maintains event schedules, ticket pricing, publication states, and venue bindings.
 
-Events with lifecycle management.
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Event ID |
-| `name` | `VARCHAR(255)` | — | Event name |
-| `description` | `TEXT` | — | Event description |
-| `event_date` | `DATE` | — | Date of event |
-| `start_time` | `TIME` | — | Start time |
-| `end_time` | `TIME` | — | End time |
-| `category` | `VARCHAR(255)` | — | Category (MUSIC, TECH, etc.) |
-| `status` | `VARCHAR(255)` | — | `DRAFT`, `PUBLISHED`, `CANCELLED`, `COMPLETED` |
-| `ticket_price` | `DECIMAL` | — | Base ticket price |
-| `currency` | `VARCHAR(255)` | — | Currency code |
-| `available_seats` | `INTEGER` | — | Remaining available seats |
-| `registration_deadline` | `DATE` | — | Last date to register |
-| `deleted` | `BOOLEAN` | DEFAULT `false` | Soft delete flag |
-| `view_count` | `BIGINT` | DEFAULT `0` | Page view counter |
-| `banner_image_url` | `VARCHAR(255)` | — | Banner image URL/path |
-| `version` | `BIGINT` | — | Optimistic lock version |
-| `venue_id` | `BIGINT` | FK → `venue.id` | Associated venue |
-| `organizer_id` | `BIGINT` | FK → `app_user.id` | Event organizer |
-| `created_at` ... | — | — | Audit fields |
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Internal event identifier |
+| `name` | `VARCHAR(255)` | Yes | None | Display title |
+| `description` | `TEXT` | Yes | None | Comprehensive event overview |
+| `event_date` | `DATE` | Yes | B-tree Index | Scheduled event date |
+| `start_time` | `TIME` | Yes | None | Session start time |
+| `end_time` | `TIME` | Yes | None | Session conclusion time |
+| `category` | `VARCHAR(255)` | Yes | B-tree Index | Event genre/category |
+| `status` | `VARCHAR(255)` | Yes | B-tree Index | Enum: `DRAFT`, `PUBLISHED`, `CANCELLED`, `COMPLETED` |
+| `ticket_price` | `DECIMAL` | Yes | None | Base admission fee |
+| `currency` | `VARCHAR(255)` | Yes | None | ISO currency code (default: USD) |
+| `available_seats` | `INTEGER` | Yes | None | Remaining unbooked seats |
+| `registration_deadline` | `DATE` | Yes | None | Registration cutoff date |
+| `deleted` | `BOOLEAN` | Yes | Default: `false` | Soft-deletion flag |
+| `view_count` | `BIGINT` | Yes | Default: `0` | Cumulative profile views |
+| `banner_image_url` | `VARCHAR(255)` | Yes | None | Relative banner image URI |
+| `version` | `BIGINT` | Yes | None | Optimistic locking version |
+| `venue_id` | `BIGINT` | Yes | Foreign Key -> `venue.id` | Host venue association |
+| `organizer_id` | `BIGINT` | Yes | Foreign Key -> `app_user.id` | Assigned organizer account |
+| Audit Fields | Multiple | — | — | Standard `BaseEntity` columns |
 
 ### `venue`
+Physical sites and physical capacities.
 
-Event venues with capacity.
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Venue ID |
-| `name` | `VARCHAR(255)` | — | Venue name |
-| `address` | `VARCHAR(255)` | — | Full address |
-| `capacity` | `INTEGER` | — | Maximum capacity |
-| `description` | `VARCHAR(255)` | — | Venue description |
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Venue identifier |
+| `name` | `VARCHAR(255)` | Yes | None | Venue facility name |
+| `address` | `VARCHAR(255)` | Yes | None | Physical location address |
+| `capacity` | `INTEGER` | Yes | None | Maximum legal occupancy |
+| `description` | `VARCHAR(255)` | Yes | None | Facility overview |
+| Audit Fields | Multiple | — | — | Standard `BaseEntity` columns |
 
 ### `seat`
+Individual bookable seating positions with temporary lock support.
 
-Individual seats within venues.
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Seat ID |
-| `seat_number` | `VARCHAR(255)` | — | Seat identifier (e.g., "A1") |
-| `row_number` | `VARCHAR(255)` | — | Row identifier (e.g., "A") |
-| `seat_type` | `VARCHAR(255)` | — | `REGULAR`, `VIP`, `PREMIUM` |
-| `status` | `VARCHAR(255)` | — | `AVAILABLE`, `BOOKED`, `LOCKED` |
-| `locked_until` | `TIMESTAMP` | — | Lock expiry time |
-| `version` | `BIGINT` | — | Optimistic lock version |
-| `venue_id` | `BIGINT` | FK → `venue.id` | Parent venue |
-| `event_id` | `BIGINT` | FK → `event.id` | Associated event (nullable) |
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Seat identifier |
+| `seat_number` | `VARCHAR(255)` | Yes | None | Column or chair designator (e.g., "12") |
+| `row_number` | `VARCHAR(255)` | Yes | None | Row designator (e.g., "B") |
+| `seat_type` | `VARCHAR(255)` | Yes | None | Enum: `REGULAR`, `VIP`, `PREMIUM` |
+| `status` | `VARCHAR(255)` | Yes | None | Enum: `AVAILABLE`, `BOOKED`, `LOCKED` |
+| `locked_until` | `TIMESTAMP` | Yes | None | Temporary lock expiration timestamp |
+| `version` | `BIGINT` | Yes | None | Optimistic locking version |
+| `venue_id` | `BIGINT` | Yes | Foreign Key -> `venue.id` | Parent venue |
+| `event_id` | `BIGINT` | Yes | Foreign Key -> `event.id` | Optional event binding |
 
 ### `booking`
+Reservation records linking users, events, and seat allocations.
 
-Booking records linking users to events.
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Booking identifier |
+| `booking_date` | `TIMESTAMP` | Yes | None | Reservation timestamp |
+| `booking_status` | `VARCHAR(255)` | Yes | None | Enum: `PENDING`, `CONFIRMED`, `CANCELLED` |
+| `quantity` | `INTEGER` | Yes | None | Reserved seat count |
+| `total_amount` | `DECIMAL` | Yes | None | Net cost after discount applied |
+| `version` | `BIGINT` | Yes | None | Optimistic locking version |
+| `user_id` | `BIGINT` | Yes | Foreign Key -> `app_user.id` | Reservation owner |
+| `event_id` | `BIGINT` | Yes | Foreign Key -> `event.id` | Reserved event |
+| Audit Fields | Multiple | — | — | Standard `BaseEntity` columns |
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Booking ID |
-| `booking_date` | `TIMESTAMP` | — | Booking timestamp |
-| `booking_status` | `VARCHAR(255)` | — | `PENDING`, `CONFIRMED`, `CANCELLED` |
-| `quantity` | `INTEGER` | — | Number of seats booked |
-| `total_amount` | `DECIMAL` | — | Total booking amount |
-| `version` | `BIGINT` | — | Optimistic lock version |
-| `user_id` | `BIGINT` | FK → `app_user.id` | Booking user |
-| `event_id` | `BIGINT` | FK → `event.id` | Booked event |
+### `booking_seats`
+Join table establishing the many-to-many relationship between bookings and seats.
 
-### `booking_seats` (Join Table)
-
-Many-to-many relationship between bookings and seats.
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `booking_id` | `BIGINT` | FK → `booking.id` | Booking reference |
-| `seat_id` | `BIGINT` | FK → `seat.id` | Seat reference |
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `booking_id` | `BIGINT` | No | Foreign Key -> `booking.id` | Parent booking identifier |
+| `seat_id` | `BIGINT` | No | Foreign Key -> `seat.id` | Reserved seat identifier |
 
 ### `ticket`
+Individual attendee admission units carrying unique verification tokens.
 
-E-tickets with QR codes.
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Ticket ID |
-| `qr_code` | `VARCHAR(255)` | UNIQUE | Unique QR code string |
-| `issue_date` | `TIMESTAMP` | — | Ticket issue date |
-| `check_in_time` | `TIMESTAMP` | — | When ticket was used |
-| `ticket_status` | `VARCHAR(255)` | — | `ACTIVE`, `USED`, `CANCELLED` |
-| `booking_id` | `BIGINT` | FK → `booking.id` | Parent booking |
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Ticket identifier |
+| `qr_code` | `VARCHAR(255)` | Yes | Unique Index | Verification token payload |
+| `issue_date` | `TIMESTAMP` | Yes | None | Generation timestamp |
+| `check_in_time` | `TIMESTAMP` | Yes | None | Gate check-in timestamp |
+| `ticket_status` | `VARCHAR(255)` | Yes | None | Enum: `ACTIVE`, `USED`, `CANCELLED` |
+| `booking_id` | `BIGINT` | Yes | Foreign Key -> `booking.id` | Associated booking |
+| Audit Fields | Multiple | — | — | Standard `BaseEntity` columns |
 
 ### `payment`
+Transactional settlement records linked 1:1 with bookings.
 
-Payment records (1:1 with booking).
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Payment ID |
-| `amount` | `DECIMAL` | — | Payment amount |
-| `payment_method` | `VARCHAR(255)` | — | `CREDIT_CARD`, `DEBIT_CARD`, `UPI`, `NET_BANKING` |
-| `payment_status` | `VARCHAR(255)` | — | `PENDING`, `COMPLETED`, `FAILED`, `REFUNDED` |
-| `transaction_id` | `VARCHAR(255)` | — | Transaction reference |
-| `booking_id` | `BIGINT` | FK → `booking.id`, UNIQUE | Associated booking |
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Payment identifier |
+| `amount` | `DECIMAL` | Yes | None | Transaction settlement amount |
+| `payment_method` | `VARCHAR(255)` | Yes | None | Enum: `CREDIT_CARD`, `DEBIT_CARD`, `UPI`, `NET_BANKING` |
+| `payment_status` | `VARCHAR(255)` | Yes | None | Enum: `PENDING`, `COMPLETED`, `FAILED`, `REFUNDED` |
+| `transaction_id` | `VARCHAR(255)` | Yes | None | External settlement reference |
+| `booking_id` | `BIGINT` | Yes | Foreign Key -> `booking.id`, Unique | Associated booking |
+| Audit Fields | Multiple | — | — | Standard `BaseEntity` columns |
 
 ### `review`
+Customer event feedback and star ratings.
 
-Event reviews and ratings.
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Review identifier |
+| `rating` | `INTEGER` | No | Range: 1 to 5 | Quantitative rating |
+| `comment` | `VARCHAR(1000)` | No | Max: 1000 chars | Customer comment |
+| `user_id` | `BIGINT` | No | Foreign Key -> `app_user.id` | Reviewer identity |
+| `event_id` | `BIGINT` | No | Foreign Key -> `event.id` | Evaluated event |
+| Audit Fields | Multiple | — | — | Standard `BaseEntity` columns |
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Review ID |
-| `rating` | `INTEGER` | NOT NULL, 1-5 | Star rating |
-| `comment` | `VARCHAR(1000)` | NOT BLANK | Review text |
-| `user_id` | `BIGINT` | FK → `app_user.id`, NOT NULL | Reviewer |
-| `event_id` | `BIGINT` | FK → `event.id`, NOT NULL | Reviewed event |
+Unique Constraint: `(user_id, event_id)` prevents duplicate reviews for the same event by the same user.
 
 ### `coupon`
+Promotional codes and discount rules.
 
-Discount coupons.
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Coupon ID |
-| `code` | `VARCHAR(255)` | UNIQUE, NOT NULL | Coupon code |
-| `discount_type` | `VARCHAR(255)` | NOT NULL | `PERCENTAGE`, `FIXED`, `EARLY_BIRD` |
-| `discount_value` | `DECIMAL` | NOT NULL | Discount amount/percentage |
-| `expiry_date` | `DATE` | — | Coupon expiry |
-| `usage_limit` | `INTEGER` | — | Max usage count |
-| `used_count` | `INTEGER` | DEFAULT `0` | Current usage |
-| `min_booking_amount` | `DECIMAL` | DEFAULT `0` | Minimum booking amount |
-| `active` | `BOOLEAN` | DEFAULT `true` | Active flag |
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Coupon identifier |
+| `code` | `VARCHAR(255)` | No | Unique Index | Promotional alphanumeric code |
+| `discount_type` | `VARCHAR(255)` | No | None | Enum: `PERCENTAGE`, `FIXED`, `EARLY_BIRD` |
+| `discount_value` | `DECIMAL` | No | None | Value applied according to discount type |
+| `expiry_date` | `DATE` | Yes | None | Last valid calendar day |
+| `usage_limit` | `INTEGER` | Yes | None | Maximum permitted redemptions |
+| `used_count` | `INTEGER` | Yes | Default: `0` | Current redemptions |
+| `min_booking_amount`| `DECIMAL` | Yes | Default: `0` | Threshold cart amount required |
+| `active` | `BOOLEAN` | Yes | Default: `true` | Promotional state |
+| Audit Fields | Multiple | — | — | Standard `BaseEntity` columns |
 
 ### `wishlist`
+Personal event collections for authenticated accounts.
 
-User's saved events.
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Record identifier |
+| `user_id` | `BIGINT` | No | Foreign Key -> `app_user.id` | Account reference |
+| `event_id` | `BIGINT` | No | Foreign Key -> `event.id` | Event reference |
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Wishlist entry ID |
-| `user_id` | `BIGINT` | FK → `app_user.id`, NOT NULL | User |
-| `event_id` | `BIGINT` | FK → `event.id`, NOT NULL | Event |
+Unique Constraint: `(user_id, event_id)` prevents duplicate bookmarks.
 
 ### `waitlist`
+Queue for sold-out event reservations.
 
-Users waiting for event availability.
+| Column | Data Type | Nullable | Constraints | Description |
+|---|---|---|---|---|
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Record identifier |
+| `user_id` | `BIGINT` | No | Foreign Key -> `app_user.id` | Account reference |
+| `event_id` | `BIGINT` | No | Foreign Key -> `event.id` | Event reference |
+| `status` | `VARCHAR(255)` | No | Default: `WAITING` | Enum: `WAITING`, `NOTIFIED`, `PROMOTED`, `CANCELLED` |
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Waitlist entry ID |
-| `user_id` | `BIGINT` | FK → `app_user.id`, NOT NULL | User |
-| `event_id` | `BIGINT` | FK → `event.id`, NOT NULL | Event |
-| `status` | `VARCHAR(255)` | NOT NULL, DEFAULT `WAITING` | `WAITING`, `NOTIFIED`, `PROMOTED`, `CANCELLED` |
+Unique Constraint: `(user_id, event_id)` prevents duplicate queue entries.
 
 ### `refresh_token`
+Cryptographic refresh tokens enabling stateless JWT rotation.
 
-JWT refresh tokens.
-
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `BIGINT` | PK, auto-increment | Token ID |
-| `token` | `VARCHAR(255)` | UNIQUE, NOT NULL | UUID token string |
-| `expiry_date` | `TIMESTAMP` | NOT NULL | Expiration time |
-| `revoked` | `BOOLEAN` | DEFAULT `false` | Revocation flag |
-| `user_id` | `BIGINT` | FK → `app_user.id`, NOT NULL | Token owner |
-
----
-
-## Indexes
-
-| Table | Index Name | Columns | Type | Purpose |
+| Column | Data Type | Nullable | Constraints | Description |
 |---|---|---|---|---|
-| `app_user` | `idx_user_email` | `email` | B-tree | Fast login lookup |
-| `event` | `idx_event_date` | `event_date` | B-tree | Date range queries |
-| `event` | `idx_event_category` | `category` | B-tree | Category filtering |
-| `event` | `idx_event_status` | `status` | B-tree | Status filtering |
-| `booking` | `idx_booking_user` | `user_id` | B-tree | User's bookings |
-| `booking` | `idx_booking_event` | `event_id` | B-tree | Event's bookings |
-| `seat` | `idx_seat_venue_status` | `venue_id, status` | Composite | Available seats by venue |
-| `seat` | `idx_seat_event` | `event_id` | B-tree | Event's seats |
-| `ticket` | `idx_ticket_qrcode` | `qr_code` | Unique | QR code validation |
-| `review` | `idx_review_event` | `event_id` | B-tree | Event reviews |
-| `review` | `idx_review_user_event` | `user_id, event_id` | Unique | One review per user/event |
-| `coupon` | `idx_coupon_code` | `code` | Unique | Coupon lookup |
-| `wishlist` | `idx_wishlist_user` | `user_id` | B-tree | User's wishlist |
-| `wishlist` | `idx_wishlist_user_event` | `user_id, event_id` | Unique | Prevent duplicates |
-| `waitlist` | `idx_waitlist_event` | `event_id` | B-tree | Event waitlist |
-| `waitlist` | `idx_waitlist_user_event` | `user_id, event_id` | Unique | Prevent duplicates |
-| `refresh_token` | `idx_refresh_token` | `token` | Unique | Token lookup |
+| `id` | `BIGINT` | No | Primary Key, Auto-increment | Record identifier |
+| `token` | `VARCHAR(255)` | No | Unique Index | Opaque token identifier |
+| `expiry_date` | `TIMESTAMP` | No | None | Token expiration point |
+| `revoked` | `BOOLEAN` | Yes | Default: `false` | Revocation flag |
+| `user_id` | `BIGINT` | No | Foreign Key -> `app_user.id` | Owning account |
 
 ---
 
-## Enums
+## Indexes and Optimization
 
-### Role
-| Value | Description |
-|---|---|
-| `ADMIN` | System administrator |
-| `ORGANIZER` | Event organizer |
-| `CUSTOMER` | Regular customer |
+The database declares indexes to optimize frequently filtered and joined columns:
 
-### EventStatus
-| Value | Description |
-|---|---|
-| `DRAFT` | Not yet published |
-| `PUBLISHED` | Live and bookable |
-| `CANCELLED` | Event cancelled |
-| `COMPLETED` | Event finished |
-
-### BookingStatus
-| Value | Description |
-|---|---|
-| `PENDING` | Awaiting payment |
-| `CONFIRMED` | Payment completed |
-| `CANCELLED` | Booking cancelled |
-
-### PaymentMethod
-| Value | Description |
-|---|---|
-| `CREDIT_CARD` | Credit card |
-| `DEBIT_CARD` | Debit card |
-| `UPI` | Unified Payments Interface |
-| `NET_BANKING` | Internet banking |
-
-### PaymentStatus
-| Value | Description |
-|---|---|
-| `PENDING` | Not yet processed |
-| `COMPLETED` | Successfully processed |
-| `FAILED` | Payment failed |
-| `REFUNDED` | Payment refunded |
-
-### SeatType
-| Value | Description |
-|---|---|
-| `REGULAR` | Standard seat |
-| `VIP` | VIP seat |
-| `PREMIUM` | Premium seat |
-
-### SeatStatus
-| Value | Description |
-|---|---|
-| `AVAILABLE` | Open for booking |
-| `BOOKED` | Reserved by a booking |
-| `LOCKED` | Temporarily locked |
-
-### TicketStatus
-| Value | Description |
-|---|---|
-| `ACTIVE` | Valid for entry |
-| `USED` | Already checked in |
-| `CANCELLED` | Ticket cancelled |
-
-### DiscountType
-| Value | Description |
-|---|---|
-| `PERCENTAGE` | Percentage discount |
-| `FIXED` | Fixed amount discount |
-| `EARLY_BIRD` | Early registration discount |
-
-### WaitlistStatus
-| Value | Description |
-|---|---|
-| `WAITING` | In queue |
-| `NOTIFIED` | Availability notification sent |
-| `PROMOTED` | Promoted to booking |
-| `CANCELLED` | Left waitlist |
+| Table | Index Identifier | Indexed Columns | Structure | Technical Justification |
+|---|---|---|---|---|
+| `app_user` | `idx_user_email` | `email` | B-tree (Unique) | Accelerates user lookup during login and token validation |
+| `event` | `idx_event_date` | `event_date` | B-tree | Optimizes calendar searches and temporal range filtering |
+| `event` | `idx_event_category` | `category` | B-tree | Accelerates category navigation |
+| `event` | `idx_event_status` | `status` | B-tree | Filters draft versus published events |
+| `booking` | `idx_booking_user` | `user_id` | B-tree | Speeds up account booking history retrievals |
+| `booking` | `idx_booking_event` | `event_id` | B-tree | Accelerates organizer reservation lookups |
+| `seat` | `idx_seat_venue_status` | `venue_id, status` | Composite B-tree | Provides instant resolution of available seats per venue |
+| `seat` | `idx_seat_event` | `event_id` | B-tree | Speeds up event seat map resolution |
+| `ticket` | `idx_ticket_qrcode` | `qr_code` | B-tree (Unique) | Guarantees O(1) gate check-in lookups |
+| `review` | `idx_review_event` | `event_id` | B-tree | Resolves public reviews for event detail views |
+| `review` | `idx_review_user_event` | `user_id, event_id` | Composite Unique | Guarantees single-review integrity per customer |
+| `coupon` | `idx_coupon_code` | `code` | B-tree (Unique) | Ensures fast code validation during checkout |
+| `wishlist` | `idx_wishlist_user` | `user_id` | B-tree | Loads customer wishlist |
+| `wishlist` | `idx_wishlist_user_event` | `user_id, event_id` | Composite Unique | Enforces single-bookmark integrity |
+| `waitlist` | `idx_waitlist_event` | `event_id` | B-tree | Resolves queue depth for sold-out events |
+| `waitlist` | `idx_waitlist_user_event` | `user_id, event_id` | Composite Unique | Enforces single-waitlist integrity |
+| `refresh_token`| `idx_refresh_token` | `token` | B-tree (Unique) | Provides O(1) token validation on session rotation |
 
 ---
 
-## Audit Fields
+## Enumerated Types
 
-All entities extend `BaseEntity` which provides:
+### `Role`
+- `ADMIN`: Global administration privileges.
+- `ORGANIZER`: Venue and event management privileges.
+- `CUSTOMER`: Standard consumer reservation privileges.
 
-| Field | Annotation | Behavior |
-|---|---|---|
-| `createdAt` | `@CreatedDate` | Auto-set on INSERT, immutable |
-| `updatedAt` | `@LastModifiedDate` | Auto-set on UPDATE |
-| `createdBy` | `@CreatedBy` | Set to authenticated user's email or `SYSTEM` |
-| `updatedBy` | `@LastModifiedBy` | Set to authenticated user's email or `SYSTEM` |
+### `EventStatus`
+- `DRAFT`: Newly initialized event; hidden from public listings.
+- `PUBLISHED`: Active, searchable, and open for reservation.
+- `CANCELLED`: Withdrawn by organizer; reservations refunded.
+- `COMPLETED`: Event concluded.
 
-Auditing is enabled via `JpaAuditingConfig` with `@EnableJpaAuditing`.
+### `BookingStatus`
+- `PENDING`: Reservation recorded; awaiting payment settlement.
+- `CONFIRMED`: Payment cleared; seats committed and tickets generated.
+- `CANCELLED`: Transaction aborted; seats released back to pool.
+
+### `PaymentMethod`
+- `CREDIT_CARD`: Major credit card networks.
+- `DEBIT_CARD`: Bank-issued debit cards.
+- `UPI`: Unified Payments Interface rail.
+- `NET_BANKING`: Direct internet banking transfer.
+
+### `PaymentStatus`
+- `PENDING`: Processing payment intent.
+- `COMPLETED`: Funds successfully captured.
+- `FAILED`: Settlement rejected by gateway.
+- `REFUNDED`: Reversal completed.
+
+### `SeatType`
+- `REGULAR`: Standard tier seating.
+- `VIP`: Front-row, premium view, or expedited entrance tier.
+- `PREMIUM`: Elevated comfort or preferred location tier.
+
+### `SeatStatus`
+- `AVAILABLE`: Open for customer selection and temporary locking.
+- `LOCKED`: Temporarily held in checkout; cannot be booked by others.
+- `BOOKED`: Confirmed reservation; unavailable.
+
+### `TicketStatus`
+- `ACTIVE`: Valid admission pass awaiting check-in.
+- `USED`: Ticket scanned and admitted at gate.
+- `CANCELLED`: Voided through booking refund.
+
+### `DiscountType`
+- `PERCENTAGE`: Proportional cart deduction.
+- `FIXED`: Absolute monetary deduction.
+- `EARLY_BIRD`: Tiered reduction based on early reservation timing.
+
+### `WaitlistStatus`
+- `WAITING`: Enrolled in queue.
+- `NOTIFIED`: Notified of newly opened capacity.
+- `PROMOTED`: Converted to reservation.
+- `CANCELLED`: Withdrawn from queue.
 
 ---
 
-## Concurrency Control
+## Audit and Lifecycle Tracking
 
-**Optimistic Locking** is implemented on high-contention entities:
+All persistent entities inherit from `BaseEntity`:
 
-| Entity | `@Version` Field | Protection Against |
-|---|---|---|
-| `Event` | `version` | Concurrent event updates, race conditions on `availableSeats` |
-| `Booking` | `version` | Concurrent booking modifications |
-| `Seat` | `version` | Double-booking the same seat |
+```java
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public abstract class BaseEntity {
 
-When a concurrent modification is detected, Hibernate throws `ObjectOptimisticLockingFailureException`, which is caught by `GlobalExceptionHandler` and returned as HTTP `409 Conflict`.
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    @CreatedBy
+    @Column(updatable = false)
+    private String createdBy;
+
+    @LastModifiedBy
+    private String updatedBy;
+}
+```
+
+The `AuditorAware` bean resolves current authenticated user emails from Spring Security's `SecurityContextHolder` or falls back to `"SYSTEM"` for automated schedulers.
 
 ---
 
-## Seed Data
+## Concurrency Management
 
-On application startup, `DataInitializerRunner` ensures consistent demo data:
+High-demand ticket reservation introduces race condition vulnerability. The platform prevents over-allocation using optimistic concurrency control:
 
-### Venues (15 total)
-Across USA, India, UK, Europe, Australia, and Asia including Metro Arena Center, Silicon Valley Convention Center, Royal Opera House, Jio World Centre, Wembley Stadium, Sydney Opera House, Tokyo Dome, and more.
+1. `Booking`, `Event`, and `Seat` declare an `@Version private Long version;` field.
+2. During reservation submission, Hibernate appends `WHERE id = ? AND version = ?` to update statements.
+3. If a conflicting transaction commits an update beforehand, Hibernate throws `OptimisticLockException`.
+4. `GlobalExceptionHandler` intercepts the conflict and responds with `HTTP 409 Conflict`, prompting the client to retry with updated seat state.
 
-### Events (4 primary)
-1. Neon Horizon Cyber Music Festival 2026 (MUSIC)
-2. Global AI & Autonomous Tech Summit 2026 (TECH)
-3. Phantom of the Opera — Broadway Revival (THEATER)
-4. Grand Prix eSports World Championship (SPORTS)
+---
 
-### Seats
-Auto-seeded per venue with VIP (row A) and REGULAR types, organized in rows of 10.
+## Data Initialization
 
-### Cleanup
-Extra/test events and their dependencies (tickets, bookings, wishlists, waitlists, reviews) are automatically purged on startup to maintain a clean demo state.
+When launched under the `dev` profile with `app.seed-data=true`, `DataInitializerRunner` executes the following sequence:
+
+1. Creates default users (`admin@eventhub.com`, `customer@eventhub.com`).
+2. Populates 15 global venues across North America, Europe, Asia, and Australia.
+3. Provisions 4 seed events with configured pricing, descriptions, and venue mappings.
+4. Auto-generates seat matrices for primary event venues with VIP front-row assignments.
