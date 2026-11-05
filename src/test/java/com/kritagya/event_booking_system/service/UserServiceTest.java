@@ -129,4 +129,56 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.deleteUser(99L))
                 .isInstanceOf(UserNotFoundException.class);
     }
+
+    @Test
+    @DisplayName("Should update user successfully")
+    void updateUser_Success() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(passwordEncoder.encode("newpass")).thenReturn("encoded_new");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserRequestDTO updateDTO = new UserRequestDTO();
+        updateDTO.setFirstName("Alicia");
+        updateDTO.setLastName("Smith");
+        updateDTO.setEmail("alice@example.com"); // Same email
+        updateDTO.setPassword("newpass");
+        updateDTO.setPhone("1112223333");
+        updateDTO.setRole("CUSTOMER");
+
+        UserResponseDTO result = userService.updateUser(1L, updateDTO);
+
+        assertThat(result.getFirstName()).isEqualTo("Alicia");
+        assertThat(user.getPassword()).isEqualTo("encoded_new");
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    @DisplayName("Should reject updating to an email that is already taken by another user")
+    void updateUser_DuplicateEmail() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.existsByEmail("taken@example.com")).thenReturn(true);
+
+        UserRequestDTO updateDTO = new UserRequestDTO();
+        updateDTO.setFirstName("Alice");
+        updateDTO.setLastName("Smith");
+        updateDTO.setEmail("taken@example.com"); // Changed to already taken email
+        updateDTO.setPassword("pass");
+        updateDTO.setRole("CUSTOMER");
+
+        assertThatThrownBy(() -> userService.updateUser(1L, updateDTO))
+                .isInstanceOf(DuplicateEmailException.class);
+    }
+
+    @Test
+    @DisplayName("Should update user role successfully")
+    void updateUserRole_Success() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserResponseDTO result = userService.updateUserRole(1L, Role.ORGANIZER);
+
+        assertThat(result.getRole()).isEqualTo("ORGANIZER");
+        assertThat(user.getRole()).isEqualTo(Role.ORGANIZER);
+        verify(userRepository).save(user);
+    }
 }
