@@ -51,7 +51,11 @@ export default function Navbar({
   }, []);
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    document.documentElement.classList.add('theme-transitioning');
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 380);
   };
 
   const getUserInitials = (user) => {
@@ -204,10 +208,14 @@ export default function Navbar({
             {/* Theme Toggle */}
             <button 
               onClick={toggleTheme} 
-              type="button" className="w-8 h-8 bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-colors cursor-pointer"
-              title={`Switch Theme`}
+              type="button" 
+              className="w-8 h-8 bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer overflow-hidden"
+              title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+              aria-label="Toggle Theme"
             >
-              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+              <span className={`inline-flex items-center justify-center transition-transform duration-300 ${theme === 'dark' ? 'rotate-0' : 'rotate-180'}`}>
+                {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+              </span>
             </button>
 
             {/* User Account / Profile Dropdown */}

@@ -120,6 +120,18 @@ html.light, body.light, .light {
   box-sizing: border-box;
 }
 
+/* ─── Smooth Theme Transition ─── */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-delay: 0s !important;
+}
+
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
@@ -129,6 +141,7 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ─── Hazard Tape Patterns ─── */
