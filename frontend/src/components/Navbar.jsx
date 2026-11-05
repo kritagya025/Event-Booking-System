@@ -14,6 +14,8 @@ export default function Navbar({
   const [currency, setCurrency] = useState(getActiveCurrency());
   const [theme, setTheme] = useState(localStorage.getItem('sb-theme') || 'dark');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [shockwave, setShockwave] = useState(null);
+  const [themeToast, setThemeToast] = useState(null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -50,12 +52,67 @@ export default function Navbar({
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  const toggleTheme = () => {
-    document.documentElement.classList.add('theme-transitioning');
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-    setTimeout(() => {
-      document.documentElement.classList.remove('theme-transitioning');
-    }, 380);
+  const toggleTheme = (e) => {
+    const btnRect = e?.currentTarget?.getBoundingClientRect();
+    const x = btnRect ? btnRect.left + btnRect.width / 2 : window.innerWidth - 40;
+    const y = btnRect ? btnRect.top + btnRect.height / 2 : 40;
+
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+
+    // 1. Trigger Laser Shockwave & CRT Beam overlay
+    setShockwave({ x, y, radius: endRadius });
+    setTimeout(() => setShockwave(null), 550);
+
+    // 2. Trigger Zine HUD exposure notification badge
+    setThemeToast(nextTheme === 'light' ? 'DAYLIGHT XEROX INK // PROTOCOL ACTIVE' : 'WAREHOUSE PROTOCOL // NIGHT PHOSPHOR');
+    setTimeout(() => setThemeToast(null), 1400);
+
+    // 3. Fallback if View Transitions API is not supported
+    if (!document.startViewTransition) {
+      document.documentElement.classList.add('theme-transitioning');
+      setTheme(nextTheme);
+      setTimeout(() => {
+        document.documentElement.classList.remove('theme-transitioning');
+      }, 400);
+      return;
+    }
+
+    // 4. Cutting-edge View Transitions: circular laser aperture wipe expanding from click position
+    const transition = document.startViewTransition(() => {
+      const root = document.documentElement;
+      const body = document.body;
+      if (nextTheme === 'light') {
+        root.classList.remove('dark');
+        root.classList.add('light');
+        body.classList.remove('dark');
+        body.classList.add('light');
+      } else {
+        root.classList.remove('light');
+        root.classList.add('dark');
+        body.classList.remove('light');
+        body.classList.add('dark');
+      }
+      setTheme(nextTheme);
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        [
+          { clipPath: `circle(0px at ${x}px ${y}px)` },
+          { clipPath: `circle(${endRadius}px at ${x}px ${y}px)` }
+        ],
+        {
+          duration: 520,
+          easing: 'cubic-bezier(0.25, 1, 0.4, 1)',
+          pseudoElement: '::view-transition-new(root)'
+        }
+      );
+    });
   };
 
   const getUserInitials = (user) => {
@@ -71,6 +128,30 @@ export default function Navbar({
 
   return (
     <>
+      {/* ─── Cutting-Edge Theme Laser Shockwave & CRT Scanner Beam ─── */}
+      {shockwave && (
+        <>
+          <div 
+            className="theme-laser-ring"
+            style={{
+              left: `${shockwave.x}px`,
+              top: `${shockwave.y}px`,
+              width: `${shockwave.radius * 2}px`,
+              height: `${shockwave.radius * 2}px`,
+            }}
+          />
+          <div className="theme-crt-beam" />
+        </>
+      )}
+
+      {/* ─── Brutalist Cassette HUD Exposure Badge ─── */}
+      {themeToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[10002] bg-asphalt-black border-2 border-acid-yellow text-acid-yellow px-4 py-2 font-ticker text-xs font-black uppercase tracking-widest shadow-[4px_4px_0px_#ff1f6d] flex items-center gap-2.5 pointer-events-none animate-bounce">
+          <span className="w-2.5 h-2.5 rounded-full bg-neon-magenta animate-ping" />
+          <span>⚡ {themeToast}</span>
+        </div>
+      )}
+
       {/* ─── 0. HIGH VOLTAGE HAZARD WARNING HEADER MARQUEE ─── */}
       <div className="h-7 w-full hazard-tape overflow-hidden flex items-center border-b-2 border-asphalt-black select-none">
         <div className="animate-marquee items-center gap-6 text-asphalt-black font-ticker font-extrabold text-[12px] tracking-widest uppercase py-0.5">
