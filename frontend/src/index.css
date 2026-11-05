@@ -197,6 +197,7 @@ h1, h2, h3, h4, .font-display {
   border: 2px solid var(--border-strong);
   cursor: pointer;
   transition: all 0.12s ease;
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -324,8 +325,8 @@ h1, h2, h3, h4, .font-display {
   inset: 0;
   z-index: 2000;
   background: rgba(14, 14, 17, 0.92);
-  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
