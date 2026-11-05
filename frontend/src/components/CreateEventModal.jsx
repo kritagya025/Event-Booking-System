@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, PlusCircle, Image as ImageIcon, Upload, CheckCircle2, 
-  AlertCircle, Calendar, Clock, DollarSign, Users, MapPin, Tag, FileText, Trash2, Building
+  AlertCircle, Calendar, Clock, DollarSign, Users, MapPin, Tag, FileText, Trash2, Building 
 } from 'lucide-react';
 import { apiFetch, getStoredToken } from '../services/api';
 
@@ -17,11 +17,11 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
     name: '',
     description: '',
     eventDate: '',
-    startTime: '19:00',
-    endTime: '22:00',
+    startTime: '23:00',
+    endTime: '06:00',
     category: 'MUSIC',
-    ticketPrice: 50.00,
-    availableSeats: 100,
+    ticketPrice: 30.00,
+    availableSeats: 120,
     registrationDeadline: '',
     venueName: '',
     venueAddress: ''
@@ -46,7 +46,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
     setUploadError('');
 
     if (file.size > 20 * 1024 * 1024) {
-      const msg = 'File size exceeds maximum limit of 20MB';
+      const msg = 'FILE EXCEEDS MAXIMUM TRANSMISSION THRESHOLD OF 20MB';
       setUploadError(msg);
       showToast(msg, 'error');
       return;
@@ -77,9 +77,9 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
       const data = await res.json();
       const finalUrl = data.imageUrl.startsWith('http') ? data.imageUrl : `http://localhost:8080${data.imageUrl}`;
       setBannerUrl(finalUrl);
-      showToast('Banner image uploaded successfully', 'success');
+      showToast('GIG FLYER ARTWORK DISPATCHED SUCCESSFULLY', 'success');
     } catch (err) {
-      const errMsg = err.message || 'Image upload failed. Please try another image.';
+      const errMsg = err.message || 'Artwork upload failed. Select another file.';
       setUploadError(errMsg);
       showToast(errMsg, 'error');
     } finally {
@@ -98,22 +98,21 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      showToast('Please enter a valid event title', 'error');
+      showToast('SPECIFY GIG / FLYER TITLE', 'error');
       return;
     }
     if (!formData.venueName.trim()) {
-      showToast('Please enter a venue name', 'error');
+      showToast('SPECIFY WAREHOUSE / SQUAT VENUE NAME', 'error');
       return;
     }
     if (!formData.venueAddress.trim()) {
-      showToast('Please enter the venue address / location', 'error');
+      showToast('SPECIFY SECRET DOCK / VENUE COORDINATES', 'error');
       return;
     }
 
     setLoading(true);
 
     try {
-      // 1. Create venue record first
       const createdVenue = await apiFetch('/venues', {
         method: 'POST',
         body: JSON.stringify({
@@ -125,13 +124,13 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
       }).catch(() => null);
 
       const formatTime = (t) => {
-        if (!t) return '19:00:00';
+        if (!t) return '23:00:00';
         return t.length === 5 ? `${t}:00` : t;
       };
 
       const payload = {
         name: formData.name.trim(),
-        description: formData.description.trim() || `${formData.name.trim()} live event`,
+        description: formData.description.trim() || `${formData.name.trim()} live warehouse session`,
         eventDate: formData.eventDate,
         startTime: formatTime(formData.startTime),
         endTime: formatTime(formData.endTime),
@@ -150,44 +149,63 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
         body: JSON.stringify(payload)
       });
 
-      showToast(`Event '${newEvent.name}' published successfully!`, 'success');
+      showToast(`GIG '${newEvent.name}' DISPATCHED TO FLYER DECK!`, 'success');
       if (onEventCreated) onEventCreated(newEvent);
       onClose();
     } catch (err) {
-      showToast(err.message || 'Failed to create event', 'error');
+      showToast(err.message || 'FAILED TO DISPATCH GIG FLYER', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '680px', width: '100%' }}>
-        
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto" onClick={onClose}>
+      <div 
+        className="w-full max-w-2xl bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] my-auto relative font-mono-zine"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Slanted Tape Badge */}
+        <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+          PROMOTER DISPATCH RIG
+        </div>
+
         {/* Header */}
-        <div className="modal-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(255,255,255,0.08)' }}>
-              <PlusCircle size={22} color="#FFF" />
+        <div className="p-5 md:p-6 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+                HOST_RAVE://FLYER_GEN
+              </span>
+              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-neon-magenta animate-pulse"></span>
+                ZINE DISPATCH ENCLAVE
+              </span>
             </div>
-            <div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Create & Publish Event</h3>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Enter event details and location for small, local, or global events</p>
-            </div>
+            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white mt-1 leading-none">
+              DISPATCH NEW GIG FLYER
+            </h3>
+            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
+              ENGRAVE SOUND RIG, SUBWOOFER SPECS, AND WRISTBAND QUOTA
+            </p>
           </div>
-          <button onClick={onClose} className="btn btn-secondary" style={{ padding: '6px' }}>
-            <X size={16} />
+          <button 
+            onClick={onClose} 
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+          >
+            <X size={18} />
           </button>
         </div>
 
-        <div className="modal-body" style={{ padding: '24px' }}>
-          <form onSubmit={handleSubmit}>
+        {/* Body */}
+        <div className="p-5 md:p-6 max-h-[75vh] overflow-y-auto">
+          <form onSubmit={handleSubmit} className="space-y-4">
             
-            {/* SECTION 1: EVENT INFO */}
-            <div style={{ marginBottom: '20px' }}>
-              <div className="form-group" style={{ marginBottom: '14px' }}>
-                <label className="form-label">
-                  Event Title<span style={{ color: '#ef4444' }}> *</span>
+            {/* GIG TITLE & CATEGORY */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="md:col-span-2">
+                <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
+                  GIG / RAVE TITLE <span className="text-neon-magenta">*</span>
                 </label>
                 <input
                   type="text"
@@ -195,189 +213,178 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="form-input"
-                  placeholder="e.g. Local Community Concert 2026 / Tech Meetup"
-                  style={{ height: '44px', fontSize: '0.95rem' }}
+                  placeholder="E.G. ACID TEST 009: DOCKSIDE INCLINE"
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
                 />
               </div>
 
-              <div className="form-group" style={{ marginBottom: '14px' }}>
-                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Tag size={13} color="var(--text-muted)" /> Category<span style={{ color: '#ef4444' }}> *</span>
+              <div>
+                <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
+                  GENRE / RADAR <span className="text-neon-magenta">*</span>
                 </label>
-                <select name="category" value={formData.category} onChange={handleChange} className="form-select" style={{ height: '44px' }}>
-                  <option value="MUSIC">Music</option>
-                  <option value="TECH">Tech & AI</option>
-                  <option value="THEATER">Theater</option>
-                  <option value="SPORTS">Sports</option>
-                  <option value="WORKSHOP">Workshop</option>
-                  <option value="OTHER">Other</option>
+                <select 
+                  name="category" 
+                  value={formData.category} 
+                  onChange={handleChange} 
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
+                >
+                  <option value="MUSIC">ACID TECHNO / NOISE</option>
+                  <option value="TECH">CYBERNETICS / LIVE-RIG</option>
+                  <option value="THEATER">DARK AV PERFORMANCE</option>
+                  <option value="SPORTS">INDUSTRIAL FLOOR</option>
+                  <option value="WORKSHOP">HARDWARE MOD LAB</option>
+                  <option value="OTHER">UNCLASSIFIED SOUND</option>
                 </select>
               </div>
-
-              {/* DIRECT VENUE NAME & ADDRESS INPUT FIELDS (NO DROPDOWN) */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group">
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Building size={13} color="var(--text-muted)" /> Venue / Place Name<span style={{ color: '#ef4444' }}> *</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="venueName"
-                    required
-                    value={formData.venueName}
-                    onChange={handleChange}
-                    className="form-input"
-                    placeholder="e.g. Sunrise Lawn / Community Hall"
-                    style={{ height: '44px' }}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <MapPin size={13} color="var(--text-muted)" /> Address / City / Country<span style={{ color: '#ef4444' }}> *</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="venueAddress"
-                    required
-                    value={formData.venueAddress}
-                    onChange={handleChange}
-                    className="form-input"
-                    placeholder="e.g. 123 Main St, New York, NY / Mumbai"
-                    style={{ height: '44px' }}
-                  />
-                </div>
-              </div>
             </div>
 
-            {/* SECTION 2: SCHEDULE */}
-            <div style={{ marginBottom: '20px', padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.03)' }}>
-              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Schedule & Timing
-              </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                <div className="form-group">
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Calendar size={13} color="var(--text-muted)" /> Date<span style={{ color: '#ef4444' }}> *</span>
-                  </label>
-                  <input type="date" name="eventDate" required value={formData.eventDate} onChange={handleChange} className="form-input" style={{ height: '42px' }} />
-                </div>
-                <div className="form-group">
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Clock size={13} color="var(--text-muted)" /> Start<span style={{ color: '#ef4444' }}> *</span>
-                  </label>
-                  <input type="time" name="startTime" required value={formData.startTime} onChange={handleChange} className="form-input" style={{ height: '42px' }} />
-                </div>
-                <div className="form-group">
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Clock size={13} color="var(--text-muted)" /> End<span style={{ color: '#ef4444' }}> *</span>
-                  </label>
-                  <input type="time" name="endTime" required value={formData.endTime} onChange={handleChange} className="form-input" style={{ height: '42px' }} />
-                </div>
-              </div>
-            </div>
-
-            {/* SECTION 3: PRICING & SEATS */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-              <div className="form-group">
-                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <DollarSign size={13} color="var(--text-muted)" /> Base Ticket Price<span style={{ color: '#ef4444' }}> *</span>
+            {/* VENUE NAME & SECRET COORDINATES */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
+                  WAREHOUSE / SQUAT LOCATION <span className="text-neon-magenta">*</span>
                 </label>
-                <input type="number" name="ticketPrice" required step="0.01" value={formData.ticketPrice} onChange={handleChange} className="form-input" style={{ height: '44px' }} />
+                <input
+                  type="text"
+                  name="venueName"
+                  required
+                  value={formData.venueName}
+                  onChange={handleChange}
+                  placeholder="E.G. PIER 44 COLD SHED"
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
+                />
               </div>
-              <div className="form-group">
-                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Users size={13} color="var(--text-muted)" /> Total Seats Capacity<span style={{ color: '#ef4444' }}> *</span>
+
+              <div>
+                <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
+                  SECRET COORDINATES / STREET ADDRESS <span className="text-neon-magenta">*</span>
                 </label>
-                <input type="number" name="availableSeats" required min="1" value={formData.availableSeats} onChange={handleChange} className="form-input" style={{ height: '44px' }} />
+                <input
+                  type="text"
+                  name="venueAddress"
+                  required
+                  value={formData.venueAddress}
+                  onChange={handleChange}
+                  placeholder="E.G. 4241 ILLINOIS ST, BAY A1"
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
+                />
               </div>
             </div>
 
-            {/* SECTION 4: DESCRIPTION */}
-            <div className="form-group" style={{ marginBottom: '20px' }}>
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <FileText size={13} color="var(--text-muted)" /> Event Description
+            {/* TIMING */}
+            <div className="bg-asphalt-card border-2 border-asphalt-border p-3.5 space-y-2">
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">
+                CURFEW & TIMING PROTOCOL
+              </span>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-mono-zine text-grit-dim uppercase mb-1">DATE</label>
+                  <input type="date" name="eventDate" required value={formData.eventDate} onChange={handleChange} className="w-full bg-asphalt-surface border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-mono-zine text-grit-dim uppercase mb-1">CURFEW START</label>
+                  <input type="time" name="startTime" required value={formData.startTime} onChange={handleChange} className="w-full bg-asphalt-surface border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-mono-zine text-grit-dim uppercase mb-1">CURFEW END</label>
+                  <input type="time" name="endTime" required value={formData.endTime} onChange={handleChange} className="w-full bg-asphalt-surface border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* PRICING & SEATS */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
+                  WRISTBAND TARIFF ($ USD) <span className="text-neon-magenta">*</span>
+                </label>
+                <input type="number" name="ticketPrice" required step="0.01" value={formData.ticketPrice} onChange={handleChange} className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-sm outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
+                  PIT CAPACITY QUOTA <span className="text-neon-magenta">*</span>
+                </label>
+                <input type="number" name="availableSeats" required min="1" value={formData.availableSeats} onChange={handleChange} className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-sm outline-none" />
+              </div>
+            </div>
+
+            {/* DESCRIPTION */}
+            <div>
+              <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
+                GIG MANIFEST & SOUND SYSTEM RIG SPECIFICATIONS
               </label>
               <textarea
                 name="description"
-                rows="3"
+                rows="2"
                 value={formData.description}
                 onChange={handleChange}
-                className="form-textarea"
-                placeholder="Provide details about the event, location highlights, or entry instructions..."
+                placeholder="40KW SUBWOOFERS, CUSTOM HORN ENCLOSURES, STRICT 06:00 AM CURFEW..."
+                className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none uppercase"
               />
             </div>
 
-            {/* SECTION 5: BANNER IMAGE UPLOAD DROPZONE */}
-            <div className="form-group" style={{ marginBottom: '24px' }}>
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <ImageIcon size={13} color="var(--text-muted)" /> Event Banner Image
+            {/* BANNER ARTWORK DROPZONE */}
+            <div>
+              <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
+                PHOTOCOPY FLYER ARTWORK (MAX 20MB)
               </label>
 
               {!bannerUrl ? (
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  style={{
-                    border: '2px dashed rgba(255,255,255,0.15)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '24px',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    background: 'rgba(255,255,255,0.02)',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)'}
-                  onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'}
+                  className="border-2 border-dashed border-asphalt-border hover:border-acid-yellow p-6 text-center cursor-pointer bg-asphalt-card transition-colors"
                 >
-                  <Upload size={28} color="var(--text-muted)" style={{ marginBottom: '8px' }} />
-                  <span style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600 }}>
-                    {uploadingImage ? 'Uploading banner image...' : 'Click to select banner image'}
+                  <Upload size={24} className="text-grit-dim mx-auto mb-2" />
+                  <span className="block text-xs font-impact tracking-wider text-grit-white uppercase">
+                    {uploadingImage ? 'TRANSMITTING FLYER ARTWORK...' : 'CLICK TO SELECT PHOTOCOPY FLYER'}
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>
-                    Supports JPG, PNG, WEBP, GIF, SVG up to 20MB
+                  <span className="text-[10px] text-grit-dim uppercase block mt-1">
+                    JPG, PNG, WEBP UP TO 20MB
                   </span>
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    style={{ display: 'none' }}
+                    className="hidden"
                   />
                 </div>
               ) : (
-                <div style={{ position: 'relative', borderRadius: 'var(--radius-md)', overflow: 'hidden', height: '140px', background: '#000', border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <img src={bannerUrl} alt="Banner preview" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
-                  <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '8px' }}>
-                    <span className="badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <CheckCircle2 size={12} /> Uploaded
+                <div className="relative border-2 border-grit-white h-32 bg-asphalt-black overflow-hidden">
+                  <img src={bannerUrl} alt="Flyer preview" className="w-full h-full object-cover filter grayscale contrast-125" />
+                  <div className="absolute top-2 right-2 flex gap-2">
+                    <span className="bg-acid-yellow text-asphalt-black font-impact text-[10px] px-2 py-0.5 uppercase">
+                      ARTWORK LOADED
                     </span>
-                    <button type="button" onClick={handleRemoveImage} className="btn btn-secondary btn-sm" style={{ padding: '6px', background: 'rgba(0,0,0,0.7)' }}>
-                      <Trash2 size={14} color="#ef4444" />
+                    <button type="button" onClick={handleRemoveImage} className="bg-asphalt-black/80 border border-grit-white p-1 text-neon-magenta hover:text-grit-white cursor-pointer">
+                      <Trash2 size={12} />
                     </button>
                   </div>
                 </div>
               )}
 
               {uploadError && (
-                <div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <AlertCircle size={14} /> {uploadError}
+                <div className="mt-1 text-xs text-neon-magenta flex items-center gap-1 uppercase">
+                  <AlertCircle size={12} /> {uploadError}
                 </div>
               )}
             </div>
 
-            {/* Submit Button */}
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-              <button type="button" onClick={onClose} className="btn btn-secondary">
-                Cancel
+            {/* Actions */}
+            <div className="flex justify-between items-center pt-4 border-t border-asphalt-border">
+              <button 
+                type="button" 
+                onClick={onClose} 
+                className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-grit-white font-mono-zine text-xs px-4 py-2 uppercase cursor-pointer"
+              >
+                ABORT
               </button>
               <button
                 type="submit"
-                className="btn btn-primary"
-                style={{ padding: '12px 28px', fontSize: '0.95rem' }}
                 disabled={loading || uploadingImage}
+                className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] cursor-pointer disabled:opacity-50"
               >
-                {loading ? 'Publishing Event...' : 'Publish Event'}
+                {loading ? 'ENGRAVING GIG...' : 'DISPATCH GIG FLYER TO WAREHOUSE'}
               </button>
             </div>
 

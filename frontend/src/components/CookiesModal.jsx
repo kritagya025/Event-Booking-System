@@ -11,183 +11,103 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
   if (!isOpen) return null;
 
   const handleSave = () => {
-    if (showToast) showToast('Cookie preferences saved successfully', 'success');
+    if (showToast) showToast('COOKIE PREFERENCES COMMITTED TO LOCAL MEMORY', 'success');
     onClose();
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose} style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(11, 15, 23, 0.82)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px'
-    }}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{
-        background: 'var(--card-bg, #111827)',
-        border: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-        borderRadius: 'var(--radius-lg)',
-        width: '100%',
-        maxWidth: '680px',
-        maxHeight: '85vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-        overflow: 'hidden'
-      }}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4 font-mono-zine" onClick={onClose}>
+      <div 
+        className="w-full max-w-xl max-h-[85vh] bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] flex flex-col relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Slanted Tape Badge */}
+        <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+          VAULT://SESSION_COOKIES
+        </div>
+
         {/* Header */}
-        <div style={{
-          padding: '24px 28px',
-          borderBottom: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-          display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(255, 255, 255, 0.02)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              background: 'rgba(234, 179, 8, 0.15)',
-              color: '#eab308',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Cookie size={22} />
+        <div className="p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+                STORAGE_PREFERENCES
+              </span>
+              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
+                LOCAL SESSION STORE
+              </span>
             </div>
-            <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main, #fff)', margin: 0 }}>
-                Cookie Policy & Preferences
-              </h2>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted, #9ca3af)', margin: 0, marginTop: '2px' }}>
-                Manage how cookies & session storage are used on EventHub
-              </p>
-            </div>
+            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
+              COOKIE & STORAGE SETTINGS
+            </h3>
+            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
+              SPECIFY EPHEMERAL STORAGE CONFIGURATION FOR THIS TERMINAL
+            </p>
           </div>
-          <button onClick={onClose} className="btn-icon" style={{
-            background: 'rgba(255,255,255,0.06)',
-            border: 'none',
-            color: 'var(--text-secondary, #cbd5e1)',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}>
+          <button 
+            onClick={onClose} 
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+          >
             <X size={18} />
           </button>
         </div>
 
-        {/* Content */}
-        <div style={{
-          padding: '28px',
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px'
-        }}>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary, #cbd5e1)', margin: 0, lineHeight: 1.6 }}>
-            We use cookies and similar technologies to maintain secure authentication, remember your currency preferences, and deliver seamless seat booking experiences.
-          </p>
-
-          {/* Cookie Item: Essential */}
-          <div style={{
-            padding: '16px 20px',
-            borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
+        {/* Body Content */}
+        <div className="p-6 overflow-y-auto space-y-4">
+          <div className="bg-asphalt-card border border-asphalt-border p-4 flex items-center justify-between">
             <div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main, #fff)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                Strictly Necessary Cookies <span style={{ fontSize: '0.72rem', background: 'rgba(16,185,129,0.2)', color: '#10b981', padding: '2px 8px', borderRadius: '10px' }}>Required</span>
+              <div className="flex items-center gap-2">
+                <span className="font-impact text-base text-grit-white tracking-wider">ESSENTIAL AUTHENTICATION</span>
+                <span className="bg-acid-yellow text-asphalt-black font-impact text-[10px] px-1.5 py-0.2">MANDATORY</span>
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #9ca3af)', marginTop: '4px' }}>
-                HttpOnly session cookies required for user login, JWT renewal, and seat hold state.
-              </div>
+              <p className="text-[11px] text-grit-dim uppercase mt-1">
+                REQUIRED FOR HTTPONLY JWT TOKENS AND STOMP PROTOCOL CONNECTION SEALS.
+              </p>
             </div>
-            <input type="checkbox" checked disabled style={{ width: '18px', height: '18px', accentColor: '#10b981', cursor: 'not-allowed' }} />
+            <input type="checkbox" checked disabled className="w-5 h-5 accent-acid-yellow" />
           </div>
 
-          {/* Cookie Item: Functional */}
-          <div style={{
-            padding: '16px 20px',
-            borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
+          <div className="bg-asphalt-card border border-asphalt-border p-4 flex items-center justify-between">
             <div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main, #fff)' }}>
-                Functional & Preference Cookies
-              </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #9ca3af)', marginTop: '4px' }}>
-                Remembers currency settings (USD/EUR/GBP/INR) and active catalog filters.
-              </div>
+              <span className="font-impact text-base text-grit-white tracking-wider block">LOCAL PASS CACHING</span>
+              <p className="text-[11px] text-grit-dim uppercase mt-1">
+                PRESERVES RECENTLY ENGRAVED WRISTBANDS IN BROWSER LOCALSTORAGE FOR OFFLINE SCANNING.
+              </p>
             </div>
             <input 
               type="checkbox" 
               checked={preferences.functional} 
-              onChange={(e) => setPreferences({ ...preferences, functional: e.target.checked })} 
-              style={{ width: '18px', height: '18px', accentColor: 'var(--sb-orange, #f97316)', cursor: 'pointer' }} 
+              onChange={(e) => setPreferences({ ...preferences, functional: e.target.checked })}
+              className="w-5 h-5 accent-acid-yellow cursor-pointer" 
             />
           </div>
 
-          {/* Cookie Item: Analytics */}
-          <div style={{
-            padding: '16px 20px',
-            borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
+          <div className="bg-asphalt-card border border-asphalt-border p-4 flex items-center justify-between">
             <div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main, #fff)' }}>
-                Performance & Analytics
-              </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #9ca3af)', marginTop: '4px' }}>
-                Anonymous telemetry helping us optimize page load speeds & event discovery algorithms.
-              </div>
+              <span className="font-impact text-base text-grit-white tracking-wider block">TELEMETRY DIAGNOSTICS</span>
+              <p className="text-[11px] text-grit-dim uppercase mt-1">
+                MEASURES REST API ROUND-TRIP LATENCY AND SUBWOOFER CONCURRENCY SPIKES.
+              </p>
             </div>
             <input 
               type="checkbox" 
               checked={preferences.analytics} 
-              onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })} 
-              style={{ width: '18px', height: '18px', accentColor: 'var(--sb-orange, #f97316)', cursor: 'pointer' }} 
+              onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}
+              className="w-5 h-5 accent-acid-yellow cursor-pointer" 
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div style={{
-          padding: '20px 28px',
-          borderTop: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-          display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(0, 0, 0, 0.2)'
-        }}>
-          <button onClick={() => setPreferences({ essential: true, analytics: true, functional: true })} className="btn btn-secondary btn-sm">
-            Accept All
-          </button>
-          <button onClick={handleSave} className="btn btn-primary" style={{ padding: '10px 24px' }}>
-            Save Preferences
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+          <span className="font-ticker text-[10px] text-grit-dim uppercase">
+            POLICY COMPLIANCE: ZERO AD TELEMETRY
+          </span>
+          <button 
+            onClick={handleSave} 
+            className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer"
+          >
+            COMMIT PREFERENCES
           </button>
         </div>
       </div>

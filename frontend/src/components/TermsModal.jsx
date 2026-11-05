@@ -5,157 +5,91 @@ export default function TermsModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" onClick={onClose} style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(11, 15, 23, 0.82)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px'
-    }}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{
-        background: 'var(--card-bg, #111827)',
-        border: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-        borderRadius: 'var(--radius-lg)',
-        width: '100%',
-        maxWidth: '750px',
-        maxHeight: '85vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-        overflow: 'hidden'
-      }}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+      <div 
+        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] flex flex-col font-mono-zine relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Slanted Tape Badge */}
+        <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+          VAULT://MANIFESTO_PROTOCOL
+        </div>
+
         {/* Header */}
-        <div style={{
-          padding: '24px 28px',
-          borderBottom: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-          display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(255, 255, 255, 0.02)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              background: 'rgba(249, 115, 22, 0.15)',
-              color: 'var(--sb-orange, #f97316)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <FileText size={22} />
+        <div className="p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+                TERMS_OF_ENGAGEMENT
+              </span>
+              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
+                DOC REV 2026.09
+              </span>
             </div>
-            <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main, #fff)', margin: 0 }}>
-                Terms & Conditions
-              </h2>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted, #9ca3af)', margin: 0, marginTop: '2px' }}>
-                Last updated: August 2026 • EventHub Platform Master Policy
-              </p>
-            </div>
+            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
+              WAREHOUSE RULES OF ENGAGEMENT
+            </h3>
+            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
+              PROTOCOL REQUIREMENTS FOR ATTENDEES, RAVERS & SOUND SYSTEM OPERATORS
+            </p>
           </div>
-          <button onClick={onClose} className="btn-icon" style={{
-            background: 'rgba(255,255,255,0.06)',
-            border: 'none',
-            color: 'var(--text-secondary, #cbd5e1)',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}>
+          <button 
+            onClick={onClose} 
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+          >
             <X size={18} />
           </button>
         </div>
 
-        {/* Content */}
-        <div style={{
-          padding: '28px',
-          overflowY: 'auto',
-          fontSize: '0.9rem',
-          lineHeight: 1.7,
-          color: 'var(--text-secondary, #cbd5e1)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px'
-        }}>
-          <section>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <ShieldCheck size={18} color="var(--sb-orange, #f97316)" />
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main, #fff)', margin: 0 }}>
-                1. Acceptance of Terms & Services
-              </h3>
-            </div>
+        {/* Body Content */}
+        <div className="p-6 overflow-y-auto space-y-5 text-xs text-grit-dim uppercase leading-relaxed font-mono-zine">
+          <section className="bg-asphalt-card border border-asphalt-border p-4">
+            <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
+              01. NO CAMERAS / NO FLASH RECORDING
+            </h4>
             <p>
-              By accessing or using EventHub, booking tickets, hosting events, or interacting with our automated QR gate verification infrastructure, you agree to bound by these Terms & Conditions. If you do not agree to these terms, please do not utilize our platform.
+              VAULT OPERATES STRICT ANALOG DANCEFLOOR SANCTUARY PROTOCOLS. OPTICAL SENSORS, FLASH RECORDINGS, AND PHONE LIVESTREAMS ARE PROHIBITED BEYOND THE DOCK ENTRANCE. PHONE LENSES MUST BE SEALED AT GATE ADMITTANCE.
             </p>
           </section>
 
-          <section style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <CheckCircle2 size={18} color="var(--sb-orange, #f97316)" />
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main, #fff)', margin: 0 }}>
-                2. Seat Locks, Ticketing & Real-time Allocation
-              </h3>
-            </div>
-            <p style={{ marginBottom: '10px' }}>
-              Seat allocations are dynamically held during your checkout flow for a maximum duration of 10 minutes. If payment confirmation is not received within this window, held seats automatically release back to the active inventory pool.
-            </p>
-            <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <li>Tickets are digitally issued with unique cryptographic QR codes.</li>
-              <li>Each QR ticket is valid for one-time admission at venue gate scanners.</li>
-              <li>Reselling tickets at inflated prices above face value is strictly prohibited.</li>
-            </ul>
-          </section>
-
-          <section style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <AlertCircle size={18} color="var(--sb-orange, #f97316)" />
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main, #fff)', margin: 0 }}>
-                3. Cancellations & Refund Policy
-              </h3>
-            </div>
+          <section className="bg-asphalt-card border border-asphalt-border p-4">
+            <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
+              02. 40KW SUBWOOFER PRIORITY & HEARING SAFETY
+            </h4>
             <p>
-              Event organizers define individual refund eligibility periods. Approved cancellations prior to 48 hours before event start time receive full automated credit or refund processing minus network processing fees.
+              ACOUSTIC PRESSURE LEVELS MAY PEAK AT 132.8 DB-C. ATTENDEES ASSUME RESPONSIBILITY FOR AUDITORY SAFETY. HIGH-FIDELITY FOAM FILTERS ARE DISTRIBUTED GRATIS AT BOUNCER GATE ENTRY.
             </p>
           </section>
 
-          <section style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <HelpCircle size={18} color="var(--sb-orange, #f97316)" />
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main, #fff)', margin: 0 }}>
-                4. Organizer Code of Conduct
-              </h3>
-            </div>
+          <section className="bg-asphalt-card border border-asphalt-border p-4">
+            <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
+              03. WRISTBAND CONCURRENCY & ZERO SECONDARY TICKETING
+            </h4>
             <p>
-              Organizers hosting live events on EventHub must verify venue logistics, ensure maximum occupancy safety thresholds are strictly respected, and honor legitimate ticket entries verified via the Gate Scanner protocol.
+              ALL WRISTBANDS ARE DIGITALLY LOCKED TO STOMP PROTOCOL NODES. SCALPING, BOT RESERVATIONS, AND FORGERY VOID ALL PASS WATERMARKS INSTANTLY WITHOUT TARIFF REFUND.
+            </p>
+          </section>
+
+          <section className="bg-asphalt-card border border-asphalt-border p-4">
+            <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
+              04. SECRET GATE COORDINATES CURFEW
+            </h4>
+            <p>
+              VENUE COORDINATES ARE DISPATCHED 02 HOURS PRIOR TO CURFEW VIA ENCRYPTED COMM CHANNELS. ADMITTANCE DOORS SHUT AT MIDNIGHT EXACTLY; LATECOMERS SHALL BE DENIED ENTRY.
             </p>
           </section>
         </div>
 
         {/* Footer */}
-        <div style={{
-          padding: '20px 28px',
-          borderTop: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-          display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(0, 0, 0, 0.2)'
-        }}>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-muted, #9ca3af)' }}>
-            Questions? Contact support@eventhub.com
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+          <span className="font-ticker text-[10px] text-grit-dim uppercase">
+            SEC_STATUS: RATIFIED BY WAREHOUSE CONSORTIUM
           </span>
-          <button onClick={onClose} className="btn btn-primary" style={{ padding: '10px 24px' }}>
-            I Understand & Agree
+          <button 
+            onClick={onClose} 
+            className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] cursor-pointer"
+          >
+            ACKNOWLEDGE & RATIFY
           </button>
         </div>
       </div>

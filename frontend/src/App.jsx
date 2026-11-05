@@ -9,7 +9,6 @@ import MyBookings from './components/MyBookings';
 import Wishlist from './components/Wishlist';
 import CreateEventModal from './components/CreateEventModal';
 import ProfileDashboard from './components/ProfileDashboard';
-import IntroSplashScreen from './components/IntroSplashScreen';
 import TermsModal from './components/TermsModal';
 import PrivacyModal from './components/PrivacyModal';
 import SystemStatusModal from './components/SystemStatusModal';
@@ -18,16 +17,15 @@ import CookiesModal from './components/CookiesModal';
 import ApiDocsModal from './components/ApiDocsModal';
 
 import { 
-  MapPin, Ticket, Heart, Search, 
-  Flame, ArrowRight, Star, Bell, AlertCircle, Check, Zap, Trash2,
-  Music, Laptop, Film, Trophy
+  MapPin, Ticket, Heart, Search, Calendar, Tag, Zap,
+  Flame, ArrowRight, Bell, AlertCircle, Check, Trash2,
+  Music, Laptop, Film, Trophy, ShieldCheck, QrCode, Cpu, Layers
 } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem('eventhub_intro_seen'));
   
   const getInitialTab = () => {
     const hash = window.location.hash.replace('#', '');
@@ -66,32 +64,6 @@ export default function App() {
     return subscribeCurrencyChange(() => setCurrencyState(Date.now()));
   }, []);
 
-  // Scroll Reveal IntersectionObserver
-  useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('reveal-visible');
-          }
-        });
-      },
-      { threshold: 0.05 }
-    );
-
-    const timer = setTimeout(() => {
-      const elements = document.querySelectorAll('.js-reveal');
-      elements.forEach((el) => observer.observe(el));
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [activeTab]);
-
-
   const [isSeatMapOpen, setIsSeatMapOpen] = useState(false);
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
@@ -108,7 +80,6 @@ export default function App() {
   const [events, setEvents] = useState([]);
   const [allMasterEvents, setAllMasterEvents] = useState([]);
   const [popularEvents, setPopularEvents] = useState([]);
-  const [trendingEvents, setTrendingEvents] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -144,10 +115,9 @@ export default function App() {
 
     fetchCatalogData();
 
-    // Auto-refresh catalog every 4s for real-time synchronization
     const interval = setInterval(() => {
       fetchCatalogData(true);
-    }, 4000);
+    }, 5000);
 
     window.addEventListener('auth-expired', handleLogout);
     return () => {
@@ -167,10 +137,9 @@ export default function App() {
   const fetchCatalogData = async (isSilent = false) => {
     if (!isSilent) setLoading(true);
     try {
-      const [allEv, popEv, trendEv] = await Promise.all([
+      const [allEv, popEv] = await Promise.all([
         apiFetch('/events?size=50').catch(() => null),
-        apiFetch('/events/popular?limit=4').catch(() => null),
-        apiFetch('/events/trending?limit=4').catch(() => null)
+        apiFetch('/events/popular?limit=4').catch(() => null)
       ]);
 
       let freshList = [];
@@ -183,7 +152,6 @@ export default function App() {
       setAllMasterEvents(freshList);
       allMasterEventsRef.current = freshList;
 
-      // Re-apply active search filters on master event catalog using live filtersRef
       const currentFilters = filtersRef.current;
       if (hasActiveFilters(currentFilters) || currentFilters.sort) {
         applyLiveFilter(currentFilters, freshList);
@@ -194,15 +162,11 @@ export default function App() {
       if (popEv && Array.isArray(popEv) && popEv.length > 0) setPopularEvents(popEv);
       else setPopularEvents(mockEvents.slice(0, 3));
 
-      if (trendEv && Array.isArray(trendEv) && trendEv.length > 0) setTrendingEvents(trendEv);
-      else setTrendingEvents(mockEvents.slice(1, 4));
-
     } catch (err) {
       setAllMasterEvents(mockEvents);
       allMasterEventsRef.current = mockEvents;
       setEvents(mockEvents);
       setPopularEvents(mockEvents.slice(0, 3));
-      setTrendingEvents(mockEvents.slice(1, 4));
     } finally {
       if (!isSilent) setLoading(false);
     }
@@ -330,9 +294,9 @@ export default function App() {
     }
     try {
       await apiFetch(`/waitlist/${eventId}`, { method: 'POST' });
-      showToast('Joined waitlist: you will receive an email if a seat opens.', 'success');
+      showToast('Enrolled in waitlist. You will receive an email if a seat opens.', 'success');
     } catch (err) {
-      showToast(err.message || 'Already on waitlist for this event', 'info');
+      showToast(err.message || 'Already enrolled on waitlist for this event', 'info');
     }
   };
 
@@ -344,7 +308,7 @@ export default function App() {
     }
     if (!currentUser) {
       handleNavigate('login');
-      showToast('Please sign in to select seats & book tickets', 'info');
+      showToast('Please sign in to select seats and book tickets', 'info');
       return;
     }
     setSelectedEvent(targetEvent);
@@ -355,10 +319,8 @@ export default function App() {
     if (e) e.stopPropagation();
     if (!window.confirm(`Are you sure you want to remove event "${eventName || 'this event'}"?`)) return;
 
-    // Optimistic UI state removal
     setEvents((prev) => prev.filter((item) => item.id !== eventId));
     setPopularEvents((prev) => prev.filter((item) => item.id !== eventId));
-    setTrendingEvents((prev) => prev.filter((item) => item.id !== eventId));
 
     try {
       await apiFetch(`/events/${eventId}`, { method: 'DELETE' });
@@ -372,7 +334,7 @@ export default function App() {
 
   const handleNavigate = (tab, params = {}) => {
     if (currentUser && currentUser.role === 'ORGANIZER' && (tab === 'my-bookings' || tab === 'wishlist')) {
-      showToast('Organizers do not have access to customer ticket features.', 'info');
+      showToast('Organizers do not have customer booking pages.', 'info');
       tab = 'home';
     }
     const finalTab = (tab === 'events' || tab === 'explore') ? 'home' : tab;
@@ -395,7 +357,6 @@ export default function App() {
     }
   };
 
-  // Full-page auth routes render without Navbar
   if (activeTab === 'login') {
     return (
       <div>
@@ -410,9 +371,9 @@ export default function App() {
         <div className="toast-container">
           {toasts.map((toast) => (
             <div key={toast.id} className={`toast toast-${toast.type}`}>
-              {toast.type === 'success' && <Check size={16} color="#FFF" />}
-              {toast.type === 'error' && <AlertCircle size={16} color="#FFF" />}
-              {toast.type === 'info' && <Bell size={16} color="#FFF" />}
+              {toast.type === 'success' && <Check size={16} />}
+              {toast.type === 'error' && <AlertCircle size={16} />}
+              {toast.type === 'info' && <Bell size={16} />}
               <span>{toast.message}</span>
             </div>
           ))}
@@ -431,9 +392,9 @@ export default function App() {
         <div className="toast-container">
           {toasts.map((toast) => (
             <div key={toast.id} className={`toast toast-${toast.type}`}>
-              {toast.type === 'success' && <Check size={16} color="#FFF" />}
-              {toast.type === 'error' && <AlertCircle size={16} color="#FFF" />}
-              {toast.type === 'info' && <Bell size={16} color="#FFF" />}
+              {toast.type === 'success' && <Check size={16} />}
+              {toast.type === 'error' && <AlertCircle size={16} />}
+              {toast.type === 'info' && <Bell size={16} />}
               <span>{toast.message}</span>
             </div>
           ))}
@@ -458,6 +419,21 @@ export default function App() {
         }}
       />
 
+      {/* Top Diagonal Stamp Ribbon */}
+      <div className="w-full bg-asphalt-surface border-b border-asphalt-border py-2 px-4">
+        <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between text-xs font-ticker gap-2">
+          <div className="flex items-center gap-2 text-grit-dim">
+            <span className="bg-neon-magenta text-grit-white font-bold px-1.5 py-0.2 -rotate-2">ZINE DISPATCH</span>
+            <span className="text-grit-white font-mono-zine">ISSUE NO. 88 // NORTH INDUSTRIAL DOCKS // RECLAIMED REFRIGERATOR PLANT</span>
+          </div>
+          <div className="flex items-center gap-3 text-grit-dim">
+            <span className="text-acid-yellow">⚡ VOLTAGE: 380V 3-PHASE</span>
+            <span>|</span>
+            <span className="text-grit-white">SPL PEAK: 132.8 dB-C</span>
+          </div>
+        </div>
+      </div>
+
       {activeTab === 'admin' ? (
         <AdminDashboard showToast={showToast} />
       ) : activeTab === 'profile' ? (
@@ -473,363 +449,224 @@ export default function App() {
       ) : activeTab === 'wishlist' ? (
         <Wishlist currentUser={currentUser} onSelectEvent={openBookingModal} showToast={showToast} />
       ) : (
-        <main>
-          <div style={{ padding: '0 24px 80px 24px', maxWidth: '1320px', margin: '0 auto' }}>
+        <main className="w-full relative overflow-hidden pb-16">
+          <div className="max-w-[1360px] mx-auto px-4 md:px-6 pt-8">
             
-            {/* EventHub Split Hero Section (Inspired by layout structure) */}
-            <div className="hero-split-grid">
-              
-              {/* Left Column Text & CTAs */}
-              <div>
-                <div className="hero-pill-badge">
-                  <Zap size={14} /> REAL-TIME SEAT SELECTION & INSTANT QR PASSES
+            {/* 2. ACID-ZINE HERO SECTION WITH COLLAGE STAMPS */}
+            <section className="relative mb-12 border-4 border-grit-white bg-asphalt-surface p-6 md:p-10 shadow-[8px_8px_0px_#eefc54]">
+              {/* Background Raw Photocopy Noise Artifacts */}
+              <div className="absolute -top-5 -right-4 bg-neon-magenta text-grit-white font-display text-xl sm:text-2xl px-4 py-1.5 rotate-3 border-2 border-asphalt-black shadow-[4px_4px_0px_#0e0e11] z-20">
+                ★ ALL NIGHT LONG // NO GUESTLIST ★
+              </div>
+              <div className="absolute -bottom-4 -left-3 bg-electric-cobalt text-acid-yellow font-ticker text-xs font-black px-3 py-1 -rotate-3 border-2 border-grit-white z-20">
+                DESTRUCTIVE AUDIO COMPRESSION: ZERO
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                <div className="lg:col-span-8 space-y-4">
+                  <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-3 py-1 stamp-slant-1">
+                    <span className="w-2.5 h-2.5 bg-acid-yellow animate-pulse" />
+                    <span className="font-ticker text-xs font-bold uppercase text-acid-yellow tracking-widest">
+                      PIRATE TRANSMISSION • TAPE-CASSETTE ARCHIVE
+                    </span>
+                  </div>
+
+                  <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.9]">
+                    UNDERGROUND <span className="text-acid-yellow underline decoration-neon-magenta decoration-4">WAREHOUSE</span><br/>
+                    ACID-ZINE PROTOCOL.
+                  </h1>
+
+                  <p className="font-mono-zine text-sm sm:text-base text-grit-dim max-w-2xl leading-relaxed">
+                    RAW CASSETTE STUBS, CONCRETE SUBWOOFER CLUSTERS, INDUSTRIAL DOCK RIGS, AND CRYPTOGRAPHIC TICKET WATERMARKS. ZERO VIP BOOTHS. PURE SONIC FORCE OPERATING FROM SUNSET TO 08:00 AM.
+                  </p>
+
+                  {/* Telemetry Badges / Specs */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                    <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">BASS ENGINE</span>
+                      <span className="font-display text-xl text-acid-yellow">40KW FUNKTION</span>
+                    </div>
+                    <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">GATE LOCKOUT</span>
+                      <span className="font-display text-xl text-neon-magenta">12MS SOCKET</span>
+                    </div>
+                    <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">LIMITER STATUS</span>
+                      <span className="font-display text-xl text-electric-cobalt">OVERRIDDEN</span>
+                    </div>
+                    <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">ENTRY MEDIUM</span>
+                      <span className="font-display text-xl text-grit-white">TAPE / QR PASS</span>
+                    </div>
+                  </div>
                 </div>
 
-                <h1 className="hero-main-title">
-                  Discover & Book <br />
-                  Extraordinary Events. <br />
-                  <span className="hero-title-accent">Every Stage. Worldwide.</span>
-                </h1>
-
-                <p className="hero-description">
-                  EventHub is the ultimate live event platform, featuring <strong>interactive seat maps, dynamic ticket tiers, instant discount coupons, and real-time seat lock synchronizations</strong> for concerts, summits, and theater.
-                </p>
-
-                <div className="hero-cta-group">
-                  <button 
-                    onClick={() => handleNavigate('events')}
-                    className="btn-sb-primary"
-                  >
-                    Explore Events <ArrowRight size={18} />
-                  </button>
-
-                  {!currentUser ? (
-                    <button 
-                      onClick={() => handleNavigate('login')}
-                      className="btn-sb-outline"
-                    >
-                      Sign In
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={() => handleNavigate('my-bookings')}
-                      className="btn-sb-outline"
-                    >
-                      My Ticket Passes
-                    </button>
-                  )}
+                {/* Right Side: Cassette Tape Graphic / Stamp Badge */}
+                <div className="lg:col-span-4 flex flex-col items-center justify-center">
+                  <div className="w-full max-w-xs bg-asphalt-black border-4 border-grit-white p-4 shadow-[6px_6px_0px_#ff1f6d] rotate-1 group hover:rotate-0 transition-transform">
+                    {/* Cassette Header */}
+                    <div className="bg-acid-yellow text-asphalt-black p-1.5 text-center font-display text-xl tracking-wider border-2 border-asphalt-black mb-3">
+                      C-90 CHROME CASSETTE PASS
+                    </div>
+                    {/* Cassette Wheels cutout mimic */}
+                    <div className="bg-asphalt-card border-2 border-asphalt-border rounded p-3 mb-3 flex items-center justify-around">
+                      <div className="w-12 h-12 rounded-full border-4 border-grit-white bg-asphalt-black flex items-center justify-center animate-spin" style={{ animationDuration: '9s' }}>
+                        <div className="w-3 h-3 bg-neon-magenta rounded-full" />
+                      </div>
+                      <div className="h-6 w-24 bg-asphalt-surface border border-asphalt-border flex items-center justify-center text-[10px] font-ticker text-acid-yellow">
+                        A: 45:00 MIN
+                      </div>
+                      <div className="w-12 h-12 rounded-full border-4 border-grit-white bg-asphalt-black flex items-center justify-center animate-spin" style={{ animationDuration: '9s' }}>
+                        <div className="w-3 h-3 bg-neon-magenta rounded-full" />
+                      </div>
+                    </div>
+                    {/* Cassette Magnetic Strip info */}
+                    <div className="text-[11px] font-ticker space-y-1 text-grit-dim">
+                      <div className="flex justify-between">
+                        <span>PASS_ID:</span>
+                        <span className="text-grit-white font-bold">#CASSETTE-088-RAW</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>WRISTBAND:</span>
+                        <span className="text-neon-magenta font-bold">TYVEK NEON PINK</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>VERIFICATION:</span>
+                        <span className="text-acid-yellow font-bold">ZXING ECDSA SIGNED</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </section>
 
-              {/* Right Column Showcase Image Card Frame */}
-              <div className="hero-image-frame">
-                <img 
-                  src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=1200&q=80" 
-                  alt="Live Concert Stage & Crowd" 
-                />
-              </div>
+            {/* 3. HIGH VOLTAGE SEARCH & DISPATCH CAPSULE (FLYER STYLE) */}
+            <section className="mb-14">
+              <div className="bg-acid-yellow p-3 sm:p-4 border-4 border-asphalt-black shadow-[6px_6px_0px_#ffffff]">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b-2 border-asphalt-black font-ticker text-xs font-bold text-asphalt-black">
+                  <span className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">search</span>
+                    SCAN WAREHOUSE FREQUENCIES // RADAR COORD DISPATCH
+                  </span>
+                  <span className="bg-asphalt-black text-acid-yellow px-2 py-0.5">DISPATCH_FILTER_V4</span>
+                </div>
+                <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} className="grid grid-cols-1 md:grid-cols-4 gap-3 text-asphalt-black">
+                  {/* Keyword */}
+                  <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
+                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">GENRE / COLLECTIVE / RIG</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. ACID TECHNO, NOISE..." 
+                      value={filters.keyword}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setFilters({ ...filters, keyword: val });
+                        applyLiveFilter({ ...filters, keyword: val });
+                      }}
+                      className="bg-transparent font-impact text-lg text-asphalt-black placeholder:text-asphalt-black/50 focus:outline-none w-full border-none p-0" 
+                    />
+                  </div>
 
-            </div>
-
-            {/* Search Controls Bar */}
-            <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} className="search-bar-skillbridge">
-              <div style={{ flex: '2 1 240px', position: 'relative' }}>
-                <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-                <input 
-                  type="text" 
-                  placeholder="Search events, artists, venues, city..." 
-                  value={filters.keyword} 
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setFilters({ ...filters, keyword: val });
-                    applyLiveFilter({ ...filters, keyword: val });
-                  }}
-                  className="form-input-sb"
-                  style={{ paddingLeft: '44px' }}
-                />
-              </div>
-
-              <div style={{ flex: '1 1 160px' }}>
-                <select 
-                  value={filters.category} 
-                  onChange={(e) => {
-                    const cat = e.target.value;
-                    const nextFilters = { ...filters, category: cat };
-                    setFilters(nextFilters);
-                    handleSearchAndFilter(nextFilters);
-                  }} 
-                  className="form-select-sb"
-                  style={{ width: '100%' }}
-                >
-                  <option value="">All Categories</option>
-                  <option value="MUSIC">Music & Concerts</option>
-                  <option value="TECH">Tech & AI Summits</option>
-                  <option value="THEATER">Theater & Shows</option>
-                  <option value="SPORTS">Sports & eSports</option>
-                  <option value="WORKSHOP">Workshops</option>
-                  <option value="OTHER">Other Events</option>
-                </select>
-              </div>
-
-              <div style={{ flex: '1 1 140px' }}>
-                <input 
-                  type="text" 
-                  placeholder="City" 
-                  value={filters.city} 
-                  onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                  className="form-input-sb"
-                />
-              </div>
-
-              <div style={{ flex: '1 1 140px' }}>
-                <input type="date" aria-label="Events from date" value={filters.dateFrom} max={filters.dateTo || undefined}
-                  onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })} className="form-input-sb" />
-              </div>
-              <div style={{ flex: '1 1 140px' }}>
-                <input type="date" aria-label="Events through date" value={filters.dateTo} min={filters.dateFrom || undefined}
-                  onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })} className="form-input-sb" />
-              </div>
-              <div style={{ flex: '1 1 120px' }}>
-                <input type="number" min="0" step="0.01" aria-label="Minimum ticket price" placeholder="Min price" value={filters.minPrice}
-                  onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })} className="form-input-sb" />
-              </div>
-              <div style={{ flex: '1 1 120px' }}>
-                <input type="number" min="0" step="0.01" aria-label="Maximum ticket price" placeholder="Max price" value={filters.maxPrice}
-                  onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })} className="form-input-sb" />
-              </div>
-              <div style={{ flex: '1 1 170px' }}>
-                <select aria-label="Sort events" value={filters.sort}
-                  onChange={(e) => setFilters({ ...filters, sort: e.target.value })} className="form-select-sb" style={{ width: '100%' }}>
-                  <option value="">Recommended order</option>
-                  <option value="eventDate,asc">Soonest first</option>
-                  <option value="ticketPrice,asc">Price: low to high</option>
-                  <option value="ticketPrice,desc">Price: high to low</option>
-                </select>
-              </div>
-
-              <button type="submit" className="btn-sb-primary" style={{ padding: '12px 24px' }}>
-                Search <ArrowRight size={16} />
-              </button>
-
-              {(hasActiveFilters(filters)) && (
-                <button type="button" onClick={handleClearSearch} className="btn-sb-outline" style={{ padding: '12px 18px', color: '#FF4D6D' }}>
-                  Clear
-                </button>
-              )}
-            </form>
-
-              {/* Category Pill Filters (Domain Icons, No Raw Emojis) */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap', marginTop: '28px' }}>
-                {[
-                  { id: '', label: 'All Events', icon: null },
-                  { id: 'MUSIC', label: 'Music & Concerts', icon: Music },
-                  { id: 'TECH', label: 'Tech & AI', icon: Laptop },
-                  { id: 'THEATER', label: 'Theater & Arts', icon: Film },
-                  { id: 'SPORTS', label: 'Sports & eSports', icon: Trophy }
-                ].map((cat) => {
-                  const Icon = cat.icon;
-                  const isActive = filters.category === cat.id;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => {
-                        const nextFilters = { ...filters, category: cat.id };
+                  {/* Sector / Category */}
+                  <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
+                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">SECTOR / CATEGORY</label>
+                    <select 
+                      value={filters.category}
+                      onChange={(e) => {
+                        const cat = e.target.value;
+                        const nextFilters = { ...filters, category: cat };
                         setFilters(nextFilters);
                         handleSearchAndFilter(nextFilters);
                       }}
-                      style={{
-                        borderRadius: 'var(--radius-full)',
-                        padding: '8px 18px',
-                        fontSize: '0.85rem',
-                        fontWeight: 700,
-                        background: isActive ? 'var(--primary)' : 'var(--bg-surface)',
-                        color: isActive ? '#FFFFFF' : 'var(--text-main)',
-                        border: '1px solid ' + (isActive ? 'var(--primary)' : 'var(--border-subtle)'),
-                        boxShadow: isActive ? '0 2px 8px var(--primary-tint)' : 'var(--shadow-card)',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '7px'
-                      }}
+                      className="bg-transparent font-impact text-lg text-asphalt-black focus:outline-none w-full cursor-pointer appearance-none border-none p-0"
                     >
-                      {Icon && <Icon size={14} />}
-                      {cat.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Balanced 4-Item Platform Metrics */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '14px', maxWidth: '720px', margin: '40px auto 0 auto', color: 'var(--text-secondary)', fontSize: '0.82rem', textAlign: 'center' }}>
-                <div className="glass-panel" style={{ padding: '12px 16px' }}><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>50+</strong> Live Events</div>
-                <div className="glass-panel" style={{ padding: '12px 16px' }}><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>100%</strong> Real-Time Sync</div>
-                <div className="glass-panel" style={{ padding: '12px 16px' }}><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>0s</strong> Lock Delay</div>
-                <div className="glass-panel" style={{ padding: '12px 16px' }}><strong style={{ color: 'var(--text-main)', fontSize: '1.25rem', display: 'block' }}>4.9★</strong> Verified Reviews</div>
-              </div>
-
-            {/* Featured Spotlight Banner (when no search active) */}
-            {!hasActiveFilters(filters) && (
-              <div className="glass-panel" style={{ 
-                margin: '20px 0 48px 0', 
-                borderRadius: 'var(--radius-xl)', 
-                overflow: 'hidden',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                border: '1px solid rgba(240, 85, 55, 0.3)',
-                boxShadow: 'var(--shadow-card), 0 0 30px var(--eb-orange-tint)'
-              }}>
-                <div style={{ position: 'relative', minHeight: '280px' }}>
-                  <img 
-                    src={popularEvents[0]?.bannerImageUrl || '/images/concert.png'} 
-                    alt="Featured Event" 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.9)' }} 
-                  />
-                  <div style={{ position: 'absolute', top: '16px', left: '16px' }}>
-                    <span className="badge badge-orange" style={{ padding: '6px 14px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                      <Flame size={13} /> FEATURED SPOTLIGHT
-                    </span>
-                  </div>
-                </div>
-
-                <div style={{ padding: '36px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'var(--bg-surface)' }}>
-                  <div>
-                    <div style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--eb-orange)', letterSpacing: '0.05em', marginBottom: '8px' }}>
-                      SAT, SEP 15 • 7:00 PM
-                    </div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, lineHeight: 1.25, marginBottom: '12px', color: 'var(--text-main)' }}>
-                      {popularEvents[0]?.name || 'Neon Horizon Cyber Music Festival 2026'}
-                    </h2>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginBottom: '20px', lineHeight: 1.6 }}>
-                      {popularEvents[0]?.description || 'Experience 3 days of immersive electronic music, holographic stages, and world-class laser shows with global headline artists.'}
-                    </p>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '24px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <MapPin size={16} color="var(--primary)" /> Metro Arena Center
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Star size={16} color="#FFB800" fill="#FFB800" /> 4.9 (1.2k attending)
-                      </div>
-                    </div>
+                      <option value="">ALL SQUATS & DOCKS (BAY AREA)</option>
+                      <option value="MUSIC">TB-303 ACID TECHNO & HARDWARE</option>
+                      <option value="TECH">MODULAR SYNTH & TECH SUMMIT</option>
+                      <option value="THEATER">DARK INDUSTRIAL THEATER</option>
+                      <option value="SPORTS">WAREHOUSE COMBAT & SKATE</option>
+                      <option value="WORKSHOP">TAPE MOD & DUB WORKSHOP</option>
+                    </select>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-subtle)', paddingTop: '20px' }}>
-                    <div>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', fontWeight: '700', textTransform: 'uppercase' }}>Tickets From</span>
-                      <span style={{ fontSize: '1.6rem', fontWeight: '800', color: 'var(--text-main)' }}>
-                        {formatPrice(popularEvents[0]?.ticketPrice || 85.00, popularEvents[0]?.currency)}
-                      </span>
-                    </div>
-                    <button 
-                      onClick={() => openBookingModal(popularEvents[0] || mockEvents[0])} 
-                      className="btn btn-primary btn-lg"
-                    >
-                      Get Tickets <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Popular Events */}
-            {!hasActiveFilters(filters) && (
-              <div style={{ marginTop: '20px' }}>
-                <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                  <div>
-                    <h2 style={{ fontSize: '1.6rem', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                      <Flame size={22} color="var(--eb-orange)" /> Trending Near You
-                    </h2>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Top events with highest attendee interest this week</p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 380px))', gap: '20px', justifyContent: 'flex-start' }}>
-                  {popularEvents.map((event) => (
-                    <EventCard 
-                      key={event.id} 
-                      event={event} 
-                      currentUser={currentUser}
-                      onBook={() => openBookingModal(event)}
-                      onWishlist={(e) => handleToggleWishlist(event.id, e)}
-                      onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
-                      onDelete={(e) => handleDeleteEvent(event.id, event.name, e)}
+                  {/* City / Location */}
+                  <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
+                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">CURFEW WINDOW / CITY</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. San Francisco, Berlin, Tokyo" 
+                      value={filters.city}
+                      onChange={(e) => setFilters({ ...filters, city: e.target.value })}
+                      className="bg-transparent font-impact text-lg text-asphalt-black placeholder:text-asphalt-black/50 focus:outline-none w-full border-none p-0" 
                     />
-                  ))}
+                  </div>
+
+                  {/* Submit Trigger */}
+                  <div className="flex gap-2">
+                    <button 
+                      type="submit"
+                      className="flex-1 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white border-2 border-asphalt-black p-2 flex items-center justify-center gap-2 font-display text-2xl tracking-wider uppercase transition-colors shadow-[3px_3px_0px_#0e0e11] cursor-pointer"
+                    >
+                      <span>RAVE RADAR</span>
+                      <span className="material-symbols-outlined font-bold">radar</span>
+                    </button>
+                    {hasActiveFilters(filters) && (
+                      <button 
+                        type="button"
+                        onClick={handleClearSearch}
+                        className="bg-asphalt-black text-acid-yellow border-2 border-asphalt-black px-3 font-display text-xl uppercase cursor-pointer"
+                        title="Clear filters"
+                      >
+                        RESET
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+            </section>
+
+            {/* 4. GIG FLYER CARDS: TILTED BADGES, STICKERS, DENSE BARCODES, OVERLAPPING TEAR STUBS */}
+            <section className="mb-16" id="lineup-section" ref={catalogRef}>
+              <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between pb-4 mb-6 border-b-4 border-grit-white gap-4">
+                <div>
+                  <div className="font-ticker text-xs font-bold text-neon-magenta uppercase tracking-widest flex items-center gap-2">
+                    <span className="inline-block w-2.5 h-2.5 bg-neon-magenta animate-pulse" />
+                    UNDERGROUND PRINT ARCHIVE
+                  </div>
+                  <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white">
+                    FLYER DECK • ADMITTANCE STUBS
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2 font-ticker text-xs">
+                  <span className="bg-acid-yellow text-asphalt-black font-bold px-2 py-1 -rotate-2">SECTOR 9 LIVE</span>
+                  <span className="bg-electric-cobalt text-grit-white font-bold px-2 py-1 rotate-1">{events.length} SESSIONS LOCKED</span>
                 </div>
               </div>
-            )}
-
-            {/* Full Catalog / Search Results */}
-            <div ref={catalogRef} style={{ marginTop: hasActiveFilters(filters) ? '30px' : '56px', scrollMarginTop: '100px' }}>
-              
-              {/* Header logic for normal vs active search */}
-              {!hasActiveFilters(filters) ? (
-                <div style={{ marginBottom: '24px' }}>
-                  <h2 style={{ fontSize: '1.6rem', marginBottom: '4px' }}>Explore All Events</h2>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Select an event to view venue seat maps and book tickets</p>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <div>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Search size={18} color="var(--eb-orange)" /> Search Results ({events.length})
-                    </h2>
-                    <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                      Showing events matching {filters.keyword ? `"${filters.keyword}"` : ''} {filters.category ? `[${filters.category}]` : ''} {filters.city ? `in ${filters.city}` : ''}
-                    </p>
-                  </div>
-                  <button onClick={handleClearSearch} className="btn btn-outline btn-sm" style={{ color: '#FF4D6D' }}>
-                    Clear Search
-                  </button>
-                </div>
-              )}
 
               {loading ? (
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 380px))', 
-                  gap: '20px',
-                  justifyContent: 'flex-start'
-                }}>
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="skeleton-event-card" style={{ padding: 0 }}>
-                      <div className="skeleton-box" style={{ height: '210px', width: '100%', borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0' }} />
-                      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <div className="skeleton-box" style={{ height: '14px', width: '35%' }} />
-                        <div className="skeleton-box" style={{ height: '22px', width: '85%' }} />
-                        <div className="skeleton-box" style={{ height: '14px', width: '60%' }} />
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', alignItems: 'center' }}>
-                          <div className="skeleton-box" style={{ height: '26px', width: '70px' }} />
-                          <div className="skeleton-box" style={{ height: '36px', width: '110px', borderRadius: 'var(--radius-md)' }} />
-                        </div>
-                      </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="skeleton-event-card p-4 space-y-3">
+                      <div className="skeleton-box h-48 w-full" />
+                      <div className="skeleton-box h-6 w-3/4" />
+                      <div className="skeleton-box h-4 w-1/2" />
+                      <div className="skeleton-box h-10 w-full" />
                     </div>
                   ))}
                 </div>
               ) : events.length === 0 ? (
-                /* Inline Empty State Card */
-                <div style={{ textAlign: 'center', padding: '60px 20px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-lg)', border: '1px dashed rgba(255,255,255,0.1)' }}>
-                  <Search size={36} color="var(--text-muted)" style={{ marginBottom: '12px' }} />
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '6px' }}>No events found matching your search</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>
-                    No events matched the selected filters. Try broadening your date range, price, keyword, or location.
-                  </p>
-                  <button onClick={handleClearSearch} className="btn btn-primary">
-                    View All Events
-                  </button>
+                <div className="bg-asphalt-card border-3 border-grit-white p-12 text-center shadow-[6px_6px_0px_#ff1f6d]">
+                  <h3 className="font-display text-3xl text-acid-yellow mb-2">NO RADAR TRANSMISSIONS FOUND</h3>
+                  <p className="font-mono-zine text-sm text-grit-dim mb-4">No underground sessions match your active radar criteria.</p>
+                  <button onClick={handleClearSearch} className="btn btn-primary">RESET RADAR</button>
                 </div>
               ) : (
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 380px))', 
-                  gap: '20px',
-                  justifyContent: 'flex-start'
-                }}>
-                  {events.map((event) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {events.map((event, idx) => (
                     <EventCard 
-                      key={event.id} 
-                      event={event} 
+                      key={event.id}
+                      event={event}
+                      index={idx}
                       currentUser={currentUser}
                       onBook={() => openBookingModal(event)}
                       onWishlist={(e) => handleToggleWishlist(event.id, e)}
@@ -839,53 +676,223 @@ export default function App() {
                   ))}
                 </div>
               )}
-            </div>
+            </section>
+
+            {/* 5. RAW WAREHOUSE BOUNCER / PIT INTERACTIVE CONCURRENCY CONSOLE */}
+            <section className="mb-16 border-4 border-grit-white bg-asphalt-surface p-6 md:p-8 shadow-[8px_8px_0px_#ff1f6d]" id="sound-engine">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Rig Telemetry Manifesto */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="inline-block bg-neon-magenta text-grit-white font-display text-sm tracking-widest px-2 py-0.5 -rotate-2">
+                    RIG_CONTROLLER // SUB-BASS ISOLATION
+                  </div>
+                  <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white leading-none">
+                    STAGE BOUNCER • REALTIME TICKET ENCLAVE
+                  </h2>
+                  <p className="font-mono-zine text-xs sm:text-sm text-grit-dim leading-relaxed">
+                    NO SCALPERS. DIRECT OPTIMISTIC HARDWARE LOCKS ASSIGNED TO INDIVIDUAL TYVEK WRISTBANDS. TAPPING A STANDING TILE IMMEDIATELY SENDS A SUB-12MS STOMP SOCKET BURST TO PREVENT OVERCROWDING.
+                  </p>
+                  <div className="space-y-2 font-ticker text-xs">
+                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
+                      <span className="text-grit-dim">RIG PROTOCOL:</span>
+                      <span className="text-acid-yellow font-bold">RFC-7118 / STOMP v1.2</span>
+                    </div>
+                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
+                      <span className="text-grit-dim">SUBWOOFER AMP:</span>
+                      <span className="text-grit-white font-bold">40,000W CLASS-D MONO</span>
+                    </div>
+                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
+                      <span className="text-grit-dim">CONCURRENCY STAMP:</span>
+                      <span className="text-neon-magenta font-bold">@Version ISOLATED LOCK</span>
+                    </div>
+                  </div>
+                  <div className="pt-2 flex items-center gap-2 font-ticker text-xs text-acid-yellow">
+                    <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping" />
+                    ACTIVE BOUNCER RADAR: 64 SENSORS LIVE
+                  </div>
+                </div>
+
+                {/* Interactive Pit / Warehouse Floor Grid */}
+                <div className="lg:col-span-7 bg-asphalt-black p-4 sm:p-6 border-3 border-grit-white shadow-[6px_6px_0px_#eefc54]">
+                  <HeroProductDemo onOpenBooking={() => openBookingModal(popularEvents[0] || events[0])} />
+                </div>
+              </div>
+            </section>
+
+            {/* 6. RAW DIY ZINE MANIFESTO PILLARS */}
+            <section className="mb-16">
+              <div className="mb-6">
+                <div className="font-ticker text-xs font-bold text-acid-yellow uppercase tracking-widest">
+                  MANIFESTO // ZERO CORPORATE SPONSORSHIP
+                </div>
+                <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white">
+                  THE WAREHOUSE RULES OF ENGAGEMENT
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Rule 1 */}
+                <div className="bg-asphalt-surface border-3 border-grit-white p-5 relative shadow-[4px_4px_0px_#eefc54] -rotate-1 hover:rotate-0 transition-transform">
+                  <div className="w-10 h-10 bg-acid-yellow text-asphalt-black flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
+                    01
+                  </div>
+                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">NO CAMERAS / NO FLASH</h3>
+                  <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
+                    Stickers placed over smartphone lenses at gate dispatch. Protect the dance floor and communal anonymity.
+                  </p>
+                  <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-neon-magenta">
+                    RULE: STRICT IMMEDIATE REMOVAL
+                  </div>
+                </div>
+
+                {/* Rule 2 */}
+                <div className="bg-asphalt-surface border-3 border-grit-white p-5 relative shadow-[4px_4px_0px_#ff1f6d] rotate-1 hover:rotate-0 transition-transform">
+                  <div className="w-10 h-10 bg-neon-magenta text-grit-white flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
+                    02
+                  </div>
+                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">40KW SUBWOOFER PRIORITY</h3>
+                  <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
+                    Acoustic pressure calibrated to 32Hz fundamentals. Complimentary foam hearing protection stocked at bar.
+                  </p>
+                  <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-acid-yellow">
+                    SPL: 130DB SUSTAINED SUB-BASS
+                  </div>
+                </div>
+
+                {/* Rule 3 */}
+                <div className="bg-asphalt-surface border-3 border-grit-white p-5 relative shadow-[4px_4px_0px_#1d4ed8] -rotate-1 hover:rotate-0 transition-transform">
+                  <div className="w-10 h-10 bg-electric-cobalt text-grit-white flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
+                    03
+                  </div>
+                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">SECRET GATE DISPATCH</h3>
+                  <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
+                    GPS pin coordinates dropped via automated encrypted SMS exactly two hours prior to soundcheck.
+                  </p>
+                  <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-grit-white">
+                    DELIVERY: 22:00 SHARP DISPATCH
+                  </div>
+                </div>
+
+                {/* Rule 4 */}
+                <div className="bg-asphalt-surface border-3 border-grit-white p-5 relative shadow-[4px_4px_0px_#ffffff] rotate-2 hover:rotate-0 transition-transform">
+                  <div className="w-10 h-10 bg-grit-white text-asphalt-black flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
+                    04
+                  </div>
+                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">ANALOG CASSETTE DUBS</h3>
+                  <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
+                    Live master sets recorded straight to magnetic tape. Limited run cassettes traded at merch table after sunrise.
+                  </p>
+                  <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-neon-magenta">
+                    EDITIONS: 50 TAPES PER NIGHT
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 7. SECRET GATECOORDINATES CALLOUT BOX */}
+            <section className="bg-asphalt-black border-4 border-acid-yellow p-6 md:p-8 relative shadow-[8px_8px_0px_#ffffff] mb-12" id="gatekeeper">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-acid-yellow text-asphalt-black flex items-center justify-center font-display text-4xl -rotate-6 border-2 border-asphalt-black shadow-[3px_3px_0px_#ff1f6d]">
+                    ⚡
+                  </div>
+                  <div>
+                    <div className="font-ticker text-xs font-bold text-neon-magenta uppercase tracking-wider mb-1">
+                      ENCRYPTED COMM CHANNEL
+                    </div>
+                    <h3 className="font-display text-3xl uppercase tracking-wide text-grit-white">
+                      NEED DIRECT SOUND SYSTEM INTEGRATION?
+                    </h3>
+                    <p className="font-mono-zine text-xs text-grit-dim">
+                      Submit your hardware live rig or hook directly into the underground STOMP gatekeeper network.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                  <button 
+                    type="button"
+                    onClick={() => setIsCheckInOpen(true)}
+                    className="w-full md:w-auto px-6 py-3 bg-acid-yellow hover:bg-acid-yellow-hover text-asphalt-black font-display text-2xl tracking-wider uppercase border-2 border-asphalt-black shadow-[4px_4px_0px_#ff1f6d] font-bold cursor-pointer"
+                  >
+                    BOUNCER CONSOLE
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setIsApiDocsOpen(true)}
+                    className="w-full md:w-auto px-6 py-3 bg-asphalt-card hover:bg-asphalt-surface text-grit-white font-display text-2xl tracking-wider uppercase border-2 border-grit-white shadow-[4px_4px_0px_#eefc54] font-bold cursor-pointer"
+                  >
+                    TAPE SPECS
+                  </button>
+                </div>
+              </div>
+            </section>
+
           </div>
 
-          {/* SkillBridge Footer */}
-          <footer style={{ background: 'var(--bg-main)', borderTop: '1px solid var(--border-subtle)', padding: '60px 24px 40px 24px', marginTop: '60px' }}>
-            <div style={{ maxWidth: '1320px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '40px' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--sb-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Ticket size={20} color="#FFF" />
+          {/* 8. RAW UNDERGROUND COMMUNITY FOOTER */}
+          <footer className="w-full bg-asphalt-black border-t-4 border-grit-white mt-12">
+            <div className="max-w-[1360px] mx-auto px-4 md:px-6 py-10">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                  <div className="bg-acid-yellow text-asphalt-black px-2 py-0.5 font-display text-2xl tracking-wider -rotate-2 border-2 border-grit-white inline-block mb-3">
+                    VAULT://90s
                   </div>
-                  <span style={{ fontSize: '1.3rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>
-                    Event<span style={{ color: 'var(--sb-orange)' }}>Hub</span>
-                  </span>
+                  <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
+                    UNDERGROUND ACID-ZINE • DIY HARDWARE TAPE REPAIR • UNLICENSED WAREHOUSE PROTOCOL • ZERO RESPECT FOR CORPORATE CONCERT MONOPOLIES.
+                  </p>
                 </div>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                  Built with purpose. Powered by revolution. Connecting attendees with verified live events and transparent seat allocation.
-                </p>
+                <div>
+                  <div className="font-display text-xl uppercase tracking-wider text-acid-yellow mb-3">
+                    TRANSMISSION CHANNELS
+                  </div>
+                  <ul className="space-y-1.5 font-ticker text-xs text-grit-dim">
+                    <li onClick={() => handleNavigate('events')} className="hover:text-grit-white transition-colors cursor-pointer">• 40KW SUBWOOFER CLUSTER</li>
+                    <li onClick={() => handleNavigate('create-event')} className="hover:text-grit-white transition-colors cursor-pointer">• HOST NEW RAVE</li>
+                    <li onClick={() => handleNavigate('checkin')} className="hover:text-grit-white transition-colors cursor-pointer">• GATE QR SCANNER</li>
+                    <li onClick={() => setIsApiDocsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• PIRATE FM 89.9 RELAY</li>
+                  </ul>
+                </div>
+                <div>
+                  <div className="font-display text-xl uppercase tracking-wider text-neon-magenta mb-3">
+                    ZINE ARCHIVES
+                  </div>
+                  <ul className="space-y-1.5 font-ticker text-xs text-grit-dim">
+                    <li onClick={() => setIsTermsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• ISSUE 87: WAREHOUSE SQUATS (TERMS)</li>
+                    <li onClick={() => setIsPrivacyOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• ISSUE 86: 303 ACID BASSLINES (PRIVACY)</li>
+                    <li onClick={() => setIsApiDocsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• ZXING SCANNER SOURCE CODE (API)</li>
+                    <li onClick={() => setIsSystemStatusOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• EMERGENCY POLICE MONITORS (HEALTH)</li>
+                  </ul>
+                </div>
+                <div>
+                  <div className="font-display text-xl uppercase tracking-wider text-electric-cobalt mb-3">
+                    HARDWARE RIG STATUS
+                  </div>
+                  <div className="bg-asphalt-surface p-3 border-2 border-asphalt-border space-y-1.5 font-ticker text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-grit-dim">SOCKET ENGINE:</span>
+                      <span className="text-acid-yellow font-bold">ONLINE // 0ms</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-grit-dim">DECIBEL MONITOR:</span>
+                      <span className="text-neon-magenta font-bold">PEAK 132.8 dB</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-grit-dim">SECTOR NODE:</span>
+                      <span className="text-grit-white font-bold">SF-PIER-TERMINAL</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-
-              <div>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-main)', marginBottom: '16px' }}>Platform</h4>
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-                  <li><a href="#events" onClick={(e) => { e.preventDefault(); handleNavigate('events'); }}>Browse Events</a></li>
-                  <li><a href="#create" onClick={(e) => { e.preventDefault(); handleNavigate('create-event'); }}>Host Event</a></li>
-                  <li><a href="#checkin" onClick={(e) => { e.preventDefault(); handleNavigate('checkin'); }}>Gate QR Scanner</a></li>
-                  <li><a href="#apidocs" onClick={(e) => { e.preventDefault(); setIsApiDocsOpen(true); }}>API Documentation</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-main)', marginBottom: '16px' }}>Resources</h4>
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-                  <li><a href="#terms" onClick={(e) => { e.preventDefault(); setIsTermsOpen(true); }}>Terms & Conditions</a></li>
-                  <li><a href="#privacy" onClick={(e) => { e.preventDefault(); setIsPrivacyOpen(true); }}>Privacy Policy</a></li>
-                  <li><a href="#status" onClick={(e) => { e.preventDefault(); setIsSystemStatusOpen(true); }}>System Status</a></li>
-                  <li><a href="#database" onClick={(e) => { e.preventDefault(); setIsDatabaseConsoleOpen(true); }}>Database Console</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <div style={{ maxWidth: '1320px', margin: '40px auto 0 auto', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-              <span>© 2026 EventHub Inc. All rights reserved.</span>
-              <div style={{ display: 'flex', gap: '20px' }}>
-                <a href="#privacy" onClick={(e) => { e.preventDefault(); setIsPrivacyOpen(true); }}>Privacy</a>
-                <a href="#terms" onClick={(e) => { e.preventDefault(); setIsTermsOpen(true); }}>Terms</a>
-                <a href="#cookies" onClick={(e) => { e.preventDefault(); setIsCookiesOpen(true); }}>Cookies</a>
+              <div className="pt-6 border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-4 font-ticker text-xs text-grit-dim">
+                <div>
+                  © 1994-2026 VAULT_UNDERGROUND ACID FLYER COLLECTIVE. ALL TAPE PASSES GUARANTEED AUTHENTIC.
+                </div>
+                <div className="flex items-center gap-4">
+                  <a href="#apidocs" onClick={(e) => { e.preventDefault(); setIsApiDocsOpen(true); }} className="text-acid-yellow hover:underline">FLYER_PDF_DOWNLOAD</a>
+                  <span>•</span>
+                  <a href="#terms" onClick={(e) => { e.preventDefault(); setIsTermsOpen(true); }} className="text-neon-magenta hover:underline">BOUNCER_RULES</a>
+                  <span>•</span>
+                  <a href="#privacy" onClick={(e) => { e.preventDefault(); setIsPrivacyOpen(true); }} className="text-grit-white hover:underline">PRIVACY_POLICY</a>
+                </div>
               </div>
             </div>
           </footer>
@@ -893,7 +900,6 @@ export default function App() {
       )}
 
       {/* Modals */}
-
       <SeatMapModal 
         isOpen={isSeatMapOpen} 
         onClose={() => setIsSeatMapOpen(false)} 
@@ -932,35 +938,218 @@ export default function App() {
       <CookiesModal isOpen={isCookiesOpen} onClose={() => setIsCookiesOpen(false)} showToast={showToast} />
       <ApiDocsModal isOpen={isApiDocsOpen} onClose={() => setIsApiDocsOpen(false)} />
 
-      {/* Toast Overlay */}
+      {/* Toast Notifications */}
       <div className="toast-container">
         {toasts.map((toast) => (
           <div key={toast.id} className={`toast toast-${toast.type}`}>
-            {toast.type === 'success' && <Check size={16} color="#FFF" />}
-            {toast.type === 'error' && <AlertCircle size={16} color="#FFF" />}
-            {toast.type === 'info' && <Bell size={16} color="#FFF" />}
+            {toast.type === 'success' && <Check size={16} />}
+            {toast.type === 'error' && <AlertCircle size={16} />}
+            {toast.type === 'info' && <Bell size={16} />}
             <span>{toast.message}</span>
           </div>
         ))}
       </div>
-
-      {/* 1-Time Multilingual Namaste Intro Splash */}
-      {showIntro && (
-        <IntroSplashScreen 
-          onComplete={() => {
-            setShowIntro(false);
-            sessionStorage.setItem('eventhub_intro_seen', 'true');
-          }} 
-        />
-      )}
     </div>
   );
 }
 
-// Eventbrite Signature Event Card
-function EventCard({ event, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
+// Interactive Bouncer & Pit Floor Standing Tile Enclave
+function HeroProductDemo({ onOpenBooking }) {
+  const [selectedTile, setSelectedTile] = useState('F1-05');
+  const [tariff, setTariff] = useState(30);
+  const [lockedSuccess, setLockedSuccess] = useState(false);
+
+  const tilesRow1 = [
+    { id: 'F1-01', label: '01', price: 30, available: true },
+    { id: 'F1-02', label: '02', price: 30, available: true },
+    { id: 'F1-03', label: '✕', price: 30, available: false },
+    { id: 'F1-04', label: '✕', price: 30, available: false },
+    { id: 'F1-05', label: '05', price: 30, available: true },
+    { id: 'F1-06', label: '06', price: 30, available: true },
+    { id: 'F1-07', label: '07', price: 30, available: true },
+    { id: 'F1-08', label: '✕', price: 30, available: false },
+  ];
+
+  const tilesRow2 = [
+    { id: 'M2-01', label: '01', price: 30, available: true },
+    { id: 'M2-02', label: '02', price: 30, available: true },
+    { id: 'M2-03', label: '03', price: 30, available: true },
+    { id: 'M2-04', label: '04', price: 30, available: true },
+    { id: 'M2-05', label: '05', price: 30, available: true },
+    { id: 'M2-06', label: '06', price: 30, available: true },
+    { id: 'M2-07', label: '✕', price: 30, available: false },
+    { id: 'M2-08', label: '✕', price: 30, available: false },
+  ];
+
+  const tilesRow3 = [
+    { id: 'B3-01', label: '✕', price: 30, available: false },
+    { id: 'B3-02', label: '02', price: 30, available: true },
+    { id: 'B3-03', label: '03', price: 30, available: true },
+    { id: 'B3-04', label: '04', price: 30, available: true },
+    { id: 'B3-05', label: '05', price: 30, available: true },
+    { id: 'B3-06', label: '06', price: 30, available: true },
+    { id: 'B3-07', label: '07', price: 30, available: true },
+    { id: 'B3-08', label: '08', price: 30, available: true },
+  ];
+
+  const handleSelect = (tile) => {
+    if (!tile.available) return;
+    setSelectedTile(tile.id);
+    setTariff(tile.price);
+  };
+
+  const handleLock = () => {
+    setLockedSuccess(true);
+    setTimeout(() => {
+      setLockedSuccess(false);
+      onOpenBooking();
+    }, 600);
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-asphalt-border">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-acid-yellow text-lg">speaker_group</span>
+          <span className="font-display text-2xl uppercase tracking-wider text-grit-white">PIT FLOOR SECTOR A: FRONT SUB-ARRAY</span>
+        </div>
+        <span className="font-ticker text-[10px] bg-neon-magenta text-grit-white px-2 py-0.5 font-bold uppercase">
+          WS://40KW STREAM LIVE
+        </span>
+      </div>
+
+      <div className="w-full py-2 hazard-tape text-center border-2 border-asphalt-black mb-4 select-none">
+        <span className="font-impact text-sm tracking-widest text-asphalt-black uppercase bg-acid-yellow px-2 py-0.5 font-black">
+          [ 40KW SUBWOOFER WALL • NO EARPLUGS NO ENTRY ]
+        </span>
+      </div>
+
+      <div className="space-y-2 mb-4 select-none">
+        {/* Row 1 */}
+        <div className="flex items-center gap-2">
+          <span className="font-ticker text-xs font-bold text-neon-magenta w-6">F1</span>
+          <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+            {tilesRow1.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                disabled={!t.available}
+                onClick={() => handleSelect(t)}
+                className={
+                  !t.available
+                    ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                    : selectedTile === t.id
+                    ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
+                    : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                }
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 2 */}
+        <div className="flex items-center gap-2">
+          <span className="font-ticker text-xs font-bold text-acid-yellow w-6">M2</span>
+          <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+            {tilesRow2.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                disabled={!t.available}
+                onClick={() => handleSelect(t)}
+                className={
+                  !t.available
+                    ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                    : selectedTile === t.id
+                    ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
+                    : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                }
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 3 */}
+        <div className="flex items-center gap-2">
+          <span className="font-ticker text-xs font-bold text-grit-dim w-6">B3</span>
+          <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+            {tilesRow3.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                disabled={!t.available}
+                onClick={() => handleSelect(t)}
+                className={
+                  !t.available
+                    ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                    : selectedTile === t.id
+                    ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
+                    : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                }
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Legend Bar */}
+      <div className="flex flex-wrap items-center justify-between text-xs font-ticker pt-2 border-t border-asphalt-border text-grit-dim gap-2">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-asphalt-card border border-grit-white/40" /> OPEN TILE</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-acid-yellow border border-asphalt-black" /> SELECTED</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-asphalt-surface border border-asphalt-border opacity-40" /> MOSH-CLAIMED</span>
+        </div>
+        <span className="text-neon-magenta font-bold">1 WRISTBAND HELD (LOCK #OP-9821)</span>
+      </div>
+
+      {/* Total Calculation & Commit Button */}
+      <div className="mt-4 pt-3 bg-asphalt-card p-3 border-2 border-grit-white flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <span className="block text-[10px] font-ticker text-grit-dim uppercase">TOTAL WRISTBAND TARIFF</span>
+          <span className="font-display text-3xl text-acid-yellow">${tariff}.00 USD</span>
+        </div>
+        <button 
+          type="button"
+          onClick={handleLock}
+          className="w-full sm:w-auto px-6 py-2.5 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white font-display text-2xl tracking-wider uppercase border-2 border-asphalt-black shadow-[3px_3px_0px_#eefc54] active:translate-y-0.5 transition-all flex items-center justify-center gap-2 font-bold cursor-pointer"
+        >
+          <span>{lockedSuccess ? 'WRISTBAND LOCKED // OPENING PASS' : 'LOCK WRISTBAND & GET COORDS'}</span>
+          <span className="material-symbols-outlined text-lg">{lockedSuccess ? 'check_circle' : 'lock'}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Raw 90s Brutalist Rave Flyer Deck Card
+function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
   const isSoldOut = event.availableSeats === 0;
   const canDelete = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER');
+
+  const badgeTitles = ['TB-303 OVERDRIVE', 'HARDWARE ONLY', 'OUTRUN CHOPPER', 'JAPANOISE RITUAL', 'ACID SUMMIT', 'INDUSTRIAL RIG'];
+  const badgeTitle = badgeTitles[index % badgeTitles.length];
+
+  const badgeStyles = [
+    'bg-neon-magenta text-grit-white rotate-6',
+    'bg-acid-yellow text-asphalt-black -rotate-3',
+    'bg-electric-cobalt text-grit-white rotate-4',
+    'bg-neon-magenta text-grit-white -rotate-6'
+  ];
+  const badgeStyle = badgeStyles[index % badgeStyles.length];
+
+  const shadowStyles = [
+    'shadow-[6px_6px_0px_#eefc54]',
+    'shadow-[6px_6px_0px_#ff1f6d]',
+    'shadow-[6px_6px_0px_#1d4ed8]',
+    'shadow-[6px_6px_0px_#eefc54]'
+  ];
+  const shadowStyle = shadowStyles[index % shadowStyles.length];
 
   const getImageForEvent = (event) => {
     if (event.bannerImageUrl) return event.bannerImageUrl;
@@ -971,101 +1160,132 @@ function EventCard({ event, currentUser, onBook, onWishlist, onWaitlist, onDelet
     return '/images/concert.png';
   };
 
-  const formatEventDateHeader = (dateStr) => {
-    if (!dateStr) return 'SAT, SEP 20 • 7:00 PM';
+  const formatEventDate = (dateStr) => {
+    if (!dateStr) return '18.OCT // 23:00 - 07:00';
     try {
       const d = new Date(dateStr);
-      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase() + ' • 7:00 PM';
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+      return `${day}.${month} // 23:00 - 07:00`;
     } catch {
       return dateStr;
     }
   };
 
   return (
-    <div className="glass-panel glass-panel-interactive" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      {/* Banner */}
-      <div className="card-banner-wrapper">
+    <div className={`bg-asphalt-card border-3 border-grit-white relative group hover:-translate-y-1 transition-all ${shadowStyle} flex flex-col justify-between`}>
+      {/* Angular Flyer Sticker Overlay */}
+      <div className={`absolute -top-3 -right-2 ${badgeStyle} font-display text-sm tracking-wider px-2.5 py-0.5 border border-asphalt-black z-30 shadow-md`}>
+        {badgeTitle}
+      </div>
+
+      {/* Upper Artwork with Photocopy Monochrome Texture */}
+      <div className="relative h-60 w-full overflow-hidden bg-asphalt-black border-b-3 border-grit-white">
         <img 
           src={getImageForEvent(event)} 
           alt={event.name} 
-          className="card-banner-img"
+          className="w-full h-full object-cover grayscale contrast-200 brightness-90 group-hover:scale-105 transition-transform duration-300"
+          loading="lazy"
         />
-        <div className="card-banner-overlay">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className="badge badge-orange">
-              {event.category || 'EVENT'}
-            </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              {canDelete && (
-                <button 
-                  onClick={onDelete} 
-                  style={{ padding: '8px', borderRadius: '50%', background: 'rgba(220, 38, 38, 0.85)', border: 'none', cursor: 'pointer' }} 
-                  title="Remove Event"
-                >
-                  <Trash2 size={14} color="#FFFFFF" />
-                </button>
-              )}
-              <button 
-                onClick={onWishlist} 
-                style={{ padding: '8px', borderRadius: '50%', background: 'rgba(15, 23, 42, 0.85)', border: '1px solid var(--border-subtle)', cursor: 'pointer' }} 
-                title="Save to Wishlist"
-              >
-                <Heart size={14} color="#FFFFFF" />
-              </button>
-            </div>
-          </div>
+        <div className="absolute inset-0 bg-asphalt-black/40 mix-blend-multiply" />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.78rem', color: '#FFB800', fontWeight: '700' }}>
-            <Star size={13} color="#FFB800" fill="#FFB800" /> 4.9 <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>(120+ reviews)</span>
-          </div>
+        {/* Sticker Tag */}
+        <div className="absolute top-2 left-2 bg-acid-yellow text-asphalt-black font-ticker text-[10px] font-black px-1.5 py-0.5 -rotate-3 border border-asphalt-black">
+          DATE: {formatEventDate(event.eventDate)}
+        </div>
+
+        <div className="absolute bottom-2 left-2 bg-asphalt-black/90 text-grit-white font-ticker text-[10px] px-2 py-0.5 border border-grit-white/50">
+          SOUND RIG: 40KW FUNKTION
+        </div>
+
+        {/* Quick Actions (Wishlist & Delete) */}
+        <div className="absolute top-2 right-2 flex items-center gap-1 z-40">
+          {canDelete && (
+            <button 
+              type="button"
+              onClick={onDelete}
+              className="bg-danger-red text-grit-white p-1 border border-asphalt-black text-xs font-bold cursor-pointer"
+              title="Remove Event"
+            >
+              ✕
+            </button>
+          )}
+          <button 
+            type="button"
+            onClick={onWishlist}
+            className="bg-asphalt-black/80 hover:bg-neon-magenta text-grit-white p-1 border border-grit-white text-xs cursor-pointer"
+            title="Save tape to wishlist"
+          >
+            <Heart size={13} />
+          </button>
         </div>
       </div>
 
-      {/* Content */}
-      <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      {/* Hazard Tear Notch */}
+      <div className={`h-4 ${index % 2 === 0 ? 'hazard-tape' : 'hazard-tape-magenta'} relative flex items-center justify-between border-y-2 border-asphalt-black select-none`}>
+        <div className="w-3 h-4 bg-asphalt-black -ml-1 border-r-2 border-grit-white" />
+        <div className="font-ticker text-[9px] font-black text-asphalt-black tracking-widest uppercase">
+          TEAR LINE /// NO REFUNDS
+        </div>
+        <div className="w-3 h-4 bg-asphalt-black -mr-1 border-l-2 border-grit-white" />
+      </div>
+
+      {/* Flyer Lower Stub Body */}
+      <div className="p-4 flex-1 flex flex-col justify-between bg-asphalt-card">
         <div>
-          {/* Eventbrite Signature Orange Date Header */}
-          <div style={{ fontSize: '0.78rem', fontWeight: '800', color: 'var(--eb-orange)', letterSpacing: '0.05em', marginBottom: '6px' }}>
-            {formatEventDateHeader(event.eventDate)}
+          <div className="text-[10px] font-ticker text-neon-magenta uppercase tracking-wider mb-1 font-bold">
+            GATE_0{((event.id || 1) % 4) + 1} // SEC {event.category || 'INDUSTRIAL BASIN'}
           </div>
-
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '8px', lineHeight: 1.35, fontWeight: 700, color: 'var(--text-main)' }}>{event.name}</h3>
-          <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.5 }}>
-            {event.description || 'An unforgettable live event featuring top performances and interactive sessions.'}
+          <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white group-hover:text-acid-yellow transition-colors leading-tight mb-1">
+            {event.name}
+          </h3>
+          <p className="font-mono-zine text-xs text-grit-dim mb-3">
+            {event.venueName || 'PIER 80 COLD SHED'} • {event.city || '4200 ILLINOIS ST'}
           </p>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '18px' }}>
-            <MapPin size={15} color="var(--text-muted)" /> {event.venueName || 'Main Arena Center'}
-          </div>
         </div>
 
-        {/* Footer */}
-        <div style={{ borderTop: '1px solid var(--divider)', paddingTop: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div>
+          <div className="bg-asphalt-black p-2 border border-asphalt-border mb-3 flex items-center justify-between">
             <div>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ticket Price</span>
-              <span style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
+              <span className="block text-[9px] font-ticker text-grit-dim">WRISTBAND TARIFF</span>
+              <span className="font-display text-2xl text-acid-yellow">
+                {formatPrice(event.ticketPrice, event.currency)}
+              </span>
             </div>
-
-            <div style={{ textAlign: 'right' }}>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Availability</span>
-              {isSoldOut ? (
-                <span className="badge badge-rose">SOLD OUT</span>
-              ) : (
-                <span className="badge badge-emerald">{event.availableSeats} Left</span>
-              )}
+            <div className="text-right">
+              <span className="block text-[9px] font-ticker text-grit-dim">CAPACITY</span>
+              <span className="font-ticker text-xs font-bold text-neon-magenta">
+                {isSoldOut ? 'SOLD OUT' : `${event.availableSeats} LEFT`}
+              </span>
             </div>
           </div>
 
           {isSoldOut ? (
-            <button onClick={onWaitlist} className="btn btn-secondary" style={{ width: '100%', height: '44px' }}>
-              <Bell size={15} /> Join Waitlist
+            <button 
+              type="button"
+              onClick={onWaitlist}
+              className="w-full py-2 bg-asphalt-surface text-grit-dim font-display text-xl uppercase tracking-wider font-black border-2 border-asphalt-border transition-all flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <span>JOIN WAITLIST</span>
             </button>
           ) : (
-            <button onClick={onBook} className="btn btn-primary" style={{ width: '100%', height: '44px' }}>
-              <Ticket size={15} /> Select Seats
+            <button 
+              type="button"
+              onClick={onBook}
+              className="w-full py-2 bg-acid-yellow hover:bg-acid-yellow-hover text-asphalt-black font-display text-xl uppercase tracking-wider font-black border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] transition-all flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <span>RUSH ENTRY</span>
+              <span className="material-symbols-outlined text-base">bolt</span>
             </button>
           )}
+
+          {/* Dense Barcode Strip */}
+          <div className="mt-3 pt-2 border-t border-asphalt-border/60 flex flex-col items-center">
+            <svg className="w-full h-4 text-grit-dim fill-current opacity-70" preserveAspectRatio="none" viewBox="0 0 100 20">
+              <rect height="20" width="2" x="0" y="0"></rect><rect height="20" width="1" x="4" y="0"></rect><rect height="20" width="3" x="7" y="0"></rect><rect height="20" width="2" x="12" y="0"></rect><rect height="20" width="4" x="16" y="0"></rect><rect height="20" width="1" x="22" y="0"></rect><rect height="20" width="2" x="25" y="0"></rect><rect height="20" width="3" x="29" y="0"></rect><rect height="20" width="1" x="34" y="0"></rect><rect height="20" width="4" x="37" y="0"></rect><rect height="20" width="2" x="43" y="0"></rect><rect height="20" width="1" x="47" y="0"></rect><rect height="20" width="3" x="50" y="0"></rect><rect height="20" width="2" x="55" y="0"></rect><rect height="20" width="4" x="59" y="0"></rect><rect height="20" width="1" x="65" y="0"></rect><rect height="20" width="3" x="68" y="0"></rect><rect height="20" width="2" x="73" y="0"></rect><rect height="20" width="4" x="77" y="0"></rect><rect height="20" width="1" x="83" y="0"></rect><rect height="20" width="2" x="86" y="0"></rect><rect height="20" width="4" x="90" y="0"></rect><rect height="20" width="1" x="96" y="0"></rect>
+            </svg>
+            <span className="text-[9px] font-ticker text-grit-dim tracking-widest mt-0.5">AUTH_SIG // WAREHOUSE_303</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1077,7 +1297,7 @@ const mockEvents = [
   {
     id: 1,
     name: 'Neon Horizon Cyber Music Festival 2026',
-    description: 'Experience 3 days of immersive electronic music, holographic stages, and world-class laser shows.',
+    description: 'Immersive electronic music event featuring holographic stages and world-class performances.',
     category: 'MUSIC',
     ticketPrice: 85.00,
     availableSeats: 120,
@@ -1088,7 +1308,7 @@ const mockEvents = [
   {
     id: 2,
     name: 'Global AI & Autonomous Tech Summit 2026',
-    description: 'Keynotes from leading AI researchers, robotics live demonstrations, and executive networking sessions.',
+    description: 'Keynotes from leading systems researchers, live robotics demonstrations, and engineering workshops.',
     category: 'TECH',
     ticketPrice: 299.00,
     availableSeats: 45,
@@ -1099,7 +1319,7 @@ const mockEvents = [
   {
     id: 3,
     name: 'Phantom of the Opera: Broadway Revival',
-    description: 'The iconic award-winning musical returns with an all-new cast and breathtaking orchestral arrangements.',
+    description: 'Award-winning musical production with orchestral accompaniment and live staging.',
     category: 'THEATER',
     ticketPrice: 120.00,
     availableSeats: 0,
@@ -1110,7 +1330,7 @@ const mockEvents = [
   {
     id: 4,
     name: 'Grand Prix eSports World Championship',
-    description: 'Top simulator racing drivers compete for the $500,000 prize pool live on stage in front of thousands.',
+    description: 'Simulator racing championship featuring verified competitive telemetry and live finals.',
     category: 'SPORTS',
     ticketPrice: 45.00,
     availableSeats: 300,

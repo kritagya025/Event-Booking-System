@@ -149,7 +149,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
   const toggleSeatSelection = (seat) => {
     if (seat.status === 'BOOKED' || seat.status === 'LOCKED') {
-      showToast(`Seat ${seat.seatNumber} is unavailable`, 'error');
+      showToast(`SECTOR TILE ${seat.seatNumber} IS OCCUPIED / LOCKED`, 'error');
       return;
     }
 
@@ -157,7 +157,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
       setSelectedSeats(selectedSeats.filter(s => s.id !== seat.id));
     } else {
       if (selectedSeats.length >= 6) {
-        showToast('Maximum 6 seats per booking', 'info');
+        showToast('MAXIMUM 6 WRISTBANDS PER TRANSMISSION', 'info');
         return;
       }
       setSelectedSeats([...selectedSeats, seat]);
@@ -186,9 +186,9 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         calculatedDiscount: discountAmount
       });
 
-      showToast(`Coupon applied: saved ${formatPrice(discountAmount, event.currency)}`, 'success');
+      showToast(`AUTH CIPHER ACCEPTED: DEDUCTED ${formatPrice(discountAmount, event.currency)}`, 'success');
     } catch (err) {
-      showToast(err.message || 'Invalid coupon code', 'error');
+      showToast(err.message || 'INVALID CIPHER CODE', 'error');
       setDiscountInfo(null);
     } finally {
       setValidatingCoupon(false);
@@ -212,7 +212,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
   const handleConfirmBooking = async () => {
     if (!currentUser) {
-      showToast('Please sign in to complete your booking', 'info');
+      showToast('AUTHENTICATE IDENTITY BEFORE LOCKING TICKETS', 'info');
       return;
     }
 
@@ -237,17 +237,15 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
       let bookingResult = null;
 
-      // 1. Try Backend Booking API
       try {
         bookingResult = await apiFetch('/bookings', {
           method: 'POST',
           body: JSON.stringify(payload)
         });
       } catch (bErr) {
-        console.warn('Backend booking API warning, using fallback:', bErr);
+        console.warn('Backend booking API notice, generating cryptographic wristband:', bErr);
       }
 
-      // 2. Fallback booking object if backend endpoint returned null or threw
       if (!bookingResult || !bookingResult.id) {
         bookingResult = {
           id: Date.now(),
@@ -259,14 +257,12 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           event: event
         };
       } else {
-        // 3. Complete Payment API
         await apiFetch('/payments', {
           method: 'POST',
           body: JSON.stringify({ bookingId: bookingResult.id, paymentMethod: validPaymentMethod })
         }).catch((pErr) => console.warn('Payment API notice:', pErr));
       }
 
-      // 4. Save local copy so user sees their new ticket pass instantly in My Tickets
       try {
         const storedBookings = JSON.parse(localStorage.getItem('my_local_bookings') || '[]');
         const newBookingRecord = {
@@ -282,144 +278,194 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         localStorage.setItem('my_local_bookings', JSON.stringify([newBookingRecord, ...storedBookings]));
       } catch (lsErr) {}
 
-      // 5. Confetti celebratory effect
       try {
         if (typeof confetti === 'function') {
-          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
         }
       } catch (cErr) {}
 
-      showToast('🎉 Booking & Payment Successful! Your QR ticket is ready.', 'success');
+      showToast('WRISTBAND PASS SECURED // ENCLAVE BARCODE ISSUED', 'success');
       if (onBookingSuccess) {
         onBookingSuccess(bookingResult);
       }
       onClose();
     } catch (err) {
       console.error('Booking error:', err);
-      showToast('🎉 Booking & Payment Successful! Your QR ticket is ready.', 'success');
+      showToast('WRISTBAND PASS SECURED // ENCLAVE BARCODE ISSUED', 'success');
       onClose();
     } finally {
       setBookingLoading(false);
     }
   };
 
-  // Group seats by row for display
   const rowsList = Array.from(new Set(seatMap.map(s => s.rowNumber || 'A'))).sort();
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '720px', width: '100%' }}>
-        
-        {/* Header with Step Progress */}
-        <div className="modal-header">
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto" onClick={onClose}>
+      <div 
+        className="w-full max-w-2xl bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] my-auto relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Top Slanted Sticker */}
+        <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+          VAULT://BOUNCER_ENCLAVE
+        </div>
+
+        {/* Modal Header */}
+        <div className="p-5 md:p-6 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>{event.name}</h3>
-              <span className="badge badge-purple pulse-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <Zap size={10} /> Live
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+                LIVE_ADMITTANCE
+              </span>
+              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
+                STOMP NODE: {event.id}
               </span>
             </div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
-              {event.venueName || 'Main Venue'} · {availableCount} seats available
+            <h3 className="font-display text-2xl md:text-3xl uppercase tracking-tight text-grit-white mt-1 leading-none">
+              {event.name}
+            </h3>
+            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
+              VENUE: {event.venueName || 'NORTH INDUSTRIAL DOCKS'} · {availableCount} WRISTBANDS REMAINING
             </p>
           </div>
-          <button onClick={onClose} className="btn btn-secondary" style={{ padding: '6px 10px', borderRadius: '50%' }}>
-            <X size={16} />
+          <button 
+            onClick={onClose} 
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+          >
+            <X size={18} />
           </button>
         </div>
 
-        {/* Multi-Step Indicator */}
-        <div style={{ display: 'flex', borderBottom: '1px solid var(--border-subtle)', padding: '12px 24px', gap: '14px', fontSize: '0.8rem', color: 'var(--text-muted)', background: 'var(--bg-main)' }}>
-          <span style={{ color: step >= 1 ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: step === 1 ? '700' : '400' }}>1. Select Seats</span>
-          <span>→</span>
-          <span style={{ color: step >= 2 ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: step === 2 ? '700' : '400' }}>2. Review</span>
-          <span>→</span>
-          <span style={{ color: step >= 3 ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: step === 3 ? '700' : '400' }}>3. Checkout</span>
-          <span>→</span>
-          <span style={{ color: step >= 4 ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: step === 4 ? '700' : '400' }}>4. Confirm</span>
+        {/* Multi-Step Protocol Bar */}
+        <div className="bg-asphalt-black border-b border-asphalt-border px-5 py-2.5 flex items-center justify-between text-xs font-ticker overflow-x-auto gap-2">
+          <div className="flex items-center gap-2">
+            <span className={step === 1 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
+              [01] PIT MATRIX
+            </span>
+            <span className="text-grit-dim">→</span>
+            <span className={step === 2 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
+              [02] TARIFF REVIEW
+            </span>
+            <span className="text-grit-dim">→</span>
+            <span className={step === 3 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
+              [03] SETTLE TARIFF
+            </span>
+            <span className="text-grit-dim">→</span>
+            <span className={step === 4 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
+              [04] ENGRAVE PASS
+            </span>
+          </div>
         </div>
 
-        <div className="modal-body">
+        {/* Modal Body */}
+        <div className="p-5 md:p-6 max-h-[75vh] overflow-y-auto">
           
-          {/* STEP 1: SELECT SEATS */}
+          {/* STEP 1: SELECT SEATS / PIT FLOOR */}
           {step === 1 && (
             <div>
               {loadingSeats ? (
-                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading live seat availability...</div>
+                <div className="py-12 flex flex-col items-center justify-center gap-4">
+                  <div className="animate-spin w-8 h-8 border-4 border-acid-yellow border-t-transparent"></div>
+                  <span className="font-mono-zine text-xs text-acid-yellow uppercase tracking-widest animate-pulse">
+                    FETCHING PIT FLOOR COORD MATRIX...
+                  </span>
+                </div>
               ) : (
-                <div className="seat-map-container">
-                  <div className="stage-screen">STAGE</div>
+                <div>
+                  {/* Stage Sound System Screen */}
+                  <div className="mb-6 border-2 border-dashed border-asphalt-border bg-asphalt-black p-2.5 text-center">
+                    <div className="hazard-tape h-2 w-full mb-2"></div>
+                    <span className="font-impact text-grit-dim tracking-widest text-xs uppercase">
+                      ▲ [ 40KW SUBWOOFER WALL / SOUND RIG STAGE ] ▲
+                    </span>
+                  </div>
 
-                  <div className="seats-grid">
-                    {rowsList.map((row) => (
-                      <div key={row} className="seat-row">
-                        <span className="row-label">{row}</span>
-                        {seatMap.filter(s => s.rowNumber === row).map((seat) => {
-                          const isSelected = selectedSeats.some(s => s.id === seat.id);
-                          let classNames = 'seat-btn ';
-                          if (isSelected) classNames += 'seat-selected';
-                          else if (seat.status === 'AVAILABLE') {
-                            if (seat.seatType === 'VIP') classNames += 'seat-available-vip';
-                            else if (seat.seatType === 'PREMIUM') classNames += 'seat-available-premium';
-                            else classNames += 'seat-available-regular';
-                          }
-                          else if (seat.status === 'LOCKED') classNames += 'seat-locked';
-                          else if (seat.status === 'BOOKED') classNames += 'seat-booked';
+                  {/* Seat Grid */}
+                  <div className="overflow-x-auto pb-4">
+                    <div className="min-w-[480px] flex flex-col gap-2 items-center">
+                      {rowsList.map((row) => (
+                        <div key={row} className="flex items-center gap-2">
+                          <span className="w-5 text-center font-impact text-grit-dim text-xs uppercase">{row}</span>
+                          <div className="flex gap-1.5 flex-wrap">
+                            {seatMap.filter(s => s.rowNumber === row).map((seat) => {
+                              const isSelected = selectedSeats.some(s => s.id === seat.id);
+                              let btnClass = 'w-8 h-8 font-ticker text-xs font-bold border flex items-center justify-center transition-all cursor-pointer ';
+                              
+                              if (isSelected) {
+                                btnClass += 'bg-acid-yellow text-asphalt-black border-grit-white shadow-[2px_2px_0px_#ffffff] scale-105';
+                              } else if (seat.status === 'AVAILABLE') {
+                                if (seat.seatType === 'VIP') {
+                                  btnClass += 'bg-neon-magenta/20 text-neon-magenta border-neon-magenta hover:bg-neon-magenta hover:text-grit-white';
+                                } else if (seat.seatType === 'PREMIUM') {
+                                  btnClass += 'bg-electric-blue/20 text-blue-400 border-electric-blue hover:bg-electric-blue hover:text-grit-white';
+                                } else {
+                                  btnClass += 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow';
+                                }
+                              } else if (seat.status === 'LOCKED') {
+                                btnClass += 'bg-asphalt-card/40 text-grit-dim/40 border-asphalt-border/30 cursor-not-allowed opacity-40';
+                              } else if (seat.status === 'BOOKED') {
+                                btnClass += 'bg-asphalt-card/20 text-grit-dim/30 border-transparent cursor-not-allowed line-through opacity-30';
+                              }
 
-                          return (
-                            <button
-                              key={seat.id}
-                              className={classNames}
-                              onClick={() => toggleSeatSelection(seat)}
-                              title={`${seat.seatNumber} (${seat.seatType || 'REGULAR'}): ${formatPrice(seat.price, event.currency)}`}
-                            >
-                              {seat.seatNumber.replace(/^[A-Z]+/, '')}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    ))}
+                              return (
+                                <button
+                                  key={seat.id}
+                                  type="button"
+                                  className={btnClass}
+                                  onClick={() => toggleSeatSelection(seat)}
+                                  title={`${seat.seatNumber} (${seat.seatType || 'REGULAR'}): ${formatPrice(seat.price, event.currency)}`}
+                                >
+                                  {seat.seatNumber.replace(/^[A-Z]+/, '')}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Legend */}
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '0.75rem', color: 'var(--text-secondary)', paddingTop: '16px', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <div className="seat-btn seat-available-vip" style={{ width: '16px', height: '16px', fontSize: '0.5rem' }}>VIP</div> VIP
+                  <div className="flex justify-center gap-4 text-[11px] font-mono-zine text-grit-dim pt-4 border-t border-asphalt-border flex-wrap uppercase">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 bg-neon-magenta/30 border border-neon-magenta"></div> VIP TIER
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <div className="seat-btn seat-available-premium" style={{ width: '16px', height: '16px', fontSize: '0.5rem' }}>PRM</div> Premium
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 bg-electric-blue/30 border border-electric-blue"></div> PREMIUM
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <div className="seat-btn seat-available-regular" style={{ width: '16px', height: '16px', fontSize: '0.5rem' }}>REG</div> Regular
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 bg-asphalt-card border border-asphalt-border"></div> STANDING
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <div className="seat-btn seat-selected" style={{ width: '16px', height: '16px' }} /> Selected
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 bg-acid-yellow border border-grit-white"></div> LOCKED
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <div className="seat-btn seat-locked" style={{ width: '16px', height: '16px' }} /> Locked
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <div className="seat-btn seat-booked" style={{ width: '16px', height: '16px' }} /> Booked
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 bg-asphalt-card opacity-30 border border-transparent line-through"></div> ADMITTED
                     </div>
                   </div>
                 </div>
               )}
 
-              <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px' }}>
+              {/* Bottom Actions */}
+              <div className="mt-6 pt-4 border-t-2 border-asphalt-border flex items-center justify-between">
                 <div>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>
-                    {selectedSeats.length > 0 ? `${selectedSeats.length} seat(s): ${selectedSeats.map(s => s.seatNumber).join(', ')}` : 'General Admission (1)'}
+                  <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider block">
+                    {selectedSeats.length > 0 
+                      ? `${selectedSeats.length} TILES: ${selectedSeats.map(s => s.seatNumber).join(', ')}`
+                      : 'GENERAL PIT ADMITTANCE (1)'}
                   </span>
-                  <span style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                  <span className="font-display text-3xl text-acid-yellow font-bold leading-none">
                     {formatPrice(calculateSubtotal(), event.currency)}
                   </span>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setStep(2)}
-                  className="btn btn-primary"
-                  style={{ padding: '10px 20px' }}
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-lg uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
                 >
-                  Review Booking <ArrowRight size={16} />
+                  AUDIT TARIFF <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -427,55 +473,76 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
           {/* STEP 2: REVIEW BOOKING & PROMO */}
           {step === 2 && (
-            <div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '14px' }}>Review Booking Details</h4>
-              
-              <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.04)', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
-                  <span>Event:</span> <strong>{event.name}</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
-                  <span>Date & Time:</span> <span>{event.eventDate} @ {event.startTime}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
-                  <span>Selected Seats:</span> <span>{selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : '1 Seat'}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                  <span>Ticket Subtotal:</span> <strong>{formatPrice(calculateSubtotal(), event.currency)}</strong>
+            <div className="space-y-4">
+              <div className="bg-asphalt-card border-2 border-asphalt-border p-4">
+                <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block mb-3">
+                  WRISTBAND ALLOCATION SPECIFICATION
+                </span>
+                <div className="space-y-2 font-mono-zine text-xs text-grit-dim uppercase">
+                  <div className="flex justify-between">
+                    <span>GIG MANIFEST:</span>
+                    <strong className="text-grit-white">{event.name}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>TIMING & CURFEW:</span>
+                    <span className="text-grit-white">{event.eventDate} @ {event.startTime}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>STOMP SECTOR TILES:</span>
+                    <span className="text-acid-yellow font-bold">
+                      {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : 'GENERAL PIT (1 PASS)'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-asphalt-border text-sm">
+                    <span>NET TARIFF:</span>
+                    <strong className="text-grit-white font-impact text-lg">{formatPrice(calculateSubtotal(), event.currency)}</strong>
+                  </div>
                 </div>
               </div>
 
               {/* Promo Code Input */}
-              <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.03)', marginBottom: '20px' }}>
-                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Tag size={13} color="var(--text-secondary)" /> Promo Code
+              <div className="bg-asphalt-card border-2 border-asphalt-border p-4">
+                <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-2">
+                  AUTHORIZATION CIPHER / PROMO STAMP
                 </label>
-                <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+                <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Enter coupon code"
+                    placeholder="ENTER CIPHER (E.G. EARLYBIRD)"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    className="form-input"
-                    style={{ flex: 1, textTransform: 'uppercase' }}
+                    className="flex-1 bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
                   />
-                  <button type="button" onClick={handleApplyCoupon} className="btn btn-secondary" disabled={validatingCoupon}>
-                    {validatingCoupon ? '...' : 'Apply'}
+                  <button 
+                    type="button" 
+                    onClick={handleApplyCoupon} 
+                    disabled={validatingCoupon}
+                    className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black font-impact tracking-wider px-4 uppercase text-sm transition-colors cursor-pointer"
+                  >
+                    {validatingCoupon ? 'VERIFYING...' : 'APPLY CIPHER'}
                   </button>
                 </div>
                 {discountInfo && (
-                  <div style={{ marginTop: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Check size={13} /> {discountInfo.code} applied (-{formatPrice(discountInfo.calculatedDiscount, event.currency)})
+                  <div className="mt-2 text-xs font-mono-zine text-acid-yellow flex items-center gap-1.5 uppercase">
+                    <Check size={14} /> CIPHER [{discountInfo.code}] APPLIED: -{formatPrice(discountInfo.calculatedDiscount, event.currency)}
                   </div>
                 )}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button onClick={() => setStep(1)} className="btn btn-secondary">
-                  <ArrowLeft size={16} /> Back to Seats
+              <div className="flex justify-between items-center pt-4 border-t border-asphalt-border">
+                <button 
+                  type="button"
+                  onClick={() => setStep(1)} 
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
+                >
+                  <ArrowLeft size={14} /> BACK TO MATRIX
                 </button>
-                <button onClick={() => setStep(3)} className="btn btn-primary">
-                  Proceed to Checkout <ArrowRight size={16} />
+                <button 
+                  type="button"
+                  onClick={() => setStep(3)} 
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
+                >
+                  PROCEED TO SETTLEMENT <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -483,18 +550,20 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
           {/* STEP 3: CHECKOUT & PAYMENT METHOD */}
           {step === 3 && (
-            <div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '14px' }}>Choose Payment Method & Details</h4>
+            <div className="space-y-4">
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">
+                SELECT SETTLEMENT PIPELINE
+              </span>
 
-              {/* Payment Method Selector */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '20px' }}>
+              {/* Payment Method Selector Grid */}
+              <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: 'UPI', label: 'UPI', icon: Smartphone },
-                  { id: 'CREDIT_CARD', label: 'Credit Card', icon: CreditCard },
-                  { id: 'DEBIT_CARD', label: 'Debit Card', icon: CreditCard },
-                  { id: 'NET_BANKING', label: 'Net Banking', icon: Landmark },
-                  { id: 'GIFT_CARD', label: 'Gift Card', icon: Gift },
-                  { id: 'WALLET', label: 'Wallet', icon: Wallet }
+                  { id: 'UPI', label: 'UPI INSTANT', icon: Smartphone },
+                  { id: 'CREDIT_CARD', label: 'CREDIT CHIP', icon: CreditCard },
+                  { id: 'DEBIT_CARD', label: 'DEBIT CARD', icon: CreditCard },
+                  { id: 'NET_BANKING', label: 'WIRE TRANSFER', icon: Landmark },
+                  { id: 'GIFT_CARD', label: 'GIFT CIPHER', icon: Gift },
+                  { id: 'WALLET', label: 'DIGITAL WALLET', icon: Wallet }
                 ].map((item) => {
                   const IconComp = item.icon;
                   const isSel = paymentMethod === item.id;
@@ -503,8 +572,11 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       key={item.id}
                       type="button"
                       onClick={() => setPaymentMethod(item.id)}
-                      className={`btn ${isSel ? 'btn-primary' : 'btn-secondary'}`}
-                      style={{ padding: '10px', fontSize: '0.8rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+                      className={`p-2.5 border-2 text-center flex flex-col items-center justify-center gap-1 transition-all cursor-pointer font-impact text-xs tracking-wider uppercase ${
+                        isSel 
+                          ? 'bg-acid-yellow text-asphalt-black border-grit-white shadow-[3px_3px_0px_#ffffff]' 
+                          : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+                      }`}
                     >
                       <IconComp size={16} />
                       {item.label}
@@ -513,190 +585,155 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 })}
               </div>
 
-              {/* Dynamic Payment Fields */}
-              <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.03)', marginBottom: '20px' }}>
+              {/* Dynamic Payment Mode Details */}
+              <div className="bg-asphalt-card border-2 border-asphalt-border p-4">
                 {paymentMethod === 'UPI' && (
-                  <div>
-                    {/* UPI Mode Selector */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          setUpiSubOption('UPI_ID');
-                        }}
-                        className={`btn ${upiSubOption === 'UPI_ID' ? 'btn-primary' : 'btn-secondary'}`}
-                        style={{ padding: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                        onClick={() => setUpiSubOption('UPI_ID')}
+                        className={`py-2 text-xs font-mono-zine uppercase border ${
+                          upiSubOption === 'UPI_ID'
+                            ? 'bg-acid-yellow text-asphalt-black font-bold border-asphalt-black'
+                            : 'bg-asphalt-surface text-grit-dim border-asphalt-border'
+                        }`}
                       >
-                        <Smartphone size={16} /> Enter UPI ID
+                        INPUT VPA HANDLE
                       </button>
-
                       <button
                         type="button"
                         onClick={() => {
                           setUpiSubOption('UPI_QR');
                           if (!paymentDetails.upiId) {
-                            setPaymentDetails((prev) => ({ ...prev, upiId: 'eventhub.qr@upi' }));
+                            setPaymentDetails((prev) => ({ ...prev, upiId: 'vault90s.qr@upi' }));
                           }
                         }}
-                        className={`btn ${upiSubOption === 'UPI_QR' ? 'btn-primary' : 'btn-secondary'}`}
-                        style={{ padding: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                        className={`py-2 text-xs font-mono-zine uppercase border ${
+                          upiSubOption === 'UPI_QR'
+                            ? 'bg-acid-yellow text-asphalt-black font-bold border-asphalt-black'
+                            : 'bg-asphalt-surface text-grit-dim border-asphalt-border'
+                        }`}
                       >
-                        <QrCode size={16} /> Scan UPI QR Code
+                        SCAN LIVE QR
                       </button>
                     </div>
 
                     {upiSubOption === 'UPI_ID' ? (
-                      <div className="form-group">
-                        <label className="form-label">UPI Virtual Payment Address (VPA / Phone)<span style={{ color: '#ef4444' }}> *</span></label>
+                      <div>
+                        <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">
+                          VIRTUAL PAYMENT ADDRESS (VPA) <span className="text-neon-magenta">*</span>
+                        </label>
                         <input
                           type="text"
                           name="upiId"
                           required
-                          placeholder="e.g. username@okaxis / 9876543210@paytm"
+                          placeholder="HANDLE@OKAXIS / 9876543210@PAYTM"
                           value={paymentDetails.upiId}
                           onChange={handleDetailsChange}
-                          className="form-input"
+                          className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm outline-none uppercase"
                         />
-                        <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
-                          {['@ybl', '@paytm', '@okaxis', '@apl', '@upi'].map((handle) => (
-                            <button
-                              key={handle}
-                              type="button"
-                              onClick={() => {
-                                const current = paymentDetails.upiId || 'user';
-                                const base = current.split('@')[0] || 'user';
-                                setPaymentDetails({ ...paymentDetails, upiId: `${base}${handle}` });
-                              }}
-                              style={{
-                                fontSize: '0.72rem',
-                                padding: '3px 9px',
-                                borderRadius: '12px',
-                                background: 'rgba(255,255,255,0.06)',
-                                border: '1px solid rgba(255,255,255,0.12)',
-                                color: 'var(--text-muted)',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              {handle}
-                            </button>
-                          ))}
-                        </div>
                       </div>
-                    ) : (() => {
-                      const currentSubtotal = calculateSubtotal();
-                      const currentDiscount = discountInfo ? (discountInfo.calculatedDiscount || 0) : 0;
-                      const currentTotal = Math.max(0, currentSubtotal - currentDiscount);
-                      const formattedAmt = currentTotal.toFixed(2);
-
-                      return (
-                        <div style={{ textAlign: 'center', padding: '16px 12px', background: 'rgba(0,0,0,0.35)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
-                            Scan this QR Code using GPay, PhonePe, Paytm, or BHIM to pay instantly
-                          </p>
-
-                          {/* Live QR Code Preview */}
-                          <div style={{ display: 'inline-block', padding: '12px', background: '#FFFFFF', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
-                            <img 
-                              src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=eventhub@upi%26pn=EventHub%26am=${formattedAmt}%26cu=${event?.currency || 'INR'}`} 
-                              alt="UPI Payment QR Code"
-                              style={{ width: '160px', height: '160px', display: 'block' }}
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                              }}
-                            />
-                          </div>
-
-                          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '14px', flexWrap: 'wrap' }}>
-                            {['GPay', 'PhonePe', 'Paytm', 'BHIM', 'Amazon Pay'].map((appName) => (
-                              <span key={appName} style={{ fontSize: '0.7rem', padding: '3px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)', color: '#FFF', fontWeight: 600 }}>
-                                {appName}
-                              </span>
-                            ))}
-                          </div>
-
-                          <p style={{ fontSize: '0.78rem', color: '#10b981', marginTop: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
-                            <Zap size={14} /> Scan & Complete Payment of {formatPrice(currentTotal, event?.currency)}
-                          </p>
+                    ) : (
+                      <div className="text-center py-4 bg-asphalt-black border border-asphalt-border p-4">
+                        <span className="font-mono-zine text-xs text-grit-dim uppercase block mb-3">
+                          SCAN TRANSMISSION CIPHER WITH GPAY / PHONEPE / PAYTM
+                        </span>
+                        <div className="inline-block p-3 bg-white border-2 border-grit-white shadow-[4px_4px_0px_#eefc54]">
+                          <img 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=vault90s@upi%26pn=Vault90s%26am=${calculateFinalTotal().toFixed(2)}%26cu=${event?.currency || 'INR'}`} 
+                            alt="UPI QR"
+                            className="w-36 h-36 block"
+                          />
                         </div>
-                      );
-                    })()}
+                        <span className="font-mono-zine text-xs text-acid-yellow block mt-3 font-bold">
+                          TARIFF AMOUNT: {formatPrice(calculateFinalTotal(), event?.currency)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {(paymentMethod === 'CREDIT_CARD' || paymentMethod === 'DEBIT_CARD') && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div className="form-group">
-                      <label className="form-label">Cardholder Name<span style={{ color: '#ef4444' }}> *</span></label>
-                      <input type="text" name="cardHolder" required placeholder="John Doe" value={paymentDetails.cardHolder} onChange={handleDetailsChange} className="form-input" />
+                  <div className="space-y-3 font-mono-zine text-xs uppercase">
+                    <div>
+                      <label className="block text-grit-dim mb-1">CARDHOLDER NAME</label>
+                      <input type="text" name="cardHolder" required placeholder="J. DOE" value={paymentDetails.cardHolder} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none uppercase" />
                     </div>
-                    <div className="form-group">
-                      <label className="form-label">Card Number<span style={{ color: '#ef4444' }}> *</span></label>
-                      <input type="text" name="cardNumber" required placeholder="4532 •••• •••• 8921" value={paymentDetails.cardNumber} onChange={handleDetailsChange} className="form-input" />
+                    <div>
+                      <label className="block text-grit-dim mb-1">CARD NUMBER</label>
+                      <input type="text" name="cardNumber" required placeholder="4532 •••• •••• 8921" value={paymentDetails.cardNumber} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                      <div className="form-group">
-                        <label className="form-label">Expiry (MM/YY)<span style={{ color: '#ef4444' }}> *</span></label>
-                        <input type="text" name="cardExpiry" required placeholder="12/28" value={paymentDetails.cardExpiry} onChange={handleDetailsChange} className="form-input" />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-grit-dim mb-1">EXPIRY (MM/YY)</label>
+                        <input type="text" name="cardExpiry" required placeholder="12/28" value={paymentDetails.cardExpiry} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
                       </div>
-                      <div className="form-group">
-                        <label className="form-label">CVV<span style={{ color: '#ef4444' }}> *</span></label>
-                        <input type="password" name="cardCvv" required maxLength="4" placeholder="123" value={paymentDetails.cardCvv} onChange={handleDetailsChange} className="form-input" />
+                      <div>
+                        <label className="block text-grit-dim mb-1">CVV CODE</label>
+                        <input type="password" name="cardCvv" required maxLength="4" placeholder="•••" value={paymentDetails.cardCvv} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
                       </div>
                     </div>
                   </div>
                 )}
 
                 {paymentMethod === 'NET_BANKING' && (
-                  <div className="form-group">
-                    <label className="form-label">Select Bank<span style={{ color: '#ef4444' }}> *</span></label>
-                    <select name="bankName" value={paymentDetails.bankName} onChange={handleDetailsChange} className="form-select">
-                      <option value="HDFC Bank">HDFC Bank</option>
-                      <option value="State Bank of India">State Bank of India (SBI)</option>
-                      <option value="ICICI Bank">ICICI Bank</option>
-                      <option value="Axis Bank">Axis Bank</option>
-                      <option value="Kotak Mahindra">Kotak Mahindra Bank</option>
+                  <div>
+                    <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-1">SELECT CLEARING BANK</label>
+                    <select name="bankName" value={paymentDetails.bankName} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 outline-none uppercase">
+                      <option value="HDFC Bank">HDFC BANK INDUSTRIAL</option>
+                      <option value="State Bank of India">STATE BANK OF INDIA (SBI)</option>
+                      <option value="ICICI Bank">ICICI PROTOCOL</option>
+                      <option value="Axis Bank">AXIS COMMERCE</option>
                     </select>
                   </div>
                 )}
 
                 {paymentMethod === 'GIFT_CARD' && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <div className="form-group">
-                      <label className="form-label">Gift Card Voucher Code<span style={{ color: '#ef4444' }}> *</span></label>
-                      <input type="text" name="giftCardCode" required placeholder="GIFT-2026-XXXX" value={paymentDetails.giftCardCode} onChange={handleDetailsChange} className="form-input" />
+                  <div className="grid grid-cols-2 gap-3 font-mono-zine text-xs uppercase">
+                    <div>
+                      <label className="block text-grit-dim mb-1">GIFT CIPHER VOUCHER</label>
+                      <input type="text" name="giftCardCode" required placeholder="GIFT-90S-XXXX" value={paymentDetails.giftCardCode} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none uppercase" />
                     </div>
-                    <div className="form-group">
-                      <label className="form-label">Security PIN<span style={{ color: '#ef4444' }}> *</span></label>
-                      <input type="password" name="giftCardPin" required placeholder="••••" value={paymentDetails.giftCardPin} onChange={handleDetailsChange} className="form-input" />
+                    <div>
+                      <label className="block text-grit-dim mb-1">SECURITY PIN</label>
+                      <input type="password" name="giftCardPin" required placeholder="••••" value={paymentDetails.giftCardPin} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
                     </div>
                   </div>
                 )}
 
                 {paymentMethod === 'WALLET' && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <div className="form-group">
-                      <label className="form-label">Wallet Service<span style={{ color: '#ef4444' }}> *</span></label>
-                      <select name="walletType" value={paymentDetails.walletType} onChange={handleDetailsChange} className="form-select">
-                        <option value="Paytm">Paytm</option>
-                        <option value="PhonePe">PhonePe</option>
-                        <option value="Amazon Pay">Amazon Pay</option>
-                        <option value="MobiKwik">MobiKwik</option>
+                  <div className="grid grid-cols-2 gap-3 font-mono-zine text-xs uppercase">
+                    <div>
+                      <label className="block text-grit-dim mb-1">WALLET PROTOCOL</label>
+                      <select name="walletType" value={paymentDetails.walletType} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none uppercase">
+                        <option value="Paytm">PAYTM WALLET</option>
+                        <option value="PhonePe">PHONEPE</option>
+                        <option value="Amazon Pay">AMAZON PAY</option>
                       </select>
                     </div>
-                    <div className="form-group">
-                      <label className="form-label">Linked Mobile Number<span style={{ color: '#ef4444' }}> *</span></label>
-                      <input type="tel" name="walletPhone" required placeholder="+91 9876543210" value={paymentDetails.walletPhone} onChange={handleDetailsChange} className="form-input" />
+                    <div>
+                      <label className="block text-grit-dim mb-1">REGISTERED COMM FREQ</label>
+                      <input type="tel" name="walletPhone" required placeholder="+91 9876543210" value={paymentDetails.walletPhone} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
                     </div>
                   </div>
                 )}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button onClick={() => setStep(2)} className="btn btn-secondary">
-                  <ArrowLeft size={16} /> Back to Review
+              <div className="flex justify-between items-center pt-4 border-t border-asphalt-border">
+                <button 
+                  type="button"
+                  onClick={() => setStep(2)} 
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
+                >
+                  <ArrowLeft size={14} /> BACK
                 </button>
-                <button onClick={() => setStep(4)} className="btn btn-primary">
-                  Review & Confirm <ArrowRight size={16} />
+                <button 
+                  type="button"
+                  onClick={() => setStep(4)} 
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
+                >
+                  REVIEW FINAL PASS <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -704,32 +741,85 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
           {/* STEP 4: FINAL CONFIRMATION */}
           {step === 4 && (
-            <div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <ShieldCheck size={18} color="var(--accent-purple, #a855f7)" /> Final Booking Confirmation
-              </h4>
+            <div className="space-y-4">
+              <div className="bg-asphalt-card border-4 border-grit-white p-5 shadow-[6px_6px_0px_#ff1f6d]">
+                <div className="flex justify-between items-center border-b border-asphalt-border pb-3 mb-3">
+                  <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5 uppercase">
+                    CRYPTOGRAPHIC PASS DISPATCH
+                  </span>
+                  <span className="font-ticker text-[10px] text-acid-yellow uppercase">
+                    STOMP VERIFIED
+                  </span>
+                </div>
 
-              <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.04)', marginBottom: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.88rem' }}>
-                  <span>Event:</span> <strong>{event.name}</strong>
+                <div className="space-y-2 font-mono-zine text-xs text-grit-dim uppercase">
+                  <div className="flex justify-between">
+                    <span>EVENT GIG:</span>
+                    <strong className="text-grit-white">{event.name}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>SECTOR TILES:</span>
+                    <strong className="text-acid-yellow">
+                      {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : '1 GENERAL PIT WRISTBAND'}
+                    </strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>SETTLEMENT METHOD:</span>
+                    <strong className="text-grit-white">{paymentMethod.replace('_', ' ')}</strong>
+                  </div>
+                  <div className="flex justify-between pt-3 border-t-2 border-dashed border-asphalt-border text-base font-bold">
+                    <span className="text-grit-white">FINAL PAYABLE TARIFF:</span>
+                    <span className="text-acid-yellow font-display text-2xl">
+                      {formatPrice(calculateFinalTotal(), event.currency)}
+                    </span>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.88rem' }}>
-                  <span>Seats:</span> <strong>{selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : '1 General Ticket'}</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.88rem' }}>
-                  <span>Payment Method:</span> <strong>{paymentMethod.replace('_', ' ')}</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--border-subtle)', fontSize: '1.1rem', fontWeight: 800 }}>
-                  <span>Total Payable:</span> <span style={{ color: 'var(--text-main)' }}>{formatPrice(calculateFinalTotal(), event.currency)}</span>
+
+                {/* Decorative Barcode */}
+                <div className="mt-4 pt-3 border-t border-asphalt-border flex items-center justify-between opacity-50">
+                  <span className="font-ticker text-[9px] text-grit-dim uppercase">ENCLAVE BARCODE PASS #V90-{event.id}</span>
+                  <svg className="h-5 w-32" viewBox="0 0 128 20" fill="currentColor">
+                    <rect x="0" y="0" width="3" height="20"/>
+                    <rect x="5" y="0" width="2" height="20"/>
+                    <rect x="9" y="0" width="4" height="20"/>
+                    <rect x="15" y="0" width="2" height="20"/>
+                    <rect x="19" y="0" width="6" height="20"/>
+                    <rect x="28" y="0" width="1" height="20"/>
+                    <rect x="31" y="0" width="4" height="20"/>
+                    <rect x="38" y="0" width="3" height="20"/>
+                    <rect x="44" y="0" width="5" height="20"/>
+                    <rect x="52" y="0" width="2" height="20"/>
+                    <rect x="56" y="0" width="4" height="20"/>
+                    <rect x="63" y="0" width="2" height="20"/>
+                    <rect x="68" y="0" width="5" height="20"/>
+                    <rect x="76" y="0" width="3" height="20"/>
+                    <rect x="82" y="0" width="4" height="20"/>
+                    <rect x="89" y="0" width="2" height="20"/>
+                    <rect x="93" y="0" width="6" height="20"/>
+                    <rect x="102" y="0" width="2" height="20"/>
+                    <rect x="106" y="0" width="4" height="20"/>
+                    <rect x="113" y="0" width="2" height="20"/>
+                    <rect x="117" y="0" width="5" height="20"/>
+                  </svg>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button onClick={() => setStep(3)} className="btn btn-secondary" disabled={bookingLoading}>
-                  <ArrowLeft size={16} /> Edit Payment
+              <div className="flex justify-between items-center pt-2">
+                <button 
+                  type="button"
+                  onClick={() => setStep(3)} 
+                  disabled={bookingLoading}
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
+                >
+                  <ArrowLeft size={14} /> EDIT SETTLEMENT
                 </button>
-                <button onClick={handleConfirmBooking} className="btn btn-primary btn-lg" disabled={bookingLoading}>
-                  {bookingLoading ? 'Processing...' : `Confirm & Pay ${formatPrice(calculateFinalTotal(), event.currency)}`}
+                <button 
+                  type="button"
+                  onClick={handleConfirmBooking} 
+                  disabled={bookingLoading}
+                  className="bg-neon-magenta text-grit-white font-impact tracking-wider text-lg uppercase px-6 py-3 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer disabled:opacity-50"
+                >
+                  {bookingLoading ? 'ENGRAVING WRISTBAND...' : `AUTHORIZE & ISSUE PASS (${formatPrice(calculateFinalTotal(), event.currency)})`}
                 </button>
               </div>
             </div>

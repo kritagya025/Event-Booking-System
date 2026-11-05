@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink, ShieldCheck, CreditCard, Clock } from 'lucide-react';
+import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink, ShieldCheck, CreditCard, Clock, Radio } from 'lucide-react';
 import { apiFetch, BASE_URL } from '../services/api';
 import { formatPrice } from '../services/currency';
 
@@ -21,14 +21,14 @@ export default function MyBookings({ currentUser, showToast }) {
           bookingDate: '2026-08-01T14:30:00',
           bookingStatus: 'CONFIRMED',
           quantity: 2,
-          totalAmount: 150.00,
+          totalAmount: 60.00,
           event: {
             id: 1,
-            name: 'Neon Horizon Cyber Music Festival 2026',
+            name: 'MAHLER 203: RESURRECTION RAVE',
             eventDate: '2026-09-15',
-            startTime: '19:00:00',
-            category: 'MUSIC',
-            venue: { name: 'Metro Arena Center', address: '450 Innovation Way, San Francisco' }
+            startTime: '23:00',
+            category: 'TECHNO',
+            venue: { name: 'PIER 44 COLD SHED', address: '4241 ILLINOIS ST' }
           }
         }
       ];
@@ -53,20 +53,20 @@ export default function MyBookings({ currentUser, showToast }) {
   }, [currentUser, fetchUserBookings]);
 
   const handleCancelBooking = async (bookingId) => {
-    if (!window.confirm('Cancel this booking? Seats will be returned to availability.')) return;
+    if (!window.confirm('VOID WRISTBAND PASS? ALLOCATED SECTOR WILL RETURN TO LIVE INVENTORY.')) return;
 
     try {
       await apiFetch(`/bookings/${bookingId}/cancel`, { method: 'PATCH' });
-      showToast('Booking cancelled successfully.', 'info');
+      showToast('WRISTBAND PASS VOIDED AND ARCHIVED', 'info');
       fetchUserBookings();
     } catch (err) {
-      showToast(err.message || 'Failed to cancel booking', 'error');
+      showToast(err.message || 'FAILED TO CANCEL BOOKING', 'error');
     }
   };
 
   const handleDownloadPdf = async (booking) => {
     if (booking.bookingStatus === 'CANCELLED') {
-      showToast('Cannot download ticket PDF for a cancelled booking.', 'error');
+      showToast('CANNOT DISPATCH PASS FOR VOIDED RESERVATION', 'error');
       return;
     }
 
@@ -80,19 +80,19 @@ export default function MyBookings({ currentUser, showToast }) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `EventHub-Pass-${booking.id}.pdf`;
+        link.download = `VAULT90S-Pass-${booking.id}.pdf`;
         document.body.appendChild(link);
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
-        showToast('Ticket PDF downloaded successfully!', 'success');
+        showToast('WRISTBAND ENCLAVE PASS DISPATCHED', 'success');
         return;
       }
     } catch (e) {
       console.warn('PDF API notice:', e);
     }
 
-    // High-Quality Client Printable E-Ticket Pass Fallback
+    // 90s Acid-Zine Printable Pass Stub
     try {
       const passWindow = window.open('', '_blank');
       if (passWindow) {
@@ -100,44 +100,49 @@ export default function MyBookings({ currentUser, showToast }) {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>EventHub Pass #${booking.id}</title>
+            <title>VAULT://90s PASS #${booking.id}</title>
             <style>
-              body { font-family: system-ui, -apple-system, sans-serif; background: #0F172A; color: #F8FAFC; padding: 40px; text-align: center; }
-              .pass-card { max-width: 480px; margin: 0 auto; background: #1E293B; border-radius: 20px; padding: 32px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-              .badge { background: #4F46E5; color: #FFF; padding: 6px 14px; border-radius: 99px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; }
-              h2 { font-size: 1.6rem; margin: 16px 0 8px 0; color: #FFF; }
-              p { color: #94A3B8; font-size: 0.95rem; margin-bottom: 24px; }
-              .qr-img { width: 180px; height: 180px; padding: 12px; background: #FFF; border-radius: 14px; margin: 20px 0; }
-              .info-row { display: flex; justify-content: space-between; text-align: left; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px; font-size: 0.88rem; }
-              .print-btn { background: #4F46E5; color: #FFF; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; }
+              body { font-family: 'Courier New', monospace; background: #0e0e11; color: #f5f5f0; padding: 40px; text-align: center; }
+              .pass-card { max-width: 480px; margin: 0 auto; background: #16161c; border: 4px solid #f5f5f0; padding: 24px; box-shadow: 10px 10px 0px #eefc54; text-align: left; }
+              .hazard { height: 12px; background: repeating-linear-gradient( -45deg, #eefc54, #eefc54 10px, #0e0e11 10px, #0e0e11 20px ); margin-bottom: 16px; }
+              .badge { display: inline-block; background: #eefc54; color: #0e0e11; padding: 4px 10px; font-weight: 900; font-size: 11px; text-transform: uppercase; }
+              h2 { font-size: 26px; margin: 12px 0 6px 0; color: #f5f5f0; font-weight: 900; text-transform: uppercase; }
+              p { color: #90929e; font-size: 12px; margin: 0 0 16px 0; }
+              .qr-container { text-align: center; margin: 20px 0; }
+              .qr-img { width: 180px; height: 180px; padding: 12px; background: #FFF; border: 3px solid #0e0e11; }
+              .info-row { display: flex; justify-content: space-between; margin-top: 14px; border-top: 2px dashed #90929e; padding-top: 10px; font-size: 11px; }
+              .print-btn { display: block; width: 100%; background: #ff1f6d; color: #FFF; border: 2px solid #0e0e11; padding: 12px; font-weight: 900; font-size: 14px; cursor: pointer; margin-top: 20px; text-transform: uppercase; box-shadow: 4px 4px 0px #eefc54; }
             </style>
           </head>
           <body>
             <div class="pass-card">
-              <span class="badge">Official E-Ticket Pass</span>
-              <h2>${booking.event?.name || 'Live Event Pass'}</h2>
-              <p>📅 ${booking.event?.eventDate || '2026-09-15'} · ${booking.event?.venue?.name || 'Main Arena Center'}</p>
-              <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PASS-${booking.id}`}" class="qr-img" alt="QR Code" />
-              <div class="info-row">
-                <div><strong>Attendee:</strong> ${currentUser?.firstName || 'Guest'} ${currentUser?.lastName || ''}</div>
-                <div style="text-align:right"><strong>Seats:</strong> ${booking.selectedSeats || 'General Admission'}</div>
+              <div class="hazard"></div>
+              <span class="badge">VAULT://90S OFFICIAL WRISTBAND PASS</span>
+              <h2>${booking.event?.name || 'UNDERGROUND RAVE'}</h2>
+              <p>${booking.event?.eventDate || '2026-09-15'} · ${booking.event?.venue?.name || 'NORTH INDUSTRIAL DOCKS'}</p>
+              <div class="qr-container">
+                <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=VAULT90S-PASS-${booking.id}`}" class="qr-img" alt="Pass QR" />
               </div>
-              <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+              <div class="info-row">
+                <div><span>RAVER ATTENDEE</span><br><strong>${currentUser?.firstName || 'ANON'} ${currentUser?.lastName || 'CREW'}</strong></div>
+                <div style="text-align:right"><span>SECTOR TILES</span><br><strong>${booking.selectedSeats || 'GENERAL PIT'}</strong></div>
+              </div>
+              <button class="print-btn" onclick="window.print()">PRINT / EXPORT PASS</button>
             </div>
           </body>
           </html>
         `);
         passWindow.document.close();
-        showToast('Official Ticket Pass opened for printing/saving', 'success');
+        showToast('ADMISSION PASS OPENED FOR PRINTING', 'success');
       }
     } catch (passErr) {
-      showToast('Downloading ticket pass...', 'success');
+      showToast('DISPATCHING TICKET PASS...', 'success');
     }
   };
 
   const handleDownloadCalendar = (eventId) => {
     window.open(`${BASE_URL}/events/${eventId}/calendar.ics`, '_blank');
-    showToast('Downloading calendar file (.ics)...', 'info');
+    showToast('DISPATCHING ICS CALENDAR FILE...', 'info');
   };
 
   const handleOpenGoogleCalendar = async (eventId, eventData) => {
@@ -145,24 +150,22 @@ export default function MyBookings({ currentUser, showToast }) {
       const response = await apiFetch(`/events/${eventId}/google-calendar-link`);
       if (response && response.googleCalendarUrl) {
         window.open(response.googleCalendarUrl, '_blank');
-        showToast('Opening Google Calendar...', 'success');
+        showToast('SYNCHRONIZING GOOGLE CALENDAR...', 'success');
         return;
       }
     } catch (err) {
       console.warn('Backend calendar link fallback:', err);
     }
 
-    // Direct Google Calendar link fallback
-    const title = encodeURIComponent(eventData?.name || 'Event Booking');
-    const details = encodeURIComponent(`Booking reservation for ${eventData?.name || 'event'}`);
-    const location = encodeURIComponent(eventData?.venue?.name || 'Event Venue');
+    const title = encodeURIComponent(eventData?.name || 'VAULT Rave');
+    const details = encodeURIComponent(`Admittance Pass for ${eventData?.name || 'Underground Warehouse Gig'}`);
+    const location = encodeURIComponent(eventData?.venue?.name || 'North Docks');
     const dateFormatted = (eventData?.eventDate || '2026-09-15').replace(/-/g, '');
-    const gUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dateFormatted}T180000Z/${dateFormatted}T210000Z`;
+    const gUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dateFormatted}T230000Z/${dateFormatted}T060000Z`;
     window.open(gUrl, '_blank');
-    showToast('Opening Google Calendar...', 'success');
+    showToast('SYNCHRONIZING GOOGLE CALENDAR...', 'success');
   };
 
-  // Filtered and searched bookings
   const filteredBookings = useMemo(() => {
     return bookings.filter((b) => {
       const matchesStatus =
@@ -180,7 +183,6 @@ export default function MyBookings({ currentUser, showToast }) {
     });
   }, [bookings, statusFilter, searchQuery]);
 
-  // Statistics calculation
   const stats = useMemo(() => {
     const totalCount = bookings.length;
     const confirmedCount = bookings.filter(b => b.bookingStatus === 'CONFIRMED').length;
@@ -192,158 +194,223 @@ export default function MyBookings({ currentUser, showToast }) {
   }, [bookings]);
 
   return (
-    <div style={{ padding: '0 24px 40px 24px', maxWidth: '1320px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 800 }}>My Tickets & Reservations</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-          Manage your booked events, download unified PDF passes, or sync with your personal calendar
-        </p>
+    <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
+      
+      {/* Header */}
+      <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+              VAULT://ARCHIVE_DECK
+            </span>
+            <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
+              COMM IDENTIFIER: {currentUser?.email || 'ANON_USER'}
+            </span>
+          </div>
+          <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
+            WRISTBANDS & TICKET PASS ARCHIVE
+          </h1>
+          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
+            CRYPTOGRAPHIC ADMITTANCE PASSES, STOMP MATRIX RESERVATIONS & PERFORATED TEAR STUBS
+          </p>
+        </div>
+
+        <button 
+          onClick={fetchUserBookings} 
+          className="self-start md:self-auto bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer"
+        >
+          REFRESH ARCHIVE
+        </button>
       </div>
 
-      {/* Balanced 4-Metric Grid (Anti-AI Tell #16, Unified Cohesive Palette) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ padding: '10px', borderRadius: '10px', background: 'var(--primary-tint)', color: 'var(--primary)' }}>
-            <Ticket size={22} />
-          </div>
-          <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Total Bookings</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800 }}>{stats.totalCount}</div>
-          </div>
+      {/* 4 Brutalist Metric Stamps */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54] relative">
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PASSES</span>
+          <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+            {stats.totalCount}
+          </span>
         </div>
 
-        <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(5, 150, 105, 0.12)', color: '#059669' }}>
-            <ShieldCheck size={22} />
-          </div>
-          <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Active Passes</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#059669' }}>{stats.confirmedCount}</div>
-          </div>
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d] relative">
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">ACTIVE WRISTBANDS</span>
+          <span className="font-display text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
+            {stats.confirmedCount}
+          </span>
         </div>
 
-        <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(217, 119, 6, 0.12)', color: '#D97706' }}>
-            <Clock size={22} />
-          </div>
-          <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Upcoming Shows</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#D97706' }}>{stats.upcomingCount}</div>
-          </div>
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8] relative">
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">UPCOMING RAVES</span>
+          <span className="font-display text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
+            {stats.upcomingCount}
+          </span>
         </div>
 
-        <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ padding: '10px', borderRadius: '10px', background: 'var(--border-subtle)', color: 'var(--text-main)' }}>
-            <CreditCard size={22} />
-          </div>
-          <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Total Invested</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)' }}>{formatPrice(stats.totalSpent)}</div>
-          </div>
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ffffff] relative">
+          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TARIFF COMMITTED</span>
+          <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+            {formatPrice(stats.totalSpent)}
+          </span>
         </div>
       </div>
 
-      {/* Filter and Search Controls */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {['ALL', 'CONFIRMED', 'CANCELLED'].map((status) => (
+      {/* Filter and Search Bar */}
+      <div className="bg-asphalt-surface border-2 border-asphalt-border p-3 mb-8 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="flex gap-2 w-full md:w-auto">
+          {['ALL', 'CONFIRMED', 'CANCELLED'].map((st) => (
             <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={`btn btn-sm ${statusFilter === status ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ textTransform: 'capitalize', fontWeight: 600 }}
+              key={st}
+              onClick={() => setStatusFilter(st)}
+              className={`px-3 py-1.5 text-xs font-impact tracking-wider uppercase border transition-all cursor-pointer ${
+                statusFilter === st
+                  ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[2px_2px_0px_#ffffff]'
+                  : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+              }`}
             >
-              {status.toLowerCase()}
+              {st}
             </button>
           ))}
         </div>
 
-        <div style={{ position: 'relative', minWidth: '260px' }}>
-          <Search size={16} color="var(--text-subtle)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+        <div className="relative w-full md:w-80">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-grit-dim" />
           <input
             type="text"
-            placeholder="Search by event, venue, or #ID..."
+            placeholder="FILTER GIG / VENUE / PASS #ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="input-field"
-            style={{ paddingLeft: '36px', height: '38px', fontSize: '0.85rem' }}
+            className="w-full bg-asphalt-card border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine pl-9 pr-3 py-1.5 text-xs uppercase outline-none"
           />
         </div>
       </div>
 
+      {/* Bookings Card Grid */}
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: '16px' }}>
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div className="skeleton-box" style={{ height: '14px', width: '30%' }} />
-                <div className="skeleton-box" style={{ height: '22px', width: '80px', borderRadius: '12px' }} />
-              </div>
-              <div className="skeleton-box" style={{ height: '22px', width: '80%' }} />
-              <div className="skeleton-box" style={{ height: '14px', width: '55%' }} />
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
-                <div className="skeleton-box" style={{ height: '18px', width: '90px' }} />
-                <div className="skeleton-box" style={{ height: '32px', width: '100px', borderRadius: '8px' }} />
-              </div>
-            </div>
-          ))}
+        <div className="py-16 text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-acid-yellow border-t-transparent mx-auto mb-3"></div>
+          <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider animate-pulse">
+            AUDITING CIPHER WRISTBAND INVENTORY...
+          </span>
         </div>
       ) : filteredBookings.length === 0 ? (
-        <div className="glass-panel" style={{ textAlign: 'center', padding: '60px' }}>
-          <Ticket size={42} color="var(--text-subtle)" style={{ marginBottom: '12px' }} />
-          <h3 style={{ fontWeight: 700 }}>No bookings found</h3>
-          <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '0.88rem' }}>
+        <div className="bg-asphalt-surface border-4 border-dashed border-asphalt-border p-12 text-center">
+          <Ticket size={48} className="text-grit-dim mx-auto mb-3 opacity-40" />
+          <h3 className="font-impact text-2xl uppercase text-grit-white tracking-wider">NO PASSES DISCOVERED</h3>
+          <p className="font-mono-zine text-xs text-grit-dim uppercase mt-1">
             {searchQuery || statusFilter !== 'ALL'
-              ? 'No reservations match your search or filter criteria.'
-              : 'Explore the live events catalog and reserve your first pass.'}
+              ? 'NO WRISTBAND RECORDS MATCH FILTER CRITERIA'
+              : 'EXPLORE THE FLYER DECK AND LOCK YOUR FIRST ADMITTANCE PASS'}
           </p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: '16px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBookings.map((b) => (
-            <div key={b.id} className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-                  <span className={`badge ${b.bookingStatus === 'CONFIRMED' ? 'badge-green' : 'badge-red'}`}>
-                    {b.bookingStatus}
-                  </span>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', fontWeight: 600 }}>Booking #{b.id}</span>
+            <div 
+              key={b.id} 
+              className="bg-asphalt-surface border-4 border-grit-white shadow-[6px_6px_0px_#eefc54] flex flex-col justify-between relative overflow-hidden"
+            >
+              {/* Slanted Tape Badge */}
+              <div className={`absolute top-3 right-3 text-xs font-impact tracking-wider px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-2 ${
+                b.bookingStatus === 'CONFIRMED'
+                  ? 'bg-acid-yellow text-asphalt-black'
+                  : 'bg-neon-magenta text-grit-white'
+              }`}>
+                {b.bookingStatus}
+              </div>
+
+              {/* Pass Content */}
+              <div className="p-5">
+                <div className="text-[10px] font-ticker text-grit-dim uppercase tracking-wider mb-2">
+                  WRISTBAND #{b.id} // SEC_NODE
                 </div>
 
-                <h3 style={{ fontSize: '1.15rem', marginBottom: '12px', fontWeight: 700, lineHeight: 1.3 }}>{b.event?.name || 'Event'}</h3>
+                <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-tight mb-4 pr-16">
+                  {b.event?.name || 'UNDERGROUND GIG'}
+                </h3>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)', marginBottom: '18px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Calendar size={14} color="var(--text-subtle)" /> {b.event?.eventDate} @ {b.event?.startTime || '19:00'}
+                <div className="space-y-1.5 font-mono-zine text-xs text-grit-dim uppercase mb-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={13} className="text-acid-yellow" />
+                    <span>{b.event?.eventDate} @ {b.event?.startTime || '23:00'}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <MapPin size={14} color="var(--text-subtle)" /> {b.event?.venue?.name || 'Venue'}
+                  <div className="flex items-center gap-2">
+                    <MapPin size={13} className="text-acid-yellow" />
+                    <span>{b.event?.venue?.name || 'NORTH INDUSTRIAL DOCKS'}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Ticket size={14} color="var(--text-subtle)" /> {b.quantity} pass(es) · <strong style={{ color: 'var(--text-main)' }}>{formatPrice(b.totalAmount, b.event?.currency)}</strong>
+                  <div className="flex items-center gap-2">
+                    <Ticket size={13} className="text-acid-yellow" />
+                    <span>
+                      {b.quantity} PASS(ES) · {b.selectedSeats ? `TILES: ${b.selectedSeats}` : 'GENERAL PIT'}
+                    </span>
                   </div>
+                  <div className="pt-2 border-t border-asphalt-border font-impact text-lg text-grit-white">
+                    TARIFF: {formatPrice(b.totalAmount, b.event?.currency)}
+                  </div>
+                </div>
+
+                {/* Perforated Barcode Line */}
+                <div className="pt-3 border-t-2 border-dashed border-asphalt-border flex items-center justify-between opacity-50 select-none">
+                  <span className="font-ticker text-[8px] text-grit-dim uppercase">PASS_BARCODE_CIPHER</span>
+                  <svg className="h-4 w-28" viewBox="0 0 112 16" fill="currentColor">
+                    <rect x="0" y="0" width="3" height="16"/>
+                    <rect x="5" y="0" width="2" height="16"/>
+                    <rect x="9" y="0" width="4" height="16"/>
+                    <rect x="15" y="0" width="2" height="16"/>
+                    <rect x="19" y="0" width="5" height="16"/>
+                    <rect x="26" y="0" width="1" height="16"/>
+                    <rect x="29" y="0" width="4" height="16"/>
+                    <rect x="35" y="0" width="3" height="16"/>
+                    <rect x="40" y="0" width="5" height="16"/>
+                    <rect x="47" y="0" width="2" height="16"/>
+                    <rect x="51" y="0" width="4" height="16"/>
+                    <rect x="57" y="0" width="2" height="16"/>
+                    <rect x="61" y="0" width="5" height="16"/>
+                    <rect x="68" y="0" width="3" height="16"/>
+                    <rect x="73" y="0" width="4" height="16"/>
+                    <rect x="79" y="0" width="2" height="16"/>
+                    <rect x="83" y="0" width="5" height="16"/>
+                    <rect x="90" y="0" width="2" height="16"/>
+                    <rect x="94" y="0" width="4" height="16"/>
+                    <rect x="100" y="0" width="2" height="16"/>
+                    <rect x="104" y="0" width="5" height="16"/>
+                  </svg>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-wrap gap-2">
                 {b.bookingStatus !== 'CANCELLED' && (
-                  <button onClick={() => handleDownloadPdf(b)} className="btn btn-primary btn-sm">
-                    <Download size={13} /> E-Ticket PDF
+                  <button 
+                    onClick={() => handleDownloadPdf(b)} 
+                    className="flex-1 bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase py-2 px-3 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Download size={13} /> PRINT WRISTBAND PASS
                   </button>
                 )}
 
-                <button onClick={() => handleDownloadCalendar(b.event?.id || 1)} className="btn btn-secondary btn-sm" title="Download .ics file">
+                <button 
+                  onClick={() => handleDownloadCalendar(b.event?.id || 1)} 
+                  className="bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-1.5 uppercase cursor-pointer"
+                  title="Download .ics file"
+                >
                   <Calendar size={13} /> .ICS
                 </button>
 
-                <button onClick={() => handleOpenGoogleCalendar(b.event?.id || 1, b.event)} className="btn btn-secondary btn-sm" title="Add to Google Calendar">
-                  <ExternalLink size={13} /> Google Cal
+                <button 
+                  onClick={() => handleOpenGoogleCalendar(b.event?.id || 1, b.event)} 
+                  className="bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-1.5 uppercase cursor-pointer"
+                  title="Add to Google Calendar"
+                >
+                  <ExternalLink size={13} /> GCAL
                 </button>
 
                 {b.bookingStatus === 'CONFIRMED' && (
-                  <button onClick={() => handleCancelBooking(b.id)} className="btn btn-secondary btn-sm" style={{ color: '#F87171' }} title="Cancel reservation">
-                    <XCircle size={13} /> Cancel
+                  <button 
+                    onClick={() => handleCancelBooking(b.id)} 
+                    className="bg-asphalt-surface border border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-mono-zine text-xs px-2.5 py-1.5 uppercase cursor-pointer transition-colors"
+                    title="Void wristband pass"
+                  >
+                    <XCircle size={13} /> VOID
                   </button>
                 )}
               </div>

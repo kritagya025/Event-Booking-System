@@ -1,146 +1,86 @@
 import React from 'react';
-import { X, Lock, ShieldCheck, Database, Key, Check } from 'lucide-react';
+import { X, Shield, Lock, Eye, Server, RefreshCw } from 'lucide-react';
 
 export default function PrivacyModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" onClick={onClose} style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(11, 15, 23, 0.82)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px'
-    }}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{
-        background: 'var(--card-bg, #111827)',
-        border: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-        borderRadius: 'var(--radius-lg)',
-        width: '100%',
-        maxWidth: '750px',
-        maxHeight: '85vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-        overflow: 'hidden'
-      }}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+      <div 
+        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#ff1f6d] flex flex-col font-mono-zine relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Slanted Tape Badge */}
+        <div className="absolute -top-4 -right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+          VAULT://CIPHER_PRIVACY
+        </div>
+
         {/* Header */}
-        <div style={{
-          padding: '24px 28px',
-          borderBottom: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-          display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(255, 255, 255, 0.02)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              background: 'rgba(16, 185, 129, 0.15)',
-              color: '#10b981',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Lock size={22} />
+        <div className="p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
+                PRIVACY_MANIFEST
+              </span>
+              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
+                ZERO TELEMETRY LEAKAGE
+              </span>
             </div>
-            <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main, #fff)', margin: 0 }}>
-                Privacy Policy & Security
-              </h2>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted, #9ca3af)', margin: 0, marginTop: '2px' }}>
-                GDPR & CCPA Compliant • HttpOnly Encrypted Session Management
-              </p>
-            </div>
+            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
+              CRYPTOGRAPHIC PRIVACY POLICY
+            </h3>
+            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
+              HOW WE SHIELD ATTENDEE IDENTITIES, COMM ADDRESSES & WRISTBAND KEYS
+            </p>
           </div>
-          <button onClick={onClose} className="btn-icon" style={{
-            background: 'rgba(255,255,255,0.06)',
-            border: 'none',
-            color: 'var(--text-secondary, #cbd5e1)',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}>
+          <button 
+            onClick={onClose} 
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+          >
             <X size={18} />
           </button>
         </div>
 
-        {/* Content */}
-        <div style={{
-          padding: '28px',
-          overflowY: 'auto',
-          fontSize: '0.9rem',
-          lineHeight: 1.7,
-          color: 'var(--text-secondary, #cbd5e1)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px'
-        }}>
-          <section>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <ShieldCheck size={18} color="#10b981" />
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main, #fff)', margin: 0 }}>
-                1. Data Protection Guarantee
-              </h3>
-            </div>
+        {/* Body Content */}
+        <div className="p-6 overflow-y-auto space-y-4 text-xs text-grit-dim uppercase leading-relaxed font-mono-zine">
+          <section className="bg-asphalt-card border border-asphalt-border p-4">
+            <h4 className="font-impact text-base text-neon-magenta tracking-wider mb-1">
+              01. ZERO THIRD-PARTY TRACKERS OR AD NETWORKS
+            </h4>
             <p>
-              Your privacy is paramount. EventHub employs industry-leading end-to-end security measures. All sensitive session tokens are delivered exclusively over secure HttpOnly cookies, completely mitigating cross-site scripting (XSS) attack vectors.
+              VAULT HOUSES ZERO TRACKING PIXELS, BEACONS, OR CORPORATE AD NETWORKS. SESSIONS OPERATE IN AIR-GAPPED SANDBOXES WITH CRYPTOGRAPHIC TLS COMMUNICATIONS DIRECT TO OUR NORTH DOCKS BACKEND RIG.
             </p>
           </section>
 
-          <section style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <Database size={18} color="#10b981" />
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main, #fff)', margin: 0 }}>
-                2. Information We Collect
-              </h3>
-            </div>
-            <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <li><strong>Account Credentials:</strong> Full name, email address, encrypted password hash (BCrypt salted).</li>
-              <li><strong>Booking Transactions:</strong> Reserved seats, venue locations, ticket QR signature tokens.</li>
-              <li><strong>Check-in Logs:</strong> Gate entry timestamps and validation metrics for venue access audit control.</li>
-            </ul>
+          <section className="bg-asphalt-card border border-asphalt-border p-4">
+            <h4 className="font-impact text-base text-neon-magenta tracking-wider mb-1">
+              02. EPHEMERAL COMM ENCRYPTION
+            </h4>
+            <p>
+              LOCATION COORDINATES DISPATCHED VIA EMAIL / SMS AUTO-EXPIRE 24 HOURS FOLLOWING EVENT CONCLUSION. PASS WATERMARKS ARE PERMANENTLY RETIRED AND HASHED IN POSTGRESQL.
+            </p>
           </section>
 
-          <section style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <Key size={18} color="#10b981" />
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main, #fff)', margin: 0 }}>
-                3. Third-Party Sharing & Data Export
-              </h3>
-            </div>
+          <section className="bg-asphalt-card border border-asphalt-border p-4">
+            <h4 className="font-impact text-base text-neon-magenta tracking-wider mb-1">
+              03. RIGHT TO DATA PURGE
+            </h4>
             <p>
-              We do not sell or monetize personal user data. Data is shared with venue organizers strictly to facilitate event access, seat allocation, and attendee safety protocols. Users retain the full right to export or request permanent deletion of their account records at any time.
+              ANY CREW MEMBER MAY REQUEST AN IMMEDIATE, IRREVERSIBLE FLUSH OF THEIR COMM RECORD, WRISTBAND LOGS, AND SYSTEM IDENTIFIERS WITH ZERO AUDIT TRAIL.
             </p>
           </section>
         </div>
 
         {/* Footer */}
-        <div style={{
-          padding: '20px 28px',
-          borderTop: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-          display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(0, 0, 0, 0.2)'
-        }}>
-          <span style={{ fontSize: '0.82rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Check size={14} /> 256-Bit SSL/TLS Encryption Active
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+          <span className="font-ticker text-[10px] text-grit-dim uppercase">
+            PRIVACY STATUS: ZERO LOGGING VERIFIED
           </span>
-          <button onClick={onClose} className="btn btn-primary" style={{ padding: '10px 24px', background: '#10b981', borderColor: '#10b981' }}>
-            Close Privacy Policy
+          <button 
+            onClick={onClose} 
+            className="bg-neon-magenta text-grit-white font-impact tracking-wider text-sm uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer"
+          >
+            ACCEPT & ENTER
           </button>
         </div>
       </div>

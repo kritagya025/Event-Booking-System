@@ -48,181 +48,111 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   const tables = [
-    { name: 'events', rows: stats.eventsCount || 12, description: 'Live concert, conference & match catalog' },
-    { name: 'bookings', rows: stats.bookingsCount || 48, description: 'Customer seat reservations & order history' },
-    { name: 'tickets', rows: (stats.bookingsCount || 48) * 2, description: 'QR Cryptographic validation codes' },
-    { name: 'users', rows: stats.usersCount || 15, description: 'Registered customers & event organizers' },
-    { name: 'venues', rows: 8, description: 'Stadiums, arenas & auditorium layout metadata' },
-    { name: 'seats', rows: 240, description: 'Tiered pricing seat matrix & row coordinates' },
-    { name: 'wishlist_items', rows: 19, description: 'User saved events & favorite catalog items' }
+    { name: 'EVENTS', rows: stats.eventsCount || 12, description: 'CATALOG OF LIVE RAVES, DOCK SESSIONS & FLYERS' },
+    { name: 'BOOKINGS', rows: stats.bookingsCount || 48, description: 'ATTENDEE WRISTBAND ALLOCATIONS & STOMP LOGS' },
+    { name: 'TICKETS', rows: (stats.bookingsCount || 48) * 2, description: 'CRYPTOGRAPHIC BARCODE & QR PASS WATERMARKS' },
+    { name: 'USERS', rows: stats.usersCount || 15, description: 'AUTHENTICATED CREW IDENTITIES & SOUND RIGS' },
+    { name: 'VENUES', rows: 8, description: 'NORTH DOCKS WAREHOUSES, REFRIGERATOR SQUATS & BAYS' },
+    { name: 'SEATS', rows: 240, description: 'PIT FLOOR SUB-ARRAY COORD MATRIX (F1, M2, B3)' }
   ];
 
   return (
-    <div className="modal-backdrop" onClick={onClose} style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(11, 15, 23, 0.82)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px'
-    }}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{
-        background: 'var(--card-bg, #111827)',
-        border: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-        borderRadius: 'var(--radius-lg)',
-        width: '100%',
-        maxWidth: '800px',
-        maxHeight: '85vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-        overflow: 'hidden'
-      }}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4 font-mono-zine" onClick={onClose}>
+      <div 
+        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] flex flex-col relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Slanted Tape Badge */}
+        <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+          VAULT://SQL_CONSOLE
+        </div>
+
         {/* Header */}
-        <div style={{
-          padding: '24px 28px',
-          borderBottom: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-          display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(255, 255, 255, 0.02)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              background: 'rgba(168, 85, 247, 0.15)',
-              color: '#a855f7',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Database size={22} />
+        <div className="p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+                POSTGRESQL_ENGINE
+              </span>
+              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
+                ACTIVE POOL: HIKARICP
+              </span>
             </div>
-            <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main, #fff)', margin: 0 }}>
-                Database Console & Schema Metrics
-              </h2>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted, #9ca3af)', margin: 0, marginTop: '2px' }}>
-                Relational Persistence Layer • HikariCP Active Pool Connection
-              </p>
-            </div>
+            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
+              DATABASE CONSOLE & SCHEMA AUDIT
+            </h3>
+            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
+              RELATIONAL ENTITIES, LIVE TUPLES, AND SEAT INVENTORY INDEXES
+            </p>
           </div>
-          <button onClick={onClose} className="btn-icon" style={{
-            background: 'rgba(255,255,255,0.06)',
-            border: 'none',
-            color: 'var(--text-secondary, #cbd5e1)',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}>
+          <button 
+            onClick={onClose} 
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+          >
             <X size={18} />
           </button>
         </div>
 
-        {/* System Stats Overview */}
-        <div style={{
-          padding: '20px 28px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '16px',
-          background: 'rgba(0, 0, 0, 0.15)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)'
-        }}>
-          <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted, #9ca3af)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Engine</div>
-            <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main, #fff)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <HardDrive size={16} color="#a855f7" /> {stats.dbEngine}
+        {/* Body Content */}
+        <div className="p-6 overflow-y-auto space-y-4">
+          
+          {/* Top Engine Specs Banner */}
+          <div className="bg-asphalt-card border-2 border-asphalt-border p-4 flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] text-grit-dim uppercase block">ENGINE INSTANCE</span>
+              <span className="font-impact text-lg text-grit-white tracking-wider uppercase block">
+                {stats.dbEngine}
+              </span>
+              <span className="text-xs text-acid-yellow uppercase">
+                STATUS: {stats.status} ({stats.activeConnections}/{stats.maxPoolSize} POOL CONNS)
+              </span>
             </div>
-          </div>
-          <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted, #9ca3af)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Connection Pool</div>
-            <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#10b981', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircle2 size={16} /> {stats.activeConnections} / {stats.maxPoolSize} Connections
-            </div>
-          </div>
-          <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted, #9ca3af)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>State</div>
-            <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#10b981', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <ShieldCheck size={16} /> {stats.status}
-            </div>
-          </div>
-        </div>
-
-        {/* Table Schema List */}
-        <div style={{
-          padding: '24px 28px',
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main, #fff)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Table size={18} color="#a855f7" /> Active Database Tables ({tables.length})
-            </h3>
-            <button onClick={fetchDbMetrics} disabled={loading} className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <RefreshCw size={14} className={loading ? 'spin' : ''} /> Sync Metrics
+            <button 
+              onClick={fetchDbMetrics} 
+              disabled={loading}
+              className="bg-asphalt-surface border border-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-3 py-1.5 font-impact text-xs uppercase flex items-center gap-1.5 cursor-pointer transition-colors"
+            >
+              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> RE-QUERY SCHEMA
             </button>
           </div>
 
-          <div style={{
-            borderRadius: '12px',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            overflow: 'hidden',
-            background: 'rgba(255, 255, 255, 0.02)'
-          }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
-              <thead>
-                <tr style={{ background: 'rgba(255, 255, 255, 0.04)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: 'var(--text-muted, #9ca3af)' }}>
-                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Table Name</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Description</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, textAlign: 'right' }}>Record Count</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tables.map((t, idx) => (
-                  <tr key={idx} style={{ borderBottom: idx === tables.length - 1 ? 'none' : '1px solid rgba(255, 255, 255, 0.04)' }}>
-                    <td style={{ padding: '12px 16px', fontWeight: 700, color: '#a855f7', fontFamily: 'monospace' }}>
-                      public.{t.name}
-                    </td>
-                    <td style={{ padding: '12px 16px', color: 'var(--text-secondary, #cbd5e1)' }}>
-                      {t.description}
-                    </td>
-                    <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--text-main, #fff)' }}>
-                      {t.rows.toLocaleString()} rows
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Tables schema */}
+          <div className="space-y-2">
+            <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block mb-1">
+              RELATIONAL TUPLE AUDIT
+            </span>
+            {tables.map((t) => (
+              <div key={t.name} className="bg-asphalt-card border border-asphalt-border p-3 flex items-center justify-between">
+                <div>
+                  <h4 className="font-impact text-sm uppercase text-grit-white tracking-wider leading-none mb-0.5">
+                    TABLE: {t.name}
+                  </h4>
+                  <p className="text-[10px] text-grit-dim uppercase">
+                    {t.description}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="bg-acid-yellow text-asphalt-black font-ticker text-xs px-2 py-0.5 font-bold uppercase">
+                    {t.rows} TUPLES
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
+
         </div>
 
         {/* Footer */}
-        <div style={{
-          padding: '18px 28px',
-          borderTop: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.1))',
-          display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(0, 0, 0, 0.2)'
-        }}>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-muted, #9ca3af)' }}>
-            H2 Web Console: Available in dev profile on port 8080/h2-console
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+          <span className="font-ticker text-[10px] text-grit-dim uppercase">
+            DATA INTEGRITY: ACID COMPLIANT // WAL ACTIVE
           </span>
-          <button onClick={onClose} className="btn btn-secondary btn-sm" style={{ padding: '8px 18px' }}>
-            Close Console
+          <button 
+            onClick={onClose} 
+            className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer"
+          >
+            DISMISS CONSOLE
           </button>
         </div>
       </div>

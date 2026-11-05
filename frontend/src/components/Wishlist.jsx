@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Calendar, MapPin, Trash2, ArrowRight } from 'lucide-react';
+import { Bookmark, Calendar, MapPin, Trash2, ArrowRight } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
 
@@ -20,12 +20,12 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
       setWishlistItems([
         {
           id: 1,
-          name: 'Neon Horizon Cyber Music Festival 2026',
-          category: 'MUSIC',
-          ticketPrice: 85.00,
+          name: 'MAHLER 203: RESURRECTION RAVE',
+          category: 'TECHNO',
+          ticketPrice: 30.00,
           eventDate: '2026-09-15',
-          availableSeats: 140,
-          venueName: 'Metro Arena Center'
+          availableSeats: 50,
+          venueName: 'PIER 44 COLD SHED'
         }
       ]);
     } finally {
@@ -37,72 +37,99 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
     try {
       await apiFetch(`/wishlist/${eventId}`, { method: 'DELETE' });
       setWishlistItems(wishlistItems.filter(e => e.id !== eventId));
-      showToast('Removed from wishlist', 'info');
+      showToast('REMOVED FROM SAVED TAPES', 'info');
     } catch (err) {
-      showToast(err.message || 'Failed to remove', 'error');
+      showToast(err.message || 'FAILED TO REMOVE TAPE', 'error');
     }
   };
 
   return (
-    <div style={{ padding: '0 24px 40px 24px', maxWidth: '1320px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '28px' }}>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 800 }}>Wishlist</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Events you want to attend</p>
+    <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
+      
+      {/* Header */}
+      <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex items-end justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+              VAULT://BOOKMARKS
+            </span>
+            <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
+              SAVED FLYERS
+            </span>
+          </div>
+          <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
+            SAVED TAPES & FLYER BOOKMARKS
+          </h1>
+          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
+            YOUR CURATED DECK OF UPCOMING INDUSTRIAL SESSIONS & WAREHOUSE GIGS
+          </p>
+        </div>
       </div>
 
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div className="skeleton-box" style={{ height: '20px', width: '70px', borderRadius: '12px' }} />
-                <div className="skeleton-box" style={{ height: '24px', width: '28px', borderRadius: '6px' }} />
-              </div>
-              <div className="skeleton-box" style={{ height: '22px', width: '80%' }} />
-              <div className="skeleton-box" style={{ height: '14px', width: '50%' }} />
-              <div className="skeleton-box" style={{ height: '14px', width: '40%' }} />
-            </div>
-          ))}
+        <div className="py-16 text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-acid-yellow border-t-transparent mx-auto mb-3"></div>
+          <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider animate-pulse">
+            AUDITING SAVED TAPES ARCHIVE...
+          </span>
         </div>
       ) : wishlistItems.length === 0 ? (
-        <div className="glass-panel" style={{ textAlign: 'center', padding: '60px' }}>
-          <Heart size={40} color="var(--text-subtle)" style={{ marginBottom: '12px' }} />
-          <h3 style={{ fontWeight: 700 }}>Your wishlist is empty</h3>
-          <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '0.88rem' }}>Save events by clicking the heart icon</p>
+        <div className="bg-asphalt-surface border-4 border-dashed border-asphalt-border p-12 text-center">
+          <Bookmark size={48} className="text-grit-dim mx-auto mb-3 opacity-40" />
+          <h3 className="font-impact text-2xl uppercase text-grit-white tracking-wider">NO TAPES SAVED</h3>
+          <p className="font-mono-zine text-xs text-grit-dim uppercase mt-1">
+            CLICK THE BOOKMARK STAMP ON ANY FLYER TO PIN IT TO THIS ARCHIVE
+          </p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '12px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {wishlistItems.map((event) => (
-            <div key={event.id} className="glass-panel glass-panel-interactive" style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div 
+              key={event.id} 
+              className="bg-asphalt-surface border-4 border-grit-white shadow-[6px_6px_0px_#eefc54] p-5 flex flex-col justify-between relative"
+            >
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <span className="badge badge-orange">{event.category}</span>
+                <div className="flex justify-between items-center mb-3">
+                  <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5 uppercase">
+                    {event.category}
+                  </span>
                   <button 
                     onClick={() => handleRemoveFromWishlist(event.id)}
-                    className="btn btn-secondary btn-sm"
-                    style={{ padding: '4px 8px' }}
-                    title="Remove"
+                    className="text-neon-magenta hover:text-grit-white bg-asphalt-card border border-asphalt-border hover:border-neon-magenta p-1 cursor-pointer transition-colors"
+                    title="Remove from saved"
                   >
-                    <Trash2 size={12} />
+                    <Trash2 size={13} />
                   </button>
                 </div>
 
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '10px', fontWeight: 700 }}>{event.name}</h3>
+                <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-tight mb-3">
+                  {event.name}
+                </h3>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Calendar size={13} color="var(--text-subtle)" /> {event.eventDate}
+                <div className="space-y-1.5 font-mono-zine text-xs text-grit-dim uppercase mb-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={13} className="text-acid-yellow" />
+                    <span>{event.eventDate}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <MapPin size={13} color="var(--text-subtle)" /> {event.venueName || 'Main Arena'}
+                  <div className="flex items-center gap-2">
+                    <MapPin size={13} className="text-acid-yellow" />
+                    <span>{event.venueName || 'NORTH INDUSTRIAL DOCKS'}</span>
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '14px' }}>
-                <span style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-main)' }}>{formatPrice(event.ticketPrice, event.currency)}</span>
-                <button onClick={() => onSelectEvent(event)} className="btn btn-primary btn-sm">
-                  Book <ArrowRight size={12} />
+              <div className="pt-4 border-t border-asphalt-border flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-ticker text-grit-dim uppercase block">TARIFF</span>
+                  <span className="font-display text-2xl text-acid-yellow font-bold leading-none">
+                    {formatPrice(event.ticketPrice, event.currency)}
+                  </span>
+                </div>
+                <button 
+                  onClick={() => onSelectEvent(event)} 
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase px-4 py-2 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center gap-1.5 cursor-pointer"
+                >
+                  CLAIM PASS <ArrowRight size={13} />
                 </button>
               </div>
             </div>

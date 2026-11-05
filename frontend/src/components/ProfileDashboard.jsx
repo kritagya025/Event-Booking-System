@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   User, Mail, Phone, ShieldCheck, Ticket, Heart, Calendar, 
   MapPin, Download, PlusCircle, QrCode, DollarSign, Edit3, X, CheckCircle, 
-  TrendingUp, Award, Layers, LogOut, Lock, Trash2
+  TrendingUp, Award, Layers, LogOut, Lock, Trash2, Radio
 } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
@@ -29,7 +29,6 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
 
   const fetchProfileData = useCallback(async () => {
     try {
-      // 1. Fetch fresh user profile
       const userRes = await apiFetch('/users/me').catch(() => currentUser);
       if (userRes) {
         setProfile(userRes);
@@ -43,7 +42,6 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       const isOrg = currentUser.role === 'ORGANIZER' || currentUser.role === 'ADMIN';
 
       if (isOrg) {
-        // Fetch Organizer events
         const eventsRes = await apiFetch('/events?size=50').catch(() => null);
         if (eventsRes && eventsRes.content) {
           setManagedEvents(eventsRes.content);
@@ -51,7 +49,6 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       }
 
       if (currentUser.role === 'CUSTOMER' || currentUser.role === 'ADMIN') {
-        // Fetch Customer bookings and wishlist
         const [bRes, wRes] = await Promise.all([
           apiFetch('/bookings/user/' + (currentUser.id || 1)).catch(() => []),
           apiFetch('/wishlist/user/' + (currentUser.id || 1)).catch(() => [])
@@ -79,29 +76,29 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       });
       setProfile(updated);
       if (onUpdateUser) onUpdateUser(updated);
-      showToast('Profile details updated successfully', 'success');
+      showToast('CREW IDENTITY SPECIFICATIONS UPDATED', 'success');
       setIsEditOpen(false);
     } catch (err) {
-      showToast(err.message || 'Failed to update profile', 'error');
+      showToast(err.message || 'FAILED TO UPDATE IDENTITY', 'error');
     } finally {
       setSavingProfile(false);
     }
   };
 
   const handleDeleteManagedEvent = async (eventId, eventName) => {
-    if (!window.confirm(`Are you sure you want to remove event "${eventName || 'this event'}"?`)) return;
+    if (!window.confirm(`ARE YOU SURE YOU WANT TO REMOVE GIG "${eventName || 'THIS GIG'}"?`)) return;
     try {
       await apiFetch(`/events/${eventId}`, { method: 'DELETE' });
-      showToast('Event removed successfully', 'success');
+      showToast('GIG REMOVED FROM WAREHOUSE CATALOG', 'success');
       setManagedEvents((prev) => prev.filter((e) => e.id !== eventId));
     } catch (err) {
-      showToast(err.message || 'Failed to remove event', 'error');
+      showToast(err.message || 'FAILED TO REMOVE EVENT', 'error');
     }
   };
 
   const handleDownloadPdf = async (booking) => {
     if (booking.bookingStatus === 'CANCELLED') {
-      showToast('Cannot download tickets for a cancelled booking', 'error');
+      showToast('CANNOT DOWNLOAD PASS FOR VOIDED RESERVATION', 'error');
       return;
     }
     try {
@@ -113,23 +110,27 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `booking-${booking.id}.pdf`;
+      link.download = `VAULT90S-Pass-${booking.id}.pdf`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      showToast('Downloaded PDF Ticket', 'success');
+      showToast('WRISTBAND PASS DISPATCHED', 'success');
     } catch (err) {
-      showToast(err.message || 'Failed to download ticket PDF', 'error');
+      showToast(err.message || 'FAILED TO DOWNLOAD PASS', 'error');
     }
   };
 
   if (!currentUser) {
     return (
-      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-        <h3>Please sign in to view your Profile Dashboard</h3>
-        <button onClick={() => onNavigate('login')} className="btn btn-primary" style={{ marginTop: '16px' }}>
-          Sign In
+      <div className="w-full max-w-md mx-auto py-24 text-center font-mono-zine text-grit-white">
+        <h3 className="font-display text-3xl uppercase mb-4">AUTHENTICATE IDENTITY</h3>
+        <p className="text-xs text-grit-dim uppercase mb-6">SIGN IN TO ACCESS YOUR ENCLAVE PROFILE AND WRISTBAND LOGS</p>
+        <button 
+          onClick={() => onNavigate('login')} 
+          className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff] cursor-pointer"
+        >
+          SIGN IN TO ENCLAVE
         </button>
       </div>
     );
@@ -137,7 +138,6 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
 
   const isOrganizer = currentUser.role === 'ORGANIZER';
 
-  // Calculate Metrics
   const totalSpent = bookings.reduce((sum, b) => b.bookingStatus === 'CONFIRMED' ? sum + (b.totalAmount || 0) : sum, 0);
   const activeBookingsCount = bookings.filter(b => b.bookingStatus === 'CONFIRMED').length;
 
@@ -145,47 +145,35 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
   const estimatedRevenue = managedEvents.reduce((sum, e) => sum + (e.ticketPrice * 25), 0);
 
   return (
-    <div style={{ padding: '0 24px 60px 24px', maxWidth: '1280px', margin: '0 auto' }}>
+    <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
       
-      {/* ─── Profile Header Card ─── */}
-      <div className="glass-panel" style={{ padding: '32px', marginBottom: '28px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
+      {/* Profile Header Box */}
+      <div className="bg-asphalt-surface border-4 border-grit-white p-6 md:p-8 shadow-[8px_8px_0px_#eefc54] mb-8 relative">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            {/* User Avatar Circle */}
-            <div style={{
-              width: '72px',
-              height: '72px',
-              borderRadius: '50%',
-              background: isOrganizer ? 'linear-gradient(135deg, #EA580C, #C2410C)' : 'linear-gradient(135deg, #475569, #334155)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.8rem',
-              fontWeight: '800',
-              color: '#FFF',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.2)'
-            }}>
+          <div className="flex items-center gap-5">
+            {/* Stamp Avatar */}
+            <div className="w-20 h-20 bg-acid-yellow text-asphalt-black border-2 border-asphalt-black flex items-center justify-center font-display text-4xl font-bold shadow-[4px_4px_0px_#0e0e11] shrink-0">
               {(profile.firstName || 'U')[0].toUpperCase()}
             </div>
 
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                <h2 style={{ fontSize: '1.6rem', fontWeight: '800' }}>
+              <div className="flex items-center gap-3 mb-1">
+                <h2 className="font-display text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-none">
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <span className={`badge ${isOrganizer ? 'badge-orange' : 'badge-green'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <ShieldCheck size={12} /> {profile.role}
+                <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-1">
+                  {profile.role}
                 </span>
               </div>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Mail size={14} color="var(--text-subtle)" /> {profile.email}
+              <div className="flex flex-wrap gap-4 text-xs font-mono-zine text-grit-dim uppercase">
+                <span className="flex items-center gap-1.5">
+                  <Mail size={13} className="text-acid-yellow" /> {profile.email}
                 </span>
                 {profile.phone && (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Phone size={14} color="var(--text-subtle)" /> {profile.phone}
+                  <span className="flex items-center gap-1.5">
+                    <Phone size={13} className="text-acid-yellow" /> {profile.phone}
                   </span>
                 )}
               </div>
@@ -193,306 +181,220 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={() => setIsEditOpen(true)} className="btn btn-secondary" style={{ padding: '9px 16px', fontSize: '0.85rem' }}>
-              <Edit3 size={14} /> Edit Profile
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setIsEditOpen(true)} 
+              className="bg-asphalt-card border-2 border-asphalt-border hover:border-acid-yellow text-grit-white font-impact tracking-wider text-xs px-4 py-2 uppercase flex items-center gap-1.5 cursor-pointer transition-all"
+            >
+              <Edit3 size={13} /> EDIT CIPHER
             </button>
-            <button onClick={onLogout} className="btn btn-secondary" style={{ padding: '9px 16px', fontSize: '0.85rem', color: '#ef4444' }}>
-              <LogOut size={14} /> Sign Out
+            <button 
+              onClick={onLogout} 
+              className="bg-asphalt-card border-2 border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-impact tracking-wider text-xs px-4 py-2 uppercase flex items-center gap-1.5 cursor-pointer transition-all"
+            >
+              <LogOut size={13} /> TERMINATE SESSION
             </button>
           </div>
 
         </div>
       </div>
 
-      {/* ─── Role-Based KPI Metrics Cards ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-        
+      {/* KPI Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {!isOrganizer ? (
           <>
-            <div className="stat-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>TOTAL BOOKINGS</span>
-                <Ticket size={18} color="var(--accent-purple, #a855f7)" />
-              </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>{bookings.length}</div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>{activeBookingsCount} confirmed active</span>
+            <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54]">
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PASSES</span>
+              <span className="font-display text-3xl text-grit-white font-bold leading-none mt-1 block">{bookings.length}</span>
+              <span className="text-[10px] text-acid-yellow uppercase block mt-1">{activeBookingsCount} ACTIVE WRISTBANDS</span>
             </div>
 
-            <div className="stat-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>TOTAL SPENT</span>
-                <DollarSign size={18} color="#22c55e" />
-              </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>{formatPrice(totalSpent)}</div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>Active currency format</span>
+            <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d]">
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TARIFF INVESTED</span>
+              <span className="font-display text-3xl text-acid-yellow font-bold leading-none mt-1 block">{formatPrice(totalSpent)}</span>
+              <span className="text-[10px] text-grit-dim uppercase block mt-1">LOCKED DISPATCH VALUE</span>
             </div>
 
-            <div className="stat-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>SAVED WISHLIST</span>
-                <Heart size={18} color="#ef4444" />
-              </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>{wishlist.length}</div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>Events bookmarked</span>
+            <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8]">
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">SAVED TAPES</span>
+              <span className="font-display text-3xl text-blue-400 font-bold leading-none mt-1 block">{wishlist.length}</span>
+              <span className="text-[10px] text-grit-dim uppercase block mt-1">FLYER BOOKMARKS</span>
             </div>
           </>
         ) : (
           <>
-            <div className="stat-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>MANAGED EVENTS</span>
-                <Layers size={18} color="var(--accent-purple, #a855f7)" />
-              </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>{managedEvents.length}</div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>Published on catalog</span>
+            <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54]">
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">MANAGED GIGS</span>
+              <span className="font-display text-3xl text-grit-white font-bold leading-none mt-1 block">{managedEvents.length}</span>
+              <span className="text-[10px] text-acid-yellow uppercase block mt-1">CATALOG FLYERS ACTIVE</span>
             </div>
 
-            <div className="stat-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>TICKETS SOLD</span>
-                <Ticket size={18} color="#3b82f6" />
-              </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>{totalTicketsSold}</div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>Across hosted events</span>
+            <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d]">
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">WRISTBANDS ALLOCATED</span>
+              <span className="font-display text-3xl text-acid-yellow font-bold leading-none mt-1 block">{totalTicketsSold}</span>
+              <span className="text-[10px] text-grit-dim uppercase block mt-1">ACROSS MANAGED FLOORS</span>
             </div>
 
-            <div className="stat-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>ESTIMATED REVENUE</span>
-                <TrendingUp size={18} color="#22c55e" />
-              </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>{formatPrice(estimatedRevenue)}</div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>Gross event volume</span>
+            <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8]">
+              <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">ESTIMATED VOLUME</span>
+              <span className="font-display text-3xl text-blue-400 font-bold leading-none mt-1 block">{formatPrice(estimatedRevenue)}</span>
+              <span className="text-[10px] text-grit-dim uppercase block mt-1">GROSS TARIFF COLLECTED</span>
             </div>
           </>
         )}
-
       </div>
 
-      {/* ─── Dashboard Section Tabs ─── */}
-      <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.08)', marginBottom: '24px', gap: '20px' }}>
+      {/* Section Tabs */}
+      <div className="flex gap-2 border-b-2 border-asphalt-border pb-4 mb-6">
         <button
           onClick={() => setActiveTab('overview')}
-          style={{
-            padding: '12px 4px',
-            borderBottom: activeTab === 'overview' ? '2px solid #FFF' : '2px solid transparent',
-            color: activeTab === 'overview' ? '#FFF' : 'var(--text-muted)',
-            fontWeight: activeTab === 'overview' ? '700' : '400',
-            fontSize: '0.9rem',
-            background: 'none',
-            cursor: 'pointer'
-          }}
+          className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${
+            activeTab === 'overview'
+              ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]'
+              : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+          }`}
         >
-          {isOrganizer ? 'Organizer Overview' : 'Customer Overview'}
+          {isOrganizer ? 'PROMOTER DISPATCH LOG' : 'IDENTITY OVERVIEW'}
         </button>
 
         {!isOrganizer ? (
           <>
             <button
               onClick={() => setActiveTab('bookings')}
-              style={{
-                padding: '12px 4px',
-                borderBottom: activeTab === 'bookings' ? '2px solid #FFF' : '2px solid transparent',
-                color: activeTab === 'bookings' ? '#FFF' : 'var(--text-muted)',
-                fontWeight: activeTab === 'bookings' ? '700' : '400',
-                fontSize: '0.9rem',
-                background: 'none',
-                cursor: 'pointer'
-              }}
+              className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${
+                activeTab === 'bookings'
+                  ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]'
+                  : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+              }`}
             >
-              My Tickets ({bookings.length})
+              MY WRISTBANDS ({bookings.length})
             </button>
             <button
               onClick={() => setActiveTab('wishlist')}
-              style={{
-                padding: '12px 4px',
-                borderBottom: activeTab === 'wishlist' ? '2px solid #FFF' : '2px solid transparent',
-                color: activeTab === 'wishlist' ? '#FFF' : 'var(--text-muted)',
-                fontWeight: activeTab === 'wishlist' ? '700' : '400',
-                fontSize: '0.9rem',
-                background: 'none',
-                cursor: 'pointer'
-              }}
+              className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${
+                activeTab === 'wishlist'
+                  ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]'
+                  : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+              }`}
             >
-              Wishlist ({wishlist.length})
+              SAVED TAPES ({wishlist.length})
             </button>
           </>
         ) : (
           <button
             onClick={() => setActiveTab('events')}
-            style={{
-              padding: '12px 4px',
-              borderBottom: activeTab === 'events' ? '2px solid #FFF' : '2px solid transparent',
-              color: activeTab === 'events' ? '#FFF' : 'var(--text-muted)',
-              fontWeight: activeTab === 'events' ? '700' : '400',
-              fontSize: '0.9rem',
-              background: 'none',
-              cursor: 'pointer'
-            }}
+            className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${
+              activeTab === 'events'
+                ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]'
+                : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+            }`}
           >
-            My Managed Events ({managedEvents.length})
+            MANAGED FLYERS ({managedEvents.length})
           </button>
         )}
       </div>
 
-      {/* ─── TAB CONTENT ─── */}
-
-      {/* CUSTOMER / ORGANIZER OVERVIEW */}
+      {/* Tab Content */}
       {activeTab === 'overview' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-          
-          {/* Main Activity Column */}
-          <div>
-            {!isOrganizer ? (
-              <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Recent Bookings</h3>
-                  <button onClick={() => setActiveTab('bookings')} className="btn btn-secondary btn-sm">
-                    View All
-                  </button>
-                </div>
-
-                {bookings.length === 0 ? (
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No tickets booked yet. Browse events to reserve your seats.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {bookings.slice(0, 3).map((b) => (
-                      <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius-md)' }}>
-                        <div>
-                          <strong style={{ display: 'block', fontSize: '0.92rem' }}>{b.event?.name || 'Event Ticket'}</strong>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{b.event?.eventDate} · {b.quantity} seat(s)</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <span className={`badge ${b.bookingStatus === 'CONFIRMED' ? 'badge-green' : 'badge-red'}`}>{b.bookingStatus}</span>
-                          {b.bookingStatus === 'CONFIRMED' && (
-                            <button onClick={() => handleDownloadPdf(b)} className="btn btn-primary btn-sm" style={{ padding: '6px 10px' }}>
-                              <Download size={12} /> PDF
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#eefc54]">
+            <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4">
+              COMM IDENTIFIER SPECS
+            </h3>
+            <div className="space-y-3 font-mono-zine text-xs uppercase">
+              <div className="flex justify-between border-b border-asphalt-border pb-2">
+                <span className="text-grit-dim">REGISTERED HANDLE:</span>
+                <span className="text-grit-white font-bold">{profile.firstName} {profile.lastName}</span>
               </div>
-            ) : (
-              <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Managed Events Catalog</h3>
-                  <button onClick={() => onNavigate('create-event')} className="btn btn-primary btn-sm">
-                    <PlusCircle size={14} /> Create Event
-                  </button>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {managedEvents.map((ev) => (
-                    <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 18px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius-md)' }}>
-                      <div>
-                        <strong style={{ display: 'block', fontSize: '0.95rem' }}>{ev.name}</strong>
-                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{ev.category} · {ev.eventDate} · {ev.availableSeats} seats left</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{formatPrice(ev.ticketPrice, ev.currency)}</span>
-                        <span className="badge badge-purple">PUBLISHED</span>
-                        <button 
-                          onClick={() => handleDeleteManagedEvent(ev.id, ev.name)} 
-                          className="btn btn-secondary btn-sm" 
-                          style={{ padding: '6px 10px', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}
-                          title="Remove Event"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="flex justify-between border-b border-asphalt-border pb-2">
+                <span className="text-grit-dim">COMM ADDRESS:</span>
+                <span className="text-grit-white font-bold">{profile.email}</span>
               </div>
-            )}
-          </div>
-
-          {/* Side Tools & Quick Actions Column */}
-          <div>
-            <div className="glass-panel" style={{ padding: '24px' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '16px' }}>Quick Tools</h3>
-
-              {isOrganizer ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <button onClick={() => onNavigate('create-event')} className="btn btn-primary" style={{ width: '100%', padding: '10px' }}>
-                    <PlusCircle size={16} /> Publish New Event
-                  </button>
-                  <button onClick={() => onNavigate('checkin')} className="btn btn-secondary" style={{ width: '100%', padding: '10px' }}>
-                    <QrCode size={16} /> Launch Gate QR Scanner
-                  </button>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <button onClick={() => onNavigate('home')} className="btn btn-primary" style={{ width: '100%', padding: '10px' }}>
-                    Browse All Events
-                  </button>
-                  <button onClick={() => setActiveTab('bookings')} className="btn btn-secondary" style={{ width: '100%', padding: '10px' }}>
-                    Download My Tickets
-                  </button>
-                </div>
-              )}
+              <div className="flex justify-between border-b border-asphalt-border pb-2">
+                <span className="text-grit-dim">FREQ / PHONE:</span>
+                <span className="text-grit-white font-bold">{profile.phone || 'NONE SPECIFIED'}</span>
+              </div>
+              <div className="flex justify-between border-b border-asphalt-border pb-2">
+                <span className="text-grit-dim">CREW CLEARANCE:</span>
+                <span className="text-acid-yellow font-bold">{profile.role}</span>
+              </div>
             </div>
           </div>
 
-        </div>
-      )}
-
-      {/* CUSTOMER BOOKINGS LIST TAB */}
-      {activeTab === 'bookings' && !isOrganizer && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-          {bookings.map((b) => (
-            <div key={b.id} className="glass-panel" style={{ padding: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span className={`badge ${b.bookingStatus === 'CONFIRMED' ? 'badge-green' : 'badge-red'}`}>{b.bookingStatus}</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-subtle)' }}>#{b.id}</span>
-              </div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '8px' }}>{b.event?.name || 'Event'}</h4>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                {b.event?.eventDate} · {b.quantity} seat(s) · Total: {formatPrice(b.totalAmount, b.event?.currency)}
-              </p>
-              {b.bookingStatus !== 'CANCELLED' && (
-                <button onClick={() => handleDownloadPdf(b)} className="btn btn-primary btn-sm" style={{ width: '100%' }}>
-                  <Download size={14} /> Download Unified PDF Ticket
-                </button>
-              )}
+          <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#ff1f6d]">
+            <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4">
+              ENCLAVE WATERMARK
+            </h3>
+            <p className="font-mono-zine text-xs text-grit-dim uppercase mb-4 leading-relaxed">
+              THIS IDENTITY CIPHER IS TIED TO ENCRYPTED STOMP PROTOCOL NODES. SESSIONS ARE AUTOMATICALLY RENEWED VIA SECURE HTTPO NLY COOKIES.
+            </p>
+            <div className="hazard-tape h-3 w-full mb-4"></div>
+            <div className="text-[10px] font-ticker text-grit-dim uppercase">
+              CIPHER NODE: V90S_ID_{profile.id || 1} // POSTGRES_TLS_VERIFIED
             </div>
-          ))}
+          </div>
         </div>
       )}
 
-      {/* EDIT PROFILE MODAL */}
+      {/* Edit Profile Modal */}
       {isEditOpen && (
-        <div className="modal-overlay" onClick={() => setIsEditOpen(false)}>
-          <div className="modal-container" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px' }}>
-            <div className="modal-header">
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Edit Account Details</h3>
-              <button onClick={() => setIsEditOpen(false)} className="btn btn-secondary" style={{ padding: '6px' }}><X size={16} /></button>
+        <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] p-6 relative font-mono-zine">
+            <div className="flex justify-between items-center border-b-2 border-asphalt-border pb-3 mb-4">
+              <h3 className="font-display text-2xl uppercase">EDIT CREW CIPHER</h3>
+              <button onClick={() => setIsEditOpen(false)} className="text-grit-dim hover:text-neon-magenta p-1">
+                <X size={18} />
+              </button>
             </div>
-            <div className="modal-body">
-              <form onSubmit={handleSaveProfile}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-                  <div className="form-group">
-                    <label className="form-label">First Name<span style={{ color: '#ef4444' }}> *</span></label>
-                    <input type="text" required value={editForm.firstName} onChange={(e) => setEditForm({...editForm, firstName: e.target.value})} className="form-input" />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Last Name<span style={{ color: '#ef4444' }}> *</span></label>
-                    <input type="text" required value={editForm.lastName} onChange={(e) => setEditForm({...editForm, lastName: e.target.value})} className="form-input" />
-                  </div>
-                </div>
-                <div className="form-group" style={{ marginBottom: '20px' }}>
-                  <label className="form-label">Phone Number</label>
-                  <input type="tel" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} className="form-input" placeholder="+1 (555) 000-0000" />
-                </div>
-                <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px' }} disabled={savingProfile}>
-                  {savingProfile ? 'Saving...' : 'Save Profile Changes'}
+
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              <div>
+                <label className="block text-xs text-grit-dim uppercase mb-1">FIRST IDENTIFIER</label>
+                <input
+                  type="text"
+                  value={editForm.firstName}
+                  onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs uppercase outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-grit-dim uppercase mb-1">SURNAME / HANDLE</label>
+                <input
+                  type="text"
+                  value={editForm.lastName}
+                  onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs uppercase outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-grit-dim uppercase mb-1">FREQ / TELEPHONE</label>
+                <input
+                  type="tel"
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                  className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs uppercase outline-none"
+                />
+              </div>
+
+              <div className="flex justify-between items-center pt-3 border-t border-asphalt-border">
+                <button 
+                  type="button" 
+                  onClick={() => setIsEditOpen(false)} 
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white font-mono-zine text-xs px-3 py-1.5 uppercase"
+                >
+                  ABORT
                 </button>
-              </form>
-            </div>
+                <button
+                  type="submit"
+                  disabled={savingProfile}
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-5 py-2 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[2px_2px_0px_#ffffff]"
+                >
+                  {savingProfile ? 'SAVING...' : 'COMMIT CIPHER'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

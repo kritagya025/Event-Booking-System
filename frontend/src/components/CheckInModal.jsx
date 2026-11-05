@@ -29,7 +29,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
         videoRef.current.srcObject = stream;
       }
     } catch (_err) {
-      showToast('Camera access unavailable. Using manual entry fallback.', 'info');
+      showToast('OPTICAL SCANNER FEED OFFLINE. USE CIPHER OVERRIDE.', 'info');
       setIsCameraActive(false);
     }
   };
@@ -66,10 +66,10 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
     try {
       const res = await apiFetch(`/checkin/validate/${encodeURIComponent(codeStr.trim())}`);
       setCheckInResult(res);
-      showToast(`Ticket ${res.qrCode || '#' + res.id} verified`, 'success');
+      showToast(`WRISTBAND ${res.qrCode || '#' + res.id} VERIFIED`, 'success');
     } catch (err) {
-      setErrorResult(err.message || 'Ticket validation failed');
-      showToast(err.message || 'Invalid Ticket ID / QR Code', 'error');
+      setErrorResult(err.message || 'CIPHER REJECTED: TICKET INVALID OR EXPIRED');
+      showToast(err.message || 'INVALID WRISTBAND CODE', 'error');
     } finally {
       setLoading(false);
     }
@@ -88,10 +88,10 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
     try {
       const res = await apiFetch(`/checkin/${encodeURIComponent(codeToUse)}`, { method: 'POST' });
       setCheckInResult(res);
-      showToast(`Ticket checked in successfully for Gate Entry`, 'success');
+      showToast('WRISTBAND ADMITTED AT GATE // SCAN SEAL LOCKED', 'success');
     } catch (err) {
-      setErrorResult(err.message || 'Check-in failed');
-      showToast(err.message || 'Check-in failed', 'error');
+      setErrorResult(err.message || 'CHECK-IN FAILED');
+      showToast(err.message || 'CHECK-IN FAILED', 'error');
     } finally {
       setLoading(false);
     }
@@ -100,94 +100,125 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
-        <div className="modal-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(255,255,255,0.08)' }}>
-              <QrCode size={20} color="#FFF" />
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto" onClick={onClose}>
+      <div 
+        className="w-full max-w-lg bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#ff1f6d] my-auto relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Top Slanted Sticker */}
+        <div className="absolute -top-4 -right-3 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+          WAREHOUSE BOUNCER GATE
+        </div>
+
+        {/* Header */}
+        <div className="p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
+                BOUNCER_RIG://SCANNER
+              </span>
+              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
+                GATE 04 // ACTIVE
+              </span>
             </div>
-            <div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800 }}>Organizer Gate Check-In</h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Scan QR code or use manual ticket validation</p>
-            </div>
+            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white mt-1 leading-none">
+              WRISTBAND SCANNER RIG
+            </h3>
+            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
+              OPTICAL BARCODE VERIFICATION & ADMITTANCE CONFIRMATION
+            </p>
           </div>
-          <button onClick={onClose} className="btn btn-secondary" style={{ padding: '6px' }}>
-            <X size={16} />
+          <button 
+            onClick={onClose} 
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+          >
+            <X size={18} />
           </button>
         </div>
 
-        <div className="modal-body">
+        {/* Body */}
+        <div className="p-5 md:p-6 space-y-4">
           
           {/* Mode Switcher */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => { setActiveTab('scan'); startCamera(); }}
-              className={`btn ${activeTab === 'scan' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ flex: 1, padding: '8px', fontSize: '0.85rem' }}
+              className={`py-2 px-3 text-xs font-impact tracking-wider uppercase border-2 flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                activeTab === 'scan'
+                  ? 'bg-acid-yellow text-asphalt-black border-grit-white shadow-[3px_3px_0px_#ffffff]'
+                  : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+              }`}
             >
-              <Camera size={14} /> Scan QR Code
+              <Camera size={14} /> OPTICAL SCANNER
             </button>
             <button
               onClick={() => { setActiveTab('manual'); stopCamera(); }}
-              className={`btn ${activeTab === 'manual' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ flex: 1, padding: '8px', fontSize: '0.85rem' }}
+              className={`py-2 px-3 text-xs font-impact tracking-wider uppercase border-2 flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                activeTab === 'manual'
+                  ? 'bg-acid-yellow text-asphalt-black border-grit-white shadow-[3px_3px_0px_#ffffff]'
+                  : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+              }`}
             >
-              <Search size={14} /> Manual Entry Fallback
+              <Search size={14} /> CIPHER OVERRIDE
             </button>
           </div>
 
           {/* SCANNER VIEW */}
           {activeTab === 'scan' && (
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <div style={{
-                position: 'relative',
-                width: '100%',
-                height: '240px',
-                background: '#000',
-                borderRadius: 'var(--radius-md)',
-                overflow: 'hidden',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px dashed rgba(255,255,255,0.2)'
-              }}>
+            <div className="text-center space-y-3">
+              <div className="relative w-full h-64 bg-asphalt-black border-2 border-dashed border-asphalt-border overflow-hidden flex items-center justify-center">
                 <video
                   ref={videoRef}
                   autoPlay
                   playsInline
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: isCameraActive ? 'block' : 'none' }}
+                  className={`w-full h-full object-cover ${isCameraActive ? 'block' : 'hidden'}`}
                 />
 
                 {!isCameraActive && (
-                  <div style={{ color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                  <div className="flex flex-col items-center gap-2 text-grit-dim">
                     <CameraOff size={32} />
-                    <span style={{ fontSize: '0.85rem' }}>Camera Stream Off</span>
-                    <button onClick={startCamera} className="btn btn-secondary btn-sm" style={{ marginTop: '8px' }}>
-                      Start Camera
+                    <span className="font-mono-zine text-xs uppercase tracking-wider">OPTICAL SENSOR DORMANT</span>
+                    <button 
+                      onClick={startCamera} 
+                      className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase px-4 py-1.5 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white cursor-pointer transition-colors mt-2"
+                    >
+                      ACTIVATE FEED
                     </button>
                   </div>
                 )}
 
                 {isCameraActive && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '20%', left: '20%', right: '20%', bottom: '20%',
-                    border: '2px solid var(--accent-purple, #a855f7)',
-                    borderRadius: '12px',
-                    boxShadow: '0 0 0 9999px rgba(0,0,0,0.5)',
-                    pointerEvents: 'none'
-                  }} />
+                  <>
+                    {/* Viewfinder crosshairs */}
+                    <div className="absolute inset-10 border-2 border-acid-yellow pointer-events-none flex flex-col justify-between p-2">
+                      <div className="flex justify-between text-[10px] font-ticker text-acid-yellow">
+                        <span>[+]</span>
+                        <span>[+]</span>
+                      </div>
+                      <div className="hazard-tape h-1 w-full animate-pulse opacity-70"></div>
+                      <div className="flex justify-between text-[10px] font-ticker text-acid-yellow">
+                        <span>[+]</span>
+                        <span>[+]</span>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
 
-              {/* Camera Controls */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '12px' }}>
-                <button onClick={toggleCamera} className="btn btn-secondary btn-sm">
-                  {isCameraActive ? 'Stop Camera' : 'Start Camera'}
+              {/* Controls */}
+              <div className="flex justify-center gap-3">
+                <button 
+                  onClick={toggleCamera} 
+                  className="bg-asphalt-card border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-3 py-1.5 uppercase cursor-pointer"
+                >
+                  {isCameraActive ? 'SUSPEND FEED' : 'ENGAGE SENSOR'}
                 </button>
-                <button onClick={() => handleSimulateScan('TKT-DEMO123')} className="btn btn-secondary btn-sm">
-                  <RefreshCw size={12} /> Scan Test Ticket
+                <button 
+                  onClick={() => handleSimulateScan('TKT-VAULT90S-SAMPLE')} 
+                  className="bg-asphalt-card border border-acid-yellow text-acid-yellow hover:bg-acid-yellow hover:text-asphalt-black font-mono-zine text-xs px-3 py-1.5 uppercase flex items-center gap-1.5 cursor-pointer transition-colors"
+                >
+                  <RefreshCw size={12} /> SCAN TEST TAPE CIPHER
                 </button>
               </div>
             </div>
@@ -195,47 +226,55 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
 
           {/* MANUAL ENTRY VIEW */}
           {activeTab === 'manual' && (
-            <form onSubmit={handleManualSubmit} style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+            <form onSubmit={handleManualSubmit} className="flex gap-2">
               <input
                 type="text"
-                placeholder="Enter Ticket Code (e.g. TKT-ABC12345)"
+                placeholder="ENTER CIPHER (E.G. TKT-VAULT90S-SAMPLE)"
                 value={ticketIdInput}
-                onChange={(e) => setTicketIdInput(e.target.value)}
-                className="form-input"
-                style={{ flex: 1 }}
+                onChange={(e) => setTicketIdInput(e.target.value.toUpperCase())}
+                className="flex-1 bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-xs uppercase outline-none"
               />
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                <Search size={14} /> Validate
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="bg-acid-yellow text-asphalt-black font-impact tracking-wider px-4 text-sm uppercase border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white cursor-pointer disabled:opacity-50"
+              >
+                {loading ? 'AUDITING...' : 'VERIFY'}
               </button>
             </form>
           )}
 
           {/* Verification Result Card */}
           {checkInResult && (
-            <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.04)', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                <CheckCircle2 size={24} color="#FFF" />
-                <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Ticket Validated</h4>
-                  <span className={`badge ${checkInResult.ticketStatus === 'USED' ? 'badge-red' : 'badge-green'}`}>
-                    STATUS: {checkInResult.ticketStatus}
+            <div className="bg-asphalt-card border-2 border-acid-yellow p-4 space-y-3">
+              <div className="flex items-center justify-between border-b border-asphalt-border pb-2">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 size={20} className="text-acid-yellow" />
+                  <span className="font-impact text-base uppercase tracking-wider text-grit-white">
+                    WRISTBAND RECOGNIZED
                   </span>
                 </div>
+                <span className={`font-ticker text-xs px-2 py-0.5 border ${
+                  checkInResult.ticketStatus === 'USED' 
+                    ? 'bg-neon-magenta/20 text-neon-magenta border-neon-magenta' 
+                    : 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold'
+                }`}>
+                  STATUS: {checkInResult.ticketStatus || 'CONFIRMED'}
+                </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '12px' }}>
-                <div><strong>Code:</strong> {checkInResult.qrCode || checkInResult.id}</div>
-                <div><strong>Check-In:</strong> {checkInResult.checkInTime || 'Pending Entry'}</div>
+              <div className="grid grid-cols-2 gap-2 font-mono-zine text-xs text-grit-dim uppercase">
+                <div>PASS CIPHER: <span className="text-grit-white">{checkInResult.qrCode || checkInResult.id}</span></div>
+                <div>CHECK-IN LOG: <span className="text-grit-white">{checkInResult.checkInTime || 'PENDING DISPATCH'}</span></div>
               </div>
 
               {checkInResult.ticketStatus !== 'USED' && (
                 <button
                   onClick={handleConfirmCheckIn}
-                  className="btn btn-primary"
-                  style={{ width: '100%', marginTop: '14px', padding: '10px' }}
                   disabled={loading}
+                  className="w-full bg-neon-magenta text-grit-white font-impact tracking-wider text-base uppercase py-2.5 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black shadow-[4px_4px_0px_#0e0e11] cursor-pointer transition-all"
                 >
-                  Confirm Gate Entry & Mark Used
+                  {loading ? 'RECORDING SEAL...' : 'ADMIT AT GATE & BREAK TAPE SEAL'}
                 </button>
               )}
             </div>
@@ -243,13 +282,11 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
 
           {/* Rejected Error Card */}
           {errorResult && (
-            <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.04)', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <AlertTriangle size={24} color="var(--accent-red, #ef4444)" />
-                <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Ticket Rejected</h4>
-                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{errorResult}</p>
-                </div>
+            <div className="bg-neon-magenta/10 border-2 border-neon-magenta p-4 flex items-center gap-3">
+              <AlertTriangle size={24} className="text-neon-magenta shrink-0" />
+              <div>
+                <h4 className="font-impact text-base uppercase text-neon-magenta tracking-wider">ENTRY REJECTED</h4>
+                <p className="font-mono-zine text-xs text-grit-dim uppercase">{errorResult}</p>
               </div>
             </div>
           )}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Compass, Ticket, Heart, PlusCircle, Globe, User, LogOut, ShieldCheck, QrCode, Search, 
-  Sun, Moon, Home, Layers
+  Ticket, Heart, PlusCircle, User, LogOut, ShieldCheck, QrCode, 
+  Sun, Moon, Home, Layers, Zap
 } from 'lucide-react';
 import { getActiveCurrency, setActiveCurrency, getAvailableCurrencies, subscribeCurrencyChange } from '../services/currency';
 
@@ -16,7 +16,9 @@ export default function Navbar({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   useEffect(() => {
-    document.body.className = theme;
+    document.body.className = theme === 'dark' 
+      ? 'bg-asphalt-black font-mono-zine text-grit-white antialiased selection:bg-acid-yellow selection:text-asphalt-black min-h-screen photocopy-grit border-t-4 border-acid-yellow dark' 
+      : 'bg-asphalt-black font-mono-zine text-grit-white antialiased selection:bg-acid-yellow selection:text-asphalt-black min-h-screen photocopy-grit border-t-4 border-acid-yellow light';
     localStorage.setItem('sb-theme', theme);
   }, [theme]);
 
@@ -51,38 +53,64 @@ export default function Navbar({
 
   return (
     <>
-      {/* ─── DESKTOP & MOBILE TOP HEADER BAR ─── */}
-      <header className="sb-navbar-header">
-        <div className="sb-navbar-container">
+      {/* ─── 0. HIGH VOLTAGE HAZARD WARNING HEADER MARQUEE ─── */}
+      <div className="h-7 w-full hazard-tape overflow-hidden flex items-center border-b-2 border-asphalt-black select-none">
+        <div className="animate-marquee items-center gap-6 text-asphalt-black font-ticker font-extrabold text-[12px] tracking-widest uppercase py-0.5">
+          <span>⚠️ VAULT_UNDERGROUND // NO CAMERAS // SOUND REINFORCEMENT: 40KW FUNKTION-ONE ⚠️</span>
+          <span>•</span>
+          <span>SECRET GATE COORDS SENT 120M PRIOR // CASH OR SECURE WRISTBAND AT ENTRANCE</span>
+          <span>•</span>
+          <span>DIY HARDWARE SYNTH / ACID CORE / INDUSTRIAL TAPE CASSETTE DUB MATRIX</span>
+          <span>•</span>
+          <span>CURFEW: UNTIL INDEFINITE MORNING LIGHT // OVERDRIVE LIMITER BYPASSED</span>
+          <span>•</span>
+          <span>⚠️ VAULT_UNDERGROUND // NO CAMERAS // SOUND REINFORCEMENT: 40KW FUNKTION-ONE ⚠️</span>
+          <span>•</span>
+          <span>SECRET GATE COORDS SENT 120M PRIOR // CASH OR SECURE WRISTBAND AT ENTRANCE</span>
+          <span>•</span>
+          <span>DIY HARDWARE SYNTH / ACID CORE / INDUSTRIAL TAPE CASSETTE DUB MATRIX</span>
+          <span>•</span>
+          <span>CURFEW: UNTIL INDEFINITE MORNING LIGHT // OVERDRIVE LIMITER BYPASSED</span>
+        </div>
+      </div>
+
+      {/* ─── 1. BRUTALIST DIY CLUB FLYER NAVIGATION BAR ─── */}
+      <header className="sticky top-0 z-50 bg-asphalt-black/95 backdrop-blur-md border-b-2 border-asphalt-border px-4 py-3">
+        <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-4">
           
-          {/* Brand Logo (Left) */}
-          <div 
-            onClick={() => handleNavClick('home')} 
-            className="sb-logo-brand"
-          >
-            <div className="sb-logo-icon">
-              <Ticket size={22} color="#FFFFFF" />
+          {/* Brand Stamp Logo */}
+          <div className="flex items-center gap-3">
+            <div 
+              onClick={() => handleNavClick('home')} 
+              className="flex items-center gap-2 group cursor-pointer"
+            >
+              <div className="bg-acid-yellow text-asphalt-black px-2 py-0.5 font-display text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
+                VAULT://90s
+              </div>
+              <div className="hidden sm:flex flex-col font-ticker leading-none">
+                <span className="text-xs font-bold text-grit-white tracking-widest uppercase">ACID_ZINE_SYSTEM</span>
+                <span className="text-[10px] text-neon-magenta tracking-tight">TAPE ARCHIVE & WAREHOUSE PASSES</span>
+              </div>
             </div>
-            <div className="sb-logo-text">
-              <span className="dark-part">event</span>
-              <span className="orange-part">hub</span>
-            </div>
+            <span className="hidden lg:inline-block font-ticker text-[10px] bg-electric-cobalt text-grit-white px-2 py-0.5 uppercase font-bold border border-grit-white/40 stamp-slant-2">
+              CASSETTE ED. #04
+            </span>
           </div>
 
-          {/* Clean Role-Based Navigation Links (Desktop Center) */}
-          <nav className="sb-nav-center-links">
+          {/* Navigation Flyers Tabs */}
+          <nav className="hidden md:flex items-center gap-2 font-display text-lg tracking-wider">
             <button 
               onClick={() => handleNavClick('home')}
-              className={`sb-nav-link ${activeTab === 'home' ? 'active' : ''}`}
+              className={`px-3 py-1 font-bold border-2 transition-all -rotate-1 ${activeTab === 'home' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[2px_2px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
             >
-              Home
+              FLYER ARCHIVE
             </button>
 
             <button 
               onClick={() => handleNavClick('events')}
-              className={`sb-nav-link ${activeTab === 'events' ? 'active' : ''}`}
+              className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'events' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[2px_2px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
             >
-              Explore Events
+              LINEUP & GIGS
             </button>
 
             {/* CUSTOMER ROLE LINKS */}
@@ -90,16 +118,16 @@ export default function Navbar({
               <>
                 <button 
                   onClick={() => handleNavClick('wishlist')}
-                  className={`sb-nav-link ${activeTab === 'wishlist' ? 'active' : ''}`}
+                  className={`px-3 py-1 border transition-all -rotate-1 ${activeTab === 'wishlist' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta'}`}
                 >
-                  Wishlist
+                  SAVED TAPES
                 </button>
 
                 <button 
                   onClick={() => handleNavClick('my-bookings')}
-                  className={`sb-nav-link ${activeTab === 'my-bookings' ? 'active' : ''}`}
+                  className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'my-bookings' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
                 >
-                  My Tickets
+                  MY WRISTBANDS
                 </button>
               </>
             )}
@@ -109,16 +137,16 @@ export default function Navbar({
               <>
                 <button 
                   onClick={() => handleNavClick('create-event')}
-                  className={`sb-nav-link ${activeTab === 'create-event' ? 'active' : ''}`}
+                  className={`px-3 py-1 border transition-all -rotate-1 ${activeTab === 'create-event' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
                 >
-                  Host Event
+                  HOST RAVE
                 </button>
 
                 <button 
                   onClick={() => handleNavClick('checkin')}
-                  className={`sb-nav-link ${activeTab === 'checkin' ? 'active' : ''}`}
+                  className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'checkin' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta'}`}
                 >
-                  Gate Check-In
+                  GATE SCANNER
                 </button>
               </>
             )}
@@ -127,115 +155,90 @@ export default function Navbar({
             {currentUser && currentUser.role === 'ADMIN' && (
               <button 
                 onClick={() => handleNavClick('admin')}
-                className={`sb-nav-link ${activeTab === 'admin' ? 'active' : ''}`}
+                className={`px-3 py-1 border transition-all ${activeTab === 'admin' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
               >
-                Admin Panel
+                ADMIN RIG
               </button>
             )}
           </nav>
 
-          {/* Right Controls: Currency, Theme Switcher & User Profile Menu */}
-          <div className="sb-nav-right-controls">
-            
-            {/* Multi-Currency Selector */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--bg-surface)', padding: '5px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
-              <Globe size={14} color="var(--primary)" />
+          {/* Header Actions & Live Counter */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Currency Hack Selector */}
+            <div className="relative flex items-center">
               <select 
                 value={currency} 
                 onChange={(e) => setActiveCurrency(e.target.value)}
-                style={{ background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.82rem', fontWeight: '700', outline: 'none', cursor: 'pointer' }}
+                className="bg-asphalt-card text-acid-yellow font-ticker text-xs font-bold border-2 border-acid-yellow px-2 py-1 focus:outline-none appearance-none cursor-pointer pr-6 shadow-[2px_2px_0px_#ff1f6d]"
               >
                 {getAvailableCurrencies().map((c) => (
-                  <option key={c.code} value={c.code} style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
-                    {c.symbol} {c.code}
+                  <option key={c.code} value={c.code}>
+                    {c.code} ({c.symbol})
                   </option>
                 ))}
               </select>
+              <span className="material-symbols-outlined text-acid-yellow pointer-events-none absolute right-1 text-xs font-bold">arrow_drop_down</span>
             </div>
 
-            {/* Light/Dark Mode Switcher */}
+            {/* High-Entropy Wristband Counter */}
+            <div className="hidden sm:flex items-center gap-1.5 bg-asphalt-card border border-asphalt-border px-2.5 py-1">
+              <span className="w-2 h-2 rounded-full bg-neon-magenta animate-ping" />
+              <span className="font-ticker text-[11px] text-grit-dim">WRISTBANDS:</span>
+              <span className="font-ticker text-[11px] font-bold text-acid-yellow">#992 / 1200</span>
+            </div>
+
+            {/* Theme Toggle */}
             <button 
               onClick={toggleTheme} 
-              className="theme-toggle-btn"
-              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+              className="w-8 h-8 bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-colors"
+              title={`Switch Theme`}
             >
-              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
             {/* User Account / Profile Dropdown */}
             {currentUser ? (
-              <div id="user-profile-menu-container" style={{ position: 'relative' }}>
+              <div id="user-profile-menu-container" className="relative">
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: 'var(--primary)',
-                    border: '2px solid var(--bg-surface)',
-                    color: '#FFFFFF',
-                    fontWeight: '800',
-                    fontSize: '0.9rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 14px var(--primary-glow)',
-                    overflow: 'hidden',
-                    padding: 0
-                  }}
+                  className="w-9 h-9 bg-acid-yellow text-asphalt-black font-ticker font-extrabold text-sm border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] flex items-center justify-center cursor-pointer"
                   title={`${currentUser.firstName || ''} ${currentUser.lastName || ''}`}
                 >
                   {currentUser.avatarUrl ? (
-                    <img src={currentUser.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={currentUser.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (
                     getUserInitials(currentUser)
                   )}
                 </button>
 
-                {/* User Profile Dropdown Menu */}
                 {profileDropdownOpen && (
-                  <div style={{
-                    position: 'absolute',
-                    right: 0,
-                    top: '52px',
-                    width: '240px',
-                    background: 'var(--bg-surface)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '12px',
-                    zIndex: 1100,
-                    boxShadow: 'var(--shadow-elevated)',
-                  }}>
-                    <div style={{ padding: '8px', borderBottom: '1px solid var(--border-subtle)', marginBottom: '8px' }}>
-                      <span style={{ display: 'block', fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                  <div className="absolute right-0 mt-2 w-64 bg-asphalt-surface border-3 border-grit-white shadow-[6px_6px_0px_#ff1f6d] p-3 z-50">
+                    <div className="pb-2 mb-2 border-b border-asphalt-border">
+                      <span className="block font-ticker text-xs font-bold text-acid-yellow uppercase">
                         {currentUser.firstName} {currentUser.lastName}
                       </span>
-                      <span style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                        {currentUser.email}
-                      </span>
-                      <span className="badge badge-primary" style={{ fontSize: '0.62rem', marginTop: '6px', display: 'inline-block' }}>
-                        {currentUser.role}
+                      <span className="block font-ticker text-[10px] text-grit-dim">
+                        {currentUser.email} • {currentUser.role}
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div className="flex flex-col gap-1 font-ticker text-xs">
                       <button
                         type="button"
                         onClick={() => { handleNavClick('profile'); setProfileDropdownOpen(false); }}
-                        style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                        className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
                       >
-                        <User size={16} color="var(--primary)" /> Account Profile
+                        <User size={13} /> Account Profile
                       </button>
 
                       {currentUser.role === 'CUSTOMER' && (
                         <button
                           type="button"
                           onClick={() => { handleNavClick('my-bookings'); setProfileDropdownOpen(false); }}
-                          style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                          className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
                         >
-                          <Ticket size={16} color="#10B981" /> Purchased Tickets
+                          <Ticket size={13} /> My Wristbands
                         </button>
                       )}
 
@@ -244,16 +247,16 @@ export default function Navbar({
                           <button
                             type="button"
                             onClick={() => { handleNavClick('create-event'); setProfileDropdownOpen(false); }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                            className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
                           >
-                            <PlusCircle size={16} color="#A855F7" /> Host New Event
+                            <PlusCircle size={13} /> Host New Rave
                           </button>
                           <button
                             type="button"
                             onClick={() => { handleNavClick('checkin'); setProfileDropdownOpen(false); }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                            className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
                           >
-                            <QrCode size={16} color="#F59E0B" /> Gate Scanner
+                            <QrCode size={13} /> Gate Scanner
                           </button>
                         </>
                       )}
@@ -262,40 +265,38 @@ export default function Navbar({
                         <button
                           type="button"
                           onClick={() => { handleNavClick('admin'); setProfileDropdownOpen(false); }}
-                          style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: 'var(--text-main)', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                          className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
                         >
-                          <ShieldCheck size={16} color="#6366F1" /> Admin Panel
+                          <ShieldCheck size={13} /> Admin Panel
                         </button>
                       )}
 
-                      <div style={{ height: '1px', background: 'var(--border-subtle)', margin: '4px 0' }} />
+                      <div className="h-px bg-asphalt-border my-1" />
 
                       <button
                         type="button"
                         onClick={() => { onLogout(); setProfileDropdownOpen(false); }}
-                        style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px', borderRadius: '8px', background: 'transparent', color: '#EF4444', border: 'none', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left' }}
+                        className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-danger-red text-left font-bold"
                       >
-                        <LogOut size={16} color="#EF4444" /> Sign Out
+                        <LogOut size={13} /> Sign Out
                       </button>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="flex items-center gap-2">
                 <button 
                   onClick={() => handleNavClick('login')} 
-                  className="btn-sb-outline"
-                  style={{ padding: '8px 20px', fontSize: '0.88rem' }}
+                  className="bg-asphalt-card hover:bg-asphalt-surface text-grit-white px-3 py-1 font-display text-base tracking-wider uppercase border border-asphalt-border hover:border-acid-yellow"
                 >
-                  Sign In
+                  SIGN IN
                 </button>
                 <button 
                   onClick={() => handleNavClick('register')} 
-                  className="btn-sb-primary"
-                  style={{ padding: '8px 20px', fontSize: '0.88rem' }}
+                  className="bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white px-3 sm:px-4 py-1.5 font-display text-base tracking-wider uppercase border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] active:translate-x-0.5 active:translate-y-0.5 transition-all"
                 >
-                  Register
+                  CLAIM PASS
                 </button>
               </div>
             )}
@@ -304,101 +305,6 @@ export default function Navbar({
 
         </div>
       </header>
-
-      {/* ─── MOBILE FLOATING BOTTOM TAB BAR (MOBILE DEVICES ≤ 768px) ─── */}
-      <nav className="mobile-bottom-tab-bar">
-        
-        {/* 1. Home */}
-        <button 
-          onClick={() => handleNavClick('home')}
-          className={`mobile-tab-item ${activeTab === 'home' ? 'active' : ''}`}
-        >
-          <Home size={20} />
-          <span>Home</span>
-        </button>
-
-        {/* 2. Explore */}
-        <button 
-          onClick={() => handleNavClick('events')}
-          className={`mobile-tab-item ${activeTab === 'events' ? 'active' : ''}`}
-        >
-          <Compass size={20} />
-          <span>Explore</span>
-        </button>
-
-        {/* 3. CENTER ELEVATED ACTION BUTTON (Role Aware) */}
-        {currentUser?.role === 'ORGANIZER' ? (
-          <button 
-            onClick={() => handleNavClick('create-event')}
-            className="mobile-tab-center-btn"
-            title="Host Event"
-          >
-            <PlusCircle size={24} />
-          </button>
-        ) : currentUser?.role === 'ADMIN' ? (
-          <button 
-            onClick={() => handleNavClick('admin')}
-            className="mobile-tab-center-btn"
-            title="Admin Dashboard"
-          >
-            <ShieldCheck size={24} />
-          </button>
-        ) : (
-          <button 
-            onClick={() => {
-              if (!currentUser) handleNavClick('login');
-              else handleNavClick('wishlist');
-            }}
-            className="mobile-tab-center-btn"
-            title="Wishlist"
-          >
-            <Heart size={24} />
-          </button>
-        )}
-
-        {/* 4. Tickets / Scanner / Dashboard */}
-        {currentUser?.role === 'ORGANIZER' ? (
-          <button 
-            onClick={() => handleNavClick('checkin')}
-            className={`mobile-tab-item ${activeTab === 'checkin' ? 'active' : ''}`}
-          >
-            <QrCode size={20} />
-            <span>Scan</span>
-          </button>
-        ) : currentUser?.role === 'ADMIN' ? (
-          <button 
-            onClick={() => handleNavClick('admin')}
-            className={`mobile-tab-item ${activeTab === 'admin' ? 'active' : ''}`}
-          >
-            <ShieldCheck size={20} />
-            <span>Admin</span>
-          </button>
-        ) : (
-          <button 
-            onClick={() => {
-              if (!currentUser) handleNavClick('login');
-              else handleNavClick('my-bookings');
-            }}
-            className={`mobile-tab-item ${activeTab === 'my-bookings' ? 'active' : ''}`}
-          >
-            <Ticket size={20} />
-            <span>Tickets</span>
-          </button>
-        )}
-
-        {/* 5. Account Profile */}
-        <button 
-          onClick={() => {
-            if (!currentUser) handleNavClick('login');
-            else handleNavClick('profile');
-          }}
-          className={`mobile-tab-item ${activeTab === 'profile' ? 'active' : ''}`}
-        >
-          <User size={20} />
-          <span>Profile</span>
-        </button>
-
-      </nav>
     </>
   );
 }
