@@ -2,12 +2,59 @@ import React, { useState, useEffect } from 'react';
 import { 
   X, Check, ArrowRight, ArrowLeft,
   Smartphone, CreditCard, Landmark, Gift, Wallet, AlertCircle,
-  Volume2, Zap, Tag, Filter, RotateCcw, Trash2, Eye, Ticket
+  Volume2, Zap, Tag, Filter, RotateCcw, Trash2, Eye, Ticket,
+  Film, Clapperboard, Popcorn, UtensilsCrossed
 } from 'lucide-react';
 import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
 import confetti from 'canvas-confetti';
+
+// Cinema & Movie Concessions Menu
+const CINEMA_CONCESSIONS = [
+  {
+    id: 'popcorn_tub',
+    name: 'Buttered Mega Tub Popcorn',
+    tag: 'CINEMA CLASSIC',
+    description: 'Freshly popped warm golden kernels with real melted butter or caramel glaze',
+    price: 8.50,
+    icon: '🍿'
+  },
+  {
+    id: 'nachos_supreme',
+    name: 'Loaded Stadium Nachos',
+    tag: 'CHEF SELECTION',
+    description: 'Crisp tortilla corn chips served with hot jalapeño cheddar cheese dip & zesty salsa',
+    price: 9.00,
+    icon: '🧀'
+  },
+  {
+    id: 'soda_duo',
+    name: 'Fountain Soda Duo (2x 32oz)',
+    tag: 'CHILLED REFRESH',
+    description: 'Choice of Ice-Cold Cola, Lemon-Lime, Ginger Ale or Zero Sugar chilled with crushed ice',
+    price: 6.50,
+    icon: '🥤'
+  },
+  {
+    id: 'sweet_box',
+    name: 'Confectionery Sweet Box',
+    tag: 'GOURMET CANDY',
+    description: 'Classic cinema candy box: Chocolate M&M\'s, Red Twizzlers & sour gummy ribbons',
+    price: 5.50,
+    icon: '🍫'
+  },
+  {
+    id: 'directors_pack',
+    name: "Director's Cut VIP Combo",
+    tag: 'BEST VALUE // SAVE 20%',
+    description: 'Mega Popcorn Tub + 2 Large Fountain Sodas + Loaded Nachos + Choice of Candy Box',
+    price: 22.00,
+    icon: '🎟️'
+  }
+];
+
+const DEFAULT_SHOWTIMES = ['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM', '11:59 PM'];
 
 export default function SeatMapModal({ isOpen, onClose, event, currentUser, showToast, onBookingSuccess }) {
   const [step, setStep] = useState(1); // 1: Seats, 2: Review, 3: Payment Method & Details, 4: Confirm
@@ -37,6 +84,36 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   const [loadingSeats, setLoadingSeats] = useState(false);
   const [hoveredSeat, setHoveredSeat] = useState(null);
   const [activeSection, setActiveSection] = useState('ALL'); // 'ALL' | 'VIP' | 'PREMIUM' | 'REGULAR'
+  const isCinema = event?.category === 'CINEMA' || event?.category === 'MOVIE' || (event?.name && /imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(event.name));
+  const [selectedShowtime, setSelectedShowtime] = useState(event?.selectedShowtime || event?.showtimes?.[0] || '06:15 PM');
+  const [selectedSnacks, setSelectedSnacks] = useState({});
+
+  useEffect(() => {
+    if (event) {
+      setSelectedShowtime(event.selectedShowtime || event.showtimes?.[0] || '06:15 PM');
+      setSelectedSnacks({});
+    }
+  }, [event]);
+
+  const calculateSnacksTotal = () => {
+    return Object.entries(selectedSnacks).reduce((sum, [snackId, qty]) => {
+      const item = CINEMA_CONCESSIONS.find(c => c.id === snackId);
+      return sum + (item ? item.price * qty : 0);
+    }, 0);
+  };
+
+  const handleUpdateSnack = (snackId, delta) => {
+    setSelectedSnacks(prev => {
+      const current = prev[snackId] || 0;
+      const next = Math.max(0, current + delta);
+      if (next === 0) {
+        const copy = { ...prev };
+        delete copy[snackId];
+        return copy;
+      }
+      return { ...prev, [snackId]: next };
+    });
+  };
 
   useEffect(() => {
     if (!event || !isOpen) return;
@@ -229,8 +306,8 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   };
 
   const calculateSubtotal = () => {
-    if (selectedSeats.length > 0) return selectedSeats.reduce((sum, s) => sum + (s.price || event.ticketPrice || 0), 0);
-    return 0;
+    const seatsTotal = selectedSeats.length > 0 ? selectedSeats.reduce((sum, s) => sum + (s.price || event.ticketPrice || 0), 0) : 0;
+    return seatsTotal + calculateSnacksTotal();
   };
 
   const calculateFinalTotal = () => {
@@ -403,6 +480,10 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           totalAmount: calculateFinalTotal(),
           event: event,
           selectedSeats: selectedSeats.map(s => s.seatNumber).join(', '),
+          isCinema: isCinema,
+          showtime: selectedShowtime,
+          screenName: 'SCREEN 01 // AUDITORIUM LASER',
+          snacks: selectedSnacks,
           qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=TICKET-${bookingResult.id}-${event.id}`
         };
         localStorage.setItem('my_local_bookings', JSON.stringify([newBookingRecord, ...storedBookings]));
@@ -504,47 +585,90 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 </div>
               ) : (
                 <div>
-                  {/* ─── A. Brutalist Amphitheater Soundstage & Proscenium ─── */}
+                  {/* ─── Cinema Showtime Selector Bar (Cinema Mode) ─── */}
+                  {isCinema && (
+                    <div className="mb-4 p-3 bg-asphalt-black border-2 border-acid-yellow flex flex-wrap items-center justify-between gap-2 shadow-[2px_2px_0px_#ffffff]">
+                      <div className="flex items-center gap-2">
+                        <Clapperboard size={15} className="text-acid-yellow" />
+                        <span className="font-ticker text-[10px] text-grit-white uppercase tracking-wider font-bold">
+                          SCREEN 01 // SELECT SHOWTIME:
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {(event.showtimes || DEFAULT_SHOWTIMES).map(st => (
+                          <button
+                            key={st}
+                            type="button"
+                            onClick={() => setSelectedShowtime(st)}
+                            className={`px-3 py-1 font-ticker text-xs font-bold uppercase border transition-all cursor-pointer ${
+                              selectedShowtime === st
+                                ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[2px_2px_0px_#ffffff]'
+                                : 'bg-asphalt-surface text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
+                            }`}
+                          >
+                            {st}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ─── A. Proscenium: Cinema Curved Screen OR Live Concert Stage ─── */}
                   <div className="relative mb-6 bg-asphalt-black border-2 border-asphalt-border p-3 sm:p-4 overflow-hidden">
                     <div className="hazard-tape h-2 w-full mb-3" />
 
-                    <div className="flex items-center justify-between gap-3">
-                      {/* Left Speaker Tower */}
-                      <div className="hidden sm:flex flex-col items-center p-2 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11]">
-                        <Volume2 size={16} className="text-acid-yellow animate-pulse" />
-                        <span className="font-ticker text-[8px] text-grit-dim uppercase tracking-wider mt-1">L-RIG 40kW</span>
-                        <div className="flex gap-0.5 mt-1.5 h-3 items-end">
-                          <span className="w-1 h-2 bg-acid-yellow animate-pulse" />
-                          <span className="w-1 h-3 bg-acid-yellow" />
-                          <span className="w-1 h-1 bg-neon-magenta" />
-                        </div>
-                      </div>
-
-                      {/* Center Stage Arc */}
-                      <div className="flex-1 text-center py-2.5 px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_20px_rgba(238,252,84,0.12)] relative rounded-b-[20px]">
-                        <div className="flex items-center justify-center gap-2 mb-0.5">
-                          <Zap size={15} className="text-acid-yellow animate-bounce" />
-                          <span className="font-impact text-sm sm:text-base tracking-widest text-grit-white uppercase">
-                            ▲ MAIN STAGE & LIVE SOUND RIG ▲
+                    {isCinema ? (
+                      /* Cinema Curved Screen */
+                      <div className="text-center py-4 px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_24px_rgba(226,241,60,0.15)] relative rounded-b-[40px]">
+                        <div className="flex items-center justify-center gap-2 mb-1">
+                          <Film size={16} className="text-acid-yellow animate-pulse" />
+                          <span className="font-impact text-base sm:text-lg tracking-widest text-grit-white uppercase">
+                            ▲ CURVED IMAX CINEMA SCREEN // ALL EYES FORWARD ▲
                           </span>
-                          <Zap size={15} className="text-neon-magenta animate-bounce" />
+                          <Film size={16} className="text-neon-magenta animate-pulse" />
                         </div>
                         <p className="font-mono-zine text-[10px] text-grit-dim uppercase tracking-wider">
-                          DIRECT ACOUSTIC LINE-OF-SIGHT // 10-MINUTE SEAT LOCK ACTIVE
+                          SCREEN 01 • DUAL 4K LASER PROJECTION • 128-CH DOLBY ATMOS • OPTIMAL SWEET-SPOT: ROWS B-C
                         </p>
+                        <div className="w-56 h-1 bg-gradient-to-r from-transparent via-acid-yellow to-transparent mx-auto mt-2 opacity-70"></div>
                       </div>
+                    ) : (
+                      /* Concert Stage Rig */
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="hidden sm:flex flex-col items-center p-2 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11]">
+                          <Volume2 size={16} className="text-acid-yellow animate-pulse" />
+                          <span className="font-ticker text-[8px] text-grit-dim uppercase tracking-wider mt-1">L-RIG 40kW</span>
+                          <div className="flex gap-0.5 mt-1.5 h-3 items-end">
+                            <span className="w-1 h-2 bg-acid-yellow animate-pulse" />
+                            <span className="w-1 h-3 bg-acid-yellow" />
+                            <span className="w-1 h-1 bg-neon-magenta" />
+                          </div>
+                        </div>
 
-                      {/* Right Speaker Tower */}
-                      <div className="hidden sm:flex flex-col items-center p-2 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11]">
-                        <Volume2 size={16} className="text-neon-magenta animate-pulse" />
-                        <span className="font-ticker text-[8px] text-grit-dim uppercase tracking-wider mt-1">R-RIG 40kW</span>
-                        <div className="flex gap-0.5 mt-1.5 h-3 items-end">
-                          <span className="w-1 h-1 bg-neon-magenta" />
-                          <span className="w-1 h-3 bg-acid-yellow" />
-                          <span className="w-1 h-2 bg-acid-yellow animate-pulse" />
+                        <div className="flex-1 text-center py-2.5 px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_20px_rgba(238,252,84,0.12)] relative rounded-b-[20px]">
+                          <div className="flex items-center justify-center gap-2 mb-0.5">
+                            <Zap size={15} className="text-acid-yellow animate-bounce" />
+                            <span className="font-impact text-sm sm:text-base tracking-widest text-grit-white uppercase">
+                              ▲ MAIN STAGE & LIVE SOUND RIG ▲
+                            </span>
+                            <Zap size={15} className="text-neon-magenta animate-bounce" />
+                          </div>
+                          <p className="font-mono-zine text-[10px] text-grit-dim uppercase tracking-wider">
+                            DIRECT ACOUSTIC LINE-OF-SIGHT // 10-MINUTE SEAT LOCK ACTIVE
+                          </p>
+                        </div>
+
+                        <div className="hidden sm:flex flex-col items-center p-2 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11]">
+                          <Volume2 size={16} className="text-neon-magenta animate-pulse" />
+                          <span className="font-ticker text-[8px] text-grit-dim uppercase tracking-wider mt-1">R-RIG 40kW</span>
+                          <div className="flex gap-0.5 mt-1.5 h-3 items-end">
+                            <span className="w-1 h-1 bg-neon-magenta" />
+                            <span className="w-1 h-3 bg-acid-yellow" />
+                            <span className="w-1 h-2 bg-acid-yellow animate-pulse" />
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* ─── B. Quick Filters & Smart Selection Bar ─── */}
@@ -893,9 +1017,15 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     <span>EVENT:</span>
                     <strong className="text-grit-white">{event.name}</strong>
                   </div>
+                  {isCinema && (
+                    <div className="flex justify-between text-acid-yellow">
+                      <span>AUDITORIUM & SHOWTIME:</span>
+                      <strong>SCREEN 01 // {selectedShowtime}</strong>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span>DATE & TIME:</span>
-                    <span className="text-grit-white">{event.eventDate} @ {event.startTime}</span>
+                    <span className="text-grit-white">{event.eventDate} @ {isCinema ? selectedShowtime : event.startTime}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>SELECTED SEATS:</span>
@@ -903,12 +1033,100 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : 'GENERAL ADMISSION (1 TICKET)'}
                     </span>
                   </div>
+                  <div className="flex justify-between pt-2 border-t border-asphalt-border text-xs">
+                    <span>SEATS SUBTOTAL:</span>
+                    <strong className="text-grit-white">{formatPrice(selectedSeats.reduce((sum, s) => sum + (s.price || event.ticketPrice || 0), 0), event.currency)}</strong>
+                  </div>
+                  {isCinema && calculateSnacksTotal() > 0 && (
+                    <div className="flex justify-between text-xs text-acid-yellow">
+                      <span>CONCESSIONS & SNACKS:</span>
+                      <strong>+{formatPrice(calculateSnacksTotal(), event.currency)}</strong>
+                    </div>
+                  )}
                   <div className="flex justify-between pt-2 border-t border-asphalt-border text-sm">
-                    <span>TICKET SUBTOTAL:</span>
-                    <strong className="text-grit-white font-impact text-lg">{formatPrice(calculateSubtotal(), event.currency)}</strong>
+                    <span className="text-grit-white">ORDER SUBTOTAL:</span>
+                    <strong className="text-acid-yellow font-impact text-lg">{formatPrice(calculateSubtotal(), event.currency)}</strong>
                   </div>
                 </div>
               </div>
+
+              {/* CINEMA CONCESSIONS & GOURMET SNACK BAR */}
+              {isCinema && (
+                <div className="bg-asphalt-card border-2 border-asphalt-border p-4">
+                  <div className="flex items-center justify-between mb-3 border-b border-asphalt-border pb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-acid-yellow text-asphalt-black font-impact text-xs px-2 py-0.5 uppercase tracking-wider">
+                        CINEMA CONCESSIONS
+                      </span>
+                      <span className="font-ticker text-[10px] text-grit-dim uppercase">
+                        GOURMET SNACK BAR // IN-SEAT DELIVERY
+                      </span>
+                    </div>
+                    {calculateSnacksTotal() > 0 && (
+                      <span className="font-mono-zine text-xs text-acid-yellow font-bold">
+                        SNACKS: +{formatPrice(calculateSnacksTotal(), event.currency)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {CINEMA_CONCESSIONS.map(snack => {
+                      const qty = selectedSnacks[snack.id] || 0;
+                      return (
+                        <div
+                          key={snack.id}
+                          className={`p-3 border-2 flex items-center justify-between gap-3 transition-all ${
+                            qty > 0
+                              ? 'bg-asphalt-surface border-acid-yellow shadow-[2px_2px_0px_#eefc54]'
+                              : 'bg-asphalt-surface/60 border-asphalt-border hover:border-grit-dim'
+                          }`}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="font-impact text-xs uppercase tracking-wider text-grit-white truncate">
+                                {snack.name}
+                              </span>
+                              <span className="font-mono-zine text-[9px] px-1 bg-asphalt-card border border-asphalt-border text-acid-yellow shrink-0">
+                                {snack.tag}
+                              </span>
+                            </div>
+                            <div className="font-mono-zine text-[10px] text-grit-dim uppercase line-clamp-1">
+                              {snack.description}
+                            </div>
+                            <div className="font-ticker text-xs text-acid-yellow font-bold mt-1">
+                              {formatPrice(snack.price, event.currency)}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0 bg-asphalt-card border border-asphalt-border p-1">
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateSnack(snack.id, -1)}
+                              disabled={qty <= 0}
+                              className="w-6 h-6 flex items-center justify-center font-impact text-sm bg-asphalt-surface hover:bg-neon-magenta hover:text-grit-white text-grit-white border border-asphalt-border disabled:opacity-30 disabled:hover:bg-asphalt-surface cursor-pointer"
+                              title="Decrease"
+                            >
+                              -
+                            </button>
+                            <span className="w-6 text-center font-mono-zine text-xs font-bold text-grit-white">
+                              {qty}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateSnack(snack.id, 1)}
+                              disabled={qty >= 10}
+                              className="w-6 h-6 flex items-center justify-center font-impact text-sm bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-bold cursor-pointer"
+                              title="Increase"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Promo Code Input */}
               <div className="bg-asphalt-card border-2 border-asphalt-border p-4">
@@ -1172,12 +1390,38 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     <span>EVENT:</span>
                     <strong className="text-grit-white">{event.name}</strong>
                   </div>
+                  {isCinema && (
+                    <>
+                      <div className="flex justify-between text-acid-yellow">
+                        <span>CINEMA SCREEN:</span>
+                        <strong>SCREEN 01 // AUDITORIUM LASER</strong>
+                      </div>
+                      <div className="flex justify-between text-acid-yellow">
+                        <span>SHOWTIME:</span>
+                        <strong>{selectedShowtime}</strong>
+                      </div>
+                    </>
+                  )}
                   <div className="flex justify-between">
                     <span>RESERVED SEATS:</span>
                     <strong className="text-acid-yellow">
                       {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNumber).join(', ') : '1 GENERAL ADMISSION TICKET'}
                     </strong>
                   </div>
+                  {isCinema && Object.keys(selectedSnacks).length > 0 && (
+                    <div className="flex justify-between">
+                      <span>CONCESSIONS:</span>
+                      <strong className="text-grit-white">
+                        {Object.entries(selectedSnacks)
+                          .map(([id, qty]) => {
+                            const s = CINEMA_CONCESSIONS.find(c => c.id === id);
+                            return s ? `${qty}x ${s.name}` : null;
+                          })
+                          .filter(Boolean)
+                          .join(', ')}
+                      </strong>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span>PAYMENT METHOD:</span>
                     <strong className="text-grit-white">{paymentMethod.replace('_', ' ')}</strong>

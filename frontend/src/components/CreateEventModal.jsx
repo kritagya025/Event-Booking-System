@@ -17,6 +17,9 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
     startTime: '23:00',
     endTime: '06:00',
     category: 'MUSIC',
+    movieFormat: 'IMAX 3D // 4K LASER',
+    movieRuntime: '150 MIN',
+    movieRating: 'PG-13',
     ticketPrice: 30.00,
     availableSeats: 120,
     registrationDeadline: '',
@@ -127,7 +130,9 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
 
       const payload = {
         name: formData.name.trim(),
-        description: formData.description.trim() || `${formData.name.trim()} live event`,
+        description: formData.category === 'CINEMA'
+          ? `${formData.description.trim() || formData.name.trim()} [FORMAT: ${formData.movieFormat || 'IMAX 3D'} | RUNTIME: ${formData.movieRuntime || '150 MIN'} | RATED: ${formData.movieRating || 'PG-13'}]`
+          : (formData.description.trim() || `${formData.name.trim()} live event`),
         eventDate: formData.eventDate,
         startTime: formatTime(formData.startTime),
         endTime: formatTime(formData.endTime),
@@ -138,7 +143,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
         venueId: createdVenue ? createdVenue.id : null,
         venueName: formData.venueName.trim(),
         venueAddress: formData.venueAddress.trim(),
-        bannerImageUrl: bannerUrl || '/images/concert.png'
+        bannerImageUrl: bannerUrl || (formData.category === 'CINEMA' ? 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80' : '/images/concert.png')
       };
 
       const newEvent = await apiFetch('/events', {
@@ -225,6 +230,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                   onChange={handleChange} 
                   className="w-full bg-asphalt-card border-2 border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-3 py-2 text-sm uppercase outline-none"
                 >
+                  <option value="CINEMA">CINEMA & MOVIE PREMIERE</option>
                   <option value="MUSIC">MUSIC CONCERT & FESTIVAL</option>
                   <option value="TECH">TECH & AI CONFERENCE</option>
                   <option value="THEATER">THEATER & PERFORMING ARTS</option>
@@ -234,6 +240,56 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                 </select>
               </div>
             </div>
+
+            {/* CINEMA-SPECIFIC ATTRIBUTES */}
+            {formData.category === 'CINEMA' && (
+              <div className="bg-asphalt-black border-2 border-acid-yellow p-3 space-y-3">
+                <span className="font-impact text-xs uppercase tracking-wider text-acid-yellow block">
+                  CINEMA SCREEN & PROJECTION SPECIFICATIONS
+                </span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-mono-zine text-grit-dim uppercase mb-1">PROJECTION FORMAT</label>
+                    <select
+                      name="movieFormat"
+                      value={formData.movieFormat}
+                      onChange={handleChange}
+                      className="w-full bg-asphalt-card border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-2 py-1.5 text-xs uppercase outline-none"
+                    >
+                      <option value="IMAX 3D // 4K LASER">IMAX 3D // 4K LASER</option>
+                      <option value="DOLBY CINEMA // ATMOS 7.1">DOLBY CINEMA // ATMOS 7.1</option>
+                      <option value="70MM DUAL FILM">70MM DUAL FILM SPECIAL</option>
+                      <option value="STANDARD 4K DIGITAL">STANDARD 4K DIGITAL</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-mono-zine text-grit-dim uppercase mb-1">RUNTIME / DURATION</label>
+                    <input
+                      type="text"
+                      name="movieRuntime"
+                      value={formData.movieRuntime}
+                      onChange={handleChange}
+                      placeholder="E.G. 162 MIN"
+                      className="w-full bg-asphalt-card border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-2 py-1.5 text-xs uppercase outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-mono-zine text-grit-dim uppercase mb-1">AGE CERTIFICATE</label>
+                    <select
+                      name="movieRating"
+                      value={formData.movieRating}
+                      onChange={handleChange}
+                      className="w-full bg-asphalt-card border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine px-2 py-1.5 text-xs uppercase outline-none"
+                    >
+                      <option value="PG-13">PG-13 (PARENTS STRONGLY CAUTIONED)</option>
+                      <option value="R-RATED">R-RATED (RESTRICTED 17+)</option>
+                      <option value="PG">PG (PARENTAL GUIDANCE)</option>
+                      <option value="U/A">U/A (ALL AUDIENCES)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* VENUE NAME & VENUE ADDRESS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

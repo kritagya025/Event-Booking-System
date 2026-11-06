@@ -84,7 +84,9 @@ public class DataInitializerRunner implements CommandLineRunner {
                 "Neon Horizon Cyber Music Festival 2026",
                 "Global AI & Autonomous Tech Summit 2026",
                 "Phantom of the Opera — Broadway Revival",
-                "Grand Prix eSports World Championship"
+                "Grand Prix eSports World Championship",
+                "Cyberpunk 2099: Neo-Tokyo — Midnight IMAX 3D Premiere",
+                "Interstellar: 70mm Special Retrospective Presentation"
         );
 
         // 1. Delete all non-dummy events created during test runs
@@ -102,6 +104,7 @@ public class DataInitializerRunner implements CommandLineRunner {
         Venue venue2 = getOrCreateVenue("Silicon Valley Convention Center", "100 Tech Blvd, San Jose, CA, USA", 8000, "State-of-the-art tech conference center");
         Venue venue3 = getOrCreateVenue("Royal Opera House", "12 Broadway Ave, New York, NY, USA", 3000, "Historic theater for arts & music");
         Venue venue4 = getOrCreateVenue("Apex eSports Dome", "88 Cyber Way, Austin, TX, USA", 5000, "High-tech gaming arena");
+        Venue venueCinema = getOrCreateVenue("Omniplex IMAX Laser Dome", "100 Cine Drive, Los Angeles, CA, USA", 90, "Dual 4K laser projection theater with 128-channel Dolby Atmos sound and luxury recliners");
         
         // India Venues
         getOrCreateVenue("Jio World Centre", "BKC, Mumbai, Maharashtra, India", 16000, "World-class convention & exhibition centre");
@@ -125,6 +128,7 @@ public class DataInitializerRunner implements CommandLineRunner {
         seedSeatsForVenue(venue2, 45);
         seedSeatsForVenue(venue3, 40);
         seedSeatsForVenue(venue4, 300);
+        seedSeatsForVenue(venueCinema, 90);
 
         // 3. Ensure the 4 primary dummy events exist
         Set<String> remainingNames = new HashSet<>();
@@ -198,6 +202,40 @@ public class DataInitializerRunner implements CommandLineRunner {
             );
             e4.setBannerImageUrl("https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80");
             eventRepository.save(e4);
+        }
+
+        if (!remainingNames.contains("Cyberpunk 2099: Neo-Tokyo — Midnight IMAX 3D Premiere")) {
+            Event e5 = new Event(
+                    "Cyberpunk 2099: Neo-Tokyo — Midnight IMAX 3D Premiere",
+                    "Exclusive midnight screening in dual 4K laser IMAX with 128-channel Dolby Atmos sound and director Q&A.",
+                    LocalDate.of(2026, 10, 31),
+                    LocalTime.of(23, 59),
+                    LocalTime.of(2, 45),
+                    "CINEMA",
+                    EventStatus.PUBLISHED,
+                    new BigDecimal("18.50"),
+                    90,
+                    venueCinema
+            );
+            e5.setBannerImageUrl("https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80");
+            eventRepository.save(e5);
+        }
+
+        if (!remainingNames.contains("Interstellar: 70mm Special Retrospective Presentation")) {
+            Event e6 = new Event(
+                    "Interstellar: 70mm Special Retrospective Presentation",
+                    "Christopher Nolan's space masterpiece projected in glorious 70mm film format with original theatrical mix.",
+                    LocalDate.of(2026, 11, 14),
+                    LocalTime.of(19, 30),
+                    LocalTime.of(22, 20),
+                    "CINEMA",
+                    EventStatus.PUBLISHED,
+                    new BigDecimal("22.00"),
+                    90,
+                    venueCinema
+            );
+            e6.setBannerImageUrl("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80");
+            eventRepository.save(e6);
         }
 
         log.info("[DataInitializer] Database reset finished. Total events active in database: {}", eventRepository.count());

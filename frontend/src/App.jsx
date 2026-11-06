@@ -299,7 +299,7 @@ export default function App() {
     }
   };
 
-  const openBookingModal = (event) => {
+  const openBookingModal = (event, preferredShowtime = null) => {
     const targetEvent = event || popularEvents[0] || events[0];
     if (!targetEvent) {
       showToast('No event selected', 'info');
@@ -310,7 +310,7 @@ export default function App() {
       showToast('Please sign in to select seats and book tickets', 'info');
       return;
     }
-    setSelectedEvent(targetEvent);
+    setSelectedEvent(preferredShowtime ? { ...targetEvent, initialShowtime: preferredShowtime } : targetEvent);
     setIsSeatMapOpen(true);
   };
 
@@ -587,6 +587,7 @@ export default function App() {
                       className="bg-transparent font-impact text-lg text-asphalt-black focus:outline-none w-full cursor-pointer appearance-none border-none p-0"
                     >
                       <option value="">ALL CATEGORIES (ALL EVENTS)</option>
+                      <option value="CINEMA">CINEMA & MOVIE PREMIERES</option>
                       <option value="MUSIC">MUSIC CONCERTS & FESTIVALS</option>
                       <option value="TECH">TECH & AI CONFERENCES</option>
                       <option value="THEATER">THEATER & PERFORMING ARTS</option>
@@ -669,7 +670,7 @@ export default function App() {
                       event={event}
                       index={idx}
                       currentUser={currentUser}
-                      onBook={() => openBookingModal(event)}
+                      onBook={(showtime) => openBookingModal(event, showtime)}
                       onWishlist={(e) => handleToggleWishlist(event.id, e)}
                       onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
                       onDelete={(e) => handleDeleteEvent(event.id, event.name, e)}
@@ -1133,8 +1134,16 @@ function HeroProductDemo({ onOpenBooking }) {
 function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
   const isSoldOut = event.availableSeats === 0;
   const canDelete = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER');
+  const isCinema = event.category === 'CINEMA' || event.category === 'MOVIE' || /imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(event.name || '');
 
-  const badgeTitles = ['FEATURED EVENT', 'SELLING FAST', 'VIP AVAILABLE', 'TOP RATED', 'LIMITED PASSES', 'POPULAR SHOW'];
+  const movieFormat = event.movieFormat || (event.description && event.description.match(/FORMAT:\s*([^/|\n]+)/)?.[1]?.trim()) || (isCinema ? 'IMAX 3D // 4K LASER' : null);
+  const movieRuntime = event.movieRuntime || (event.description && event.description.match(/RUNTIME:\s*([^/|\n]+)/)?.[1]?.trim()) || (isCinema ? '162 MIN' : null);
+  const movieRating = event.movieRating || (event.description && event.description.match(/RATING:\s*([A-Z0-9-]+)/)?.[1]?.trim()) || (isCinema ? 'PG-13' : null);
+  const cinemaShowtimes = event.showtimes || ['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM'];
+
+  const badgeTitles = isCinema 
+    ? ['IMAX PREMIERE', 'NOW SCREENING', '70MM RESTORATION', 'DOLBY ATMOS', 'MIDNIGHT SCREENING', 'DIRECTOR CUT']
+    : ['FEATURED EVENT', 'SELLING FAST', 'VIP AVAILABLE', 'TOP RATED', 'LIMITED PASSES', 'POPULAR SHOW'];
   const badgeTitle = badgeTitles[index % badgeTitles.length];
 
   const badgeStyles = [
@@ -1155,6 +1164,7 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
 
   const getImageForEvent = (event) => {
     if (event.bannerImageUrl) return event.bannerImageUrl;
+    if (event.category === 'CINEMA' || isCinema) return 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80';
     if (event.category === 'MUSIC') return '/images/concert.png';
     if (event.category === 'TECH') return '/images/tech.png';
     if (event.category === 'THEATER') return 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80';
@@ -1227,7 +1237,7 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
       <div className={`h-4 ${index % 2 === 0 ? 'hazard-tape' : 'hazard-tape-magenta'} relative flex items-center justify-between border-y-2 border-asphalt-black select-none`}>
         <div className="w-3 h-4 bg-asphalt-black -ml-1 border-r-2 border-grit-white" />
         <div className="font-ticker text-[9px] font-black text-asphalt-black tracking-widest uppercase">
-          OFFICIAL ADMISSION PASS /// EVENTHUB
+          {isCinema ? 'CINEMA ADMISSION PASS /// OMNIPLEX AUDITORIUM' : 'OFFICIAL ADMISSION PASS /// EVENTHUB'}
         </div>
         <div className="w-3 h-4 bg-asphalt-black -mr-1 border-l-2 border-grit-white" />
       </div>
@@ -1235,27 +1245,69 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
       {/* Flyer Lower Stub Body */}
       <div className="p-4 flex-1 flex flex-col justify-between bg-asphalt-card">
         <div>
-          <div className="text-[10px] font-ticker text-neon-magenta uppercase tracking-wider mb-1 font-bold">
-            SECTOR: {event.category || 'LIVE EVENT'} // TIER 01
+          <div className="flex items-center gap-1.5 flex-wrap mb-1">
+            <span className="text-[10px] font-ticker text-neon-magenta uppercase tracking-wider font-bold">
+              SECTOR: {isCinema ? 'CINEMA & MOVIES' : (event.category || 'LIVE EVENT')}
+            </span>
+            {isCinema && movieFormat && (
+              <span className="text-[9px] font-mono-zine bg-asphalt-black border border-acid-yellow text-acid-yellow px-1">
+                {movieFormat}
+              </span>
+            )}
+            {isCinema && movieRuntime && (
+              <span className="text-[9px] font-mono-zine bg-asphalt-black border border-asphalt-border text-grit-dim px-1">
+                {movieRuntime}
+              </span>
+            )}
+            {isCinema && movieRating && (
+              <span className="text-[9px] font-impact bg-neon-magenta text-grit-white px-1">
+                {movieRating}
+              </span>
+            )}
           </div>
           <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white group-hover:text-acid-yellow transition-colors leading-tight mb-1">
             {event.name}
           </h3>
           <p className="font-mono-zine text-xs text-grit-dim mb-3">
-            {event.venueName || 'Main Arena'} • {event.city || 'Convention Center'}
+            {event.venueName || 'Main Arena'} • {event.city || event.venueAddress || 'Convention Center'}
           </p>
         </div>
 
         <div>
+          {/* Quick Showtime Selector for Cinema Events */}
+          {isCinema && (
+            <div className="mb-3 pt-2 border-t border-asphalt-border/60">
+              <span className="block font-ticker text-[9px] text-grit-dim uppercase tracking-wider mb-1">
+                SCREEN 01 // SELECT SHOWTIME:
+              </span>
+              <div className="flex flex-wrap gap-1">
+                {cinemaShowtimes.map((time) => (
+                  <button
+                    key={time}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onBook(time);
+                    }}
+                    className="font-mono-zine text-[10px] px-2 py-0.5 bg-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black text-grit-white border border-asphalt-border transition-colors cursor-pointer"
+                    title={`Book seats for ${time}`}
+                  >
+                    {time}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="bg-asphalt-black p-2 border border-asphalt-border mb-3 flex items-center justify-between">
             <div>
-              <span className="block text-[9px] font-ticker text-grit-dim">TICKET PRICE</span>
+              <span className="block text-[9px] font-ticker text-grit-dim">{isCinema ? 'CINEMA TICKET' : 'TICKET PRICE'}</span>
               <span className="font-display text-2xl text-acid-yellow">
                 {formatPrice(event.ticketPrice, event.currency)}
               </span>
             </div>
             <div className="text-right">
-              <span className="block text-[9px] font-ticker text-grit-dim">AVAILABLE SEATS</span>
+              <span className="block text-[9px] font-ticker text-grit-dim">{isCinema ? 'AUDITORIUM SEATS' : 'AVAILABLE SEATS'}</span>
               <span className="font-ticker text-xs font-bold text-neon-magenta">
                 {isSoldOut ? 'SOLD OUT' : `${event.availableSeats} SEATS LEFT`}
               </span>
@@ -1273,10 +1325,10 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
           ) : (
             <button 
               type="button"
-              onClick={onBook}
+              onClick={() => onBook()}
               className="w-full py-2 bg-acid-yellow hover:bg-acid-yellow-hover text-asphalt-black font-display text-xl uppercase tracking-wider font-black border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] transition-all flex items-center justify-center gap-1 cursor-pointer"
             >
-              <span>SELECT SEATS</span>
+              <span>{isCinema ? 'BOOK CINEMA SEATS' : 'SELECT SEATS'}</span>
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </button>
           )}
@@ -1309,6 +1361,38 @@ const mockEvents = [
   },
   {
     id: 2,
+    name: 'Cyberpunk 2099: Neo-Tokyo — Midnight IMAX 3D Premiere',
+    description: 'FORMAT: IMAX 3D // 4K LASER / RUNTIME: 162 MIN / RATING: R-RATED. Worldwide cinema premiere with live synthesized score.',
+    category: 'CINEMA',
+    movieFormat: 'IMAX 3D // 4K LASER',
+    movieRuntime: '162 MIN',
+    movieRating: 'R-RATED',
+    ticketPrice: 24.50,
+    availableSeats: 90,
+    eventDate: '2026-10-15',
+    venueName: 'Omniplex IMAX Laser Dome',
+    venueAddress: 'Los Angeles, CA',
+    bannerImageUrl: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
+    showtimes: ['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM', '11:59 PM']
+  },
+  {
+    id: 3,
+    name: 'Interstellar: 70mm Special Retrospective Presentation',
+    description: 'FORMAT: 70MM IMAX RE-ISSUE / RUNTIME: 169 MIN / RATING: PG-13. Christopher Nolan magnum opus presented on 70mm film stock with uncompressed 12-channel audio.',
+    category: 'CINEMA',
+    movieFormat: '70MM IMAX RE-ISSUE',
+    movieRuntime: '169 MIN',
+    movieRating: 'PG-13',
+    ticketPrice: 22.00,
+    availableSeats: 90,
+    eventDate: '2026-11-05',
+    venueName: 'Omniplex IMAX Laser Dome',
+    venueAddress: 'Los Angeles, CA',
+    bannerImageUrl: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80',
+    showtimes: ['12:00 PM', '03:30 PM', '07:00 PM', '10:30 PM']
+  },
+  {
+    id: 4,
     name: 'Global AI & Autonomous Tech Summit 2026',
     description: 'Keynotes from leading systems researchers, live robotics demonstrations, and engineering workshops.',
     category: 'TECH',
@@ -1319,7 +1403,7 @@ const mockEvents = [
     bannerImageUrl: '/images/tech.png'
   },
   {
-    id: 3,
+    id: 5,
     name: 'Phantom of the Opera: Broadway Revival',
     description: 'Award-winning musical production with orchestral accompaniment and live staging.',
     category: 'THEATER',
@@ -1330,7 +1414,7 @@ const mockEvents = [
     bannerImageUrl: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80'
   },
   {
-    id: 4,
+    id: 6,
     name: 'Grand Prix eSports World Championship',
     description: 'Simulator racing championship featuring verified competitive telemetry and live finals.',
     category: 'SPORTS',

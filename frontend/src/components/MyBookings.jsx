@@ -117,16 +117,21 @@ export default function MyBookings({ currentUser, showToast }) {
           <body>
             <div class="pass-card">
               <div class="hazard"></div>
-              <span class="badge">EVENTHUB OFFICIAL ADMISSION PASS</span>
+              <span class="badge">${booking.isCinema ? 'CINEMA OFFICIAL ADMISSION PASS' : 'EVENTHUB OFFICIAL ADMISSION PASS'}</span>
               <h2>${booking.event?.name || 'LIVE EVENT'}</h2>
-              <p>${booking.event?.eventDate || '2026-09-15'} · ${booking.event?.venue?.name || 'MAIN CONCERT ARENA'}</p>
+              <p>${booking.event?.eventDate || '2026-09-15'} · ${booking.isCinema ? (booking.showtime ? 'SHOWTIME ' + booking.showtime : 'SHOWTIME 06:15 PM') : (booking.event?.startTime || '19:00')} · ${booking.screenName || booking.event?.venue?.name || 'MAIN CONCERT ARENA'}</p>
               <div class="qr-container">
                 <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=EVENTHUB-PASS-${booking.id}`}" class="qr-img" alt="Pass QR" />
               </div>
               <div class="info-row">
                 <div><span>ATTENDEE</span><br><strong>${currentUser?.firstName || 'GUEST'} ${currentUser?.lastName || 'ATTENDEE'}</strong></div>
-                <div style="text-align:right"><span>SEATS / ROW</span><br><strong>${booking.selectedSeats || 'GENERAL ADMISSION'}</strong></div>
+                <div style="text-align:right"><span>SEATS / AUDITORIUM</span><br><strong>${booking.selectedSeats || 'GENERAL ADMISSION'}</strong></div>
               </div>
+              ${booking.snacks && Object.keys(booking.snacks).length > 0 ? `
+              <div class="info-row" style="background:#222; padding:8px 10px; margin-top:10px;">
+                <div><span>CONCESSIONS VOUCHER</span><br><strong>${Object.entries(booking.snacks).map(([k, q]) => `${q}x ${k.replace(/_/g, ' ').toUpperCase()}`).join(', ')}</strong></div>
+                <div style="text-align:right"><span>PICKUP</span><br><strong>SNACK BAR COUNTER 01</strong></div>
+              </div>` : ''}
               <button class="print-btn" onclick="window.print()">PRINT / EXPORT TICKET</button>
             </div>
           </body>
@@ -314,7 +319,9 @@ export default function MyBookings({ currentUser, showToast }) {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBookings.map((b) => (
+          {filteredBookings.map((b) => {
+            const isCinema = b.isCinema || b.event?.category === 'CINEMA' || b.event?.category === 'MOVIE' || /imax|cinema|movie|film|screening|interstellar/i.test(b.event?.name || '');
+            return (
             <div 
               key={b.id} 
               className="bg-asphalt-surface border-2 border-grit-white shadow-[3px_3px_0px_#E2F13C] flex flex-col justify-between relative overflow-hidden"
@@ -322,16 +329,23 @@ export default function MyBookings({ currentUser, showToast }) {
               {/* Slanted Tape Badge */}
               <div className={`absolute top-3 right-3 text-xs font-impact tracking-wider px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-2 ${
                 b.bookingStatus === 'CONFIRMED'
-                  ? 'bg-acid-yellow text-asphalt-black'
+                  ? (isCinema ? 'bg-acid-yellow text-asphalt-black' : 'bg-acid-yellow text-asphalt-black')
                   : 'bg-neon-magenta text-grit-white'
               }`}>
-                {b.bookingStatus}
+                {isCinema && b.bookingStatus === 'CONFIRMED' ? 'CINEMA PASS' : b.bookingStatus}
               </div>
 
               {/* Pass Content */}
               <div className="p-5">
-                <div className="text-[10px] font-ticker text-grit-dim uppercase tracking-wider mb-2">
-                  TICKET #{b.id} // SEC_NODE
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[10px] font-ticker text-grit-dim uppercase tracking-wider">
+                    TICKET #{b.id} // SEC_NODE
+                  </span>
+                  {isCinema && (
+                    <span className="text-[9px] font-impact bg-asphalt-card border border-asphalt-border px-1.5 py-0.2 text-acid-yellow">
+                      SCREEN 01 // LASER
+                    </span>
+                  )}
                 </div>
 
                 <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-tight mb-4 pr-16">
@@ -341,11 +355,11 @@ export default function MyBookings({ currentUser, showToast }) {
                 <div className="space-y-1.5 font-mono-zine text-xs text-grit-dim uppercase mb-4">
                   <div className="flex items-center gap-2">
                     <Calendar size={13} className="text-acid-yellow" />
-                    <span>{b.event?.eventDate} @ {b.event?.startTime || '19:00'}</span>
+                    <span>{b.event?.eventDate} @ {b.showtime || b.event?.startTime || '19:00'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin size={13} className="text-acid-yellow" />
-                    <span>{b.event?.venue?.name || 'CONCERT ARENA'}</span>
+                    <span>{b.screenName || b.event?.venue?.name || 'CONCERT ARENA'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Ticket size={13} className="text-acid-yellow" />
@@ -353,6 +367,14 @@ export default function MyBookings({ currentUser, showToast }) {
                       {b.quantity} PASS(ES) · {b.selectedSeats ? `SEATS: ${b.selectedSeats}` : 'GENERAL ADMISSION'}
                     </span>
                   </div>
+                  {b.snacks && Object.keys(b.snacks).length > 0 && (
+                    <div className="flex items-start gap-2 text-acid-yellow pt-1 border-t border-asphalt-border/60">
+                      <span className="shrink-0 font-impact text-[9px] bg-asphalt-card px-1 border border-asphalt-border">SNACKS:</span>
+                      <span className="text-[11px] truncate">
+                        {Object.entries(b.snacks).map(([k, q]) => `${q}x ${k.replace(/_/g, ' ').toUpperCase()}`).join(', ')}
+                      </span>
+                    </div>
+                  )}
                   <div className="pt-2 border-t border-asphalt-border font-impact text-lg text-grit-white">
                     TOTAL AMOUNT: {formatPrice(b.totalAmount, b.event?.currency)}
                   </div>
@@ -425,7 +447,8 @@ export default function MyBookings({ currentUser, showToast }) {
                 )}
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
       )}
     </div>
