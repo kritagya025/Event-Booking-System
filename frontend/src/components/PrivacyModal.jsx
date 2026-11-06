@@ -7,7 +7,7 @@ export default function PrivacyModal({ isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
       <div 
-        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#ff1f6d] flex flex-col font-mono-zine relative"
+        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#F43F5E] flex flex-col font-mono-zine relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Slanted Tape Badge */}

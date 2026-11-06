@@ -70,7 +70,7 @@ export default function Navbar({
       {/* ─── 0. HIGH VOLTAGE HAZARD WARNING HEADER MARQUEE ─── */}
       <div className="h-7 w-full hazard-tape overflow-hidden flex items-center border-b-2 border-asphalt-black select-none">
         <div className="animate-marquee items-center gap-6 text-asphalt-black font-ticker font-extrabold text-[12px] tracking-widest uppercase py-0.5">
-          <span>⚡ EVENTHUB // REAL-TIME STOMP SEAT CONCURRENCY ENGINE // 10-MINUTE SEAT LOCK PROTOCOL ⚡</span>
+          <span>[SYSTEM LIVE] EVENTHUB // REAL-TIME STOMP SEAT CONCURRENCY ENGINE // 10-MINUTE SEAT LOCK PROTOCOL [ACTIVE]</span>
           <span>•</span>
           <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
           <span>•</span>
@@ -78,7 +78,7 @@ export default function Navbar({
           <span>•</span>
           <span>DIRECT ORGANIZER GATE SCANNER VALIDATION // 99.98% DISTRIBUTED UPTIME</span>
           <span>•</span>
-          <span>⚡ EVENTHUB // REAL-TIME STOMP SEAT CONCURRENCY ENGINE // 10-MINUTE SEAT LOCK PROTOCOL ⚡</span>
+          <span>[SYSTEM LIVE] EVENTHUB // REAL-TIME STOMP SEAT CONCURRENCY ENGINE // 10-MINUTE SEAT LOCK PROTOCOL [ACTIVE]</span>
           <span>•</span>
           <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
           <span>•</span>

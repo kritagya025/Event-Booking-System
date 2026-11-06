@@ -102,7 +102,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
   return (
     <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto" onClick={onClose}>
       <div 
-        className="w-full max-w-lg bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#ff1f6d] my-auto relative"
+        className="w-full max-w-lg bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#F43F5E] my-auto relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Slanted Sticker */}

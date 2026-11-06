@@ -86,7 +86,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
           {wishlistItems.map((event) => (
             <div 
               key={event.id} 
-              className="bg-asphalt-surface border-4 border-grit-white shadow-[6px_6px_0px_#eefc54] p-5 flex flex-col justify-between relative"
+              className="bg-asphalt-surface border-2 border-grit-white shadow-[3px_3px_0px_#E2F13C] p-5 flex flex-col justify-between relative"
             >
               <div>
                 <div className="flex justify-between items-center mb-3">

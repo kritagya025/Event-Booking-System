@@ -286,11 +286,21 @@ export default function MyBookings({ currentUser, showToast }) {
 
       {/* Bookings Card Grid */}
       {loading ? (
-        <div className="py-16 text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-acid-yellow border-t-transparent mx-auto mb-3"></div>
-          <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider animate-pulse">
-            AUDITING TICKET PASS INVENTORY...
-          </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="bg-asphalt-surface border-2 border-asphalt-border p-5 space-y-4 animate-pulse">
+              <div className="flex justify-between items-center">
+                <div className="h-4 w-28 bg-asphalt-card" />
+                <div className="h-4 w-16 bg-asphalt-card" />
+              </div>
+              <div className="h-8 w-3/4 bg-asphalt-card" />
+              <div className="space-y-2 pt-2">
+                <div className="h-3 w-1/2 bg-asphalt-card" />
+                <div className="h-3 w-2/3 bg-asphalt-card" />
+              </div>
+              <div className="h-10 w-full bg-asphalt-card border border-asphalt-border mt-4" />
+            </div>
+          ))}
         </div>
       ) : filteredBookings.length === 0 ? (
         <div className="bg-asphalt-surface border-4 border-dashed border-asphalt-border p-12 text-center">
@@ -307,7 +317,7 @@ export default function MyBookings({ currentUser, showToast }) {
           {filteredBookings.map((b) => (
             <div 
               key={b.id} 
-              className="bg-asphalt-surface border-4 border-grit-white shadow-[6px_6px_0px_#eefc54] flex flex-col justify-between relative overflow-hidden"
+              className="bg-asphalt-surface border-2 border-grit-white shadow-[3px_3px_0px_#E2F13C] flex flex-col justify-between relative overflow-hidden"
             >
               {/* Slanted Tape Badge */}
               <div className={`absolute top-3 right-3 text-xs font-impact tracking-wider px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-2 ${

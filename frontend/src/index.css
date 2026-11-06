@@ -18,10 +18,10 @@
   --bg-input: #121217;
   --bg-modal: #16161c;
 
-  --acid-yellow: #eefc54;
-  --acid-yellow-hover: #dbed2d;
-  --neon-magenta: #ff1f6d;
-  --neon-magenta-dark: #d40c50;
+  --acid-yellow: #E2F13C;
+  --acid-yellow-hover: #D4E330;
+  --neon-magenta: #F43F5E;
+  --neon-magenta-dark: #E11D48;
   --electric-cobalt: #1d4ed8;
   --asphalt-black: #0e0e11;
   --asphalt-surface: #16161c;
@@ -31,18 +31,18 @@
   --grit-dim: #90929e;
 
   /* Aliases for core app */
-  --primary: #eefc54;
-  --primary-hover: #dbed2d;
+  --primary: #E2F13C;
+  --primary-hover: #D4E330;
   --primary-contrast: #0e0e11;
   --primary-subtle: rgba(238, 252, 84, 0.12);
   --primary-glow: rgba(238, 252, 84, 0.25);
 
-  --stage-live: #ff1f6d;
+  --stage-live: #F43F5E;
   --stage-live-subtle: rgba(255, 31, 109, 0.15);
 
   --border-subtle: #2c2d3a;
   --border-strong: #f5f5f0;
-  --border-active: #eefc54;
+  --border-active: #E2F13C;
 
   --text-main: #f5f5f0;
   --text-secondary: #90929e;
@@ -69,7 +69,7 @@
 
   --shadow-sm: 2px 2px 0px #0e0e11;
   --shadow-card: 6px 6px 0px #eefc54;
-  --shadow-magenta: 6px 6px 0px #ff1f6d;
+  --shadow-magenta: 3px 3px 0px #F43F5E;
   --shadow-white: 6px 6px 0px #ffffff;
 }
 
@@ -81,10 +81,10 @@ html.light, body.light, .light {
   --bg-input: #ffffff;
   --bg-modal: #ffffff;
 
-  --acid-yellow: #ff1f6d;
-  --acid-yellow-hover: #d40c50;
-  --neon-magenta: #1d4ed8;
-  --neon-magenta-dark: #1e40af;
+  --acid-yellow: #E11D48;
+  --acid-yellow-hover: #BE123C;
+  --neon-magenta: #2563EB;
+  --neon-magenta-dark: #1D4ED8;
   --electric-cobalt: #1d4ed8;
 
   --asphalt-black: #f5f5f0;
@@ -111,7 +111,7 @@ html.light, body.light, .light {
 
   --shadow-sm: 2px 2px 0px #0e0e11;
   --shadow-card: 6px 6px 0px #0e0e11;
-  --shadow-magenta: 6px 6px 0px #ff1f6d;
+  --shadow-magenta: 3px 3px 0px #F43F5E;
   --shadow-white: 6px 6px 0px #0e0e11;
 }
 
@@ -572,15 +572,18 @@ h1, h2, h3, h4, .font-display {
 }
 
 .toast-success {
-  border-left: 6px solid var(--acid-yellow);
+  border-color: var(--acid-yellow);
+  box-shadow: 3px 3px 0px rgba(226, 241, 60, 0.4);
 }
 
 .toast-error {
-  border-left: 6px solid var(--neon-magenta);
+  border-color: var(--neon-magenta);
+  box-shadow: 3px 3px 0px rgba(244, 37, 100, 0.4);
 }
 
 .toast-info {
-  border-left: 6px solid var(--electric-cobalt);
+  border-color: var(--electric-cobalt);
+  box-shadow: 3px 3px 0px rgba(29, 78, 216, 0.4);
 }
 
 /* ─── Form Inputs ─── */

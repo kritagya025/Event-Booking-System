@@ -23,7 +23,7 @@ export default class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-asphalt-black text-grit-white flex flex-col items-center justify-center p-6 text-center select-none">
-          <div className="max-w-lg w-full bg-asphalt-card border-4 border-neon-magenta p-6 shadow-[10px_10px_0px_#eefc54]">
+          <div className="max-w-lg w-full bg-asphalt-card border-2 border-neon-magenta p-6 shadow-[4px_4px_0px_#E2F13C]">
             <div className="hazard-tape-magenta h-3 w-full mb-4"></div>
             <span className="font-ticker text-xs text-neon-magenta uppercase tracking-widest font-black block mb-2">
               CRITICAL SYSTEM EXCEPTION INTERCEPTED

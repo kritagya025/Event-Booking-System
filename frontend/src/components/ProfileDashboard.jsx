@@ -144,7 +144,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
     <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
       
       {/* Profile Header Box */}
-      <div className="bg-asphalt-surface border-4 border-grit-white p-6 md:p-8 shadow-[8px_8px_0px_#eefc54] mb-8 relative">
+      <div className="bg-asphalt-surface border-2 border-grit-white p-6 md:p-8 shadow-[4px_4px_0px_#E2F13C] mb-8 relative">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
           <div className="flex items-center gap-5">
@@ -293,7 +293,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       {/* Tab Content */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#eefc54]">
+          <div className="bg-asphalt-surface border-2 border-grit-white p-6 shadow-[3px_3px_0px_#E2F13C]">
             <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4">
               ACCOUNT PROFILE DETAILS
             </h3>
@@ -317,7 +317,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
             </div>
           </div>
 
-          <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#ff1f6d]">
+          <div className="bg-asphalt-surface border-2 border-grit-white p-6 shadow-[3px_3px_0px_#F43F5E]">
             <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4">
               SECURITY PROTOCOL
             </h3>
@@ -335,7 +335,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       {/* Edit Profile Modal */}
       {isEditOpen && (
         <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] p-6 relative font-mono-zine">
+          <div className="w-full max-w-md bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#E2F13C] p-6 relative font-mono-zine">
             <div className="flex justify-between items-center border-b-2 border-asphalt-border pb-3 mb-4">
               <h3 className="font-display text-2xl uppercase">EDIT ACCOUNT PROFILE</h3>
               <button onClick={() => setIsEditOpen(false)} className="text-grit-dim hover:text-neon-magenta p-1">

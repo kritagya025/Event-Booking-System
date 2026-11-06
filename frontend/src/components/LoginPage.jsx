@@ -63,7 +63,7 @@ export default function LoginPage({ onAuthSuccess, onNavigate, showToast }) {
           SECURE TICKETING ACCESS
         </div>
 
-        <div className="bg-asphalt-surface border-4 border-grit-white p-6 md:p-8 shadow-[8px_8px_0px_#eefc54] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-6 md:p-8 shadow-[4px_4px_0px_#E2F13C] relative">
           
           {/* Brand Header */}
           <div className="border-b-2 border-asphalt-border pb-5 mb-6 text-left">

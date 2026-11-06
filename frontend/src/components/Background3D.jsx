@@ -43,14 +43,15 @@ export default function Background3D() {
         }}
       />
 
-      {/* ─── 2. Authentic Silkscreen Halftone Screenprint Dots ─── */}
+      {/* ─── 2. Fine Acoustic Architecture Matrix & Stage Grid ─── */}
       <div 
-        className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
+        className="absolute inset-0 opacity-[0.02] dark:opacity-[0.03]"
         style={{
           backgroundImage: `
-            radial-gradient(currentColor 1.2px, transparent 1.2px)
+            linear-gradient(to right, currentColor 1px, transparent 1px),
+            linear-gradient(to bottom, currentColor 1px, transparent 1px)
           `,
-          backgroundSize: '24px 24px'
+          backgroundSize: '192px 192px'
         }}
       />
 

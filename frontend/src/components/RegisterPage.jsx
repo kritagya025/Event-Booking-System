@@ -58,7 +58,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
           USER ONBOARDING // REAL-TIME PASSES
         </div>
 
-        <div className="bg-asphalt-surface border-4 border-grit-white p-6 md:p-8 shadow-[8px_8px_0px_#ff1f6d] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-6 md:p-8 shadow-[4px_4px_0px_#F43F5E] relative">
           
           {/* Header */}
           <div className="border-b-2 border-asphalt-border pb-5 mb-6 text-left">

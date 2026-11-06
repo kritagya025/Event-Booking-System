@@ -102,7 +102,7 @@ export default function AdminDashboard({ showToast }) {
 
       {/* 4 Brutalist Metric Stamps */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-asphalt-surface border-4 border-grit-white p-5 shadow-[6px_6px_0px_#eefc54] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#E2F13C] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PLATFORM REVENUE</span>
           <span className="font-display text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
             {formatPrice(displayTotalRevenue)}
@@ -112,7 +112,7 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-4 border-grit-white p-5 shadow-[6px_6px_0px_#ff1f6d] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#F43F5E] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TICKETS ISSUED</span>
           <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {dbBookingsCount.toLocaleString()}
@@ -122,7 +122,7 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-4 border-grit-white p-5 shadow-[6px_6px_0px_#1d4ed8] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#1d4ed8] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">REGISTERED USERS</span>
           <span className="font-display text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
             {dbUsersCount.toLocaleString()}
@@ -132,7 +132,7 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-4 border-grit-white p-5 shadow-[6px_6px_0px_#ffffff] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#ffffff] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">PUBLISHED EVENTS</span>
           <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {dbEventsCount}
@@ -147,7 +147,7 @@ export default function AdminDashboard({ showToast }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Top Performing Events */}
-        <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#eefc54]">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-6 shadow-[3px_3px_0px_#E2F13C]">
           <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-acid-yellow"></span> TOP POPULAR EVENTS
           </h3>
@@ -189,7 +189,7 @@ export default function AdminDashboard({ showToast }) {
         </div>
 
         {/* System Infrastructure */}
-        <div className="bg-asphalt-surface border-4 border-grit-white p-6 shadow-[6px_6px_0px_#ff1f6d]">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-6 shadow-[3px_3px_0px_#F43F5E]">
           <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-neon-magenta"></span> SYSTEM PROTOCOL & INFRASTRUCTURE STATE
           </h3>

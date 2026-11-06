@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, RefreshCw } from 'lucide-react';
+import { X, RefreshCw, Database } from 'lucide-react';
 import { apiFetch } from '../services/api';
 
 export default function DatabaseConsoleModal({ isOpen, onClose }) {
@@ -59,12 +59,12 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4 font-mono-zine" onClick={onClose}>
       <div 
-        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[10px_10px_0px_#eefc54] flex flex-col relative"
+        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#E2F13C] flex flex-col relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Slanted Tape Badge */}
-        <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          EVENTHUB://DB_CONSOLE
+        {/* Top Status Badge */}
+        <div className="absolute -top-3.5 right-4 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-0.5 border border-asphalt-black text-xs uppercase shadow-[2px_2px_0px_#0e0e11] z-10 flex items-center gap-1.5">
+          <Database size={11} /> DATA INFRASTRUCTURE
         </div>
 
         {/* Header */}
@@ -80,7 +80,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
               </span>
             </div>
             <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
-              DATABASE CONSOLE & SCHEMA AUDIT
+              DATABASE & SCHEMA TELEMETRY
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
               RELATIONAL ENTITIES, LIVE TUPLES, AND SEAT INVENTORY INDEXES
@@ -152,7 +152,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
             onClick={onClose} 
             className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer"
           >
-            DISMISS CONSOLE
+            DISMISS TELEMETRY
           </button>
         </div>
       </div>

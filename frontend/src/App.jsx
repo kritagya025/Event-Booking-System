@@ -17,7 +17,8 @@ import CookiesModal from './components/CookiesModal';
 import ApiDocsModal from './components/ApiDocsModal';
 import Background3D from './components/Background3D';
 
-import { Heart, Bell, AlertCircle, Check } from 'lucide-react';
+import EventCardSkeleton from './components/EventCardSkeleton';
+import { Heart, Bell, AlertCircle, Check, Zap, Radio } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
 
@@ -429,7 +430,10 @@ export default function App() {
             <span className="text-grit-white font-mono-zine">REAL-TIME STOMP SEAT CONCURRENCY // DISTRIBUTED EVENT TICKETING PLATFORM</span>
           </div>
           <div className="flex items-center gap-3 text-grit-dim">
-            <span className="text-acid-yellow">⚡ 10-MIN SEAT LOCK GUARANTEE</span>
+            <span className="text-acid-yellow flex items-center gap-1.5 font-bold">
+              <Zap size={11} className="fill-current text-acid-yellow" />
+              10-MIN SEAT LOCK GUARANTEE
+            </span>
             <span>|</span>
             <span className="text-grit-white">99.98% CLUSTER UPTIME</span>
           </div>
@@ -647,13 +651,8 @@ export default function App() {
 
               {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="skeleton-event-card p-4 space-y-3">
-                      <div className="skeleton-box h-48 w-full" />
-                      <div className="skeleton-box h-6 w-3/4" />
-                      <div className="skeleton-box h-4 w-1/2" />
-                      <div className="skeleton-box h-10 w-full" />
-                    </div>
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                    <EventCardSkeleton key={i} />
                   ))}
                 </div>
               ) : events.length === 0 ? (
@@ -791,11 +790,11 @@ export default function App() {
             </section>
 
             {/* 7. ORGANIZER PORTAL CALLOUT */}
-            <section className="bg-asphalt-black border-4 border-acid-yellow p-6 md:p-8 relative shadow-[8px_8px_0px_#ffffff] mb-12" id="gatekeeper">
+            <section className="bg-asphalt-black border-2 border-acid-yellow p-6 md:p-8 relative shadow-[4px_4px_0px_rgba(255,255,255,0.7)] mb-12" id="gatekeeper">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-acid-yellow text-asphalt-black flex items-center justify-center font-display text-4xl -rotate-6 border-2 border-asphalt-black shadow-[3px_3px_0px_#ff1f6d]">
-                    ⚡
+                  <div className="w-14 h-14 bg-acid-yellow text-asphalt-black flex items-center justify-center -rotate-3 border-2 border-asphalt-black shadow-[2px_2px_0px_#ff1f6d]">
+                    <Radio size={28} className="stroke-[2.5]" />
                   </div>
                   <div>
                     <div className="font-ticker text-xs font-bold text-neon-magenta uppercase tracking-wider mb-1">

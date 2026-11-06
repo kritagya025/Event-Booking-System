@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   X, Check, ArrowRight, ArrowLeft,
   Smartphone, CreditCard, Landmark, Gift, Wallet, AlertCircle,
-  Volume2, Zap, Sparkles, Filter, RotateCcw, Trash2, Eye
+  Volume2, Zap, Tag, Filter, RotateCcw, Trash2, Eye, Ticket
 } from 'lucide-react';
 import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
@@ -54,12 +54,13 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         const data = await apiFetch(`/seats/venue/${vId}`).catch(() => null);
         if (data && data.length > 0) {
           let formatted = data.map(s => {
-            const isVip = s.seatType === 'VIP' || s.rowNumber === 'A';
-            const isPremium = s.seatType === 'PREMIUM' || s.rowNumber === 'B';
-            const type = isVip ? 'VIP' : (isPremium ? 'PREMIUM' : (s.seatType || 'REGULAR'));
-            const price = isVip 
+            const isOrch = s.seatType === 'ORCHESTRA' || s.seatType === 'VIP' || s.rowNumber === 'A';
+            const isMezz = s.seatType === 'MEZZANINE' || s.seatType === 'PREMIUM' || s.rowNumber === 'B';
+            const isBalc = s.seatType === 'BALCONY' || s.rowNumber === 'C';
+            const type = isOrch ? 'ORCHESTRA' : (isMezz ? 'MEZZANINE' : (isBalc ? 'BALCONY' : (s.seatType || 'GENERAL')));
+            const price = isOrch 
               ? Math.round(event.ticketPrice * 1.5) 
-              : (isPremium ? Math.round(event.ticketPrice * 1.25) : event.ticketPrice);
+              : (isMezz ? Math.round(event.ticketPrice * 1.25) : (isBalc ? Math.round(event.ticketPrice * 1.1) : event.ticketPrice));
             return {
               ...s,
               seatType: type,
@@ -116,12 +117,13 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
     for (let r = 0; r < totalRows; r++) {
       const row = getRowLetter(r);
-      const isVip = r === 0;
-      const isPremium = r === 1;
-      const seatType = isVip ? 'VIP' : (isPremium ? 'PREMIUM' : 'REGULAR');
-      const price = isVip 
+      const isOrch = r === 0;
+      const isMezz = r === 1;
+      const isBalc = r === 2;
+      const seatType = isOrch ? 'ORCHESTRA' : (isMezz ? 'MEZZANINE' : (isBalc ? 'BALCONY' : 'GENERAL'));
+      const price = isOrch 
         ? Math.round(event.ticketPrice * 1.5) 
-        : (isPremium ? Math.round(event.ticketPrice * 1.25) : event.ticketPrice);
+        : (isMezz ? Math.round(event.ticketPrice * 1.25) : (isBalc ? Math.round(event.ticketPrice * 1.1) : event.ticketPrice));
 
       for (let num = 1; num <= seatsPerRow; num++) {
         if (generated.length >= countToGenerate) break;
@@ -150,12 +152,13 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
     for (let r = 0; r < totalRows; r++) {
       const row = getRowLetter(r);
-      const isVip = r === 0;
-      const isPremium = r === 1;
-      const seatType = isVip ? 'VIP' : (isPremium ? 'PREMIUM' : 'REGULAR');
-      const price = isVip 
+      const isOrch = r === 0;
+      const isMezz = r === 1;
+      const isBalc = r === 2;
+      const seatType = isOrch ? 'ORCHESTRA' : (isMezz ? 'MEZZANINE' : (isBalc ? 'BALCONY' : 'GENERAL'));
+      const price = isOrch 
         ? Math.round(event.ticketPrice * 1.5) 
-        : (isPremium ? Math.round(event.ticketPrice * 1.25) : event.ticketPrice);
+        : (isMezz ? Math.round(event.ticketPrice * 1.25) : (isBalc ? Math.round(event.ticketPrice * 1.1) : event.ticketPrice));
 
       for (let num = 1; num <= seatsPerRow; num++) {
         if (expanded.length >= countToGenerate) break;
@@ -552,9 +555,10 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       </span>
                       {[
                         { id: 'ALL', label: 'ALL SECTIONS' },
-                        { id: 'VIP', label: 'VIP PIT' },
-                        { id: 'PREMIUM', label: 'PREMIUM' },
-                        { id: 'REGULAR', label: 'REGULAR' }
+                        { id: 'ORCHESTRA', label: 'ORCHESTRA PIT' },
+                        { id: 'MEZZANINE', label: 'MEZZANINE' },
+                        { id: 'BALCONY', label: 'BALCONY' },
+                        { id: 'GENERAL', label: 'GENERAL FLOOR' }
                       ].map(f => (
                         <button
                           key={f.id}
@@ -621,12 +625,15 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             headrest += "bg-acid-yellow border-asphalt-black ";
                             cushion += "bg-acid-yellow text-asphalt-black border-grit-white shadow-[0_0_12px_rgba(238,252,84,0.6),2px_2px_0px_#ffffff] font-black ";
                           } else if (seat.status === 'AVAILABLE') {
-                            if (seat.seatType === 'VIP') {
+                            if (seat.seatType === 'ORCHESTRA' || seat.seatType === 'VIP') {
                               headrest += "bg-neon-magenta border-asphalt-black ";
-                              cushion += "bg-neon-magenta/20 text-neon-magenta border-neon-magenta hover:bg-neon-magenta hover:text-asphalt-black hover:shadow-[0_0_10px_rgba(255,31,109,0.5)] ";
-                            } else if (seat.seatType === 'PREMIUM') {
+                              cushion += "bg-neon-magenta/20 text-neon-magenta border-neon-magenta hover:bg-neon-magenta hover:text-asphalt-black ";
+                            } else if (seat.seatType === 'MEZZANINE' || seat.seatType === 'PREMIUM') {
                               headrest += "bg-blue-400 border-asphalt-black ";
-                              cushion += "bg-blue-950/40 text-blue-300 border-blue-400 hover:bg-blue-400 hover:text-asphalt-black hover:shadow-[0_0_10px_rgba(96,165,250,0.5)] ";
+                              cushion += "bg-blue-950/40 text-blue-300 border-blue-400 hover:bg-blue-400 hover:text-asphalt-black ";
+                            } else if (seat.seatType === 'BALCONY') {
+                              headrest += "bg-amber-400 border-asphalt-black ";
+                              cushion += "bg-amber-950/40 text-amber-300 border-amber-400 hover:bg-amber-400 hover:text-asphalt-black ";
                             } else {
                               headrest += "bg-asphalt-border border-asphalt-black group-hover:bg-acid-yellow ";
                               cushion += "bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow ";
@@ -715,13 +722,15 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       <>
                         <div className="flex items-center gap-2.5">
                           <span className={`px-2 py-0.5 font-bold text-[10px] uppercase border ${
-                            hoveredSeat.seatType === 'VIP' 
+                            hoveredSeat.seatType === 'ORCHESTRA' || hoveredSeat.seatType === 'VIP' 
                               ? 'bg-neon-magenta text-grit-white border-neon-magenta' 
-                              : hoveredSeat.seatType === 'PREMIUM'
+                              : (hoveredSeat.seatType === 'MEZZANINE' || hoveredSeat.seatType === 'PREMIUM'
                                 ? 'bg-blue-500 text-asphalt-black border-blue-400'
-                                : 'bg-asphalt-card text-grit-white border-asphalt-border'
+                                : (hoveredSeat.seatType === 'BALCONY'
+                                  ? 'bg-amber-500 text-asphalt-black border-amber-400'
+                                  : 'bg-asphalt-card text-grit-white border-asphalt-border'))
                           }`}>
-                            {hoveredSeat.seatType || 'REGULAR'}
+                            {hoveredSeat.seatType || 'GENERAL'}
                           </span>
                           <div>
                             <span className="font-bold text-grit-white text-sm">
@@ -771,15 +780,19 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   <div className="mt-3 pt-3 border-t border-asphalt-border flex justify-center gap-4 text-[11px] font-mono-zine text-grit-dim flex-wrap uppercase">
                     <div className="flex items-center gap-1.5">
                       <div className="w-3.5 h-3.5 bg-neon-magenta/20 border-2 border-neon-magenta rounded-t-sm"></div> 
-                      <span>VIP ({seatMap.filter(s => s.seatType === 'VIP' && s.status === 'AVAILABLE').length} LEFT)</span>
+                      <span>ORCHESTRA ({seatMap.filter(s => (s.seatType === 'ORCHESTRA' || s.seatType === 'VIP') && s.status === 'AVAILABLE').length} LEFT)</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3.5 h-3.5 bg-blue-950/40 border-2 border-blue-400 rounded-t-sm"></div> 
-                      <span>PREMIUM ({seatMap.filter(s => s.seatType === 'PREMIUM' && s.status === 'AVAILABLE').length} LEFT)</span>
+                      <span>MEZZANINE ({seatMap.filter(s => (s.seatType === 'MEZZANINE' || s.seatType === 'PREMIUM') && s.status === 'AVAILABLE').length} LEFT)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 bg-amber-950/40 border-2 border-amber-400 rounded-t-sm"></div> 
+                      <span>BALCONY ({seatMap.filter(s => s.seatType === 'BALCONY' && s.status === 'AVAILABLE').length} LEFT)</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3.5 h-3.5 bg-asphalt-card border-2 border-asphalt-border rounded-t-sm"></div> 
-                      <span>REGULAR ({seatMap.filter(s => s.seatType === 'REGULAR' && s.status === 'AVAILABLE').length} LEFT)</span>
+                      <span>GENERAL ({seatMap.filter(s => (s.seatType === 'GENERAL' || s.seatType === 'REGULAR') && s.status === 'AVAILABLE').length} LEFT)</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3.5 h-3.5 bg-acid-yellow border-2 border-grit-white rounded-t-sm"></div> 
@@ -796,7 +809,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     <div className="mt-4 p-3 bg-asphalt-card border-2 border-acid-yellow shadow-[4px_4px_0px_#0e0e11]">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-impact text-xs uppercase tracking-wider text-acid-yellow flex items-center gap-1.5">
-                          <Sparkles size={13} /> RESERVED PASSES IN CART ({selectedSeats.length}/6 SEATS)
+                          <Ticket size={13} /> RESERVED PASSES IN CART ({selectedSeats.length}/6 SEATS)
                         </span>
                         <button
                           type="button"
@@ -813,7 +826,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             className="flex items-center gap-2 bg-asphalt-surface border border-asphalt-border px-2.5 py-1 text-xs font-mono-zine"
                           >
                             <span className={`w-2 h-2 rounded-full ${
-                              seat.seatType === 'VIP' ? 'bg-neon-magenta' : seat.seatType === 'PREMIUM' ? 'bg-blue-400' : 'bg-acid-yellow'
+                              seat.seatType === 'ORCHESTRA' || seat.seatType === 'VIP' ? 'bg-neon-magenta' : (seat.seatType === 'MEZZANINE' || seat.seatType === 'PREMIUM' ? 'bg-blue-400' : (seat.seatType === 'BALCONY' ? 'bg-amber-400' : 'bg-acid-yellow'))
                             }`} />
                             <strong className="text-grit-white font-ticker">{seat.seatNumber}</strong>
                             <span className="text-acid-yellow font-bold">{formatPrice(seat.price, event.currency)}</span>
@@ -843,7 +856,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       </span>
                     ) : (
                       <span className="text-neon-magenta flex items-center gap-1 font-bold">
-                        <AlertCircle size={13} /> NO SEATS SELECTED — PLEASE CHOOSE YOUR SEATS
+                        <AlertCircle size={13} /> NO SEATS SELECTED // PLEASE CHOOSE YOUR SEATS
                       </span>
                     )}
                   </span>
