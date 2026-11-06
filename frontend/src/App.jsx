@@ -15,6 +15,7 @@ import SystemStatusModal from './components/SystemStatusModal';
 import DatabaseConsoleModal from './components/DatabaseConsoleModal';
 import CookiesModal from './components/CookiesModal';
 import ApiDocsModal from './components/ApiDocsModal';
+import Background3D from './components/Background3D';
 
 import { Heart, Bell, AlertCircle, Check } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
@@ -401,8 +402,12 @@ export default function App() {
   }
 
   return (
-    <div>
-      <Navbar 
+    <div className="relative min-h-screen bg-asphalt-black text-grit-white overflow-x-hidden selection:bg-acid-yellow selection:text-asphalt-black">
+      {/* 3D Atmospheric Background Layer */}
+      <Background3D />
+
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navbar 
         currentUser={currentUser}
         onNavigate={handleNavigate}
         activeTab={activeTab}
@@ -945,6 +950,7 @@ export default function App() {
             <span>{toast.message}</span>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );
