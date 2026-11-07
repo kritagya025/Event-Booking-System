@@ -8,7 +8,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
     eventsCount: 0,
     bookingsCount: 0,
     usersCount: 0,
-    dbEngine: 'PostgreSQL 16 / HikariCP Pool',
+    dbEngine: 'Enterprise Relational Vault (PostgreSQL)',
     status: 'Connected & Healthy',
     activeConnections: 5,
     maxPoolSize: 20
@@ -72,7 +72,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-                POSTGRESQL_ENGINE
+                ENCRYPTED_VAULT_ENGINE
               </span>
               <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>

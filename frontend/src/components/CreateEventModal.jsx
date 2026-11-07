@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Upload, AlertCircle, Trash2 } from 'lucide-react';
-import { apiFetch, getStoredToken } from '../services/api';
+import { apiFetch, getStoredToken, BASE_URL } from '../services/api';
 
 export default function CreateEventModal({ isOpen, onClose, showToast, onEventCreated }) {
   const [loading, setLoading] = useState(false);
@@ -63,7 +63,8 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const res = await fetch('http://localhost:8080/api/images/upload', {
+      const uploadEndpoint = `${BASE_URL}/images/upload`;
+      const res = await fetch(uploadEndpoint, {
         method: 'POST',
         headers: headers,
         body: bodyData
@@ -75,7 +76,10 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
       }
 
       const data = await res.json();
-      const finalUrl = data.imageUrl.startsWith('http') ? data.imageUrl : `http://localhost:8080${data.imageUrl}`;
+      const originBase = BASE_URL.replace(/\/api$/, '');
+      const finalUrl = data.imageUrl.startsWith('http') 
+        ? data.imageUrl 
+        : `${originBase}${data.imageUrl}`;
       setBannerUrl(finalUrl);
       showToast('EVENT BANNER IMAGE UPLOADED', 'success');
     } catch (err) {

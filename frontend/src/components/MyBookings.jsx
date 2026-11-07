@@ -207,10 +207,10 @@ export default function MyBookings({ currentUser, showToast }) {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-              EVENTHUB://TICKETS_PORTAL
+              OFFICIAL TICKET VAULT
             </span>
             <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
-              ACCOUNT: {currentUser?.email || 'ANON_USER'}
+              ACCOUNT: {currentUser?.email || 'ATTENDEE'}
             </span>
           </div>
           <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">

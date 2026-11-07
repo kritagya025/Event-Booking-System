@@ -122,7 +122,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
                 ACCREDITATION
               </span>
               <span className="font-ticker text-[9px] text-grit-dim uppercase tracking-widest">
-                PORT 8080 // TLS 1.3
+                VERIFIED ADMISSION // SECURE CHECKOUT
               </span>
             </div>
             <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">

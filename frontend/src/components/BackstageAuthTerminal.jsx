@@ -168,11 +168,11 @@ export default function BackstageAuthTerminal({
           <div className="bg-asphalt-card border border-asphalt-border px-3 py-1.5 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-acid-yellow animate-pulse"></span>
             <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
-              TERMINAL // 10-MIN MUTEX ACTIVE
+              OFFICIAL BOX OFFICE // LIVE SEAT INVENTORY
             </span>
           </div>
           <div className="bg-neon-magenta text-grit-white font-impact tracking-wider px-2.5 py-1 text-xs border border-asphalt-black">
-            PORT 8080 TLS 1.3
+            OFFICIAL ADMISSION GATE
           </div>
         </div>
       </header>
@@ -247,7 +247,7 @@ export default function BackstageAuthTerminal({
                   </div>
 
                   <div className="font-mono-zine text-[11px] text-grit-dim uppercase tracking-wider mt-1.5 truncate">
-                    {formData.email || 'IDENTIFIER: PENDING_INPUT'}
+                    {formData.email || 'AUTHENTICATED TICKETING ACCOUNT'}
                   </div>
 
                   {/* Role Accreditation Stamp */}
@@ -334,7 +334,7 @@ export default function BackstageAuthTerminal({
                 <div className="mt-4 pt-3 border-t border-asphalt-border/60 grid grid-cols-2 gap-1.5 font-ticker text-[9px] text-grit-dim uppercase tracking-wider">
                   <div className="flex items-center gap-1 text-grit-white">
                     <CheckCircle2 size={10} className="text-acid-yellow" />
-                    <span>10-MIN SEAT MUTEX</span>
+                    <span>10-MIN CART HOLD</span>
                   </div>
                   <div className="flex items-center gap-1 text-grit-white">
                     <CheckCircle2 size={10} className="text-acid-yellow" />
@@ -407,8 +407,8 @@ export default function BackstageAuthTerminal({
                 </h1>
                 <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
                   {mode === 'login' && 'ENTER YOUR CREDENTIALS TO RETRIEVE BOOKINGS & TICKETS'}
-                  {mode === 'register' && 'JOIN EVENTHUB TO RESERVE SEATS WITH 10-MIN STOMP MUTEX'}
-                  {mode === 'forgot' && 'ENTER REGISTERED EMAIL TO RECEIVE SECURE HMAC-256 RESET LINK'}
+                  {mode === 'register' && 'JOIN EVENTHUB TO RESERVE SEATS, SECURE QR PASSES & TRACK LIVE EVENTS'}
+                  {mode === 'forgot' && 'ENTER YOUR EMAIL ADDRESS TO RECEIVE A SECURE PASSWORD RESET LINK'}
                 </p>
               </div>
 
@@ -692,7 +692,7 @@ export default function BackstageAuthTerminal({
 
               {/* Barcode Watermark Footer */}
               <div className="mt-5 pt-3 border-t border-asphalt-border/40 flex justify-between items-center opacity-40 select-none">
-                <span className="font-ticker text-[8px] text-grit-dim uppercase">SYS_AUTH // EVENTHUB_VAULT_2026</span>
+                <span className="font-ticker text-[8px] text-grit-dim uppercase">OFFICIAL EVENTHUB BOX OFFICE // VERIFIED PASS</span>
                 <svg className="h-5 w-32" viewBox="0 0 144 24" fill="currentColor">
                   <rect x="0" y="0" width="3" height="24"/>
                   <rect x="5" y="0" width="1" height="24"/>
@@ -736,3 +736,4 @@ export default function BackstageAuthTerminal({
     </div>
   );
 }
+

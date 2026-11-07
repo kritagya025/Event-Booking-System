@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Mail, Phone, Edit3, X, LogOut } from 'lucide-react';
-import { apiFetch } from '../services/api';
+import { apiFetch, BASE_URL } from '../services/api';
 import { formatPrice } from '../services/currency';
 import ProfileSkeleton from './ProfileSkeleton';
 
@@ -103,7 +103,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/api/tickets/booking/${booking.id}/pdf`, {
+      const response = await fetch(`${BASE_URL}/tickets/booking/${booking.id}/pdf`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       if (!response.ok) throw new Error('PDF download failed');

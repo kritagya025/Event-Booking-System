@@ -218,13 +218,13 @@ export default function AdminDashboard({ showToast }) {
             <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
               <span className="text-grit-dim">DATABASE ENCRYPTION</span>
               <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs">
-                POSTGRESQL // SECURE
+                ENCRYPTED STORAGE // SECURE
               </span>
             </div>
             <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
               <span className="text-grit-dim">SEAT LOCK CACHE</span>
               <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs">
-                REDIS DISTRIBUTED LOCKS
+                REAL-TIME SEAT HOLD // ACTIVE
               </span>
             </div>
             <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">

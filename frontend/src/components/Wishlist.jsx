@@ -52,10 +52,10 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-              EVENTHUB://WISHLIST
+              SAVED WATCHLIST
             </span>
             <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
-              SAVED EVENTS
+              BOOKMARKED PASSES
             </span>
           </div>
           <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">

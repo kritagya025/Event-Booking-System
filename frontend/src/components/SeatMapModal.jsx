@@ -650,7 +650,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             <Zap size={15} className="text-neon-magenta animate-bounce" />
                           </div>
                           <p className="font-mono-zine text-[10px] text-grit-dim uppercase tracking-wider">
-                            DIRECT ACOUSTIC LINE-OF-SIGHT // 10-MINUTE SEAT LOCK ACTIVE
+                            DIRECT STAGE SIGHTLINE // 10-MINUTE SEAT HOLD ACTIVE
                           </p>
                         </div>
 

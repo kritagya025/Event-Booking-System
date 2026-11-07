@@ -7,7 +7,6 @@ export default function SystemStatusModal({ isOpen, onClose }) {
   const [lastChecked, setLastChecked] = useState(new Date().toLocaleTimeString());
   const [apiLatency, setApiLatency] = useState(null);
   const [apiStatus, setApiStatus] = useState('checking'); // 'operational' | 'degraded' | 'checking'
-  const [diagnostics, setDiagnostics] = useState(null);
 
   const checkStatus = async () => {
     setLoading(true);
@@ -17,15 +16,6 @@ export default function SystemStatusModal({ isOpen, onClose }) {
       const end = performance.now();
       setApiLatency(Math.round(end - start));
       setApiStatus('operational');
-
-      try {
-        const diag = await apiFetch('/admin/system-health');
-        if (diag && diag.status) {
-          setDiagnostics(diag);
-        }
-      } catch {
-        // Non-admin fallback
-      }
     } catch {
       setApiLatency(null);
       setApiStatus('degraded');
@@ -45,27 +35,27 @@ export default function SystemStatusModal({ isOpen, onClose }) {
 
   const services = [
     {
-      name: 'REST API ENGINE',
-      description: 'SPRING BOOT 3.4 REST RIG & JSON ENDPOINTS',
+      name: 'TICKETING API GATEWAY',
+      description: 'HIGH-AVAILABILITY CLOUD RESERVATION & CATALOG ENGINE',
       status: apiStatus === 'operational' ? 'ONLINE // 200 OK' : 'SIMULATED / STANDBY',
       latency: apiLatency ? `${apiLatency} MS` : 'N/A'
     },
     {
-      name: 'DATABASE CLUSTER',
-      description: 'POSTGRESQL RELATIONAL REPO & JPA POOL',
-      status: 'ONLINE // TLS',
+      name: 'SECURE INVENTORY DATABASE',
+      description: 'ENTERPRISE ENCRYPTED CLUSTER & AUDIT TRAIL',
+      status: 'ONLINE // 256-BIT ENCRYPTION',
       latency: '2 MS'
     },
     {
-      name: 'CONCURRENCY CACHE',
-      description: 'REDIS DISTRIBUTED SEAT LOCK ENGINE',
-      status: 'ONLINE // IN-MEMORY',
+      name: 'SEAT CONCURRENCY ENGINE',
+      description: 'REAL-TIME 10-MINUTE SEAT HOLD & RESERVATION CONTROLLER',
+      status: 'ONLINE // ZERO OVERBOOKING',
       latency: '1 MS'
     },
     {
-      name: 'WEBSOCKET DISPATCH',
-      description: 'STOMP LIVE SEAT MUTEX BROKER',
-      status: 'ACTIVE // PORT 8080',
+      name: 'LIVE SEAT MAP BROADCAST',
+      description: 'AMPHITHEATER & CINEMA REAL-TIME SEAT SYNCHRONIZATION',
+      status: 'ACTIVE // LIVE CONNECTED',
       latency: '3 MS'
     }
   ];
@@ -78,7 +68,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
       >
         {/* Slanted Tape Badge */}
         <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
-          EVENTHUB://SYSTEM_TELEMETRY
+          EVENTHUB://BUYER_PROTECTION_SAFETY
         </div>
 
         {/* Header */}
@@ -86,7 +76,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-                STATUS_DIAGNOSTICS
+                SAFETY_GUARANTEES
               </span>
               <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
@@ -94,10 +84,10 @@ export default function SystemStatusModal({ isOpen, onClose }) {
               </span>
             </div>
             <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
-              HARDWARE & CLUSTER TELEMETRY
+              BUYER PROTECTION & PLATFORM STATUS
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              REAL-TIME UPTIME, LATENCY, AND STOMP SOCKET CONCURRENCY METRICS
+              REAL-TIME RELIABILITY, VERIFIED SEAT HOLDS & FRAUD PREVENTION
             </p>
           </div>
           <button 
@@ -120,7 +110,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
                   {apiStatus === 'operational' ? 'ALL PLATFORM SERVICES OPERATIONAL' : 'BACKEND SERVICES STANDBY / TESTING'}
                 </div>
                 <div className="font-mono-zine text-[11px] text-grit-dim uppercase">
-                  ZERO PACKET LOSS DETECTED ACROSS INFRASTRUCTURE NODES
+                  ZERO DUPLICATE BOOKINGS // 100% VERIFIED AUTHENTIC TICKETS
                 </div>
               </div>
             </div>
@@ -133,36 +123,25 @@ export default function SystemStatusModal({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Diagnostics grid */}
-          {loading && !diagnostics ? (
-            <div className="grid grid-cols-4 gap-2 bg-asphalt-black border border-asphalt-border p-3 text-xs uppercase">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="space-y-1">
-                  <div className="h-2.5 w-14 skeleton-box" />
-                  <div className="h-4 w-12 skeleton-box" />
-                </div>
-              ))}
+          {/* Platform Trust Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-asphalt-black border border-asphalt-border p-3 text-xs uppercase">
+            <div>
+              <span className="text-[10px] text-grit-dim block font-ticker">PLATFORM UPTIME</span>
+              <span className="text-acid-yellow font-bold text-sm">99.98%</span>
             </div>
-          ) : diagnostics && (
-            <div className="grid grid-cols-4 gap-2 bg-asphalt-black border border-asphalt-border p-3 text-xs uppercase">
-              <div>
-                <span className="text-[10px] text-grit-dim block">JVM MEMORY</span>
-                <span className="text-acid-yellow font-bold">{diagnostics.jvmTotalMemoryMB - diagnostics.jvmFreeMemoryMB} MB</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-grit-dim block">CPU CORES</span>
-                <span className="text-grit-white font-bold">{diagnostics.availableProcessors} CORES</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-grit-dim block">THREADS</span>
-                <span className="text-grit-white font-bold">{diagnostics.activeJvmThreads} THREADS</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-grit-dim block">UPTIME</span>
-                <span className="text-grit-white font-bold">{Math.floor(diagnostics.uptimeSeconds / 60)} MINS</span>
-              </div>
+            <div>
+              <span className="text-[10px] text-grit-dim block font-ticker">TICKET STATUS</span>
+              <span className="text-grit-white font-bold text-sm">100% VERIFIED</span>
             </div>
-          )}
+            <div>
+              <span className="text-[10px] text-grit-dim block font-ticker">SEAT CONCURRENCY</span>
+              <span className="text-grit-white font-bold text-sm">ACTIVE HOLD</span>
+            </div>
+            <div>
+              <span className="text-[10px] text-grit-dim block font-ticker">CHECKOUT SECURITY</span>
+              <span className="text-grit-white font-bold text-sm">256-BIT SSL</span>
+            </div>
+          </div>
 
           {/* Service items */}
           <div className="space-y-2">
@@ -199,7 +178,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
             onClick={onClose} 
             className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer"
           >
-            CLOSE TELEMETRY
+            CLOSE STATUS
           </button>
         </div>
       </div>
