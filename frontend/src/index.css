@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ==========================================================================
    VAULT://90s — UNDERGROUND ACID-ZINE PROTOCOL & TAPE ARCHIVE
    Design Language: 90s Brutalist Rave Flyer, Hazard Stripes, Photocopy Grit,

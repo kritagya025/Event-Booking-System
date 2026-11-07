@@ -99,6 +99,7 @@ export default function App() {
   const filtersRef = useRef(filters);
   const allMasterEventsRef = useRef([]);
   const catalogRef = useRef(null);
+  const backendOnlineRef = useRef(true);
 
   const categoryCounts = useMemo(() => {
     const master = allMasterEvents.length > 0 
@@ -149,8 +150,11 @@ export default function App() {
     fetchCatalogData();
 
     const interval = setInterval(() => {
-      fetchCatalogData(true);
-    }, 5000);
+      // Avoid spamming requests when backend is offline in static staging
+      if (backendOnlineRef.current) {
+        fetchCatalogData(true);
+      }
+    }, 10000);
 
     window.addEventListener('auth-expired', handleLogout);
     return () => {
@@ -179,8 +183,10 @@ export default function App() {
       let freshList = [];
       if (allEv && Array.isArray(allEv.content) && allEv.content.length > 0) {
         freshList = allEv.content;
+        backendOnlineRef.current = true;
       } else {
         freshList = mockEvents;
+        if (!allEv) backendOnlineRef.current = false;
       }
 
       setAllMasterEvents(freshList);
@@ -197,6 +203,7 @@ export default function App() {
       else setPopularEvents(mockEvents.slice(0, 3));
 
     } catch {
+      backendOnlineRef.current = false;
       setAllMasterEvents(mockEvents);
       allMasterEventsRef.current = mockEvents;
       setEvents(mockEvents);
@@ -1306,11 +1313,11 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
     if (evt.bannerImageUrl) return evt.bannerImageUrl;
     const isCin = evt.category === 'CINEMA' || evt.category === 'MOVIE' || /imax|cinema|movie|film|screening/i.test(evt.name || '');
     if (evt.category === 'CINEMA' || isCin) return 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80';
-    if (evt.category === 'MUSIC') return '/images/concert.png';
-    if (evt.category === 'TECH') return '/images/tech.png';
+    if (evt.category === 'MUSIC') return '/images/concert.jpg';
+    if (evt.category === 'TECH') return '/images/tech.jpg';
     if (evt.category === 'THEATER') return 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80';
     if (evt.category === 'SPORTS') return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80';
-    return '/images/concert.png';
+    return '/images/concert.jpg';
   };
 
   const formatSlideDate = (dateStr) => {
@@ -1556,11 +1563,11 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
   const getImageForEvent = (event) => {
     if (event.bannerImageUrl) return event.bannerImageUrl;
     if (event.category === 'CINEMA' || isCinema) return 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80';
-    if (event.category === 'MUSIC') return '/images/concert.png';
-    if (event.category === 'TECH') return '/images/tech.png';
+    if (event.category === 'MUSIC') return '/images/concert.jpg';
+    if (event.category === 'TECH') return '/images/tech.jpg';
     if (event.category === 'THEATER') return 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80';
     if (event.category === 'SPORTS') return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80';
-    return '/images/concert.png';
+    return '/images/concert.jpg';
   };
 
   const formatEventDate = (dateStr) => {
@@ -1763,7 +1770,7 @@ const mockEvents = [
     availableSeats: 120,
     eventDate: '2026-09-15',
     venueName: 'Metro Arena Center',
-    bannerImageUrl: '/images/concert.png'
+    bannerImageUrl: '/images/concert.jpg'
   },
   {
     id: 2,
@@ -1806,7 +1813,7 @@ const mockEvents = [
     availableSeats: 45,
     eventDate: '2026-10-02',
     venueName: 'Silicon Valley Convention Center',
-    bannerImageUrl: '/images/tech.png'
+    bannerImageUrl: '/images/tech.jpg'
   },
   {
     id: 5,
