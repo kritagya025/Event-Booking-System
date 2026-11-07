@@ -45,18 +45,18 @@ export default function ApiDocsModal({ isOpen, onClose }) {
     : faqs.filter(f => f.category === activeCategory);
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4 font-mono-zine" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 font-mono-zine safe-pb touch-scroll select-none" onClick={onClose}>
       <div 
-        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[6px_6px_0px_#E2F13C] flex flex-col relative select-none"
+        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[6px_6px_0px_#E2F13C] flex flex-col relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Slanted Tape Badge */}
-        <div className="absolute -top-4 -right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
           EVENTHUB://HELP_CENTER
         </div>
 
         {/* Header */}
-        <div className="p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+        <div className="p-4 sm:p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
@@ -66,7 +66,7 @@ export default function ApiDocsModal({ isOpen, onClose }) {
                 OFFICIAL BOX OFFICE KNOWLEDGE BASE
               </span>
             </div>
-            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
+            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight text-grit-white leading-none">
               HELP CENTER & TICKET POLICIES
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
@@ -76,7 +76,7 @@ export default function ApiDocsModal({ isOpen, onClose }) {
           <button 
             type="button"
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
             aria-label="Close help modal"
           >
             <X size={18} />
@@ -84,7 +84,7 @@ export default function ApiDocsModal({ isOpen, onClose }) {
         </div>
 
         {/* Categories Bar */}
-        <div className="bg-asphalt-black border-b border-asphalt-border px-4 py-2.5 flex gap-2 overflow-x-auto">
+        <div className="bg-asphalt-black border-b border-asphalt-border px-3 sm:px-4 py-2 sm:py-2.5 flex gap-2 overflow-x-auto touch-scroll scrollbar-none">
           {categories.map((cat) => (
             <button
               key={cat}

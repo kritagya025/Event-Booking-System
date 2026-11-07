@@ -146,24 +146,24 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
   const estimatedRevenue = managedEvents.reduce((sum, e) => sum + (e.ticketPrice * 25), 0);
 
   return (
-    <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
+    <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
       {loading ? (
         <ProfileSkeleton />
       ) : (
         <>
           {/* Profile Header Box */}
-      <div className="bg-asphalt-surface border-2 border-grit-white p-6 md:p-8 shadow-[4px_4px_0px_#E2F13C] mb-8 relative">
+      <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_#E2F13C] mb-8 relative">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5">
             {/* Stamp Avatar */}
-            <div className="w-20 h-20 bg-acid-yellow text-asphalt-black border-2 border-asphalt-black flex items-center justify-center font-display text-4xl font-bold shadow-[4px_4px_0px_#0e0e11] shrink-0">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-acid-yellow text-asphalt-black border-2 border-asphalt-black flex items-center justify-center font-display text-3xl sm:text-4xl font-bold shadow-[4px_4px_0px_#0e0e11] shrink-0">
               {(profile.firstName || 'U')[0].toUpperCase()}
             </div>
 
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <h2 className="font-display text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-none">
+              <div className="flex items-center gap-2.5 sm:gap-3 mb-1 flex-wrap">
+                <h2 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-none">
                   {profile.firstName} {profile.lastName}
                 </h2>
                 <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-1">
@@ -171,13 +171,13 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                 </span>
               </div>
 
-              <div className="flex flex-wrap gap-4 text-xs font-mono-zine text-grit-dim uppercase">
-                <span className="flex items-center gap-1.5">
-                  <Mail size={13} className="text-acid-yellow" /> {profile.email}
+              <div className="flex flex-wrap gap-3 sm:gap-4 text-xs font-mono-zine text-grit-dim uppercase">
+                <span className="flex items-center gap-1.5 truncate">
+                  <Mail size={13} className="text-acid-yellow shrink-0" /> {profile.email}
                 </span>
                 {profile.phone && (
                   <span className="flex items-center gap-1.5">
-                    <Phone size={13} className="text-acid-yellow" /> {profile.phone}
+                    <Phone size={13} className="text-acid-yellow shrink-0" /> {profile.phone}
                   </span>
                 )}
               </div>
@@ -185,16 +185,16 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
             <button 
               onClick={() => setIsEditOpen(true)} 
-              className="bg-asphalt-card border-2 border-asphalt-border hover:border-acid-yellow text-grit-white font-impact tracking-wider text-xs px-4 py-2 uppercase flex items-center gap-1.5 cursor-pointer transition-all"
+              className="bg-asphalt-card border-2 border-asphalt-border hover:border-acid-yellow text-grit-white font-impact tracking-wider text-xs px-4 py-2 uppercase flex items-center justify-center gap-1.5 cursor-pointer transition-all touch-manipulation flex-1 sm:flex-initial"
             >
               <Edit3 size={13} /> EDIT PROFILE
             </button>
             <button 
               onClick={onLogout} 
-              className="bg-asphalt-card border-2 border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-impact tracking-wider text-xs px-4 py-2 uppercase flex items-center gap-1.5 cursor-pointer transition-all"
+              className="bg-asphalt-card border-2 border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-impact tracking-wider text-xs px-4 py-2 uppercase flex items-center justify-center gap-1.5 cursor-pointer transition-all touch-manipulation flex-1 sm:flex-initial"
             >
               <LogOut size={13} /> LOG OUT
             </button>
@@ -204,24 +204,24 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       </div>
 
       {/* KPI Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8">
         {!isOrganizer ? (
           <>
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54]">
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL BOOKINGS</span>
-              <span className="font-display text-3xl text-grit-white font-bold leading-none mt-1 block">{bookings.length}</span>
+              <span className="font-display text-2xl sm:text-3xl text-grit-white font-bold leading-none mt-1 block">{bookings.length}</span>
               <span className="text-[10px] text-acid-yellow uppercase block mt-1">{activeBookingsCount} CONFIRMED PASSES</span>
             </div>
 
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d]">
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL SPENT</span>
-              <span className="font-display text-3xl text-acid-yellow font-bold leading-none mt-1 block">{formatPrice(totalSpent)}</span>
+              <span className="font-display text-2xl sm:text-3xl text-acid-yellow font-bold leading-none mt-1 block">{formatPrice(totalSpent)}</span>
               <span className="text-[10px] text-grit-dim uppercase block mt-1">CONFIRMED RESERVATIONS</span>
             </div>
 
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8]">
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">SAVED EVENTS</span>
-              <span className="font-display text-3xl text-blue-400 font-bold leading-none mt-1 block">{wishlist.length}</span>
+              <span className="font-display text-2xl sm:text-3xl text-blue-400 font-bold leading-none mt-1 block">{wishlist.length}</span>
               <span className="text-[10px] text-grit-dim uppercase block mt-1">WISHLIST BOOKMARKS</span>
             </div>
           </>
@@ -229,19 +229,19 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
           <>
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54]">
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">HOSTED EVENTS</span>
-              <span className="font-display text-3xl text-grit-white font-bold leading-none mt-1 block">{managedEvents.length}</span>
+              <span className="font-display text-2xl sm:text-3xl text-grit-white font-bold leading-none mt-1 block">{managedEvents.length}</span>
               <span className="text-[10px] text-acid-yellow uppercase block mt-1">ACTIVE LIVE EVENTS</span>
             </div>
 
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d]">
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TICKETS ALLOCATED</span>
-              <span className="font-display text-3xl text-acid-yellow font-bold leading-none mt-1 block">{totalTicketsSold}</span>
+              <span className="font-display text-2xl sm:text-3xl text-acid-yellow font-bold leading-none mt-1 block">{totalTicketsSold}</span>
               <span className="text-[10px] text-grit-dim uppercase block mt-1">ACROSS HOSTED EVENTS</span>
             </div>
 
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8]">
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">ESTIMATED REVENUE</span>
-              <span className="font-display text-3xl text-blue-400 font-bold leading-none mt-1 block">{formatPrice(estimatedRevenue)}</span>
+              <span className="font-display text-2xl sm:text-3xl text-blue-400 font-bold leading-none mt-1 block">{formatPrice(estimatedRevenue)}</span>
               <span className="text-[10px] text-grit-dim uppercase block mt-1">GROSS TICKET SALES</span>
             </div>
           </>
@@ -249,7 +249,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       </div>
 
       {/* Section Tabs */}
-      <div className="flex gap-2 border-b-2 border-asphalt-border pb-4 mb-6">
+      <div className="flex gap-2 border-b-2 border-asphalt-border pb-3 sm:pb-4 mb-6 overflow-x-auto touch-scroll scrollbar-none">
         <button
           onClick={() => setActiveTab('overview')}
           className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${

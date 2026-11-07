@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Ticket, PlusCircle, User, LogOut, ShieldCheck, QrCode, 
-  Sun, Moon
+  Sun, Moon, Menu, X, Sparkles, Heart
 } from 'lucide-react';
 import { getActiveCurrency, setActiveCurrency, getAvailableCurrencies, subscribeCurrencyChange } from '../services/currency';
 
@@ -14,6 +14,7 @@ export default function Navbar({
   const [currency, setCurrency] = useState(getActiveCurrency());
   const [theme, setTheme] = useState(localStorage.getItem('sb-theme') || 'dark');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -62,6 +63,7 @@ export default function Navbar({
   };
 
   const handleNavClick = (tab, params = {}) => {
+    setMobileMenuOpen(false);
     onNavigate(tab, params);
   };
 
@@ -319,10 +321,233 @@ export default function Navbar({
               </div>
             )}
 
+            {/* Mobile Hamburger Drawer Toggle */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="md:hidden w-9 h-9 bg-asphalt-card hover:bg-asphalt-surface border-2 border-grit-white text-grit-white hover:text-acid-yellow flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#ff1f6d] active:scale-95 transition-all touch-manipulation"
+              aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+            >
+              {mobileMenuOpen ? <X size={20} className="text-neon-magenta" /> : <Menu size={20} />}
+            </button>
+
           </div>
 
         </div>
       </header>
+
+      {/* ─── 2. MOBILE NAVIGATION DRAWER OVERLAY ─── */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-asphalt-black/85 backdrop-blur-md md:hidden flex flex-col justify-between pt-16 pb-6 px-4 overflow-y-auto touch-scroll safe-pb animate-modal-fade select-none"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
+            
+            {/* Top Warning Strip */}
+            <div className="hazard-tape h-2 w-full border border-asphalt-black" />
+
+            {/* User Profile Card (Mobile) */}
+            {currentUser ? (
+              <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 shadow-[4px_4px_0px_#eefc54]">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-asphalt-border">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 bg-acid-yellow text-asphalt-black font-ticker font-extrabold text-sm border-2 border-grit-white flex items-center justify-center">
+                      {getUserInitials(currentUser)}
+                    </div>
+                    <div>
+                      <span className="block font-ticker text-xs font-bold text-acid-yellow uppercase leading-none">
+                        {currentUser.firstName} {currentUser.lastName}
+                      </span>
+                      <span className="block font-ticker text-[10px] text-grit-dim uppercase mt-0.5">
+                        {currentUser.role}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { handleNavClick('profile'); }}
+                    className="bg-asphalt-card border border-asphalt-border hover:border-acid-yellow text-grit-white font-mono-zine text-[10px] uppercase px-2 py-1 flex items-center gap-1"
+                  >
+                    <User size={12} /> PROFILE
+                  </button>
+                </div>
+                <div className="font-ticker text-[10px] text-grit-dim truncate">
+                  {currentUser.email}
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('login')}
+                  className="w-full py-2.5 bg-acid-yellow text-asphalt-black font-display text-lg uppercase tracking-wider font-bold border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] text-center"
+                >
+                  SIGN IN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('register')}
+                  className="w-full py-2.5 bg-neon-magenta text-grit-white font-display text-lg uppercase tracking-wider font-bold border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] text-center"
+                >
+                  REGISTER
+                </button>
+              </div>
+            )}
+
+            {/* Navigation Tabs (Mobile Stacking) */}
+            <nav className="flex flex-col gap-2 font-display text-xl tracking-wider">
+              <button
+                type="button"
+                onClick={() => handleNavClick('home')}
+                className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
+                  activeTab === 'home'
+                    ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ff1f6d] font-bold'
+                    : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
+                }`}
+              >
+                <span>EXPLORE EVENTS</span>
+                <Sparkles size={16} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavClick('events')}
+                className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
+                  activeTab === 'events'
+                    ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ff1f6d] font-bold'
+                    : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
+                }`}
+              >
+                <span>ALL CATALOG</span>
+                <Ticket size={16} />
+              </button>
+
+              {/* Customer Links */}
+              {currentUser && currentUser.role === 'CUSTOMER' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('wishlist')}
+                    className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
+                      activeTab === 'wishlist'
+                        ? 'bg-neon-magenta text-grit-white border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
+                        : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-neon-magenta hover:text-neon-magenta'
+                    }`}
+                  >
+                    <span>MY WISHLIST</span>
+                    <Heart size={16} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('my-bookings')}
+                    className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
+                      activeTab === 'my-bookings'
+                        ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
+                        : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
+                    }`}
+                  >
+                    <span>MY TICKETS & PASSES</span>
+                    <Ticket size={16} />
+                  </button>
+                </>
+              )}
+
+              {/* Organizer Links */}
+              {currentUser && currentUser.role === 'ORGANIZER' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('create-event')}
+                    className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
+                      activeTab === 'create-event'
+                        ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
+                        : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
+                    }`}
+                  >
+                    <span>CREATE NEW EVENT</span>
+                    <PlusCircle size={16} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('checkin')}
+                    className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
+                      activeTab === 'checkin'
+                        ? 'bg-neon-magenta text-grit-white border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
+                        : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-neon-magenta hover:text-neon-magenta'
+                    }`}
+                  >
+                    <span>GATE SCANNER</span>
+                    <QrCode size={16} />
+                  </button>
+                </>
+              )}
+
+              {/* Admin Link */}
+              {currentUser && currentUser.role === 'ADMIN' && (
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('admin')}
+                  className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
+                    activeTab === 'admin'
+                      ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
+                      : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
+                  }`}
+                >
+                  <span>ADMIN DASHBOARD</span>
+                  <ShieldCheck size={16} />
+                </button>
+              )}
+            </nav>
+
+            {/* Quick Currency & Theme Control */}
+            <div className="bg-asphalt-card border border-asphalt-border p-3 flex items-center justify-between text-xs font-ticker">
+              <div className="flex items-center gap-2">
+                <span className="text-grit-dim uppercase">CURRENCY:</span>
+                <select
+                  value={currency}
+                  onChange={(e) => setActiveCurrency(e.target.value)}
+                  className="bg-asphalt-surface text-acid-yellow font-bold border border-acid-yellow px-2 py-1 outline-none cursor-pointer"
+                >
+                  {getAvailableCurrencies().map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.code} ({c.symbol})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex items-center gap-1.5 bg-asphalt-surface border border-asphalt-border px-2.5 py-1 text-grit-white hover:text-acid-yellow"
+              >
+                {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+                <span>{theme === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}</span>
+              </button>
+            </div>
+
+            {/* Sign Out (Mobile) */}
+            {currentUser && (
+              <button
+                type="button"
+                onClick={() => { onLogout(); setMobileMenuOpen(false); }}
+                className="w-full py-2.5 bg-asphalt-card hover:bg-danger-red/20 border-2 border-danger-red text-danger-red font-impact text-base uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-colors"
+              >
+                <LogOut size={16} /> SIGN OUT OF SESSION
+              </button>
+            )}
+
+            {/* Guarantee Tag */}
+            <div className="text-center font-ticker text-[10px] text-grit-dim tracking-wider uppercase pt-2">
+              ★ 100% VERIFIED PASSES • 10-MIN HOLD GUARANTEE ★
+            </div>
+
+          </div>
+        </div>
+      )}
     </>
   );
 }

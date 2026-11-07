@@ -513,18 +513,18 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   const rowsList = Array.from(new Set(seatMap.map(s => s.rowNumber || 'A'))).sort();
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto safe-pb touch-scroll" onClick={onClose}>
       <div 
-        className="w-full max-w-4xl bg-asphalt-surface border-4 border-grit-white text-grit-white shadow-[12px_12px_0px_#eefc54] my-auto relative"
+        className="w-full max-w-4xl bg-asphalt-surface border-2 sm:border-4 border-grit-white text-grit-white shadow-[6px_6px_0px_#eefc54] sm:shadow-[12px_12px_0px_#eefc54] my-auto relative select-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Slanted Sticker */}
-        <div className="absolute -top-4 -right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-10">
+        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
           EVENTHUB // RESERVATION ENGINE
         </div>
 
         {/* Modal Header */}
-        <div className="p-5 md:p-6 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+        <div className="p-4 sm:p-5 md:p-6 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
@@ -544,14 +544,14 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Multi-Step Protocol Bar */}
-        <div className="bg-asphalt-black border-b border-asphalt-border px-5 py-2.5 flex items-center justify-between text-xs font-ticker overflow-x-auto gap-2">
+        <div className="bg-asphalt-black border-b border-asphalt-border px-3 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between text-xs font-ticker overflow-x-auto touch-scroll scrollbar-none gap-2">
           <div className="flex items-center gap-2">
             <span className={step === 1 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
               [01] SELECT SEATS
@@ -725,7 +725,11 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   </div>
 
                   {/* ─── C. Interactive Arena Seat Grid with Center Aisle ─── */}
-                  <div className="overflow-x-auto pb-4">
+                  <div className="flex sm:hidden items-center justify-center gap-1.5 py-1 px-3 bg-asphalt-black border border-asphalt-border text-[10px] font-mono-zine text-acid-yellow uppercase mb-2">
+                    <span>← SWIPE HORIZONTALLY TO VIEW ALL ROWS & SEATS →</span>
+                  </div>
+
+                  <div className="overflow-x-auto pb-4 touch-scroll scrollbar-none">
                     <div className="min-w-[560px] flex flex-col gap-2.5 items-center">
                       {rowsList.map((row) => {
                         const rowSeats = seatMap.filter(s => s.rowNumber === row);
@@ -967,7 +971,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
               )}
 
               {/* ─── G. Bottom Actions ─── */}
-              <div className="mt-6 pt-4 border-t-2 border-asphalt-border flex items-center justify-between gap-4">
+              <div className="mt-6 pt-4 border-t-2 border-asphalt-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                 <div>
                   <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider block">
                     {selectedSeats.length > 0 ? (
@@ -980,7 +984,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       </span>
                     )}
                   </span>
-                  <span className="font-display text-3xl text-acid-yellow font-bold leading-none">
+                  <span className="font-display text-2xl sm:text-3xl text-acid-yellow font-bold leading-none mt-0.5 block">
                     {formatPrice(calculateSubtotal(), event.currency)}
                   </span>
                 </div>
@@ -988,7 +992,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   type="button"
                   onClick={handleProceedToReview}
                   disabled={selectedSeats.length === 0}
-                  className={`font-impact tracking-wider text-lg uppercase px-6 py-2.5 border-2 border-asphalt-black flex items-center gap-2 transition-all ${
+                  className={`font-impact tracking-wider text-base sm:text-lg uppercase px-6 py-3 sm:py-2.5 border-2 border-asphalt-black flex items-center justify-center gap-2 transition-all touch-manipulation ${
                     selectedSeats.length > 0
                       ? 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff] cursor-pointer'
                       : 'bg-asphalt-card text-grit-dim/50 border-asphalt-border cursor-not-allowed opacity-50'
@@ -1153,11 +1157,11 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 )}
               </div>
 
-              <div className="flex justify-between items-center pt-4 border-t border-asphalt-border">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-asphalt-border">
                 <button 
                   type="button"
                   onClick={() => setStep(1)} 
-                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
                 >
                   <ArrowLeft size={14} /> BACK TO SEATS
                 </button>
@@ -1165,7 +1169,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   type="button"
                   onClick={handleProceedToPayment} 
                   disabled={selectedSeats.length === 0}
-                  className={`font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black flex items-center gap-2 transition-all ${
+                  className={`font-impact tracking-wider text-base uppercase px-5 py-3 border-2 border-asphalt-black flex items-center justify-center gap-2 transition-all touch-manipulation ${
                     selectedSeats.length > 0
                       ? 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff] cursor-pointer'
                       : 'bg-asphalt-card text-grit-dim/50 border-asphalt-border cursor-not-allowed opacity-50'
@@ -1185,7 +1189,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
               </span>
 
               {/* Payment Method Selector Grid */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {[
                   { id: 'UPI', label: 'UPI INSTANT', icon: Smartphone },
                   { id: 'CREDIT_CARD', label: 'CREDIT CARD', icon: CreditCard },
@@ -1349,18 +1353,18 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 )}
               </div>
 
-              <div className="flex justify-between items-center pt-4 border-t border-asphalt-border">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-asphalt-border">
                 <button 
                   type="button"
                   onClick={() => setStep(2)} 
-                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
                 >
                   <ArrowLeft size={14} /> BACK
                 </button>
                 <button 
                   type="button"
                   onClick={handleProceedToConfirm} 
-                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center gap-2 cursor-pointer"
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-3 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
                 >
                   REVIEW ORDER <ArrowRight size={16} />
                 </button>
@@ -1459,12 +1463,12 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
                 <button 
                   type="button"
                   onClick={() => setStep(3)} 
                   disabled={bookingLoading || selectedSeats.length === 0}
-                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2 uppercase flex items-center gap-1 cursor-pointer"
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
                 >
                   <ArrowLeft size={14} /> EDIT PAYMENT
                 </button>
@@ -1472,7 +1476,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   type="button"
                   onClick={handleConfirmBooking} 
                   disabled={bookingLoading || selectedSeats.length === 0}
-                  className="bg-neon-magenta text-grit-white font-impact tracking-wider text-lg uppercase px-6 py-3 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer disabled:opacity-50"
+                  className="bg-neon-magenta text-grit-white font-impact tracking-wider text-base sm:text-lg uppercase px-6 py-3 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer disabled:opacity-50 touch-manipulation flex items-center justify-center"
                 >
                   {bookingLoading ? 'PROCESSING RESERVATION...' : `CONFIRM & PAY (${formatPrice(calculateFinalTotal(), event.currency)})`}
                 </button>

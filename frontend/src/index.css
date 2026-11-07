@@ -141,6 +141,12 @@ aside,
               color 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
@@ -150,6 +156,7 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
+  touch-action: manipulation;
 }
 
 /* ─── Hazard Tape Patterns ─── */
@@ -544,30 +551,52 @@ h1, h2, h3, h4, .font-display {
   border: 3px solid var(--grit-white);
 }
 
-/* ─── Toast Notifications ─── */
+/* ─── Toast Notifications (Responsive Mobile & Desktop) ─── */
 .toast-container {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 16px;
+  right: 16px;
+  left: 16px;
   z-index: 3000;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .toast-container {
+    left: auto;
+    right: 24px;
+    bottom: 24px;
+    max-width: 420px;
+    gap: 10px;
+  }
 }
 
 .toast {
-  padding: 12px 18px;
+  pointer-events: auto;
+  padding: 10px 14px;
   background: #0e0e11;
   border: 2px solid var(--grit-white);
   color: var(--grit-white);
-  box-shadow: 4px 4px 0px #ff1f6d;
+  box-shadow: 3px 3px 0px #ff1f6d;
   display: flex;
   align-items: center;
   gap: 10px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   animation: toast-slide 0.2s ease;
+  word-break: break-word;
+}
+
+@media (min-width: 640px) {
+  .toast {
+    padding: 12px 18px;
+    font-size: 0.85rem;
+    box-shadow: 4px 4px 0px #ff1f6d;
+  }
 }
 
 @keyframes toast-slide {
@@ -713,4 +742,49 @@ h1, h2, h3, h4, .font-display {
 
 .animate-vu-pulse {
   animation: vuPulse 1.2s ease-in-out infinite;
+}
+
+/* ─── Mobile, Tablet & Touch Accessibility Utilities ─── */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-pb {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .safe-pt {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+}
+
+/* Horizontal scroll indicators for mobile seat map & tables */
+.scroll-indicator-horizontal {
+  position: relative;
+}
+
+.scroll-indicator-horizontal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  background: linear-gradient(to right, transparent, rgba(14, 14, 17, 0.85));
+  pointer-events: none;
 }

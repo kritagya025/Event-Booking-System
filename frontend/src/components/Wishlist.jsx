@@ -45,7 +45,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
   };
 
   return (
-    <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
+    <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
       
       {/* Header */}
       <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex items-end justify-between">
@@ -58,7 +58,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
               BOOKMARKED PASSES
             </span>
           </div>
-          <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
             SAVED EVENTS & WISHLIST
           </h1>
           <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
@@ -68,13 +68,13 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <WishlistCardSkeleton key={i} />
           ))}
         </div>
       ) : wishlistItems.length === 0 ? (
-        <div className="bg-asphalt-surface border-4 border-dashed border-asphalt-border p-12 text-center">
+        <div className="bg-asphalt-surface border-4 border-dashed border-asphalt-border p-8 sm:p-12 text-center">
           <Bookmark size={48} className="text-grit-dim mx-auto mb-3 opacity-40" />
           <h3 className="font-impact text-2xl uppercase text-grit-white tracking-wider">NO SAVED EVENTS</h3>
           <p className="font-mono-zine text-xs text-grit-dim uppercase mt-1">
@@ -82,7 +82,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {wishlistItems.map((event) => {
             const isSoldOut = event.availableSeats === 0;
             return (

@@ -508,58 +508,58 @@ export default function App() {
           <div className="max-w-[1360px] mx-auto px-4 md:px-6 pt-8">
             
             {/* 2. BRUTALIST HERO SECTION */}
-            <section className="relative mb-12 border-4 border-grit-white bg-asphalt-surface p-6 md:p-10 shadow-[8px_8px_0px_#eefc54]">
+            <section className="relative mb-12 border-2 sm:border-4 border-grit-white bg-asphalt-surface p-4 sm:p-6 md:p-10 shadow-[6px_6px_0px_#eefc54] sm:shadow-[8px_8px_0px_#eefc54]">
               {/* Slanted Badges */}
-              <div className="absolute -top-5 -right-4 bg-neon-magenta text-grit-white font-display text-xl sm:text-2xl px-4 py-1.5 rotate-3 border-2 border-asphalt-black shadow-[4px_4px_0px_#0e0e11] z-20">
+              <div className="absolute -top-3 sm:-top-5 right-2 sm:-right-4 bg-neon-magenta text-grit-white font-display text-sm sm:text-xl lg:text-2xl px-2.5 sm:px-4 py-1 sm:py-1.5 rotate-2 sm:rotate-3 border-2 border-asphalt-black shadow-[3px_3px_0px_#0e0e11] z-20">
                 ★ 100% VERIFIED TICKETS & PASSES ★
               </div>
-              <div className="absolute -bottom-4 -left-3 bg-electric-cobalt text-acid-yellow font-ticker text-xs font-black px-3 py-1 -rotate-3 border-2 border-grit-white z-20">
+              <div className="absolute -bottom-3 sm:-bottom-4 left-2 sm:-left-3 bg-electric-cobalt text-acid-yellow font-ticker text-[10px] sm:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-1 -rotate-2 sm:-rotate-3 border-2 border-grit-white z-20">
                 ZERO SECONDARY SCALPING // 100% VERIFIED
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
                 <div className="lg:col-span-7 space-y-4">
-                  <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-3 py-1 stamp-slant-1">
+                  <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-2.5 sm:px-3 py-1 stamp-slant-1">
                     <Sparkles size={14} className="text-acid-yellow" />
-                    <span className="font-ticker text-xs font-bold uppercase text-acid-yellow tracking-widest">
+                    <span className="font-ticker text-[10px] sm:text-xs font-bold uppercase text-acid-yellow tracking-widest">
                       OFFICIAL LIVE EVENT & CINEMA BOX OFFICE
                     </span>
                   </div>
 
-                  <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.9]">
+                  <h1 className="font-display text-4xl sm:text-6xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.92] sm:leading-[0.9]">
                     YOUR FRONT ROW TO <span className="text-acid-yellow underline decoration-neon-magenta decoration-4">LIVE EVENTS</span> & PREMIERES.
                   </h1>
 
-                  <p className="font-mono-zine text-sm sm:text-base text-grit-white/90 max-w-2xl leading-relaxed">
+                  <p className="font-mono-zine text-xs sm:text-base text-grit-white/90 max-w-2xl leading-relaxed">
                     Pick your exact seats in real time with zero hidden fees. Instant digital QR passes for arena concerts, IMAX 3D screenings, Broadway theater, and world championships with a 10-minute cart hold guarantee.
                   </p>
 
                   {/* Value Highlights */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-                    <div className="bg-asphalt-black p-2.5 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">TICKETS</span>
-                      <span className="font-display text-xl text-acid-yellow">100% VERIFIED</span>
+                    <div className="bg-asphalt-black p-2 sm:p-2.5 border-2 border-asphalt-border">
+                      <span className="text-[9px] sm:text-[10px] text-grit-dim block font-ticker uppercase">TICKETS</span>
+                      <span className="font-display text-lg sm:text-xl text-acid-yellow">100% VERIFIED</span>
                     </div>
-                    <div className="bg-asphalt-black p-2.5 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">CART HOLD</span>
-                      <span className="font-display text-xl text-neon-magenta">10-MIN WINDOW</span>
+                    <div className="bg-asphalt-black p-2 sm:p-2.5 border-2 border-asphalt-border">
+                      <span className="text-[9px] sm:text-[10px] text-grit-dim block font-ticker uppercase">CART HOLD</span>
+                      <span className="font-display text-lg sm:text-xl text-neon-magenta">10-MIN WINDOW</span>
                     </div>
-                    <div className="bg-asphalt-black p-2.5 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">EXPERIENCE</span>
-                      <span className="font-display text-xl text-electric-cobalt">IMAX 3D & ARENA</span>
+                    <div className="bg-asphalt-black p-2 sm:p-2.5 border-2 border-asphalt-border">
+                      <span className="text-[9px] sm:text-[10px] text-grit-dim block font-ticker uppercase">EXPERIENCE</span>
+                      <span className="font-display text-lg sm:text-xl text-electric-cobalt">IMAX 3D & ARENA</span>
                     </div>
-                    <div className="bg-asphalt-black p-2.5 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">DELIVERY</span>
-                      <span className="font-display text-xl text-grit-white">INSTANT QR PASS</span>
+                    <div className="bg-asphalt-black p-2 sm:p-2.5 border-2 border-asphalt-border">
+                      <span className="text-[9px] sm:text-[10px] text-grit-dim block font-ticker uppercase">DELIVERY</span>
+                      <span className="font-display text-lg sm:text-xl text-grit-white">INSTANT QR PASS</span>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-3 pt-3">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3">
                     <button
                       type="button"
                       onClick={scrollToResults}
-                      className="px-6 py-3 bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-lg uppercase tracking-wider border-2 border-asphalt-black shadow-[4px_4px_0px_#ffffff] transition-all flex items-center gap-2 cursor-pointer font-bold"
+                      className="px-5 sm:px-6 py-3 bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-base sm:text-lg uppercase tracking-wider border-2 border-asphalt-black shadow-[4px_4px_0px_#ffffff] transition-all flex items-center justify-center gap-2 cursor-pointer font-bold touch-manipulation"
                     >
                       <span>EXPLORE UPCOMING EVENTS</span>
                       <ArrowRight size={18} />
@@ -571,7 +571,7 @@ export default function App() {
                         setFilters(nextFilters);
                         handleSearchAndFilter(nextFilters);
                       }}
-                      className="px-6 py-3 bg-asphalt-black hover:bg-asphalt-surface text-grit-white font-impact text-lg uppercase tracking-wider border-2 border-grit-white shadow-[4px_4px_0px_#eefc54] transition-all flex items-center gap-2 cursor-pointer font-bold"
+                      className="px-5 sm:px-6 py-3 bg-asphalt-black hover:bg-asphalt-surface text-grit-white font-impact text-base sm:text-lg uppercase tracking-wider border-2 border-grit-white shadow-[4px_4px_0px_#eefc54] transition-all flex items-center justify-center gap-2 cursor-pointer font-bold touch-manipulation"
                     >
                       <Film size={18} className="text-acid-yellow" />
                       <span>CINEMA SCREENINGS</span>
@@ -580,7 +580,7 @@ export default function App() {
                 </div>
 
                 {/* Right Side: Interactive Trending Spotlight Slideshow */}
-                <div className="lg:col-span-5 flex flex-col items-center justify-center">
+                <div className="lg:col-span-5 flex flex-col items-center justify-center w-full overflow-hidden">
                   <HeroTrendingSlideshow 
                     events={trendingEvents} 
                     onBook={(event) => openBookingModal(event)} 
@@ -599,7 +599,7 @@ export default function App() {
                   </span>
                   <span className="bg-asphalt-black text-acid-yellow px-2 py-0.5">NOW SHOWING</span>
                 </div>
-                <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} className="grid grid-cols-1 md:grid-cols-4 gap-3 text-asphalt-black">
+                <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-asphalt-black">
                   {/* Keyword */}
                   <div className="bg-grit-white border-2 border-asphalt-black p-2.5 flex flex-col justify-between">
                     <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT / ARTIST / MOVIE</label>
@@ -652,10 +652,10 @@ export default function App() {
                   </div>
 
                   {/* Submit Trigger */}
-                  <div className="flex gap-2">
+                  <div className="col-span-1 sm:col-span-2 lg:col-span-1 flex gap-2">
                     <button 
                       type="submit"
-                      className="flex-1 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white border-2 border-asphalt-black p-2 flex items-center justify-center gap-2 font-display text-2xl tracking-wider uppercase transition-colors shadow-[3px_3px_0px_#0e0e11] cursor-pointer font-bold"
+                      className="flex-1 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white border-2 border-asphalt-black p-2.5 flex items-center justify-center gap-2 font-display text-xl sm:text-2xl tracking-wider uppercase transition-colors shadow-[3px_3px_0px_#0e0e11] cursor-pointer font-bold touch-manipulation"
                     >
                       <span>SEARCH SHOWS</span>
                       <Search size={18} />
@@ -731,7 +731,7 @@ export default function App() {
                 </div>
 
                 {/* Horizontal Category Tabs */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 touch-scroll scrollbar-none select-none">
                   {categories.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = filters.category === tab.id;
@@ -746,7 +746,7 @@ export default function App() {
                           setFilters(nextFilters);
                           handleSearchAndFilter(nextFilters);
                         }}
-                        className={`group flex items-center gap-2 px-3.5 py-2 whitespace-nowrap transition-all duration-150 cursor-pointer border-2 ${
+                        className={`group flex items-center gap-2 px-3.5 py-2 whitespace-nowrap transition-all duration-150 cursor-pointer border-2 touch-manipulation ${
                           isActive
                             ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ff1f6d] -translate-y-0.5 font-bold'
                             : 'bg-asphalt-card text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-grit-white shadow-[2px_2px_0px_rgba(255,255,255,0.1)]'
@@ -770,19 +770,19 @@ export default function App() {
               </div>
 
               {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                     <EventCardSkeleton key={i} />
                   ))}
                 </div>
               ) : events.length === 0 ? (
-                <div className="bg-asphalt-card border-3 border-grit-white p-12 text-center shadow-[6px_6px_0px_#ff1f6d]">
+                <div className="bg-asphalt-card border-3 border-grit-white p-8 sm:p-12 text-center shadow-[6px_6px_0px_#ff1f6d]">
                   <h3 className="font-display text-3xl text-acid-yellow mb-2">NO EVENTS DISCOVERED</h3>
                   <p className="font-mono-zine text-sm text-grit-dim mb-4">No live events match your search and filter criteria.</p>
                   <button onClick={handleClearSearch} className="btn btn-primary">RESET SEARCH</button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                   {events.map((event, idx) => (
                     <EventCard 
                       key={event.id}
@@ -1387,7 +1387,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
 
   return (
     <div 
-      className="relative w-full max-w-sm sm:max-w-md h-[510px] sm:h-[530px] pt-12 select-none"
+      className="relative w-full max-w-xs sm:max-w-sm md:max-w-md h-[470px] sm:h-[520px] pt-10 sm:pt-12 select-none touch-pan-y"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}

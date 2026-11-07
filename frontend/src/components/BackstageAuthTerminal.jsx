@@ -178,13 +178,14 @@ export default function BackstageAuthTerminal({
       </header>
 
       {/* Main Dual-Column Accreditation Terminal */}
-      <main className="w-full max-w-6xl px-4 py-6 relative z-10 flex-1 flex items-center justify-center">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <main className="w-full max-w-6xl px-3 sm:px-4 py-4 sm:py-6 relative z-10 flex-1 flex items-center justify-center safe-pb">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
 
           {/* ══════════════════════════════════════════════════════════════
               LEFT COLUMN: THE LIVE HOLOGRAPHIC VIP BACKSTAGE PASS
+              (Order 2 on mobile so form inputs are immediately visible)
               ══════════════════════════════════════════════════════════════ */}
-          <div className="lg:col-span-5 flex flex-col items-center">
+          <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col items-center w-full">
             
             {/* Lanyard Strap & Clip Graphic */}
             <div className="w-full flex flex-col items-center">
@@ -195,7 +196,7 @@ export default function BackstageAuthTerminal({
             </div>
 
             {/* The Physical VIP Pass Card */}
-            <div className="w-full max-w-sm bg-asphalt-surface border-2 border-grit-white shadow-[8px_8px_0px_#E2F13C] relative overflow-hidden transition-all duration-300">
+            <div className="w-full max-w-sm bg-asphalt-surface border-2 border-grit-white shadow-[4px_4px_0px_#E2F13C] sm:shadow-[8px_8px_0px_#E2F13C] relative overflow-hidden transition-all duration-300">
               
               {/* Shimmering Hologram Foil Overlay */}
               <div className="absolute inset-0 holo-foil pointer-events-none opacity-40 z-10"></div>
@@ -203,7 +204,7 @@ export default function BackstageAuthTerminal({
               {/* Pass Top Warning Header */}
               <div className="hazard-tape h-2 w-full"></div>
               
-              <div className="p-5 md:p-6 relative z-20 flex flex-col justify-between">
+              <div className="p-4 sm:p-5 md:p-6 relative z-20 flex flex-col justify-between">
                 
                 {/* Header Banner */}
                 <div className="flex items-start justify-between border-b-2 border-asphalt-border pb-3 mb-4">
@@ -360,12 +361,13 @@ export default function BackstageAuthTerminal({
 
           {/* ══════════════════════════════════════════════════════════════
               RIGHT COLUMN: THE BRUTALIST DISPATCH TERMINAL CONSOLE
+              (Order 1 on mobile for immediate access to inputs)
               ══════════════════════════════════════════════════════════════ */}
-          <div className="lg:col-span-7">
-            <div className="bg-asphalt-surface border-2 border-grit-white p-6 md:p-8 shadow-[8px_8px_0px_#F43F5E] relative">
+          <div className="lg:col-span-7 order-1 lg:order-2 w-full">
+            <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_#F43F5E] sm:shadow-[8px_8px_0px_#F43F5E] relative">
               
               {/* Slanted Tape Stamp Badge */}
-              <div className="absolute -top-4 -right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-3 py-1 rotate-2 border-2 border-asphalt-black text-xs uppercase shadow-[4px_4px_0px_#0e0e11] z-20">
+              <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-20">
                 {mode === 'register' ? 'NEW ACCREDITATION DISPATCH' : 'AUTHENTICATED GATE ACCESS'}
               </div>
 

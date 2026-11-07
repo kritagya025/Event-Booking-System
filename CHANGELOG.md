@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] - 2026-11-07
+
+### Added
+- **Complete Mobile, Tablet & Multi-Device Responsive Architecture**:
+  - **Mobile Navigation Drawer (`Navbar.jsx`)**: Added high-contrast brutalist mobile hamburger menu drawer with smooth backdrop blur, complete access to all customer/organizer/admin tabs, integrated multi-currency selector, theme toggle, and 1-tap session sign-in/out.
+  - **Responsive Seat Map & Checkout Workflow (`SeatMapModal.jsx`)**: Designed touch-friendly seating matrix with horizontal momentum scrolling (`touch-scroll`), visual mobile swipe orientation indicator ("← SWIPE HORIZONTALLY TO VIEW ALL ROWS & SEATS →"), and full-width touch-target action buttons for Steps 1 through 4.
+  - **Adaptive Backstage Auth Terminal (`BackstageAuthTerminal.jsx`)**: Re-architected mobile grid hierarchy (`order-1 lg:order-2`) prioritizing the authentication console for phone users while displaying real-time holographic VIP pass rendering underneath.
+  - **Fluid Breakpoint Grid System (`App.jsx`)**: Replaced abrupt 1-to-4 column jumps with smooth breakpoint progression (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`) for event lineup and skeleton loaders.
+  - **Touch & Accessibility Utilities (`index.css`)**: Implemented 44x44px minimum tap targets, momentum scrolling (`-webkit-overflow-scrolling: touch`), viewport bounds clamping (`max-width: 100vw; overflow-x: hidden`), and responsive floating toast notifications (`left: 16px; right: 16px; sm:left-auto sm:right-6`).
+  - **Adaptive Modals**: Refitted all modal dialogs (`CreateEventModal`, `CheckInModal`, `TermsModal`, `PrivacyModal`, `CookiesModal`, `DatabaseConsoleModal`, `ApiDocsModal`, `SystemStatusModal`) with responsive paddings, safe-area inset support, and viewport height ceilings (`max-h-[85vh]`).
+
+### Changed
+- Refactored Search & Filter capsule into balanced responsive columns (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`).
+- Optimized Hero section typography scaling (`text-4xl sm:text-6xl lg:text-8xl`) and slanted badge offsets to eliminate mobile horizontal scroll leakage.
+- Sanitized internal developer jargon (ports, STOMP mutex, TLS strings) across all modal dialogs and replaced with consumer-friendly Box Office terminology.
+
+---
+
 ## [1.3.0] - 2026-11-07
 
 ### Added

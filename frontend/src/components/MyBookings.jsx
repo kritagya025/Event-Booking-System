@@ -200,7 +200,7 @@ export default function MyBookings({ currentUser, showToast }) {
   }, [bookings]);
 
   return (
-    <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
+    <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
       
       {/* Header */}
       <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -213,7 +213,7 @@ export default function MyBookings({ currentUser, showToast }) {
               ACCOUNT: {currentUser?.email || 'ATTENDEE'}
             </span>
           </div>
-          <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
             MY BOOKINGS & DIGITAL TICKETS
           </h1>
           <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
@@ -223,38 +223,38 @@ export default function MyBookings({ currentUser, showToast }) {
 
         <button 
           onClick={fetchUserBookings} 
-          className="self-start md:self-auto bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer"
+          className="self-start md:self-auto bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer touch-manipulation"
         >
           REFRESH BOOKINGS
         </button>
       </div>
 
       {/* 4 Brutalist Metric Stamps */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#eefc54] relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-4 shadow-[4px_4px_0px_#eefc54] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL BOOKINGS</span>
-          <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {stats.totalCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ff1f6d] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-4 shadow-[4px_4px_0px_#ff1f6d] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">CONFIRMED PASSES</span>
-          <span className="font-display text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
+          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
             {stats.confirmedCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#1d4ed8] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-4 shadow-[4px_4px_0px_#1d4ed8] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">UPCOMING EVENTS</span>
-          <span className="font-display text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
+          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
             {stats.upcomingCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 shadow-[4px_4px_0px_#ffffff] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-4 shadow-[4px_4px_0px_#ffffff] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL AMOUNT SPENT</span>
-          <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {formatPrice(stats.totalSpent)}
           </span>
         </div>
@@ -262,7 +262,7 @@ export default function MyBookings({ currentUser, showToast }) {
 
       {/* Filter and Search Bar */}
       <div className="bg-asphalt-surface border-2 border-asphalt-border p-3 mb-8 flex flex-col md:flex-row items-center justify-between gap-3">
-        <div className="flex gap-2 w-full md:w-auto">
+        <div className="flex gap-2 w-full md:w-auto overflow-x-auto touch-scroll scrollbar-none pb-1 md:pb-0">
           {['ALL', 'CONFIRMED', 'CANCELLED'].map((st) => (
             <button
               key={st}

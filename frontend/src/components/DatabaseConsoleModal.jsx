@@ -57,7 +57,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4 font-mono-zine" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 font-mono-zine touch-scroll safe-pb select-none" onClick={onClose}>
       <div 
         className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#E2F13C] flex flex-col relative"
         onClick={(e) => e.stopPropagation()}
@@ -68,7 +68,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
         </div>
 
         {/* Header */}
-        <div className="p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+        <div className="p-4 sm:p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
@@ -76,10 +76,10 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
               </span>
               <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
-                ACTIVE POOL: HIKARICP
+                ACTIVE DATABASE CONNECTION
               </span>
             </div>
-            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
+            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight text-grit-white leading-none">
               DATABASE & SCHEMA TELEMETRY
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
@@ -88,14 +88,14 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Body Content */}
-        <div className="p-6 overflow-y-auto space-y-4">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 touch-scroll">
           
           {/* Top Engine Specs Banner */}
           <div className="bg-asphalt-card border-2 border-asphalt-border p-4 flex items-center justify-between">

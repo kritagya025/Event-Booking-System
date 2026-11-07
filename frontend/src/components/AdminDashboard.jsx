@@ -74,7 +74,7 @@ export default function AdminDashboard({ showToast }) {
     <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
       
       {/* Header */}
-      <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex items-end justify-between">
+      <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
@@ -85,7 +85,7 @@ export default function AdminDashboard({ showToast }) {
               LIVE PLATFORM METRICS
             </span>
           </div>
-          <h1 className="font-display text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
             SYSTEM TELEMETRY & REVENUE AUDIT
           </h1>
           <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
@@ -95,7 +95,7 @@ export default function AdminDashboard({ showToast }) {
 
         <button 
           onClick={fetchAdminData} 
-          className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer flex items-center gap-1.5"
+          className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer flex items-center gap-1.5 self-start sm:self-auto touch-manipulation"
         >
           <Activity size={14} /> REFRESH TELEMETRY
         </button>
@@ -106,10 +106,10 @@ export default function AdminDashboard({ showToast }) {
       ) : (
         <>
           {/* 4 Brutalist Metric Stamps */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#E2F13C] relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-5 shadow-[3px_3px_0px_#E2F13C] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PLATFORM REVENUE</span>
-          <span className="font-display text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
+          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
             {formatPrice(displayTotalRevenue)}
           </span>
           <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
@@ -117,9 +117,9 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#F43F5E] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-5 shadow-[3px_3px_0px_#F43F5E] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TICKETS ISSUED</span>
-          <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {dbBookingsCount.toLocaleString()}
           </span>
           <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
@@ -127,9 +127,9 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#1d4ed8] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-5 shadow-[3px_3px_0px_#1d4ed8] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">REGISTERED USERS</span>
-          <span className="font-display text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
+          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
             {dbUsersCount.toLocaleString()}
           </span>
           <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
@@ -137,9 +137,9 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#ffffff] relative">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-5 shadow-[3px_3px_0px_#ffffff] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">PUBLISHED EVENTS</span>
-          <span className="font-display text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {dbEventsCount}
           </span>
           <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
@@ -162,7 +162,7 @@ export default function AdminDashboard({ showToast }) {
               return (
               <div 
                 key={event.id || idx} 
-                className={`p-3.5 flex items-center justify-between border-2 transition-all ${
+                className={`p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-2 transition-all ${
                   isSoldOut
                     ? 'sold-out-monochrome bg-asphalt-black border-grit-dim/60 opacity-80'
                     : 'bg-asphalt-card border-asphalt-border'
