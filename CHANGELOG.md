@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.0] - 2026-11-07
+
+### Added
+- Dedicated independent GitHub Actions Backend CI workflow (`.github/workflows/backend.yml`) with path filtering (`src/**`, `pom.xml`, `mvnw*`, `.mvn/**`), Temurin Java 17 setup, Maven dependency caching, H2 in-memory test execution with required environment variables, and production JAR artifact uploading.
+- Dedicated independent GitHub Actions Frontend CI workflow (`.github/workflows/frontend.yml`) with path filtering (`frontend/**`), Node.js 20 setup, npm dependency caching, Oxlint static analysis, production Vite bundling, and dist artifact uploading.
+- Independent status badges for Backend CI and Frontend CI in project documentation.
+- Concurrency group cancellation (`cancel-in-progress: true`) to avoid redundant pipeline runs during rapid pushes.
+
+### Changed
+- Replaced monolithic full-stack `ci.yml` pipeline with decoupled backend and frontend pipelines to optimize execution time and runner utilization.
+- Fallback test database properties configured in `application.properties` to ensure out-of-the-box container and CI execution without external PostgreSQL dependencies.
+
+---
+
+## [1.2.0] - 2026-11-06
+
+### Added
+- Site-wide skeleton loaders suite (`EventCardSkeleton`, `SeatMapSkeleton`, `AdminDashboardSkeleton`, `BookingCardSkeleton`, `WishlistCardSkeleton`, `ProfileSkeleton`) matching exact container geometries to ensure zero Cumulative Layout Shift (CLS).
+- High-contrast monochrome (grayscale) styling for sold-out events with distinct "SOLD OUT" badge stamp and disabled interactive actions.
+- Interactive 3D stacked sliding event cards carousel on catalog discovery view with smooth transitions.
+- Cinema Premiere seating layout mode in `SeatMapModal` featuring curved amphitheater projection screen, sound towers, stage lighting, center aisle partitioning, and directional radar telemetry HUD.
+- Bespoke acoustic resonance harmonic waveform canvas engine (`HarmonicWaveGrid`) with mouse impulse physics, sweeping stage spotlights, rotating wireframe ticket passes, and archival 90s brutalist rave flyer textures.
+- Circular laser aperture transitions, CRT scanline beam sweeps, and exposure pill HUD badges.
+- Smooth light/dark theme toggle synchronizing CSS variables across all components with butter-smooth 60fps performance.
+- Staging cloud deployment configuration via `embarko.json`.
+
+### Optimized
+- Converted heavy PNG/JPG raster hero and event artwork to modern WebP format, achieving >80% reduction in image payload size and dramatically accelerating First Contentful Paint (FCP).
+- Configured dynamic Rollup `manualChunks` vendor splitting in `vite.config.js` (`vendor-react`, `vendor-icons`, `vendor-socket`) to eliminate oversized chunks.
+- Replaced monolithic Lucide icon object lookups with statically tree-shakable static dictionary in `CategoryBadge.jsx`, shedding over 1,500 unreferenced SVG definitions.
+- Migrated frontend linting from legacy ESLint to Rust-based `oxlint`, reducing static analysis duration from several seconds to under 30 milliseconds.
+- Enabled production console and debugger statement stripping via Terser minification.
+
+---
+
 ## [1.1.0] - 2026-11-05
 
 ### Added

@@ -8,7 +8,11 @@ Complete inventory of the directory hierarchy, source modules, and configuration
 
 ```
 event-booking-system/
-|-- README.md                          # Project overview and rapid setup guide
+|-- .github/workflows/
+|   |-- backend.yml                    # Independent Backend CI workflow (Temurin JDK 17, Maven test & package)
+|   `-- frontend.yml                   # Independent Frontend CI workflow (Node 20, Oxlint, Vite build)
+|
+|-- README.md                          # Project overview, architecture, and rapid setup guide
 |-- ARCHITECTURE.md                    # System architecture and data flow documentation
 |-- API_DOCUMENTATION.md              # Complete REST API reference specification
 |-- DATABASE.md                        # Database schema, table definitions, and indexes
@@ -17,6 +21,7 @@ event-booking-system/
 |-- SECURITY.md                        # Security policies and threat model
 |-- CHANGELOG.md                       # Version release history
 |-- PROJECT_STRUCTURE.md              # File and directory inventory
+|-- embarko.json                       # Staging deployment configuration
 |
 |-- pom.xml                            # Maven build descriptor
 |-- mvnw / mvnw.cmd                   # Maven Wrapper scripts (Linux / Windows)
@@ -218,16 +223,49 @@ event-booking-system/
 |           `-- service/                              # Domain service unit test suites
 |
 |-- frontend/                                         # React Single-Page Application
+|   |-- README.md                                     # Dedicated frontend documentation
 |   |-- package.json                                  # NPM dependencies & scripts
-|   |-- vite.config.js                                # Vite bundler configuration
+|   |-- vite.config.js                                # Vite bundler configuration (proxy & manualChunks)
 |   |-- index.html                                    # Browser HTML entry template
+|   |-- tailwind.config.js                            # Tailwind CSS brutalist theme & colors
+|   |-- postcss.config.js                             # PostCSS build configuration
 |   `-- src/
 |       |-- main.jsx                                  # React DOM bootstrap
-|       |-- App.jsx                                   # Root layout & routing coordinator
+|       |-- App.jsx                                   # Root layout coordinator, routing, & theme
 |       |-- App.css                                   # Component layout styles
-|       |-- index.css                                 # Core design tokens
-|       |-- components/                               # UI Component Library (20)
-|       `-- services/                                 # HTTP, WebSocket, & currency clients
+|       |-- index.css                                 # Core design tokens, hazard tapes, fonts
+|       |-- assets/                                   # Optimized WebP hero artwork & SVG logos
+|       |-- components/                               # UI Component Library (26 components)
+|       |   |-- Navbar.jsx                            # Brutalist header & currency selector
+|       |   |-- SeatMapModal.jsx                      # Arena & cinema interactive seating engine
+|       |   |-- AdminDashboard.jsx                    # Administrative metrics & health gauges
+|       |   |-- MyBookings.jsx                        # Customer bookings & QR ticket passes
+|       |   |-- ProfileDashboard.jsx                  # Profile settings & password update
+|       |   |-- Wishlist.jsx                          # Bookmarked events collection
+|       |   |-- AuthModal.jsx                         # Login, registration, & recovery dialog
+|       |   |-- CreateEventModal.jsx                  # Organizer event publishing modal
+|       |   |-- CheckInModal.jsx                      # Optical QR & ticket check-in scanner
+|       |   |-- DatabaseConsoleModal.jsx              # In-browser administrative SQL console
+|       |   |-- SystemStatusModal.jsx                 # Live backend telemetry dialog
+|       |   |-- ApiDocsModal.jsx                      # Embedded OpenAPI 3.0 explorer
+|       |   |-- CookiesModal.jsx                      # Cookie consent & policy dialog
+|       |   |-- PrivacyModal.jsx                      # Data protection & GDPR statement
+|       |   |-- TermsModal.jsx                        # Ticketing terms & refund conditions
+|       |   |-- LoginPage.jsx                         # Standalone authentication page
+|       |   |-- RegisterPage.jsx                      # Standalone registration page
+|       |   |-- Background3D.jsx                      # Acoustic harmonic waveform canvas engine
+|       |   |-- IntroSplashScreen.jsx                 # Boot splash screen with telemetry
+|       |   |-- ErrorBoundary.jsx                     # Crash-resilient React error boundary
+|       |   |-- EventCardSkeleton.jsx                 # Skeleton placeholder for event cards
+|       |   |-- SeatMapSkeleton.jsx                   # Skeleton placeholder for seating grid
+|       |   |-- AdminDashboardSkeleton.jsx            # Skeleton placeholder for admin view
+|       |   |-- BookingCardSkeleton.jsx               # Skeleton placeholder for booking list
+|       |   |-- WishlistCardSkeleton.jsx              # Skeleton placeholder for wishlist
+|       |   `-- ProfileSkeleton.jsx                   # Skeleton placeholder for profile
+|       `-- services/                                 # API, WebSocket, & currency clients
+|           |-- api.js                                # Axios HTTP client with JWT interceptor
+|           |-- currency.js                           # Dynamic multi-currency rate engine
+|           `-- websocket.js                          # STOMP/SockJS client with auto-reconnect
 |
 `-- target/                                           # Maven build output directory (ignored)
 ```
@@ -246,6 +284,8 @@ event-booking-system/
 | Repositories | 12 | Spring Data JPA |
 | Background Schedulers | 2 | Spring Task Scheduling |
 | Automated Test Suites | 24 | JUnit 5, Mockito, MockMvc, H2 |
-| React Components | 20 | React 19, Lucide |
+| React Components | 26 | React 19, Lucide, Tailwind CSS |
+| Frontend Linter | 1 | Oxlint 1.75.0 (sub-30ms) |
+| CI/CD Pipelines | 2 | GitHub Actions (Backend CI, Frontend CI) |
 | Real-Time Transports | 1 | STOMP over SockJS |
 | Primary Database Tables | 13 | PostgreSQL 16+ |

@@ -93,10 +93,19 @@ The platform uses a decoupled client-server architecture:
 
 ### Seat Management and Concurrency Control
 - Venue-based seat configuration across `VIP`, `PREMIUM`, and `REGULAR` tiers.
+- Dual interactive seating layouts: standard concert arena amphitheater and cinema movie premiere view.
 - Temporary seat locking with configurable lock duration (default: 10 minutes).
 - Automated background expiration scheduler releasing expired seat locks every 60 seconds.
 - Real-time seat status broadcasts over WebSocket (`/topic/events/{id}/seats`) using STOMP.
 - Optimistic concurrency control (`@Version`) on Booking, Event, and Seat entities to prevent race conditions during high-demand sales.
+
+### Visual Identity, UI/UX, and Performance
+- 90s Brutalist Warehouse Acid-Zine design language (hazard stripes, offset stamps, monospaced telemetry, 0px border radius).
+- Interactive 3D stacked sliding event cards carousel for streamlined discovery.
+- Bespoke acoustic resonance harmonic waveform canvas engine (`HarmonicWaveGrid`) with mouse impulse physics.
+- Site-wide skeleton loaders suite ensuring zero Cumulative Layout Shift (CLS = 0).
+- Sold-out events distinction in high-contrast monochrome with disabled interactions.
+- Performance engineering: modern WebP raster assets (>80% size reduction), dynamic Rollup vendor chunking, and sub-30ms Oxlint static analysis.
 
 ### Booking, Invoicing, and Ticketing
 - Atomic seat reservation workflow.
@@ -143,6 +152,9 @@ The platform uses a decoupled client-server architecture:
 
 ```
 .
+|-- .github/workflows/
+|   |-- backend.yml                     # Independent Backend CI (Java 17, Maven tests, JAR artifact)
+|   `-- frontend.yml                    # Independent Frontend CI (Node 20, Oxlint, Vite build, dist artifact)
 |-- src/main/java/com/kritagya/event_booking_system/
 |   |-- auth/               # Authentication controllers, services, and token DTOs
 |   |-- config/             # Spring configuration (Security, Redis, WebSocket, OpenAPI)
@@ -161,11 +173,15 @@ The platform uses a decoupled client-server architecture:
 |   |-- specification/      # Dynamic JPA Criteria queries for event search
 |   `-- websocket/          # WebSocket publishers for real-time seat status
 |-- src/main/resources/
-|   |-- application.properties          # Base settings
+|   |-- application.properties          # Base settings & test profile fallbacks
 |   |-- application-dev.properties      # Development overrides (seed data, DDL update)
 |   `-- application-prod.properties     # Production profile (DDL validate)
 |-- src/test/java/                      # 24 automated unit and integration test suites
-|-- frontend/                           # React 19 single-page application
+|-- frontend/                           # React 19 single-page application (26 components, Tailwind, Oxlint)
+|   |-- README.md                       # Dedicated frontend architecture and setup guide
+|   |-- src/components/                 # UI components, modals, and zero-CLS skeleton suite
+|   `-- vite.config.js                  # Proxy configuration & dynamic manualChunks
+|-- embarko.json                        # Staging cloud deployment configuration
 `-- pom.xml                             # Maven build configuration
 ```
 
@@ -270,6 +286,13 @@ The backend includes 24 automated test suites covering controllers, business log
 | Persistence | `BookingRepositoryTest`, `EventRepositoryTest` |
 | Security | `SecurityFixesTest` |
 | Context | `EventBookingSystemApplicationTests` |
+
+### Continuous Integration (GitHub Actions)
+
+The repository runs two decoupled, path-filtered GitHub Actions CI pipelines:
+
+- **Backend CI (`.github/workflows/backend.yml`)**: Triggered on changes to `src/**`, `pom.xml`, or Maven files. Sets up Java 17 Temurin, executes Maven tests under H2 in-memory profile, packages the production JAR, and uploads the artifact.
+- **Frontend CI (`.github/workflows/frontend.yml`)**: Triggered on changes to `frontend/**`. Sets up Node.js 20, runs `oxlint` static code analysis, compiles the production bundle with Vite, and uploads the static `dist` artifact.
 
 ---
 

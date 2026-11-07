@@ -182,12 +182,19 @@ Before opening a pull request, complete the following verification steps:
    ```bash
    ./mvnw test
    ```
-3. Confirm the frontend bundles without errors:
+3. Run the frontend linter (Oxlint):
+   ```bash
+   cd frontend && npm run lint
+   ```
+4. Confirm the frontend bundles without errors:
    ```bash
    cd frontend && npm run build
    ```
-4. Verify working tree is clean and commits are logically grouped.
-5. Provide a clear pull request description outlining:
+5. Verify working tree is clean and commits are logically grouped.
+6. Note that upon opening or updating a pull request, GitHub Actions automatically executes:
+   - **Backend CI (`.github/workflows/backend.yml`)** if backend files (`src/**`, `pom.xml`, `mvnw*`) were modified.
+   - **Frontend CI (`.github/workflows/frontend.yml`)** if frontend files (`frontend/**`) were modified.
+7. Provide a clear pull request description outlining:
    - The problem or feature addressed
    - Technical approach taken
    - Automated tests added or modified

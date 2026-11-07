@@ -118,6 +118,33 @@ Telemetry Tickers →  'JetBrains Mono', monospace (Real-time seat timers, barco
   - 03: INSTANT DIGITAL PASSES (Instant PDF download and Google Calendar sync)
   - 04: RAPID GATE SCANNER (Sub-second camera scanner for venue staff)
 
+### 5.8 Cinema Premiere & Movie Seating Experience
+- **Curved Amphitheater Screen**: High-contrast illuminated projection arc with stage lighting glow.
+- **Sound Tower Beacons**: Flanking stereo sound towers with blinking signal telemetry.
+- **Center Aisle Architecture**: Strict industrial aisle dividing seating into Left and Right wings with clear aisle clearance.
+- **Directional Viewing Angle Radar**: HUD indicating screen sightlines and optimal acoustic zones.
+- **Category Tier Distinction**: Distinct visual styling for `VIP`, `PREMIUM`, and `REGULAR` tiers with responsive touch states.
+
+### 5.9 3D Stacked Event Slide Cards
+- **Layered Deck Geometry**: 3 to 4 event cards physically stacked on top of each other with progressive z-index, scale, and offset transformations.
+- **Interactive Slide Transition**: Clicking or swiping slides the top card outward and cycles the deck with spring-physics motion.
+- **Perforated Ticket Header**: Retains brutalist perforated stub detailing, barcode strips, and pricing badges during slide animations.
+
+### 5.10 Site-Wide Skeleton Loading System (Zero CLS)
+- **Bounding-Box Parity**: Dedicated skeleton components (`EventCardSkeleton`, `SeatMapSkeleton`, `AdminDashboardSkeleton`, `BookingCardSkeleton`, `WishlistCardSkeleton`, `ProfileSkeleton`) engineered to mirror exact rendered container dimensions, preventing layout shifts (CLS = 0).
+- **Brutalist Shimmer Wave**: High-contrast monochrome pulse gradient traversing asphalt card frames instead of generic pastel gray placeholders.
+- **Monospaced Placeholders**: Preserves the structural alignment of timestamps, badges, and pricing elements during asynchronous data fetching.
+
+### 5.11 Sold-Out Event Monochrome Distinction
+- **High-Contrast Grayscale Filter**: Automatically desaturates promotional artwork and event containers when `availableSeats === 0` or status is `SOLD_OUT`.
+- **Industrial "SOLD OUT" Stamp**: High-impact diagonal badge stamp overlaid with muted dark border styling.
+- **Disabled Interaction State**: Disables primary CTAs, preventing ticket reservation modal triggers while preserving catalog browseability and waitlist enrollment.
+
+### 5.12 Motion, Atmospheric Effects & Theme Transitions
+- **Acoustic Harmonic Waveform Canvas Engine**: Bespoke WebGL/2D canvas rendering an interactive resonant waveform grid reacting to mouse coordinates with physical impulse attenuation.
+- **Laser Aperture & CRT Scanline Sweeps**: Circular laser view transition animations and retro CRT cathode-ray beam sweeps across header pills and modal frames.
+- **Dual-Theme Synchronization**: Seamless transition between Asphalt Brutalist Dark Mode and High-Contrast Industrial Light Mode via synchronized CSS variables and `data-theme` attributes.
+
 ---
 
 ## 6. Real-Time Telemetry & Verification

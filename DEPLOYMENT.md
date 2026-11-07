@@ -10,6 +10,8 @@ This guide describes operational procedures for provisioning, configuring, packa
 - [Environment Configuration](#environment-configuration)
 - [Database Provisioning](#database-provisioning)
 - [Application Packaging](#application-packaging)
+- [Continuous Integration (GitHub Actions)](#continuous-integration-github-actions)
+- [Cloud Staging Deployment (Embarko)](#cloud-staging-deployment-embarko)
 - [Standalone Linux Deployment](#standalone-linux-deployment)
 - [Containerized Deployment (Docker)](#containerized-deployment-docker)
 - [Reverse Proxy Configuration (Nginx)](#reverse-proxy-configuration-nginx)
@@ -123,6 +125,44 @@ npm ci
 npm run build
 ```
 Optimized static bundles are output to `frontend/dist/`.
+
+---
+
+## Continuous Integration (GitHub Actions)
+
+EventHub utilizes two decoupled, path-filtered GitHub Actions workflows ensuring fast feedback and isolated build pipelines:
+
+### 1. Backend CI (`.github/workflows/backend.yml`)
+- **Trigger Filters**: Runs on pushes and pull requests targeting `main` with modifications to `src/**`, `pom.xml`, `mvnw*`, `.mvn/**`, or `.github/workflows/backend.yml`. Supports manual execution via `workflow_dispatch`.
+- **Environment**: Ubuntu Latest with Eclipse Temurin OpenJDK 17.
+- **Dependency Caching**: Maven dependencies cached automatically (`cache: 'maven'`).
+- **Test Execution**: Executes all 24 backend test suites under the `test` profile using an in-memory H2 database with injected test credentials (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DRIVER`, `JWT_SECRET`).
+- **Binary Packaging**: Assembles the Spring Boot production executable archive (`./mvnw -B package -DskipTests`).
+- **Artifact Publishing**: Archives `target/*.jar` as `eventhub-backend-jar` (7-day retention).
+
+### 2. Frontend CI (`.github/workflows/frontend.yml`)
+- **Trigger Filters**: Runs on pushes and pull requests targeting `main` with modifications to `frontend/**` or `.github/workflows/frontend.yml`. Supports manual execution via `workflow_dispatch`.
+- **Environment**: Ubuntu Latest with Node.js 20.x.
+- **Dependency Caching**: `npm` cache linked to `frontend/package-lock.json`.
+- **Linting**: Executes Rust-powered `oxlint` (`npm run lint`), completing in under 30ms.
+- **Production Compilation**: Executes `npm run build` using Vite 8 and Rollup with dynamic vendor code splitting.
+- **Artifact Publishing**: Archives `frontend/dist/` as `eventhub-frontend-dist` (7-day retention).
+
+---
+
+## Cloud Staging Deployment (Embarko)
+
+EventHub is configured for automated preview and continuous delivery on Embarko via the workspace descriptor `embarko.json`:
+
+```json
+{
+  "appId": "cmw4r1khm1cffw56wl4frorg6",
+  "appName": "eventhub-stage"
+}
+```
+
+- **Staging Access Point**: `https://eventhub-stage.embarko.app`
+- **Reverse Proxy**: Cloud ingress proxies `/api` and `/ws` traffic to the backend instance while serving optimized static frontend assets with HTTP/2 and Brotli/gzip compression.
 
 ---
 
@@ -392,6 +432,9 @@ sudo systemctl status certbot.timer
 2. **Database Sizing**: Allocate shared buffers to approximately 25% of total server RAM. Ensure `work_mem` is tuned for sort operations on booking analytics queries.
 3. **Caching**: Ensure `CACHE_TYPE=redis` is active to alleviate repeated lookups on catalog feeds (`/api/events/popular`, `/api/events/trending`).
 4. **Rate Limiting Thresholds**: Evaluate `app.rate-limiting.capacity`. Under heavy production load, adjust capacity to 60-120 requests per minute per IP if required.
+5. **Frontend Asset Optimization (WebP)**: High-resolution artwork is delivered in WebP format, achieving an 80%+ payload reduction compared to standard PNG/JPEG assets.
+6. **Dynamic Code Splitting**: Vite Rollup `manualChunks` segments vendor libraries into `vendor-react`, `vendor-icons`, and `vendor-socket` to prevent oversized initial bundles and optimize browser caching.
+7. **Static Tree-Shaking & Dead Code Elimination**: Static dictionary lookups in `CategoryBadge.jsx` eliminate unreferenced Lucide SVG definitions, while Terser strips `console` and `debugger` statements from production distributions.
 
 ---
 

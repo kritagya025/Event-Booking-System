@@ -150,29 +150,53 @@ Coupon (standalone entity)
 
 ## Frontend Structure
 
-The frontend is an application built with React 19 and bundled using Vite.
+The frontend is a single-page application built with React 19, Tailwind CSS, and bundled using Vite 8. It adheres to the 90s Brutalist Warehouse Acid-Zine design protocol and contains 26 modular components:
 
 ```
 frontend/src/
-|-- App.jsx                    # Root component handling routing and global view state
-|-- App.css                    # Layout styling
-|-- index.css                  # Core CSS design tokens
+|-- App.jsx                    # Root coordinator handling routing, themes, and global modals
+|-- App.css                    # Component layout styles
+|-- index.css                  # Core CSS design tokens, hazard warning ribbons, fonts
 |-- main.jsx                   # React entry point
+|-- assets/                    # Optimized WebP hero and promotional raster assets
 |-- components/
-|   |-- Navbar.jsx             # Top-level header with user authentication controls
-|   |-- AuthModal.jsx          # Modal for login and registration
-|   |-- SeatMapModal.jsx       # Interactive seat layout, reservation, and payment modal
-|   |-- CreateEventModal.jsx   # Event creation form for organizers and administrators
-|   |-- CheckInModal.jsx       # Staff check-in interface with QR scanner
-|   |-- AdminDashboard.jsx     # Administrative analytics and system health view
-|   |-- MyBookings.jsx         # Customer booking history and ticket downloads
+|   |-- Navbar.jsx             # Top-level brutalist header with currency switcher and auth
+|   |-- SeatMapModal.jsx       # Interactive dual-mode seating engine (Amphitheater & Cinema)
+|   |-- AdminDashboard.jsx     # Administrative metrics, revenue analytics, and system health
+|   |-- MyBookings.jsx         # Customer booking history and QR ticket passes
 |   |-- ProfileDashboard.jsx   # Profile management and password updates
-|   `-- Wishlist.jsx           # Saved events collection
+|   |-- Wishlist.jsx           # Saved events collection
+|   |-- AuthModal.jsx          # Modal for login, registration, and password recovery
+|   |-- CreateEventModal.jsx   # Event creation form for organizers and administrators
+|   |-- CheckInModal.jsx       # Staff check-in interface with optical QR scanner
+|   |-- DatabaseConsoleModal.jsx # Administrative in-browser database telemetry viewer
+|   |-- SystemStatusModal.jsx  # Live backend diagnostics dialog
+|   |-- ApiDocsModal.jsx       # Embedded OpenAPI 3.0 explorer
+|   |-- CookiesModal.jsx       # Cookie preferences and persistence statement
+|   |-- PrivacyModal.jsx       # Data privacy and GDPR compliance declaration
+|   |-- TermsModal.jsx         # Ticketing terms, admission rules, and refund policy
+|   |-- LoginPage.jsx          # Standalone customer/organizer authentication page
+|   |-- RegisterPage.jsx       # Standalone customer account onboarding page
+|   |-- Background3D.jsx       # Acoustic harmonic waveform canvas engine with impulse physics
+|   |-- IntroSplashScreen.jsx  # Industrial boot splash screen
+|   |-- ErrorBoundary.jsx      # Crash recovery boundary with fallback UI
+|   |-- EventCardSkeleton.jsx  # Zero-CLS skeleton placeholder for event cards
+|   |-- SeatMapSkeleton.jsx    # Zero-CLS skeleton placeholder for seating layout
+|   |-- AdminDashboardSkeleton.jsx # Zero-CLS skeleton placeholder for admin metrics
+|   |-- BookingCardSkeleton.jsx # Zero-CLS skeleton placeholder for booking cards
+|   |-- WishlistCardSkeleton.jsx # Zero-CLS skeleton placeholder for wishlist items
+|   `-- ProfileSkeleton.jsx    # Zero-CLS skeleton placeholder for user profile
 `-- services/
-    |-- api.js                 # HTTP client with interceptors for JWT injection
-    |-- currency.js            # Multi-currency formatting utilities
-    `-- websocket.js           # STOMP connection manager with auto-reconnection
+    |-- api.js                 # Axios HTTP client with JWT interceptors
+    |-- currency.js            # Multi-currency formatting utilities (USD, EUR, GBP, JPY, etc.)
+    `-- websocket.js           # STOMP connection manager over SockJS with auto-reconnection
 ```
+
+### Frontend Performance & Asset Strategy
+1. **WebP Compression**: High-resolution raster images are delivered in WebP format, achieving >80% size savings.
+2. **Rollup Manual Chunk Splitting**: Configured in `vite.config.js` to split vendor dependencies into `vendor-react`, `vendor-icons`, and `vendor-socket`.
+3. **Static Icon Tree-Shaking**: Statically imported icon dictionary eliminates unused SVG definitions from bundle outputs.
+4. **Oxlint Static Analysis**: Replaced legacy ESLint with high-speed Rust-based `oxlint`.
 
 ---
 
