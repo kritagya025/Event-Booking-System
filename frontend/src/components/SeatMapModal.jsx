@@ -531,7 +531,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
               </span>
               <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
-                STOMP TOPIC: /seat-locks/{event.id}
+                LIVE SEAT INVENTORY SYNCED
               </span>
             </div>
             <h3 className="font-display text-2xl md:text-3xl uppercase tracking-tight text-grit-white mt-1 leading-none">
@@ -891,7 +891,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       <div className="w-full flex items-center justify-between text-grit-dim text-[11px]">
                         <span className="flex items-center gap-1.5 uppercase font-mono-zine">
                           <Eye size={13} className="text-acid-yellow" />
-                          HOVER OVER ANY SEAT FOR SIGHTLINE & ACOUSTIC TELEMETRY
+                          HOVER OVER ANY SEAT TO PREVIEW SIGHTLINE & PRICING
                         </span>
                         <span className="font-ticker text-acid-yellow uppercase text-[10px]">
                           MAX 6 SEATS PER BOOKING
@@ -1381,7 +1381,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     ORDER CONFIRMATION & E-TICKET
                   </span>
                   <span className="font-ticker text-[10px] text-acid-yellow uppercase">
-                    STOMP VERIFIED
+                    OFFICIALLY VERIFIED PASS
                   </span>
                 </div>
 

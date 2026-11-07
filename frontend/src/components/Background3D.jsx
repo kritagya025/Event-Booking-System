@@ -101,7 +101,7 @@ export default function Background3D() {
           </div>
 
           <div className="border-t-2 border-current pt-4 flex justify-between items-end font-ticker text-xs">
-            <span>STOMP://SEAT-LOCK.MUTEX</span>
+            <span>EVENTHUB // BOX OFFICE DIRECT</span>
             <span>#EH-2026-LIVE</span>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function Background3D() {
             </div>
           </div>
           <div className="font-ticker text-[8px] uppercase tracking-widest text-center">
-            ACOUSTIC STAGE ARCHIVE // REAL-TIME CONCURRENCY
+            CONCERT & CINEMA SEAT PASS // EVENTHUB
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function Background3D() {
       </div>
 
       <div className="absolute top-14 right-6 hidden md:flex items-center gap-2 opacity-30 font-ticker text-[9px] uppercase tracking-widest text-right">
-        <span>STOMP CONCURRENCY MUTEX · 99.98% CLUSTER</span>
+        <span>LIVE BOX OFFICE · 100% VERIFIED PASSES</span>
         <span className="font-bold text-neon-magenta">⊕</span>
       </div>
 

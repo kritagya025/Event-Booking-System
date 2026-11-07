@@ -322,11 +322,11 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
               SECURITY PROTOCOL
             </h3>
             <p className="font-mono-zine text-xs text-grit-dim uppercase mb-4 leading-relaxed">
-              THIS ACCOUNT IS SECURED VIA HTTPONLY JWT COOKIES AND REAL-TIME STOMP PROTOCOL LOCKS.
+              THIS ACCOUNT IS SECURED WITH INDUSTRY-STANDARD ENCRYPTION AND ACTIVE FRAUD DEFENSE.
             </p>
             <div className="hazard-tape h-3 w-full mb-4"></div>
             <div className="text-[10px] font-ticker text-grit-dim uppercase">
-              SECURE NODE: EHB_USR_{profile.id || 1} // POSTGRES_TLS_VERIFIED
+              ACCOUNT ID: #EHB-USER-{profile.id || 1} // VERIFIED BUYER STATUS
             </div>
           </div>
         </div>

@@ -54,7 +54,7 @@ export default function TermsModal({ isOpen, onClose }) {
 
           <section className="bg-asphalt-card border border-asphalt-border p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
-              02. REAL-TIME SEAT MUTEX & RESERVATION POLICY
+              02. REAL-TIME SEAT HOLD & RESERVATION POLICY
             </h4>
             <p>
               SEAT SELECTIONS ARE TEMPORARILY LOCKED FOR 10 MINUTES VIA DISTRIBUTED WEBSOCKET PROTOCOL. IF CHECKOUT IS NOT COMPLETED WITHIN THE 10-MINUTE HOLD WINDOW, LOCKED SEATS ARE AUTOMATICALLY RELEASED BACK TO PUBLIC INVENTORY.

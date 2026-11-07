@@ -18,7 +18,7 @@ import ApiDocsModal from './components/ApiDocsModal';
 import Background3D from './components/Background3D';
 
 import EventCardSkeleton from './components/EventCardSkeleton';
-import { Heart, Bell, AlertCircle, Check, Zap, Radio } from 'lucide-react';
+import { Heart, Bell, AlertCircle, Check, Zap, Radio, Calendar, MapPin, ArrowRight, Search, RotateCcw, Film, Ticket, Sparkles } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
 
@@ -426,16 +426,16 @@ export default function App() {
       <div className="w-full bg-asphalt-surface border-b border-asphalt-border py-2 px-4">
         <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between text-xs font-ticker gap-2">
           <div className="flex items-center gap-2 text-grit-dim">
-            <span className="bg-neon-magenta text-grit-white font-bold px-1.5 py-0.2 -rotate-2">LIVE PLATFORM</span>
-            <span className="text-grit-white font-mono-zine">REAL-TIME STOMP SEAT CONCURRENCY // DISTRIBUTED EVENT TICKETING PLATFORM</span>
+            <span className="bg-neon-magenta text-grit-white font-bold px-1.5 py-0.2 -rotate-2">BOX OFFICE</span>
+            <span className="text-grit-white font-mono-zine">OFFICIAL PASSES & TICKETS FOR LIVE CONCERTS, CINEMA & THEATER</span>
           </div>
           <div className="flex items-center gap-3 text-grit-dim">
             <span className="text-acid-yellow flex items-center gap-1.5 font-bold">
               <Zap size={11} className="fill-current text-acid-yellow" />
-              10-MIN SEAT LOCK GUARANTEE
+              10-MIN RESERVED HOLD GUARANTEE
             </span>
             <span>|</span>
-            <span className="text-grit-white">99.98% CLUSTER UPTIME</span>
+            <span className="text-grit-white">100% VERIFIED PASSES</span>
           </div>
         </div>
       </div>
@@ -465,82 +465,120 @@ export default function App() {
                 ★ 100% VERIFIED TICKETS & PASSES ★
               </div>
               <div className="absolute -bottom-4 -left-3 bg-electric-cobalt text-acid-yellow font-ticker text-xs font-black px-3 py-1 -rotate-3 border-2 border-grit-white z-20">
-                ZERO SECONDARY SCALPING // STOMP LOCKS
+                ZERO SECONDARY SCALPING // 100% VERIFIED
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
                 <div className="lg:col-span-8 space-y-4">
                   <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-3 py-1 stamp-slant-1">
-                    <span className="w-2.5 h-2.5 bg-acid-yellow animate-pulse" />
+                    <Sparkles size={14} className="text-acid-yellow" />
                     <span className="font-ticker text-xs font-bold uppercase text-acid-yellow tracking-widest">
-                      EVENT TICKETING & SEAT RESERVATION PLATFORM
+                      OFFICIAL LIVE EVENT & CINEMA BOX OFFICE
                     </span>
                   </div>
 
                   <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.9]">
-                    LIVE EVENT <span className="text-acid-yellow underline decoration-neon-magenta decoration-4">TICKETING</span><br/>
-                    & SEAT RESERVATIONS.
+                    YOUR FRONT ROW TO <span className="text-acid-yellow underline decoration-neon-magenta decoration-4">LIVE EVENTS</span> & PREMIERES.
                   </h1>
 
-                  <p className="font-mono-zine text-sm sm:text-base text-grit-dim max-w-2xl leading-relaxed">
-                    RESERVE VERIFIED SEATS IN REAL TIME. INSTANT DIGITAL PASSES, DYNAMIC CURRENCY CONVERSION, TAMPER-PROOF QR CODE VALIDATION, AND ZERO DOUBLE BOOKINGS ACROSS CONCERTS, CONFERENCES, THEATER, AND SPORTS.
+                  <p className="font-mono-zine text-sm sm:text-base text-grit-white/90 max-w-2xl leading-relaxed">
+                    Pick your exact seats in real time with zero hidden fees. Instant digital QR passes for arena concerts, IMAX 3D screenings, Broadway theater, and world championships with a 10-minute cart hold guarantee.
                   </p>
 
-                  {/* Telemetry Badges / Specs */}
+                  {/* Value Highlights */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-                    <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">REST API ENGINE</span>
-                      <span className="font-display text-xl text-acid-yellow">SPRING BOOT 3.4</span>
+                    <div className="bg-asphalt-black p-2.5 border-2 border-asphalt-border">
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">TICKETS</span>
+                      <span className="font-display text-xl text-acid-yellow">100% VERIFIED</span>
                     </div>
-                    <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">SEAT CONCURRENCY</span>
-                      <span className="font-display text-xl text-neon-magenta">10-MIN MUTEX</span>
+                    <div className="bg-asphalt-black p-2.5 border-2 border-asphalt-border">
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">CART HOLD</span>
+                      <span className="font-display text-xl text-neon-magenta">10-MIN WINDOW</span>
                     </div>
-                    <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">DATABASE CLUSTER</span>
-                      <span className="font-display text-xl text-electric-cobalt">POSTGRESQL TLS</span>
+                    <div className="bg-asphalt-black p-2.5 border-2 border-asphalt-border">
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">EXPERIENCE</span>
+                      <span className="font-display text-xl text-electric-cobalt">IMAX 3D & ARENA</span>
                     </div>
-                    <div className="bg-asphalt-black p-2 border-2 border-asphalt-border">
-                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">ADMISSION PASS</span>
-                      <span className="font-display text-xl text-grit-white">QR + PDF PASS</span>
+                    <div className="bg-asphalt-black p-2.5 border-2 border-asphalt-border">
+                      <span className="text-[10px] text-grit-dim block font-ticker uppercase">DELIVERY</span>
+                      <span className="font-display text-xl text-grit-white">INSTANT QR PASS</span>
                     </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap items-center gap-3 pt-3">
+                    <button
+                      type="button"
+                      onClick={scrollToResults}
+                      className="px-6 py-3 bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-lg uppercase tracking-wider border-2 border-asphalt-black shadow-[4px_4px_0px_#ffffff] transition-all flex items-center gap-2 cursor-pointer font-bold"
+                    >
+                      <span>EXPLORE UPCOMING EVENTS</span>
+                      <ArrowRight size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const nextFilters = { ...filters, category: 'CINEMA' };
+                        setFilters(nextFilters);
+                        handleSearchAndFilter(nextFilters);
+                      }}
+                      className="px-6 py-3 bg-asphalt-black hover:bg-asphalt-surface text-grit-white font-impact text-lg uppercase tracking-wider border-2 border-grit-white shadow-[4px_4px_0px_#eefc54] transition-all flex items-center gap-2 cursor-pointer font-bold"
+                    >
+                      <Film size={18} className="text-acid-yellow" />
+                      <span>CINEMA SCREENINGS</span>
+                    </button>
                   </div>
                 </div>
 
-                {/* Right Side: Digital Ticket Pass Graphic */}
+                {/* Right Side: Featured VIP Pass Graphic */}
                 <div className="lg:col-span-4 flex flex-col items-center justify-center">
                   <div className="w-full max-w-xs bg-asphalt-black border-4 border-grit-white p-4 shadow-[6px_6px_0px_#ff1f6d] rotate-1 group hover:rotate-0 transition-transform">
                     {/* Pass Header */}
-                    <div className="bg-acid-yellow text-asphalt-black p-1.5 text-center font-display text-xl tracking-wider border-2 border-asphalt-black mb-3">
-                      DIGITAL ADMISSION PASS
+                    <div className="bg-acid-yellow text-asphalt-black p-1.5 text-center font-display text-xl tracking-wider border-2 border-asphalt-black mb-3 font-bold">
+                      FEATURED PREMIERE PASS
                     </div>
-                    {/* Pass Reels graphic */}
-                    <div className="bg-asphalt-card border-2 border-asphalt-border rounded p-3 mb-3 flex items-center justify-around">
-                      <div className="w-12 h-12 rounded-full border-4 border-grit-white bg-asphalt-black flex items-center justify-center animate-spin" style={{ animationDuration: '9s' }}>
-                        <div className="w-3 h-3 bg-neon-magenta rounded-full" />
-                      </div>
-                      <div className="h-6 w-24 bg-asphalt-surface border border-asphalt-border flex items-center justify-center text-[10px] font-ticker text-acid-yellow font-bold">
-                        ROW A: SEAT 05
-                      </div>
-                      <div className="w-12 h-12 rounded-full border-4 border-grit-white bg-asphalt-black flex items-center justify-center animate-spin" style={{ animationDuration: '9s' }}>
-                        <div className="w-3 h-3 bg-neon-magenta rounded-full" />
+                    
+                    {/* Event Snapshot */}
+                    <div className="bg-asphalt-card border-2 border-asphalt-border p-3 mb-3 space-y-1.5">
+                      <span className="font-impact text-[10px] bg-neon-magenta text-grit-white px-1.5 py-0.5 uppercase tracking-wider">
+                        MIDNIGHT IMAX 3D
+                      </span>
+                      <h4 className="font-display text-lg uppercase text-grit-white leading-tight">
+                        CYBERPUNK 2099: NEO-TOKYO
+                      </h4>
+                      <p className="font-mono-zine text-[11px] text-acid-yellow">
+                        SCREEN 01 • OMNIPLEX LASER DOME
+                      </p>
+                      <div className="flex items-center justify-between pt-1 border-t border-asphalt-border text-[10px] font-ticker text-grit-dim">
+                        <span>SHOWTIME: 06:15 PM</span>
+                        <span className="text-grit-white font-bold">ROW A : SEAT 05</span>
                       </div>
                     </div>
+
                     {/* Pass Info */}
-                    <div className="text-[11px] font-ticker space-y-1 text-grit-dim">
+                    <div className="text-[11px] font-ticker space-y-1 text-grit-dim mb-3">
                       <div className="flex justify-between">
-                        <span>PASS_ID:</span>
+                        <span>PASS ID:</span>
                         <span className="text-grit-white font-bold">#EHB-PASS-2026-90</span>
                       </div>
                       <div className="flex justify-between">
                         <span>ADMISSION:</span>
-                        <span className="text-neon-magenta font-bold">VIP STAGE ACCESS</span>
+                        <span className="text-neon-magenta font-bold">VIP RESERVED RECLINER</span>
                       </div>
                       <div className="flex justify-between">
                         <span>VALIDATION:</span>
-                        <span className="text-acid-yellow font-bold">CRYPTOGRAPHIC QR</span>
+                        <span className="text-acid-yellow font-bold">VERIFIED QR CODE</span>
                       </div>
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={() => openBookingModal(events.find(e => e.id === 25 || e.category === 'CINEMA') || events[0])}
+                      className="w-full py-2 bg-neon-magenta hover:bg-acid-yellow text-grit-white hover:text-asphalt-black font-impact text-sm uppercase tracking-wider border border-asphalt-black shadow-[2px_2px_0px_#eefc54] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold"
+                    >
+                      <Ticket size={14} />
+                      <span>BOOK THIS EXPERIENCE</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -548,33 +586,33 @@ export default function App() {
 
             {/* 3. EVENT SEARCH & DISPATCH CAPSULE */}
             <section className="mb-14">
-              <div className="bg-acid-yellow p-3 sm:p-4 border-4 border-asphalt-black shadow-[6px_6px_0px_#ffffff]">
-                <div className="flex items-center justify-between pb-2 mb-2 border-b-2 border-asphalt-black font-ticker text-xs font-bold text-asphalt-black">
+              <div className="bg-acid-yellow p-4 sm:p-5 border-4 border-asphalt-black shadow-[6px_6px_0px_#ffffff]">
+                <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-asphalt-black font-ticker text-xs font-bold text-asphalt-black">
                   <span className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-sm">search</span>
-                    SEARCH EVENTS & VENUES // LIVE INVENTORY DISPATCH
+                    <Search size={16} />
+                    DISCOVER EVENTS & VENUES // LIVE BOX OFFICE
                   </span>
-                  <span className="bg-asphalt-black text-acid-yellow px-2 py-0.5">FILTER_ENGINE_V4</span>
+                  <span className="bg-asphalt-black text-acid-yellow px-2 py-0.5">NOW SHOWING</span>
                 </div>
                 <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} className="grid grid-cols-1 md:grid-cols-4 gap-3 text-asphalt-black">
                   {/* Keyword */}
-                  <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
-                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT / ARTIST / KEYWORD</label>
+                  <div className="bg-grit-white border-2 border-asphalt-black p-2.5 flex flex-col justify-between">
+                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT / ARTIST / MOVIE</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. Cyber Music, Tech Summit, Symphony..." 
+                      placeholder="e.g. Cyberpunk, Neon Horizon, Opera..." 
                       value={filters.keyword}
                       onChange={(e) => {
                         const val = e.target.value;
                         setFilters({ ...filters, keyword: val });
                         applyLiveFilter({ ...filters, keyword: val });
                       }}
-                      className="bg-transparent font-impact text-lg text-asphalt-black placeholder:text-asphalt-black/50 focus:outline-none w-full border-none p-0" 
+                      className="bg-transparent font-impact text-lg text-asphalt-black placeholder:text-asphalt-black/40 focus:outline-none w-full border-none p-0" 
                     />
                   </div>
 
                   {/* Category */}
-                  <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
+                  <div className="bg-grit-white border-2 border-asphalt-black p-2.5 flex flex-col justify-between">
                     <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT CATEGORY</label>
                     <select 
                       value={filters.category}
@@ -587,24 +625,24 @@ export default function App() {
                       className="bg-transparent font-impact text-lg text-asphalt-black focus:outline-none w-full cursor-pointer appearance-none border-none p-0"
                     >
                       <option value="">ALL CATEGORIES (ALL EVENTS)</option>
-                      <option value="CINEMA">CINEMA & MOVIE PREMIERES</option>
-                      <option value="MUSIC">MUSIC CONCERTS & FESTIVALS</option>
-                      <option value="TECH">TECH & AI CONFERENCES</option>
-                      <option value="THEATER">THEATER & PERFORMING ARTS</option>
-                      <option value="SPORTS">SPORTS & TOURNAMENTS</option>
-                      <option value="WORKSHOP">HANDS-ON WORKSHOPS</option>
+                      <option value="CINEMA">🎬 CINEMA & MOVIE PREMIERES</option>
+                      <option value="MUSIC">🎵 MUSIC CONCERTS & FESTIVALS</option>
+                      <option value="TECH">💻 TECH & AI CONFERENCES</option>
+                      <option value="THEATER">🎭 THEATER & PERFORMING ARTS</option>
+                      <option value="SPORTS">⚽ SPORTS & TOURNAMENTS</option>
+                      <option value="WORKSHOP">🛠️ HANDS-ON WORKSHOPS</option>
                     </select>
                   </div>
 
                   {/* City / Location */}
-                  <div className="bg-grit-white border-2 border-asphalt-black p-2 flex flex-col justify-between">
+                  <div className="bg-grit-white border-2 border-asphalt-black p-2.5 flex flex-col justify-between">
                     <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">CITY / VENUE LOCATION</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. San Francisco, New York, London..." 
+                      placeholder="e.g. Los Angeles, San Francisco..." 
                       value={filters.city}
                       onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                      className="bg-transparent font-impact text-lg text-asphalt-black placeholder:text-asphalt-black/50 focus:outline-none w-full border-none p-0" 
+                      className="bg-transparent font-impact text-lg text-asphalt-black placeholder:text-asphalt-black/40 focus:outline-none w-full border-none p-0" 
                     />
                   </div>
 
@@ -612,40 +650,70 @@ export default function App() {
                   <div className="flex gap-2">
                     <button 
                       type="submit"
-                      className="flex-1 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white border-2 border-asphalt-black p-2 flex items-center justify-center gap-2 font-display text-2xl tracking-wider uppercase transition-colors shadow-[3px_3px_0px_#0e0e11] cursor-pointer"
+                      className="flex-1 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white border-2 border-asphalt-black p-2 flex items-center justify-center gap-2 font-display text-2xl tracking-wider uppercase transition-colors shadow-[3px_3px_0px_#0e0e11] cursor-pointer font-bold"
                     >
-                      <span>SEARCH EVENTS</span>
-                      <span className="material-symbols-outlined font-bold">search</span>
+                      <span>SEARCH SHOWS</span>
+                      <Search size={18} />
                     </button>
                     {hasActiveFilters(filters) && (
                       <button 
                         type="button"
                         onClick={handleClearSearch}
-                        className="bg-asphalt-black text-acid-yellow border-2 border-asphalt-black px-3 font-display text-xl uppercase cursor-pointer"
+                        className="bg-asphalt-black text-acid-yellow border-2 border-asphalt-black px-3 font-display text-xl uppercase cursor-pointer flex items-center justify-center"
                         title="Clear filters"
                       >
-                        RESET
+                        <RotateCcw size={16} />
                       </button>
                     )}
                   </div>
                 </form>
+
+                {/* Quick Genre Filter Chips */}
+                <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t-2 border-asphalt-black">
+                  <span className="text-[10px] font-ticker font-bold text-asphalt-black uppercase mr-1">QUICK FILTER:</span>
+                  {[
+                    { id: '', label: 'ALL SHOWS' },
+                    { id: 'CINEMA', label: '🎬 CINEMA & IMAX' },
+                    { id: 'MUSIC', label: '🎵 CONCERTS' },
+                    { id: 'THEATER', label: '🎭 THEATER' },
+                    { id: 'TECH', label: '💻 TECH' },
+                    { id: 'SPORTS', label: '⚽ SPORTS' }
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => {
+                        const nextFilters = { ...filters, category: tab.id };
+                        setFilters(nextFilters);
+                        handleSearchAndFilter(nextFilters);
+                      }}
+                      className={`px-2.5 py-0.5 text-xs font-impact tracking-wider uppercase transition-colors cursor-pointer border-2 border-asphalt-black ${
+                        filters.category === tab.id
+                          ? 'bg-asphalt-black text-acid-yellow shadow-[2px_2px_0px_#ffffff]'
+                          : 'bg-grit-white text-asphalt-black hover:bg-asphalt-black hover:text-grit-white'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </section>
 
-            {/* 4. GIG FLYER CARDS: TILTED BADGES, STICKERS, DENSE BARCODES, OVERLAPPING TEAR STUBS */}
+            {/* 4. EVENT LINEUP CATALOG */}
             <section className="mb-16" id="lineup-section" ref={catalogRef}>
               <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between pb-4 mb-6 border-b-4 border-grit-white gap-4">
                 <div>
                   <div className="font-ticker text-xs font-bold text-neon-magenta uppercase tracking-widest flex items-center gap-2">
                     <span className="inline-block w-2.5 h-2.5 bg-neon-magenta animate-pulse" />
-                    LIVE EVENT CATALOG
+                    CURATED LIVE INVENTORY
                   </div>
                   <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white">
-                    UPCOMING EVENTS & TICKETS
+                    UPCOMING EVENTS & SCREENINGS
                   </h2>
                 </div>
                 <div className="flex items-center gap-2 font-ticker text-xs">
-                  <span className="bg-acid-yellow text-asphalt-black font-bold px-2 py-1 -rotate-2">INVENTORY LIVE</span>
+                  <span className="bg-acid-yellow text-asphalt-black font-bold px-2 py-1 -rotate-2">BOX OFFICE LIVE</span>
                   <span className="bg-electric-cobalt text-grit-white font-bold px-2 py-1 rotate-1">{events.length} EVENTS AVAILABLE</span>
                 </div>
               </div>
@@ -680,37 +748,37 @@ export default function App() {
               )}
             </section>
 
-            {/* 5. INTERACTIVE CONCURRENCY CONSOLE */}
+            {/* 5. INTERACTIVE VENUE & SEATING EXPERIENCE */}
             <section className="mb-16 border-4 border-grit-white bg-asphalt-surface p-6 md:p-8 shadow-[8px_8px_0px_#ff1f6d]" id="sound-engine">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                {/* Rig Telemetry Manifesto */}
+                {/* Seating Experience Manifesto */}
                 <div className="lg:col-span-5 space-y-4">
                   <div className="inline-block bg-neon-magenta text-grit-white font-display text-sm tracking-widest px-2 py-0.5 -rotate-2">
-                    CONCURRENCY_ENGINE // STOMP WEBSOCKET
+                    RESERVED SEATING // AUDITORIUM & ARENA
                   </div>
                   <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white leading-none">
-                    INTERACTIVE SEAT MAP & LOCK SYSTEM
+                    CHOOSE YOUR EXACT SEATS IN REAL TIME
                   </h2>
                   <p className="font-mono-zine text-xs sm:text-sm text-grit-dim leading-relaxed">
-                    ZERO DOUBLE BOOKINGS. WHEN YOU SELECT A SEAT TILE, OUR BACKEND IMMEDIATELY SENDS A SUB-15MS STOMP WEBSOCKET BURST AND LOCKS THE SEAT FOR 10 MINUTES TO PREVENT CONFLICTS WHILE YOU COMPLETE CHECKOUT.
+                    Select your preferred viewpoint across auditoriums, IMAX halls, and arenas. Your chosen seats are locked exclusively for 10 minutes while you complete checkout—guaranteeing zero double-bookings or surprise sold-outs.
                   </p>
                   <div className="space-y-2 font-ticker text-xs">
                     <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
-                      <span className="text-grit-dim">SOCKET PROTOCOL:</span>
-                      <span className="text-acid-yellow font-bold">RFC-7118 / STOMP v1.2</span>
+                      <span className="text-grit-dim">RESERVATION HOLD:</span>
+                      <span className="text-acid-yellow font-bold">10-Minute Lock Window</span>
                     </div>
                     <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
-                      <span className="text-grit-dim">SEAT MUTEX TIMEOUT:</span>
-                      <span className="text-grit-white font-bold">10-MINUTE HOLD WINDOW</span>
+                      <span className="text-grit-dim">SIGHTLINE PREVIEW:</span>
+                      <span className="text-grit-white font-bold">Auditorium & Screen Sightlines</span>
                     </div>
                     <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
-                      <span className="text-grit-dim">CONCURRENCY STAMP:</span>
-                      <span className="text-neon-magenta font-bold">@Version ISOLATED LOCK</span>
+                      <span className="text-grit-dim">ADMISSION PASS:</span>
+                      <span className="text-neon-magenta font-bold">Instant Tamper-Proof QR Pass</span>
                     </div>
                   </div>
                   <div className="pt-2 flex items-center gap-2 font-ticker text-xs text-acid-yellow">
                     <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping" />
-                    LIVE INVENTORY SYNC: REAL-TIME WEBSOCKET ACTIVE
+                    LIVE SEATING GRID: REAL-TIME AUDITORIUM SYNC ACTIVE
                   </div>
                 </div>
 
@@ -819,10 +887,10 @@ export default function App() {
                   </button>
                   <button 
                     type="button"
-                    onClick={() => setIsApiDocsOpen(true)}
+                    onClick={() => handleNavigate('create-event')}
                     className="w-full md:w-auto px-6 py-3 bg-asphalt-card hover:bg-asphalt-surface text-grit-white font-display text-2xl tracking-wider uppercase border-2 border-grit-white shadow-[4px_4px_0px_#eefc54] font-bold cursor-pointer"
                   >
-                    API DOCS
+                    PUBLISH EVENT
                   </button>
                 </div>
               </div>
@@ -839,7 +907,7 @@ export default function App() {
                     EVENTHUB
                   </div>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
-                    MODERN LIVE EVENT TICKETING PLATFORM • REAL-TIME SEAT CONCURRENCY • SECURE QR CODE ADMISSION • TRANSPARENT MULTI-CURRENCY BOOKINGS.
+                    Modern live event & cinema ticketing platform. Real-time seat concurrency, instant cryptographic QR passes, and transparent multi-currency booking.
                   </p>
                 </div>
                 <div>
@@ -850,7 +918,7 @@ export default function App() {
                     <li onClick={() => handleNavigate('events')} className="hover:text-grit-white transition-colors cursor-pointer">• EXPLORE EVENTS CATALOG</li>
                     <li onClick={() => handleNavigate('create-event')} className="hover:text-grit-white transition-colors cursor-pointer">• CREATE & PUBLISH EVENT</li>
                     <li onClick={() => handleNavigate('checkin')} className="hover:text-grit-white transition-colors cursor-pointer">• GATE QR SCANNER</li>
-                    <li onClick={() => setIsApiDocsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• REST & STOMP API DOCS</li>
+                    <li onClick={() => setIsApiDocsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• HELP & SUPPORT DESK</li>
                   </ul>
                 </div>
                 <div>
@@ -861,25 +929,25 @@ export default function App() {
                     <li onClick={() => setIsTermsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• TERMS OF SERVICE</li>
                     <li onClick={() => setIsPrivacyOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• PRIVACY POLICY</li>
                     <li onClick={() => setIsCookiesOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• COOKIE PREFERENCES</li>
-                    <li onClick={() => setIsSystemStatusOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• SYSTEM STATUS & HEALTH</li>
+                    <li onClick={() => setIsSystemStatusOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• BUYER PROTECTION & SAFETY</li>
                   </ul>
                 </div>
                 <div>
                   <div className="font-display text-xl uppercase tracking-wider text-electric-cobalt mb-3">
-                    PLATFORM TELEMETRY
+                    BOX OFFICE GUARANTEE
                   </div>
                   <div className="bg-asphalt-surface p-3 border-2 border-asphalt-border space-y-1.5 font-ticker text-xs">
                     <div className="flex justify-between">
-                      <span className="text-grit-dim">REST ENGINE:</span>
-                      <span className="text-acid-yellow font-bold">ONLINE // 200 OK</span>
+                      <span className="text-grit-dim">VERIFIED TICKETS:</span>
+                      <span className="text-acid-yellow font-bold">100% AUTHENTIC</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-grit-dim">DATABASE CLUSTER:</span>
-                      <span className="text-neon-magenta font-bold">POSTGRESQL ACTIVE</span>
+                      <span className="text-grit-dim">RESERVATION HOLD:</span>
+                      <span className="text-neon-magenta font-bold">10-MIN WINDOW</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-grit-dim">WEBSOCKET BROKER:</span>
-                      <span className="text-grit-white font-bold">STOMP v1.2 READY</span>
+                      <span className="text-grit-dim">CUSTOMER SUPPORT:</span>
+                      <span className="text-grit-white font-bold">24/7 CONCIERGE</span>
                     </div>
                   </div>
                 </div>
@@ -889,7 +957,7 @@ export default function App() {
                   © 2026 EVENTHUB TICKETING PLATFORM. ALL RIGHTS RESERVED.
                 </div>
                 <div className="flex items-center gap-4">
-                  <a href="#apidocs" onClick={(e) => { e.preventDefault(); setIsApiDocsOpen(true); }} className="text-acid-yellow hover:underline">API_DOCUMENTATION</a>
+                  <a href="#help" onClick={(e) => { e.preventDefault(); setIsApiDocsOpen(true); }} className="text-acid-yellow hover:underline">HELP_CENTER</a>
                   <span>•</span>
                   <a href="#terms" onClick={(e) => { e.preventDefault(); setIsTermsOpen(true); }} className="text-neon-magenta hover:underline">TERMS_OF_SERVICE</a>
                   <span>•</span>
@@ -1014,10 +1082,10 @@ function HeroProductDemo({ onOpenBooking }) {
       <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-asphalt-border">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-acid-yellow text-lg">event_seat</span>
-          <span className="font-display text-2xl uppercase tracking-wider text-grit-white">SEAT CONCURRENCY MATRIX // STAGE FLOOR</span>
+          <span className="font-display text-2xl uppercase tracking-wider text-grit-white">SEATING GRID // AUDITORIUM & STAGE</span>
         </div>
         <span className="font-ticker text-[10px] bg-neon-magenta text-grit-white px-2 py-0.5 font-bold uppercase">
-          WS://STOMP SEAT STREAM LIVE
+          LIVE SEATING PREVIEW
         </span>
       </div>
 
@@ -1130,37 +1198,27 @@ function HeroProductDemo({ onOpenBooking }) {
   );
 }
 
-// Brutalist Event Pass Flyer Card
+// Eye-Catching & Clean Brutalist Event Flyer Card
 function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
   const isSoldOut = event.availableSeats === 0;
   const canDelete = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER');
   const isCinema = event.category === 'CINEMA' || event.category === 'MOVIE' || /imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(event.name || '');
 
-  const movieFormat = event.movieFormat || (event.description && event.description.match(/FORMAT:\s*([^/|\n]+)/)?.[1]?.trim()) || (isCinema ? 'IMAX 3D // 4K LASER' : null);
-  const movieRuntime = event.movieRuntime || (event.description && event.description.match(/RUNTIME:\s*([^/|\n]+)/)?.[1]?.trim()) || (isCinema ? '162 MIN' : null);
+  const movieFormat = event.movieFormat || (event.description && event.description.match(/FORMAT:\s*([^/|\n]+)/)?.[1]?.trim()) || (isCinema ? 'IMAX 3D' : null);
+  const movieRuntime = event.movieRuntime || (event.description && event.description.match(/RUNTIME:\s*([^/|\n]+)/)?.[1]?.trim()) || (isCinema ? '162 min' : null);
   const movieRating = event.movieRating || (event.description && event.description.match(/RATING:\s*([A-Z0-9-]+)/)?.[1]?.trim()) || (isCinema ? 'PG-13' : null);
   const cinemaShowtimes = event.showtimes || ['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM'];
 
-  const badgeTitles = isCinema 
-    ? ['IMAX PREMIERE', 'NOW SCREENING', '70MM RESTORATION', 'DOLBY ATMOS', 'MIDNIGHT SCREENING', 'DIRECTOR CUT']
-    : ['FEATURED EVENT', 'SELLING FAST', 'VIP AVAILABLE', 'TOP RATED', 'LIMITED PASSES', 'POPULAR SHOW'];
-  const badgeTitle = badgeTitles[index % badgeTitles.length];
-
-  const badgeStyles = [
-    'bg-neon-magenta text-grit-white rotate-6',
-    'bg-acid-yellow text-asphalt-black -rotate-3',
-    'bg-electric-cobalt text-grit-white rotate-4',
-    'bg-neon-magenta text-grit-white -rotate-6'
-  ];
-  const badgeStyle = badgeStyles[index % badgeStyles.length];
-
-  const shadowStyles = [
-    'shadow-[6px_6px_0px_#eefc54]',
-    'shadow-[6px_6px_0px_#ff1f6d]',
-    'shadow-[6px_6px_0px_#1d4ed8]',
-    'shadow-[6px_6px_0px_#eefc54]'
-  ];
-  const shadowStyle = shadowStyles[index % shadowStyles.length];
+  const categoryLabel = isCinema ? 'CINEMA' : (event.category || 'EVENT');
+  const categoryColor = isCinema 
+    ? 'bg-neon-magenta text-grit-white' 
+    : event.category === 'MUSIC' 
+    ? 'bg-acid-yellow text-asphalt-black' 
+    : event.category === 'THEATER' 
+    ? 'bg-electric-cobalt text-grit-white' 
+    : event.category === 'SPORTS' 
+    ? 'bg-amber-400 text-asphalt-black' 
+    : 'bg-emerald-500 text-asphalt-black';
 
   const getImageForEvent = (event) => {
     if (event.bannerImageUrl) return event.bannerImageUrl;
@@ -1173,115 +1231,112 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
   };
 
   const formatEventDate = (dateStr) => {
-    if (!dateStr) return '18.OCT // 19:00';
+    if (!dateStr) return 'Oct 15 • 7:30 PM';
     try {
       const d = new Date(dateStr);
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
-      return `${day} ${month} • 19:00`;
+      const day = d.getDate();
+      const month = d.toLocaleDateString('en-US', { month: 'short' });
+      const weekday = d.toLocaleDateString('en-US', { weekday: 'short' });
+      return `${weekday}, ${month} ${day} • 7:30 PM`;
     } catch {
       return dateStr;
     }
   };
 
   return (
-    <div className={`bg-asphalt-card border-3 border-grit-white relative group hover:-translate-y-1 transition-all ${shadowStyle} flex flex-col justify-between`}>
-      {/* Event Sticker Overlay */}
-      <div className={`absolute -top-3 -right-2 ${badgeStyle} font-display text-sm tracking-wider px-2.5 py-0.5 border border-asphalt-black z-30 shadow-md`}>
-        {badgeTitle}
-      </div>
-
-      {/* Upper Artwork */}
-      <div className="relative h-60 w-full overflow-hidden bg-asphalt-black border-b-3 border-grit-white">
+    <div className="bg-asphalt-card border-2 border-grit-white relative group hover:-translate-y-1 transition-all duration-300 shadow-[4px_4px_0px_#E2F13C] flex flex-col justify-between overflow-hidden">
+      
+      {/* 1. Artwork & Image Overlay */}
+      <div className="relative h-56 w-full overflow-hidden bg-asphalt-black">
         <img 
           src={getImageForEvent(event)} 
           alt={event.name} 
-          className="w-full h-full object-cover grayscale contrast-125 brightness-95 group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-asphalt-black/30 mix-blend-multiply" />
+        {/* Subtle bottom gradient to ensure text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-asphalt-card via-black/20 to-transparent" />
 
-        {/* Date Tag */}
-        <div className="absolute top-2 left-2 bg-acid-yellow text-asphalt-black font-ticker text-[10px] font-black px-1.5 py-0.5 -rotate-3 border border-asphalt-black">
-          DATE: {formatEventDate(event.eventDate)}
-        </div>
+        {/* Top Badges Row */}
+        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+          <span className={`${categoryColor} font-impact text-xs uppercase px-2.5 py-0.5 tracking-wider border border-asphalt-black shadow-sm`}>
+            {categoryLabel}
+          </span>
 
-        <div className="absolute bottom-2 left-2 bg-asphalt-black/90 text-grit-white font-ticker text-[10px] px-2 py-0.5 border border-grit-white/50">
-          VENUE: {event.venueName || 'MAIN ARENA'}
-        </div>
-
-        {/* Quick Actions (Wishlist & Delete) */}
-        <div className="absolute top-2 right-2 flex items-center gap-1 z-40">
-          {canDelete && (
+          <div className="flex items-center gap-1.5 pointer-events-auto">
+            {canDelete && (
+              <button 
+                type="button"
+                onClick={onDelete}
+                className="bg-danger-red/90 hover:bg-danger-red text-grit-white p-1 border border-asphalt-black text-xs font-bold cursor-pointer transition-colors"
+                title="Remove Event"
+              >
+                ✕
+              </button>
+            )}
             <button 
               type="button"
-              onClick={onDelete}
-              className="bg-danger-red text-grit-white p-1 border border-asphalt-black text-xs font-bold cursor-pointer"
-              title="Remove Event"
+              onClick={onWishlist}
+              className="bg-asphalt-black/80 hover:bg-neon-magenta text-grit-white p-1.5 border border-grit-white/40 text-xs cursor-pointer transition-colors"
+              title="Save to wishlist"
             >
-              ✕
+              <Heart size={14} />
             </button>
-          )}
-          <button 
-            type="button"
-            onClick={onWishlist}
-            className="bg-asphalt-black/80 hover:bg-neon-magenta text-grit-white p-1 border border-grit-white text-xs cursor-pointer"
-            title="Save to wishlist"
-          >
-            <Heart size={13} />
-          </button>
-        </div>
-      </div>
-
-      {/* Hazard Tear Notch */}
-      <div className={`h-4 ${index % 2 === 0 ? 'hazard-tape' : 'hazard-tape-magenta'} relative flex items-center justify-between border-y-2 border-asphalt-black select-none`}>
-        <div className="w-3 h-4 bg-asphalt-black -ml-1 border-r-2 border-grit-white" />
-        <div className="font-ticker text-[9px] font-black text-asphalt-black tracking-widest uppercase">
-          {isCinema ? 'CINEMA ADMISSION PASS /// OMNIPLEX AUDITORIUM' : 'OFFICIAL ADMISSION PASS /// EVENTHUB'}
-        </div>
-        <div className="w-3 h-4 bg-asphalt-black -mr-1 border-l-2 border-grit-white" />
-      </div>
-
-      {/* Flyer Lower Stub Body */}
-      <div className="p-4 flex-1 flex flex-col justify-between bg-asphalt-card">
-        <div>
-          <div className="flex items-center gap-1.5 flex-wrap mb-1">
-            <span className="text-[10px] font-ticker text-neon-magenta uppercase tracking-wider font-bold">
-              SECTOR: {isCinema ? 'CINEMA & MOVIES' : (event.category || 'LIVE EVENT')}
-            </span>
-            {isCinema && movieFormat && (
-              <span className="text-[9px] font-mono-zine bg-asphalt-black border border-acid-yellow text-acid-yellow px-1">
-                {movieFormat}
-              </span>
-            )}
-            {isCinema && movieRuntime && (
-              <span className="text-[9px] font-mono-zine bg-asphalt-black border border-asphalt-border text-grit-dim px-1">
-                {movieRuntime}
-              </span>
-            )}
-            {isCinema && movieRating && (
-              <span className="text-[9px] font-impact bg-neon-magenta text-grit-white px-1">
-                {movieRating}
-              </span>
-            )}
           </div>
-          <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white group-hover:text-acid-yellow transition-colors leading-tight mb-1">
+        </div>
+
+        {/* Date & Time pill on bottom of image */}
+        <div className="absolute bottom-2.5 left-2.5 bg-asphalt-black/90 backdrop-blur-sm text-grit-white font-mono-zine text-xs px-2.5 py-1 border border-grit-white/30 flex items-center gap-1.5">
+          <Calendar size={13} className="text-acid-yellow shrink-0" />
+          <span>{formatEventDate(event.eventDate)}</span>
+        </div>
+      </div>
+
+      {/* 2. Content Body */}
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+        <div>
+          {/* Cinema metadata pills (Format, Runtime, Rating) */}
+          {isCinema && (
+            <div className="flex items-center gap-1.5 flex-wrap mb-2">
+              {movieFormat && (
+                <span className="font-impact text-[10px] tracking-wider bg-acid-yellow/15 text-acid-yellow border border-acid-yellow/40 px-1.5 py-0.5 uppercase">
+                  {movieFormat}
+                </span>
+              )}
+              {movieRuntime && (
+                <span className="font-mono-zine text-[10px] text-grit-dim border border-asphalt-border bg-asphalt-surface px-1.5 py-0.5">
+                  {movieRuntime}
+                </span>
+              )}
+              {movieRating && (
+                <span className="font-impact text-[10px] bg-neon-magenta text-grit-white px-1.5 py-0.5">
+                  {movieRating}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Event Title */}
+          <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white group-hover:text-acid-yellow transition-colors leading-tight mb-2 line-clamp-2">
             {event.name}
           </h3>
-          <p className="font-mono-zine text-xs text-grit-dim mb-3">
-            {event.venueName || 'Main Arena'} • {event.city || event.venueAddress || 'Convention Center'}
-          </p>
+
+          {/* Venue & City */}
+          <div className="flex items-center gap-1.5 text-xs font-mono-zine text-grit-dim mb-4">
+            <MapPin size={13} className="text-acid-yellow shrink-0" />
+            <span className="truncate">{event.venueName || 'Main Arena'} • {event.city || event.venueAddress || 'Los Angeles, CA'}</span>
+          </div>
         </div>
 
         <div>
-          {/* Quick Showtime Selector for Cinema Events */}
+          {/* Cinema Showtime Selector Pills */}
           {isCinema && (
-            <div className="mb-3 pt-2 border-t border-asphalt-border/60">
-              <span className="block font-ticker text-[9px] text-grit-dim uppercase tracking-wider mb-1">
-                SCREEN 01 // SELECT SHOWTIME:
+            <div className="mb-3.5 pt-2.5 border-t border-asphalt-border">
+              <span className="block font-ticker text-[10px] text-grit-dim uppercase tracking-wider mb-1.5">
+                SHOWTIMES // SELECT TIME:
               </span>
-              <div className="flex flex-wrap gap-1">
-                {cinemaShowtimes.map((time) => (
+              <div className="grid grid-cols-4 gap-1">
+                {cinemaShowtimes.slice(0, 4).map((time) => (
                   <button
                     key={time}
                     type="button"
@@ -1289,8 +1344,8 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
                       e.stopPropagation();
                       onBook(time);
                     }}
-                    className="font-mono-zine text-[10px] px-2 py-0.5 bg-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black text-grit-white border border-asphalt-border transition-colors cursor-pointer"
-                    title={`Book seats for ${time}`}
+                    className="font-mono-zine text-[10px] py-1 bg-asphalt-surface hover:bg-acid-yellow hover:text-asphalt-black text-grit-white border border-asphalt-border transition-colors text-center cursor-pointer font-bold"
+                    title={`Book ${time} showtime`}
                   >
                     {time}
                   </button>
@@ -1299,26 +1354,33 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
             </div>
           )}
 
-          <div className="bg-asphalt-black p-2 border border-asphalt-border mb-3 flex items-center justify-between">
+          {/* Price & Seat Availability Row */}
+          <div className="bg-asphalt-surface p-2.5 border border-asphalt-border mb-3 flex items-center justify-between">
             <div>
-              <span className="block text-[9px] font-ticker text-grit-dim">{isCinema ? 'CINEMA TICKET' : 'TICKET PRICE'}</span>
-              <span className="font-display text-2xl text-acid-yellow">
+              <span className="block text-[9px] font-ticker text-grit-dim uppercase">TICKET PRICE</span>
+              <span className="font-display text-2xl text-acid-yellow font-bold leading-none">
                 {formatPrice(event.ticketPrice, event.currency)}
               </span>
             </div>
             <div className="text-right">
-              <span className="block text-[9px] font-ticker text-grit-dim">{isCinema ? 'AUDITORIUM SEATS' : 'AVAILABLE SEATS'}</span>
-              <span className="font-ticker text-xs font-bold text-neon-magenta">
-                {isSoldOut ? 'SOLD OUT' : `${event.availableSeats} SEATS LEFT`}
+              <span className="block text-[9px] font-ticker text-grit-dim uppercase">SEATS</span>
+              <span className={`font-mono-zine text-xs font-bold ${isSoldOut ? 'text-danger-red' : 'text-grit-white'}`}>
+                {isSoldOut ? 'SOLD OUT' : (
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" />
+                    {event.availableSeats} LEFT
+                  </span>
+                )}
               </span>
             </div>
           </div>
 
+          {/* Action Button */}
           {isSoldOut ? (
             <button 
               type="button"
               onClick={onWaitlist}
-              className="w-full py-2 bg-asphalt-surface text-grit-dim font-display text-xl uppercase tracking-wider font-black border-2 border-asphalt-border transition-all flex items-center justify-center gap-1 cursor-pointer"
+              className="w-full py-2.5 bg-asphalt-surface text-grit-dim font-impact text-sm uppercase tracking-wider border border-asphalt-border transition-all flex items-center justify-center gap-1 cursor-pointer hover:text-grit-white"
             >
               <span>JOIN WAITLIST</span>
             </button>
@@ -1326,20 +1388,12 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
             <button 
               type="button"
               onClick={() => onBook()}
-              className="w-full py-2 bg-acid-yellow hover:bg-acid-yellow-hover text-asphalt-black font-display text-xl uppercase tracking-wider font-black border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] transition-all flex items-center justify-center gap-1 cursor-pointer"
+              className="w-full py-2.5 bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-base uppercase tracking-wider border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold"
             >
-              <span>{isCinema ? 'BOOK CINEMA SEATS' : 'SELECT SEATS'}</span>
-              <span className="material-symbols-outlined text-base">arrow_forward</span>
+              <span>{isCinema ? 'BOOK SEATS' : 'SELECT SEATS'}</span>
+              <ArrowRight size={15} />
             </button>
           )}
-
-          {/* Barcode Strip */}
-          <div className="mt-3 pt-2 border-t border-asphalt-border/60 flex flex-col items-center">
-            <svg className="w-full h-4 text-grit-dim fill-current opacity-70" preserveAspectRatio="none" viewBox="0 0 100 20">
-              <rect height="20" width="2" x="0" y="0"></rect><rect height="20" width="1" x="4" y="0"></rect><rect height="20" width="3" x="7" y="0"></rect><rect height="20" width="2" x="12" y="0"></rect><rect height="20" width="4" x="16" y="0"></rect><rect height="20" width="1" x="22" y="0"></rect><rect height="20" width="2" x="25" y="0"></rect><rect height="20" width="3" x="29" y="0"></rect><rect height="20" width="1" x="34" y="0"></rect><rect height="20" width="4" x="37" y="0"></rect><rect height="20" width="2" x="43" y="0"></rect><rect height="20" width="1" x="47" y="0"></rect><rect height="20" width="3" x="50" y="0"></rect><rect height="20" width="2" x="55" y="0"></rect><rect height="20" width="4" x="59" y="0"></rect><rect height="20" width="1" x="65" y="0"></rect><rect height="20" width="3" x="68" y="0"></rect><rect height="20" width="2" x="73" y="0"></rect><rect height="20" width="4" x="77" y="0"></rect><rect height="20" width="1" x="83" y="0"></rect><rect height="20" width="2" x="86" y="0"></rect><rect height="20" width="4" x="90" y="0"></rect><rect height="20" width="1" x="96" y="0"></rect>
-            </svg>
-            <span className="text-[9px] font-ticker text-grit-dim tracking-widest mt-0.5">E-TICKET CIPHER // EVENTHUB</span>
-          </div>
         </div>
       </div>
     </div>
@@ -1362,10 +1416,10 @@ const mockEvents = [
   {
     id: 2,
     name: 'Cyberpunk 2099: Neo-Tokyo — Midnight IMAX 3D Premiere',
-    description: 'FORMAT: IMAX 3D // 4K LASER / RUNTIME: 162 MIN / RATING: R-RATED. Worldwide cinema premiere with live synthesized score.',
+    description: 'Worldwide midnight cinema premiere featuring live synthesized original score and laser 3D projection.',
     category: 'CINEMA',
-    movieFormat: 'IMAX 3D // 4K LASER',
-    movieRuntime: '162 MIN',
+    movieFormat: 'IMAX 3D',
+    movieRuntime: '162 min',
     movieRating: 'R-RATED',
     ticketPrice: 24.50,
     availableSeats: 90,
@@ -1378,10 +1432,10 @@ const mockEvents = [
   {
     id: 3,
     name: 'Interstellar: 70mm Special Retrospective Presentation',
-    description: 'FORMAT: 70MM IMAX RE-ISSUE / RUNTIME: 169 MIN / RATING: PG-13. Christopher Nolan magnum opus presented on 70mm film stock with uncompressed 12-channel audio.',
+    description: 'Christopher Nolan sci-fi masterpiece presented on authentic 70mm film stock with 12-channel audio.',
     category: 'CINEMA',
-    movieFormat: '70MM IMAX RE-ISSUE',
-    movieRuntime: '169 MIN',
+    movieFormat: '70MM IMAX',
+    movieRuntime: '169 min',
     movieRating: 'PG-13',
     ticketPrice: 22.00,
     availableSeats: 90,

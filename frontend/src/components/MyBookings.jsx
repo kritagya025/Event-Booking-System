@@ -339,7 +339,7 @@ export default function MyBookings({ currentUser, showToast }) {
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-[10px] font-ticker text-grit-dim uppercase tracking-wider">
-                    TICKET #{b.id} // SEC_NODE
+                    TICKET #{b.id} // VERIFIED PASS
                   </span>
                   {isCinema && (
                     <span className="text-[9px] font-impact bg-asphalt-card border border-asphalt-border px-1.5 py-0.2 text-acid-yellow">

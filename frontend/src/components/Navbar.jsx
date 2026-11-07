@@ -70,7 +70,7 @@ export default function Navbar({
       {/* ─── 0. HIGH VOLTAGE HAZARD WARNING HEADER MARQUEE ─── */}
       <div className="h-7 w-full hazard-tape overflow-hidden flex items-center border-b-2 border-asphalt-black select-none">
         <div className="animate-marquee items-center gap-6 text-asphalt-black font-ticker font-extrabold text-[12px] tracking-widest uppercase py-0.5">
-          <span>[SYSTEM LIVE] EVENTHUB // REAL-TIME STOMP SEAT CONCURRENCY ENGINE // 10-MINUTE SEAT LOCK PROTOCOL [ACTIVE]</span>
+          <span>★ EVENTHUB OFFICIAL BOX OFFICE ★ LIVE CONCERTS, BLOCKBUSTER CINEMA & THEATER</span>
           <span>•</span>
           <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
           <span>•</span>
@@ -78,7 +78,7 @@ export default function Navbar({
           <span>•</span>
           <span>DIRECT ORGANIZER GATE SCANNER VALIDATION // 99.98% DISTRIBUTED UPTIME</span>
           <span>•</span>
-          <span>[SYSTEM LIVE] EVENTHUB // REAL-TIME STOMP SEAT CONCURRENCY ENGINE // 10-MINUTE SEAT LOCK PROTOCOL [ACTIVE]</span>
+          <span>★ EVENTHUB OFFICIAL BOX OFFICE ★ LIVE CONCERTS, BLOCKBUSTER CINEMA & THEATER</span>
           <span>•</span>
           <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
           <span>•</span>
@@ -102,12 +102,12 @@ export default function Navbar({
                 EVENTHUB
               </div>
               <div className="hidden sm:flex flex-col font-ticker leading-none">
-                <span className="text-xs font-bold text-grit-white tracking-widest uppercase">TICKETING_PROTOCOL</span>
+                <span className="text-xs font-bold text-grit-white tracking-widest uppercase">LIVE EVENTS & CINEMA</span>
                 <span className="text-[10px] text-neon-magenta tracking-tight">REAL-TIME SEAT RESERVATION & PASSES</span>
               </div>
             </div>
             <span className="hidden lg:inline-block font-ticker text-[10px] bg-electric-cobalt text-grit-white px-2 py-0.5 uppercase font-bold border border-grit-white/40 stamp-slant-2">
-              PLATFORM V2.4
+              VERIFIED TICKETS
             </span>
           </div>
 
