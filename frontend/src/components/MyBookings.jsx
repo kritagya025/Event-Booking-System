@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink } from 'lucide-react';
 import { apiFetch, BASE_URL } from '../services/api';
 import { formatPrice } from '../services/currency';
+import BookingCardSkeleton from './BookingCardSkeleton';
 
 export default function MyBookings({ currentUser, showToast }) {
   const [bookings, setBookings] = useState([]);
@@ -293,18 +294,7 @@ export default function MyBookings({ currentUser, showToast }) {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="bg-asphalt-surface border-2 border-asphalt-border p-5 space-y-4 animate-pulse">
-              <div className="flex justify-between items-center">
-                <div className="h-4 w-28 bg-asphalt-card" />
-                <div className="h-4 w-16 bg-asphalt-card" />
-              </div>
-              <div className="h-8 w-3/4 bg-asphalt-card" />
-              <div className="space-y-2 pt-2">
-                <div className="h-3 w-1/2 bg-asphalt-card" />
-                <div className="h-3 w-2/3 bg-asphalt-card" />
-              </div>
-              <div className="h-10 w-full bg-asphalt-card border border-asphalt-border mt-4" />
-            </div>
+            <BookingCardSkeleton key={i} />
           ))}
         </div>
       ) : filteredBookings.length === 0 ? (

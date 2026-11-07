@@ -122,23 +122,31 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
             <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block mb-1">
               RELATIONAL TUPLE AUDIT
             </span>
-            {tables.map((t) => (
-              <div key={t.name} className="bg-asphalt-card border border-asphalt-border p-3 flex items-center justify-between">
-                <div>
-                  <h4 className="font-impact text-sm uppercase text-grit-white tracking-wider leading-none mb-0.5">
-                    TABLE: {t.name}
-                  </h4>
-                  <p className="text-[10px] text-grit-dim uppercase">
-                    {t.description}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span className="bg-acid-yellow text-asphalt-black font-ticker text-xs px-2 py-0.5 font-bold uppercase">
-                    {t.rows} TUPLES
-                  </span>
-                </div>
+            {loading ? (
+              <div className="space-y-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="h-12 skeleton-box border border-asphalt-border" />
+                ))}
               </div>
-            ))}
+            ) : (
+              tables.map((t) => (
+                <div key={t.name} className="bg-asphalt-card border border-asphalt-border p-3 flex items-center justify-between">
+                  <div>
+                    <h4 className="font-impact text-sm uppercase text-grit-white tracking-wider leading-none mb-0.5">
+                      TABLE: {t.name}
+                    </h4>
+                    <p className="text-[10px] text-grit-dim uppercase">
+                      {t.description}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="bg-acid-yellow text-asphalt-black font-ticker text-xs px-2 py-0.5 font-bold uppercase">
+                      {t.rows} TUPLES
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
         </div>

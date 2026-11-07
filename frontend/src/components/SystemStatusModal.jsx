@@ -134,7 +134,16 @@ export default function SystemStatusModal({ isOpen, onClose }) {
           </div>
 
           {/* Diagnostics grid */}
-          {diagnostics && (
+          {loading && !diagnostics ? (
+            <div className="grid grid-cols-4 gap-2 bg-asphalt-black border border-asphalt-border p-3 text-xs uppercase">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="space-y-1">
+                  <div className="h-2.5 w-14 skeleton-box" />
+                  <div className="h-4 w-12 skeleton-box" />
+                </div>
+              ))}
+            </div>
+          ) : diagnostics && (
             <div className="grid grid-cols-4 gap-2 bg-asphalt-black border border-asphalt-border p-3 text-xs uppercase">
               <div>
                 <span className="text-[10px] text-grit-dim block">JVM MEMORY</span>

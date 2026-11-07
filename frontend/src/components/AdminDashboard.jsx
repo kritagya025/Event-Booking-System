@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Activity, Trash2 } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
+import AdminDashboardSkeleton from './AdminDashboardSkeleton';
 
 export default function AdminDashboard({ showToast }) {
   const [dashboardData, setDashboardData] = useState(null);
   const [revenueData, setRevenueData] = useState(null);
-  const [_loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchAdminData();
@@ -100,7 +101,11 @@ export default function AdminDashboard({ showToast }) {
         </button>
       </div>
 
-      {/* 4 Brutalist Metric Stamps */}
+      {loading ? (
+        <AdminDashboardSkeleton />
+      ) : (
+        <>
+          {/* 4 Brutalist Metric Stamps */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-asphalt-surface border-2 border-grit-white p-5 shadow-[3px_3px_0px_#E2F13C] relative">
           <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PLATFORM REVENUE</span>
@@ -152,27 +157,42 @@ export default function AdminDashboard({ showToast }) {
             <span className="w-2.5 h-2.5 bg-acid-yellow"></span> TOP POPULAR EVENTS
           </h3>
           <div className="space-y-3">
-            {metrics.popularEvents?.map((event, idx) => (
+            {metrics.popularEvents?.map((event, idx) => {
+              const isSoldOut = event.availableSeats === 0;
+              return (
               <div 
                 key={event.id || idx} 
-                className="bg-asphalt-card border-2 border-asphalt-border p-3.5 flex items-center justify-between"
+                className={`p-3.5 flex items-center justify-between border-2 transition-all ${
+                  isSoldOut
+                    ? 'sold-out-monochrome bg-asphalt-black border-grit-dim/60 opacity-80'
+                    : 'bg-asphalt-card border-asphalt-border'
+                }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 bg-acid-yellow text-asphalt-black font-impact text-sm flex items-center justify-center font-bold">
+                  <div className={`w-7 h-7 font-impact text-sm flex items-center justify-center font-bold ${
+                    isSoldOut ? 'bg-asphalt-card text-grit-white border border-grit-dim' : 'bg-acid-yellow text-asphalt-black'
+                  }`}>
                     0{idx + 1}
                   </div>
                   <div>
-                    <h4 className="font-impact text-base uppercase tracking-wider text-grit-white leading-none">
-                      {event.name}
-                    </h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-impact text-base uppercase tracking-wider text-grit-white leading-none">
+                        {event.name}
+                      </h4>
+                      {isSoldOut && (
+                        <span className="bg-grit-white text-asphalt-black font-impact text-[9px] px-1 py-0.2 uppercase font-bold">
+                          SOLD OUT
+                        </span>
+                      )}
+                    </div>
                     <span className="font-ticker text-[10px] text-grit-dim uppercase">
-                      {event.category} · {event.availableSeats || 50} REMAINING
+                      {event.category} · {isSoldOut ? 'CAPACITY REACHED' : `${event.availableSeats || 50} REMAINING`}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="font-display text-xl text-acid-yellow font-bold">
+                  <span className={`font-display text-xl font-bold ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
                     {formatPrice(event.ticketPrice, event.currency)}
                   </span>
                   <button 
@@ -184,7 +204,8 @@ export default function AdminDashboard({ showToast }) {
                   </button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -222,6 +243,8 @@ export default function AdminDashboard({ showToast }) {
         </div>
 
       </div>
+        </>
+      )}
 
     </div>
   );

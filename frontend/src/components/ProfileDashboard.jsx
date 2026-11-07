@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Mail, Phone, Edit3, X, LogOut } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
+import ProfileSkeleton from './ProfileSkeleton';
 
 export default function ProfileDashboard({ currentUser, onNavigate, showToast, onUpdateUser, onLogout }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'bookings' | 'wishlist' | 'events'
   const [profile, setProfile] = useState(currentUser);
+  const [loading, setLoading] = useState(true);
 
   // Customer Data
   const [bookings, setBookings] = useState([]);
@@ -24,6 +26,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
   const [savingProfile, setSavingProfile] = useState(false);
 
   const fetchProfileData = useCallback(async () => {
+    setLoading(true);
     try {
       const userRes = await apiFetch('/users/me').catch(() => currentUser);
       if (userRes) {
@@ -54,6 +57,8 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       }
     } catch (err) {
       console.error('Failed to load profile details:', err);
+    } finally {
+      setLoading(false);
     }
   }, [currentUser]);
 
@@ -142,8 +147,11 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
 
   return (
     <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
-      
-      {/* Profile Header Box */}
+      {loading ? (
+        <ProfileSkeleton />
+      ) : (
+        <>
+          {/* Profile Header Box */}
       <div className="bg-asphalt-surface border-2 border-grit-white p-6 md:p-8 shadow-[4px_4px_0px_#E2F13C] mb-8 relative">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
@@ -330,6 +338,8 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
 
       {/* Edit Profile Modal */}

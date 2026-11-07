@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
@@ -18,7 +18,12 @@ import ApiDocsModal from './components/ApiDocsModal';
 import Background3D from './components/Background3D';
 
 import EventCardSkeleton from './components/EventCardSkeleton';
-import { Heart, Bell, AlertCircle, Check, Zap, Radio, Calendar, MapPin, ArrowRight, Search, RotateCcw, Film, Ticket, Sparkles } from 'lucide-react';
+import { 
+  Heart, Bell, AlertCircle, Check, Zap, Radio, Calendar, MapPin, 
+  ArrowRight, Search, RotateCcw, Film, Ticket, Sparkles, 
+  SlidersHorizontal, Music, Theater, Laptop, Trophy,
+  ChevronLeft, ChevronRight 
+} from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
 
@@ -94,6 +99,36 @@ export default function App() {
   const filtersRef = useRef(filters);
   const allMasterEventsRef = useRef([]);
   const catalogRef = useRef(null);
+
+  const categoryCounts = useMemo(() => {
+    const master = allMasterEvents.length > 0 
+      ? allMasterEvents 
+      : (allMasterEventsRef.current.length > 0 ? allMasterEventsRef.current : mockEvents);
+    const counts = { ALL: master.length, CINEMA: 0, MUSIC: 0, THEATER: 0, TECH: 0, SPORTS: 0 };
+    master.forEach((e) => {
+      const isCinema = e.category === 'CINEMA' || e.category === 'MOVIE' || /imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(e.name || '');
+      if (isCinema) {
+        counts.CINEMA = (counts.CINEMA || 0) + 1;
+      } else if (counts[e.category] !== undefined) {
+        counts[e.category] = (counts[e.category] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [allMasterEvents]);
+
+  const categories = useMemo(() => [
+    { id: '', key: 'ALL', label: 'ALL SHOWS', icon: Sparkles },
+    { id: 'CINEMA', key: 'CINEMA', label: 'CINEMA & IMAX', icon: Film },
+    { id: 'MUSIC', key: 'MUSIC', label: 'CONCERTS', icon: Music },
+    { id: 'THEATER', key: 'THEATER', label: 'THEATER & ARTS', icon: Theater },
+    { id: 'TECH', key: 'TECH', label: 'TECH & AI', icon: Laptop },
+    { id: 'SPORTS', key: 'SPORTS', label: 'SPORTS & ARENA', icon: Trophy },
+  ], []);
+
+  const trendingEvents = useMemo(() => {
+    const pool = popularEvents.length > 0 ? popularEvents : (events.length > 0 ? events : mockEvents);
+    return pool.slice(0, 4);
+  }, [popularEvents, events]);
 
   const scrollToResults = () => {
     if (catalogRef.current) {
@@ -195,7 +230,11 @@ export default function App() {
     let list = [...masterSource];
 
     if (criteria.category) {
-      list = list.filter((e) => e.category === criteria.category);
+      if (criteria.category === 'CINEMA') {
+        list = list.filter((e) => e.category === 'CINEMA' || e.category === 'MOVIE' || /imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(e.name || ''));
+      } else {
+        list = list.filter((e) => e.category === criteria.category);
+      }
     }
     if (criteria.city && criteria.city.trim()) {
       const ctLower = criteria.city.trim().toLowerCase();
@@ -469,7 +508,7 @@ export default function App() {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                <div className="lg:col-span-8 space-y-4">
+                <div className="lg:col-span-7 space-y-4">
                   <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-3 py-1 stamp-slant-1">
                     <Sparkles size={14} className="text-acid-yellow" />
                     <span className="font-ticker text-xs font-bold uppercase text-acid-yellow tracking-widest">
@@ -530,56 +569,12 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Right Side: Featured VIP Pass Graphic */}
-                <div className="lg:col-span-4 flex flex-col items-center justify-center">
-                  <div className="w-full max-w-xs bg-asphalt-black border-4 border-grit-white p-4 shadow-[6px_6px_0px_#ff1f6d] rotate-1 group hover:rotate-0 transition-transform">
-                    {/* Pass Header */}
-                    <div className="bg-acid-yellow text-asphalt-black p-1.5 text-center font-display text-xl tracking-wider border-2 border-asphalt-black mb-3 font-bold">
-                      FEATURED PREMIERE PASS
-                    </div>
-                    
-                    {/* Event Snapshot */}
-                    <div className="bg-asphalt-card border-2 border-asphalt-border p-3 mb-3 space-y-1.5">
-                      <span className="font-impact text-[10px] bg-neon-magenta text-grit-white px-1.5 py-0.5 uppercase tracking-wider">
-                        MIDNIGHT IMAX 3D
-                      </span>
-                      <h4 className="font-display text-lg uppercase text-grit-white leading-tight">
-                        CYBERPUNK 2099: NEO-TOKYO
-                      </h4>
-                      <p className="font-mono-zine text-[11px] text-acid-yellow">
-                        SCREEN 01 • OMNIPLEX LASER DOME
-                      </p>
-                      <div className="flex items-center justify-between pt-1 border-t border-asphalt-border text-[10px] font-ticker text-grit-dim">
-                        <span>SHOWTIME: 06:15 PM</span>
-                        <span className="text-grit-white font-bold">ROW A : SEAT 05</span>
-                      </div>
-                    </div>
-
-                    {/* Pass Info */}
-                    <div className="text-[11px] font-ticker space-y-1 text-grit-dim mb-3">
-                      <div className="flex justify-between">
-                        <span>PASS ID:</span>
-                        <span className="text-grit-white font-bold">#EHB-PASS-2026-90</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>ADMISSION:</span>
-                        <span className="text-neon-magenta font-bold">VIP RESERVED RECLINER</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>VALIDATION:</span>
-                        <span className="text-acid-yellow font-bold">VERIFIED QR CODE</span>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => openBookingModal(events.find(e => e.id === 25 || e.category === 'CINEMA') || events[0])}
-                      className="w-full py-2 bg-neon-magenta hover:bg-acid-yellow text-grit-white hover:text-asphalt-black font-impact text-sm uppercase tracking-wider border border-asphalt-black shadow-[2px_2px_0px_#eefc54] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold"
-                    >
-                      <Ticket size={14} />
-                      <span>BOOK THIS EXPERIENCE</span>
-                    </button>
-                  </div>
+                {/* Right Side: Interactive Trending Spotlight Slideshow */}
+                <div className="lg:col-span-5 flex flex-col items-center justify-center">
+                  <HeroTrendingSlideshow 
+                    events={trendingEvents} 
+                    onBook={(event) => openBookingModal(event)} 
+                  />
                 </div>
               </div>
             </section>
@@ -667,36 +662,6 @@ export default function App() {
                     )}
                   </div>
                 </form>
-
-                {/* Quick Genre Filter Chips */}
-                <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t-2 border-asphalt-black">
-                  <span className="text-[10px] font-ticker font-bold text-asphalt-black uppercase mr-1">QUICK FILTER:</span>
-                  {[
-                    { id: '', label: 'ALL SHOWS' },
-                    { id: 'CINEMA', label: '🎬 CINEMA & IMAX' },
-                    { id: 'MUSIC', label: '🎵 CONCERTS' },
-                    { id: 'THEATER', label: '🎭 THEATER' },
-                    { id: 'TECH', label: '💻 TECH' },
-                    { id: 'SPORTS', label: '⚽ SPORTS' }
-                  ].map(tab => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => {
-                        const nextFilters = { ...filters, category: tab.id };
-                        setFilters(nextFilters);
-                        handleSearchAndFilter(nextFilters);
-                      }}
-                      className={`px-2.5 py-0.5 text-xs font-impact tracking-wider uppercase transition-colors cursor-pointer border-2 border-asphalt-black ${
-                        filters.category === tab.id
-                          ? 'bg-asphalt-black text-acid-yellow shadow-[2px_2px_0px_#ffffff]'
-                          : 'bg-grit-white text-asphalt-black hover:bg-asphalt-black hover:text-grit-white'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
               </div>
             </section>
 
@@ -715,6 +680,82 @@ export default function App() {
                 <div className="flex items-center gap-2 font-ticker text-xs">
                   <span className="bg-acid-yellow text-asphalt-black font-bold px-2 py-1 -rotate-2">BOX OFFICE LIVE</span>
                   <span className="bg-electric-cobalt text-grit-white font-bold px-2 py-1 rotate-1">{events.length} EVENTS AVAILABLE</span>
+                </div>
+              </div>
+
+              {/* Enhanced Neo-Brutalist Category Filter Bar */}
+              <div className="bg-asphalt-surface border-3 border-grit-white p-3 sm:p-4 mb-8 shadow-[6px_6px_0px_#eefc54]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-3 border-b border-asphalt-border">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <SlidersHorizontal size={15} className="text-acid-yellow" />
+                    <span className="font-ticker text-xs font-bold uppercase tracking-wider text-grit-dim">
+                      FILTER BY EXPERIENCE:
+                    </span>
+                    {filters.category ? (
+                      <span className="bg-neon-magenta text-grit-white text-[10px] font-mono-zine px-2 py-0.5 font-bold uppercase">
+                        ACTIVE: {categories.find(c => c.id === filters.category)?.label || filters.category}
+                      </span>
+                    ) : (
+                      <span className="bg-asphalt-card text-acid-yellow border border-asphalt-border text-[10px] font-mono-zine px-2 py-0.5 uppercase">
+                        ALL SHOWS
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="font-ticker text-xs text-grit-dim">
+                      SHOWING <span className="text-acid-yellow font-bold">{events.length}</span> {events.length === 1 ? 'EVENT' : 'EVENTS'}
+                    </span>
+                    {hasActiveFilters(filters) && (
+                      <button
+                        type="button"
+                        onClick={handleClearSearch}
+                        className="text-xs font-ticker text-neon-magenta hover:text-grit-white flex items-center gap-1 font-bold underline cursor-pointer"
+                        title="Clear all active filters"
+                      >
+                        <RotateCcw size={12} />
+                        <span>RESET FILTERS</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Horizontal Category Tabs */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                  {categories.map((tab) => {
+                    const Icon = tab.icon;
+                    const isActive = filters.category === tab.id;
+                    const count = categoryCounts[tab.key] ?? 0;
+
+                    return (
+                      <button
+                        key={tab.key}
+                        type="button"
+                        onClick={() => {
+                          const nextFilters = { ...filters, category: tab.id };
+                          setFilters(nextFilters);
+                          handleSearchAndFilter(nextFilters);
+                        }}
+                        className={`group flex items-center gap-2 px-3.5 py-2 whitespace-nowrap transition-all duration-150 cursor-pointer border-2 ${
+                          isActive
+                            ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ff1f6d] -translate-y-0.5 font-bold'
+                            : 'bg-asphalt-card text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-grit-white shadow-[2px_2px_0px_rgba(255,255,255,0.1)]'
+                        }`}
+                      >
+                        <Icon size={16} className={isActive ? 'text-asphalt-black' : 'text-acid-yellow group-hover:scale-110 transition-transform'} />
+                        <span className="font-display text-sm tracking-wider uppercase">{tab.label}</span>
+                        <span
+                          className={`text-[10px] font-mono-zine px-1.5 py-0.5 leading-none ${
+                            isActive
+                              ? 'bg-asphalt-black text-acid-yellow font-bold'
+                              : 'bg-asphalt-surface text-grit-dim border border-asphalt-border group-hover:text-grit-white'
+                          }`}
+                        >
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1198,6 +1239,298 @@ function HeroProductDemo({ onOpenBooking }) {
   );
 }
 
+// Interactive Stacked Card Deck for Hero Section (3-4 Cards Stacked, Slide on Click)
+function HeroTrendingSlideshow({ events = [], onBook }) {
+  const slides = useMemo(() => {
+    if (!events || events.length === 0) return [];
+    return events.slice(0, 4);
+  }, [events]);
+
+  const total = slides.length;
+  const [stack, setStack] = useState([0, 1, 2, 3].slice(0, total || 4));
+  const [slidingOut, setSlidingOut] = useState(false);
+  const [slideDir, setSlideDir] = useState('right');
+  const [isPaused, setIsPaused] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(null);
+
+  // Keep stack synced with total slides count
+  useEffect(() => {
+    if (total > 0) {
+      setStack([0, 1, 2, 3].slice(0, total));
+    }
+  }, [total]);
+
+  // Slide top card away and bring next card forward
+  const handleSlideNext = useCallback((dir = 'right') => {
+    if (slidingOut || total <= 1) return;
+    setSlideDir(dir);
+    setSlidingOut(true);
+
+    setTimeout(() => {
+      setStack((prev) => [...prev.slice(1), prev[0]]);
+      setSlidingOut(false);
+    }, 320);
+  }, [slidingOut, total]);
+
+  // Auto-slide every 2.6 seconds (paused when hovered)
+  useEffect(() => {
+    if (total <= 1 || isPaused) return;
+    const interval = setInterval(() => {
+      handleSlideNext('right');
+    }, 2600);
+    return () => clearInterval(interval);
+  }, [total, isPaused, handleSlideNext]);
+
+  if (total === 0) return null;
+
+  // Touch handlers for mobile phones (instant swipe & tap)
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 35) {
+      handleSlideNext('left');
+    } else if (diff < -35) {
+      handleSlideNext('right');
+    } else {
+      handleSlideNext('right');
+    }
+    setTouchStartX(null);
+  };
+
+  const getImage = (evt) => {
+    if (evt.bannerImageUrl) return evt.bannerImageUrl;
+    const isCin = evt.category === 'CINEMA' || evt.category === 'MOVIE' || /imax|cinema|movie|film|screening/i.test(evt.name || '');
+    if (evt.category === 'CINEMA' || isCin) return 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80';
+    if (evt.category === 'MUSIC') return '/images/concert.png';
+    if (evt.category === 'TECH') return '/images/tech.png';
+    if (evt.category === 'THEATER') return 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80';
+    if (evt.category === 'SPORTS') return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80';
+    return '/images/concert.png';
+  };
+
+  const formatSlideDate = (dateStr) => {
+    if (!dateStr) return 'Oct 15 • 7:30 PM';
+    try {
+      const d = new Date(dateStr);
+      const day = d.getDate();
+      const month = d.toLocaleDateString('en-US', { month: 'short' });
+      const weekday = d.toLocaleDateString('en-US', { weekday: 'short' });
+      return `${weekday}, ${month} ${day} • 7:30 PM`;
+    } catch {
+      return dateStr;
+    }
+  };
+
+  // Stack styling definitions for 4 visual layers
+  const getStackStyle = (pos) => {
+    if (pos === 0) {
+      if (slidingOut) {
+        return {
+          transform: slideDir === 'left' 
+            ? 'translateX(-125%) translateY(-15px) rotate(-16deg)' 
+            : 'translateX(125%) translateY(-15px) rotate(16deg)',
+          opacity: 0,
+          zIndex: 40,
+          transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+          pointerEvents: 'none',
+        };
+      }
+      return {
+        transform: 'translateY(0px) scale(1) rotate(0deg)',
+        opacity: 1,
+        zIndex: 30,
+        transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+        cursor: 'pointer',
+      };
+    }
+    if (pos === 1) {
+      return {
+        transform: 'translateY(-16px) scale(0.95) rotate(1.5deg)',
+        opacity: 0.88,
+        zIndex: 20,
+        transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+        pointerEvents: 'none',
+      };
+    }
+    if (pos === 2) {
+      return {
+        transform: 'translateY(-30px) scale(0.90) rotate(-1.5deg)',
+        opacity: 0.72,
+        zIndex: 10,
+        transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+        pointerEvents: 'none',
+      };
+    }
+    return {
+      transform: 'translateY(-42px) scale(0.85) rotate(0.8deg)',
+      opacity: 0.55,
+      zIndex: 5,
+      transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+      pointerEvents: 'none',
+    };
+  };
+
+  return (
+    <div 
+      className="relative w-full max-w-sm sm:max-w-md h-[510px] sm:h-[530px] pt-12 select-none"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* 3 to 4 Cards Stacked Above Each Other */}
+      {stack.map((eventIndex, pos) => {
+        const current = slides[eventIndex];
+        if (!current) return null;
+        const isTop = pos === 0;
+        const isSoldOut = current.availableSeats === 0;
+        const isCinema = current.category === 'CINEMA' || current.category === 'MOVIE' || /imax|cinema|movie|film|screening/i.test(current.name || '');
+
+        return (
+          <div
+            key={current.id || eventIndex}
+            onClick={() => isTop && handleSlideNext('right')}
+            style={getStackStyle(pos)}
+            className={`absolute inset-x-0 bottom-0 top-12 bg-asphalt-black border-4 ${
+              isTop 
+                ? (isSoldOut ? 'sold-out-monochrome border-grit-dim shadow-[6px_6px_0px_#222226]' : 'border-grit-white shadow-[6px_6px_0px_#ff1f6d]')
+                : 'border-asphalt-border shadow-[4px_4px_0px_rgba(0,0,0,0.6)]'
+            } flex flex-col justify-between overflow-hidden group ${isSoldOut ? 'sold-out-monochrome' : ''}`}
+            title={isTop ? "Click card to slide away and reveal next show!" : ""}
+          >
+            {/* Top Header Bar */}
+            <div className={`p-2 px-3 border-b-2 border-asphalt-black flex items-center justify-between z-10 relative ${
+              isSoldOut 
+                ? 'bg-asphalt-surface text-grit-white border-b-2 border-grit-dim'
+                : (isTop ? 'bg-acid-yellow text-asphalt-black' : pos === 1 ? 'bg-neon-magenta text-grit-white' : 'bg-electric-cobalt text-grit-white')
+            }`}>
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${isSoldOut ? 'bg-grit-dim' : (isTop ? 'bg-neon-magenta animate-pulse' : 'bg-acid-yellow')}`} />
+                <span className="font-display text-xs sm:text-sm tracking-wider uppercase font-bold">
+                  {isSoldOut ? 'ARCHIVED // SOLD OUT' : (isTop ? 'TRENDING CARD' : `CARD #${eventIndex + 1}`)}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {isTop && (
+                  <span className="font-ticker text-[9px] uppercase font-bold text-asphalt-black flex items-center gap-1 bg-white/70 px-1.5 py-0.5 border border-asphalt-black/40">
+                    CLICK TO SLIDE ↗
+                  </span>
+                )}
+                <span className="font-mono-zine text-xs font-bold bg-asphalt-black text-acid-yellow px-1.5 py-0.5">
+                  0{eventIndex + 1} / 0{total}
+                </span>
+              </div>
+            </div>
+
+            {/* Image Area */}
+            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-asphalt-card">
+              <img 
+                src={getImage(current)} 
+                alt={current.name} 
+                className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${isSoldOut ? 'grayscale contrast-125' : ''}`} 
+                draggable={false}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-asphalt-black via-black/25 to-transparent" />
+
+              {/* Diagonal SOLD OUT Stamp */}
+              {isSoldOut && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                  <div className="bg-asphalt-black/95 text-grit-white border-2 border-grit-white px-3 py-1 font-display text-2xl tracking-widest uppercase -rotate-12 shadow-[3px_3px_0px_#000000]">
+                    SOLD OUT
+                  </div>
+                </div>
+              )}
+
+              {/* Badges */}
+              <div className="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none">
+                <span className={`font-impact text-[10px] tracking-wider uppercase px-2 py-0.5 ${isSoldOut ? 'bg-asphalt-black text-grit-white border border-grit-white' : 'bg-neon-magenta text-grit-white'} border border-asphalt-black shadow-sm`}>
+                  {isCinema ? '🎬 CINEMA & IMAX' : `★ ${current.category || 'EVENT'}`}
+                </span>
+                <span className="font-mono-zine text-[10px] font-bold px-2 py-0.5 bg-asphalt-black/85 text-acid-yellow border border-acid-yellow/40 backdrop-blur-sm">
+                  {current.availableSeats > 0 ? `${current.availableSeats} SEATS LEFT` : 'SOLD OUT'}
+                </span>
+              </div>
+
+              {/* Date Stamp */}
+              <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-asphalt-black/90 px-2 py-0.5 border border-grit-white/30 text-grit-white font-mono-zine text-xs">
+                <Calendar size={12} className={isSoldOut ? 'text-grit-dim' : 'text-acid-yellow'} />
+                <span>{formatSlideDate(current.eventDate)}</span>
+              </div>
+            </div>
+
+            {/* Content Details */}
+            <div className="p-3.5 sm:p-4 bg-asphalt-black flex-1 flex flex-col justify-between">
+              <div>
+                <h4 className="font-display text-lg sm:text-xl uppercase text-grit-white tracking-wide leading-tight line-clamp-2 group-hover:text-acid-yellow transition-colors mb-1">
+                  {current.name}
+                </h4>
+                <div className="flex items-center gap-1.5 text-xs font-mono-zine text-grit-dim mb-2">
+                  <MapPin size={12} className={isSoldOut ? 'text-grit-dim' : 'text-acid-yellow shrink-0'} />
+                  <span className="truncate">{current.venueName || 'Main Arena'} • {current.venueAddress || current.city || 'Los Angeles, CA'}</span>
+                </div>
+              </div>
+
+              {/* Price & CTA */}
+              <div>
+                <div className="flex items-center justify-between pb-2 mb-2 border-t border-asphalt-border pt-1.5 text-xs font-ticker">
+                  <span className="text-grit-dim">ADMISSION FROM:</span>
+                  <span className={`font-display text-xl sm:text-2xl font-bold ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
+                    {formatPrice(current.ticketPrice, current.currency)}
+                  </span>
+                </div>
+
+                {isSoldOut ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onBook(current);
+                    }}
+                    className="w-full py-2 bg-asphalt-surface hover:bg-grit-white text-grit-white hover:text-asphalt-black font-impact text-sm uppercase tracking-wider border-2 border-grit-dim hover:border-grit-white shadow-[3px_3px_0px_#222] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold active:scale-[0.98]"
+                  >
+                    <span>SOLD OUT // JOIN WAITLIST</span>
+                    <ArrowRight size={13} />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onBook(current);
+                    }}
+                    className="w-full py-2 bg-neon-magenta hover:bg-acid-yellow text-grit-white hover:text-asphalt-black font-impact text-sm uppercase tracking-wider border-2 border-asphalt-black shadow-[3px_3px_0px_#eefc54] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold active:scale-[0.98]"
+                  >
+                    <Ticket size={14} />
+                    <span>BOOK THIS SHOW NOW</span>
+                    <ArrowRight size={13} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Bottom Stack Indicators */}
+            <div className="flex items-center justify-center gap-1.5 py-1.5 bg-asphalt-black border-t border-asphalt-border">
+              {slides.map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-1.5 transition-all ${
+                    i === eventIndex ? 'w-5 bg-acid-yellow' : 'w-1.5 bg-asphalt-border'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // Eye-Catching & Clean Brutalist Event Flyer Card
 function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
   const isSoldOut = event.availableSeats === 0;
@@ -1244,22 +1577,35 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
   };
 
   return (
-    <div className="bg-asphalt-card border-2 border-grit-white relative group hover:-translate-y-1 transition-all duration-300 shadow-[4px_4px_0px_#E2F13C] flex flex-col justify-between overflow-hidden">
+    <div className={`bg-asphalt-card border-2 relative group hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden ${
+      isSoldOut
+        ? 'sold-out-monochrome border-grit-dim/70 shadow-[4px_4px_0px_#222226] opacity-90 hover:opacity-100'
+        : 'border-grit-white shadow-[4px_4px_0px_#E2F13C]'
+    }`}>
       
       {/* 1. Artwork & Image Overlay */}
       <div className="relative h-56 w-full overflow-hidden bg-asphalt-black">
         <img 
           src={getImageForEvent(event)} 
           alt={event.name} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${isSoldOut ? 'grayscale contrast-125' : ''}`}
           loading="lazy"
         />
         {/* Subtle bottom gradient to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-asphalt-card via-black/20 to-transparent" />
 
+        {/* Diagonal Neo-Brutalist SOLD OUT Watermark Stamp */}
+        {isSoldOut && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+            <div className="bg-asphalt-black/95 text-grit-white border-2 sm:border-3 border-grit-white px-4 py-1.5 font-display text-3xl sm:text-4xl tracking-widest uppercase -rotate-12 shadow-[4px_4px_0px_#000000] flex items-center gap-2">
+              <span>SOLD OUT</span>
+            </div>
+          </div>
+        )}
+
         {/* Top Badges Row */}
         <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-          <span className={`${categoryColor} font-impact text-xs uppercase px-2.5 py-0.5 tracking-wider border border-asphalt-black shadow-sm`}>
+          <span className={`${isSoldOut ? 'bg-asphalt-black text-grit-white border-grit-white' : categoryColor} font-impact text-xs uppercase px-2.5 py-0.5 tracking-wider border border-asphalt-black shadow-sm`}>
             {categoryLabel}
           </span>
 
@@ -1287,7 +1633,7 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
 
         {/* Date & Time pill on bottom of image */}
         <div className="absolute bottom-2.5 left-2.5 bg-asphalt-black/90 backdrop-blur-sm text-grit-white font-mono-zine text-xs px-2.5 py-1 border border-grit-white/30 flex items-center gap-1.5">
-          <Calendar size={13} className="text-acid-yellow shrink-0" />
+          <Calendar size={13} className={isSoldOut ? 'text-grit-dim' : 'text-acid-yellow'} />
           <span>{formatEventDate(event.eventDate)}</span>
         </div>
       </div>
@@ -1323,7 +1669,7 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
 
           {/* Venue & City */}
           <div className="flex items-center gap-1.5 text-xs font-mono-zine text-grit-dim mb-4">
-            <MapPin size={13} className="text-acid-yellow shrink-0" />
+            <MapPin size={13} className={isSoldOut ? 'text-grit-dim' : 'text-acid-yellow shrink-0'} />
             <span className="truncate">{event.venueName || 'Main Arena'} • {event.city || event.venueAddress || 'Los Angeles, CA'}</span>
           </div>
         </div>
@@ -1333,19 +1679,24 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
           {isCinema && (
             <div className="mb-3.5 pt-2.5 border-t border-asphalt-border">
               <span className="block font-ticker text-[10px] text-grit-dim uppercase tracking-wider mb-1.5">
-                SHOWTIMES // SELECT TIME:
+                SHOWTIMES // {isSoldOut ? 'ALL SESSIONS SOLD OUT:' : 'SELECT TIME:'}
               </span>
               <div className="grid grid-cols-4 gap-1">
                 {cinemaShowtimes.slice(0, 4).map((time) => (
                   <button
                     key={time}
                     type="button"
+                    disabled={isSoldOut}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onBook(time);
+                      if (!isSoldOut) onBook(time);
                     }}
-                    className="font-mono-zine text-[10px] py-1 bg-asphalt-surface hover:bg-acid-yellow hover:text-asphalt-black text-grit-white border border-asphalt-border transition-colors text-center cursor-pointer font-bold"
-                    title={`Book ${time} showtime`}
+                    className={`font-mono-zine text-[10px] py-1 border transition-colors text-center font-bold ${
+                      isSoldOut
+                        ? 'bg-asphalt-card text-grit-dim/50 border-asphalt-border line-through cursor-not-allowed'
+                        : 'bg-asphalt-surface hover:bg-acid-yellow hover:text-asphalt-black text-grit-white border-asphalt-border cursor-pointer'
+                    }`}
+                    title={isSoldOut ? `Showtime ${time} is sold out` : `Book ${time} showtime`}
                   >
                     {time}
                   </button>
@@ -1358,13 +1709,13 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
           <div className="bg-asphalt-surface p-2.5 border border-asphalt-border mb-3 flex items-center justify-between">
             <div>
               <span className="block text-[9px] font-ticker text-grit-dim uppercase">TICKET PRICE</span>
-              <span className="font-display text-2xl text-acid-yellow font-bold leading-none">
+              <span className={`font-display text-2xl font-bold leading-none ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
                 {formatPrice(event.ticketPrice, event.currency)}
               </span>
             </div>
             <div className="text-right">
               <span className="block text-[9px] font-ticker text-grit-dim uppercase">SEATS</span>
-              <span className={`font-mono-zine text-xs font-bold ${isSoldOut ? 'text-danger-red' : 'text-grit-white'}`}>
+              <span className={`font-mono-zine text-xs font-bold ${isSoldOut ? 'text-grit-white bg-asphalt-black px-2 py-0.5 border border-grit-dim uppercase' : 'text-grit-white'}`}>
                 {isSoldOut ? 'SOLD OUT' : (
                   <span className="flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" />
@@ -1380,9 +1731,10 @@ function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitli
             <button 
               type="button"
               onClick={onWaitlist}
-              className="w-full py-2.5 bg-asphalt-surface text-grit-dim font-impact text-sm uppercase tracking-wider border border-asphalt-border transition-all flex items-center justify-center gap-1 cursor-pointer hover:text-grit-white"
+              className="w-full py-2.5 bg-asphalt-surface hover:bg-grit-white text-grit-white hover:text-asphalt-black font-impact text-sm uppercase tracking-wider border-2 border-grit-dim hover:border-grit-white shadow-[3px_3px_0px_#222] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold"
             >
-              <span>JOIN WAITLIST</span>
+              <span>JOIN WAITLIST // SOLD OUT</span>
+              <ArrowRight size={14} />
             </button>
           ) : (
             <button 

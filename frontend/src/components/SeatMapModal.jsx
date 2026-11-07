@@ -9,6 +9,7 @@ import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
 import confetti from 'canvas-confetti';
+import SeatMapSkeleton from './SeatMapSkeleton';
 
 // Cinema & Movie Concessions Menu
 const CINEMA_CONCESSIONS = [
@@ -577,12 +578,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           {step === 1 && (
             <div>
               {loadingSeats ? (
-                <div className="py-16 flex flex-col items-center justify-center gap-4">
-                  <div className="animate-spin w-10 h-10 border-4 border-acid-yellow border-t-transparent"></div>
-                  <span className="font-mono-zine text-xs text-acid-yellow uppercase tracking-widest animate-pulse">
-                    CALIBRATING VENUE ACOUSTICS & SEAT INVENTORY...
-                  </span>
-                </div>
+                <SeatMapSkeleton isCinema={isCinema} />
               ) : (
                 <div>
                   {/* ─── Cinema Showtime Selector Bar (Cinema Mode) ─── */}

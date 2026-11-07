@@ -2,28 +2,66 @@ import React from 'react';
 
 export default function EventCardSkeleton() {
   return (
-    <div className="bg-asphalt-surface border-2 border-asphalt-border p-4 flex flex-col justify-between h-[380px] animate-pulse">
-      {/* Top Banner Placeholder */}
-      <div className="w-full h-44 bg-asphalt-card border border-asphalt-border relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
-      </div>
-
-      {/* Title & Metadata Skeletons */}
-      <div className="space-y-3 mt-4 flex-1">
-        <div className="h-3 w-24 bg-asphalt-card" />
-        <div className="h-6 w-3/4 bg-asphalt-card" />
-        <div className="space-y-1.5 pt-2">
-          <div className="h-3 w-1/2 bg-asphalt-card" />
-          <div className="h-3 w-2/3 bg-asphalt-card" />
+    <div className="bg-asphalt-card border-2 border-asphalt-border relative flex flex-col justify-between overflow-hidden shadow-[4px_4px_0px_rgba(255,255,255,0.1)]">
+      {/* 1. Artwork / Poster Skeleton */}
+      <div className="relative h-56 w-full skeleton-box border-b-2 border-asphalt-border">
+        {/* Top Badges Placeholder */}
+        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
+          <div className="h-5 w-20 bg-asphalt-surface/80 border border-asphalt-border" />
+          <div className="h-6 w-6 bg-asphalt-surface/80 border border-asphalt-border" />
         </div>
+
+        {/* Date Pill Placeholder */}
+        <div className="absolute bottom-2.5 left-2.5 h-6 w-36 bg-asphalt-surface/90 border border-asphalt-border" />
       </div>
 
-      {/* Bottom Action Skeleton */}
-      <div className="pt-3 border-t border-asphalt-border flex items-center justify-between mt-3">
-        <div className="h-6 w-16 bg-asphalt-card" />
-        <div className="h-8 w-28 bg-asphalt-card border border-asphalt-border" />
+      {/* 2. Content Body Skeleton */}
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
+        <div className="space-y-2.5">
+          {/* Cinema tags row */}
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="h-4 w-14 skeleton-box border border-asphalt-border" />
+            <div className="h-4 w-12 skeleton-box border border-asphalt-border" />
+            <div className="h-4 w-12 skeleton-box border border-asphalt-border" />
+          </div>
+
+          {/* Event Title Skeleton */}
+          <div className="space-y-1.5">
+            <div className="h-6 w-11/12 skeleton-box" />
+            <div className="h-6 w-3/5 skeleton-box" />
+          </div>
+
+          {/* Venue & Location Skeleton */}
+          <div className="h-3.5 w-48 skeleton-box mt-2" />
+        </div>
+
+        <div>
+          {/* Showtimes row skeleton */}
+          <div className="mb-3.5 pt-2.5 border-t border-asphalt-border space-y-1.5">
+            <div className="h-2.5 w-28 skeleton-box" />
+            <div className="grid grid-cols-4 gap-1">
+              {[1, 2, 3, 4].map(t => (
+                <div key={t} className="h-6 skeleton-box border border-asphalt-border" />
+              ))}
+            </div>
+          </div>
+
+          {/* Price & Seat Box Skeleton */}
+          <div className="bg-asphalt-surface p-2.5 border border-asphalt-border mb-3 flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="h-2.5 w-16 skeleton-box" />
+              <div className="h-6 w-20 skeleton-box" />
+            </div>
+            <div className="space-y-1 flex flex-col items-end">
+              <div className="h-2.5 w-10 skeleton-box" />
+              <div className="h-4 w-16 skeleton-box" />
+            </div>
+          </div>
+
+          {/* Action Button Skeleton */}
+          <div className="h-11 w-full skeleton-box border-2 border-asphalt-border shadow-[3px_3px_0px_rgba(255,255,255,0.05)]" />
+        </div>
       </div>
     </div>
   );
 }
-

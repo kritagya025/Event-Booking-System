@@ -620,3 +620,54 @@ h1, h2, h3, h4, .font-display {
   border-color: var(--acid-yellow);
   box-shadow: 2px 2px 0px #ff1f6d;
 }
+
+
+/* ─── Global Neo-Brutalist Skeleton Shimmer System ─── */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.6s infinite ease-in-out;
+}
+
+.skeleton-box {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--asphalt-card);
+}
+
+.skeleton-box::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.06) 75%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.6s infinite linear;
+  content: '';
+}
+
+/* ─── Sold Out Distinct Monochrome / Black & White Mode ─── */
+.sold-out-monochrome {
+  filter: grayscale(100%) contrast(125%) brightness(88%);
+  -webkit-filter: grayscale(100%) contrast(125%) brightness(88%);
+}
+
+.sold-out-monochrome:hover {
+  filter: grayscale(100%) contrast(135%) brightness(98%);
+  -webkit-filter: grayscale(100%) contrast(135%) brightness(98%);
+}
