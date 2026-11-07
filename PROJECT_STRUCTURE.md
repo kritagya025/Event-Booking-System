@@ -235,8 +235,9 @@ event-booking-system/
 |       |-- App.css                                   # Component layout styles
 |       |-- index.css                                 # Core design tokens, hazard tapes, fonts
 |       |-- assets/                                   # Optimized WebP hero artwork & SVG logos
-|       |-- components/                               # UI Component Library (26 components)
+|       |-- components/                               # UI Component Library (27 components)
 |       |   |-- Navbar.jsx                            # Brutalist header & currency selector
+|       |   |-- BackstageAuthTerminal.jsx             # Creative holographic VIP backstage pass accreditation terminal
 |       |   |-- SeatMapModal.jsx                      # Arena & cinema interactive seating engine
 |       |   |-- AdminDashboard.jsx                    # Administrative metrics & health gauges
 |       |   |-- MyBookings.jsx                        # Customer bookings & QR ticket passes
@@ -284,7 +285,7 @@ event-booking-system/
 | Repositories | 12 | Spring Data JPA |
 | Background Schedulers | 2 | Spring Task Scheduling |
 | Automated Test Suites | 24 | JUnit 5, Mockito, MockMvc, H2 |
-| React Components | 26 | React 19, Lucide, Tailwind CSS |
+| React Components | 27 | React 19, Lucide, Tailwind CSS |
 | Frontend Linter | 1 | Oxlint 1.75.0 (sub-30ms) |
 | CI/CD Pipelines | 2 | GitHub Actions (Backend CI, Frontend CI) |
 | Real-Time Transports | 1 | STOMP over SockJS |

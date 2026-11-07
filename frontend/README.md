@@ -71,7 +71,7 @@ frontend/
     |-- App.css                # Component layout and responsive positioning
     |-- index.css              # Global styles, font faces, hazard tapes, and custom animations
     |-- assets/                # Static assets (optimized WebP hero images and logos)
-    |-- components/            # UI Component Library (26 components)
+    |-- components/            # UI Component Library (27 components)
     `-- services/              # API, WebSocket, and currency utility clients
 ```
 
@@ -79,11 +79,12 @@ frontend/
 
 ## Component Inventory
 
-The frontend architecture comprises 26 modular components:
+The frontend architecture comprises 27 modular components:
 
 ### Primary Views & Modals
 1. **`Navbar.jsx`**: Global brutalist navigation bar with logo stamp, multi-currency switcher, quick links, and authentication state.
-2. **`SeatMapModal.jsx`**: Interactive multi-tier arena and cinema seating engine with real-time seat lock countdowns, pricing tiers, and checkout integration.
+2. **`BackstageAuthTerminal.jsx`**: Creative split-screen holographic VIP backstage pass accreditation terminal with real-time reactive pass rendering, audio VU password meter, and 1-click demo fills.
+3. **`SeatMapModal.jsx`**: Interactive multi-tier arena and cinema seating engine with real-time seat lock countdowns, pricing tiers, and checkout integration.
 3. **`AdminDashboard.jsx`**: Operational metrics, revenue analytics, event capacity monitoring, and system diagnostic gauges for administrators.
 4. **`MyBookings.jsx`**: Customer portal displaying ticket history, QR code admission passes, and PDF invoice downloads.
 5. **`ProfileDashboard.jsx`**: User profile management, password updates, and account security controls.

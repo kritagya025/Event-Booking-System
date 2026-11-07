@@ -430,6 +430,10 @@ export default function App() {
     return (
       <div>
         <RegisterPage
+          onAuthSuccess={(user) => {
+            setCurrentUser(user);
+            setActiveTab('home');
+          }}
           onNavigate={handleNavigate}
           showToast={showToast}
         />

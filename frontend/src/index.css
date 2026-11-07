@@ -675,3 +675,42 @@ h1, h2, h3, h4, .font-display {
   filter: grayscale(100%) contrast(135%) brightness(98%);
   -webkit-filter: grayscale(100%) contrast(135%) brightness(98%);
 }
+
+/* ─── Holographic VIP Backstage Pass & Ticket Authentication Effects ─── */
+@keyframes holoShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.holo-foil {
+  background: linear-gradient(
+    135deg,
+    rgba(238, 252, 84, 0.22) 0%,
+    rgba(255, 31, 109, 0.28) 25%,
+    rgba(29, 78, 216, 0.25) 50%,
+    rgba(238, 252, 84, 0.22) 75%,
+    rgba(255, 31, 109, 0.28) 100%
+  );
+  background-size: 300% 300%;
+  animation: holoShimmer 7s ease infinite;
+}
+
+@keyframes laserSweep {
+  0% { top: 2%; opacity: 0.3; }
+  50% { top: 96%; opacity: 1; }
+  100% { top: 2%; opacity: 0.3; }
+}
+
+.animate-laser-sweep {
+  animation: laserSweep 2.4s ease-in-out infinite;
+}
+
+@keyframes vuPulse {
+  0%, 100% { opacity: 0.85; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.08); }
+}
+
+.animate-vu-pulse {
+  animation: vuPulse 1.2s ease-in-out infinite;
+}
