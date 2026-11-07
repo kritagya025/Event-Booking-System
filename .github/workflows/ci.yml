@@ -34,9 +34,23 @@ jobs:
         run: chmod +x ./mvnw
 
       - name: Run Backend Tests (H2 In-Memory Profile)
-        run: ./mvnw -B clean test -Dspring.profiles.active=test
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          DB_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+          DB_USERNAME: sa
+          DB_PASSWORD: ""
+          DB_DRIVER: org.h2.Driver
+          JWT_SECRET: dGhpcyBpcyBhIHRlc3Qgc2VjcmV0IGtleSBmb3IgdGVzdGluZyBwdXJwb3Nlcw==
+        run: ./mvnw -B test -Dspring.profiles.active=test
 
       - name: Build Spring Boot Production JAR
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          DB_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+          DB_USERNAME: sa
+          DB_PASSWORD: ""
+          DB_DRIVER: org.h2.Driver
+          JWT_SECRET: dGhpcyBpcyBhIHRlc3Qgc2VjcmV0IGtleSBmb3IgdGVzdGluZyBwdXJwb3Nlcw==
         run: ./mvnw -B package -DskipTests
 
       - name: Upload Backend Build Artifact
