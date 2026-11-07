@@ -21,8 +21,7 @@ import EventCardSkeleton from './components/EventCardSkeleton';
 import { 
   Heart, Bell, AlertCircle, Check, Zap, Radio, Calendar, MapPin, 
   ArrowRight, Search, RotateCcw, Film, Ticket, Sparkles, 
-  SlidersHorizontal, Music, Theater, Laptop, Trophy,
-  ChevronLeft, ChevronRight 
+  SlidersHorizontal, Music, Theater, Laptop, Trophy 
 } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
@@ -1539,7 +1538,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
 }
 
 // Eye-Catching & Clean Brutalist Event Flyer Card
-function EventCard({ event, index = 0, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
+function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitlist, onDelete }) {
   const isSoldOut = event.availableSeats === 0;
   const canDelete = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER');
   const isCinema = event.category === 'CINEMA' || event.category === 'MOVIE' || /imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(event.name || '');

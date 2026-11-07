@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   X, Check, ArrowRight, ArrowLeft,
   Smartphone, CreditCard, Landmark, Gift, Wallet, AlertCircle,
-  Volume2, Zap, Tag, Filter, RotateCcw, Trash2, Eye, Ticket,
-  Film, Clapperboard, Popcorn, UtensilsCrossed
+  Volume2, Zap, Filter, RotateCcw, Trash2, Eye, Ticket,
+  Film, Clapperboard
 } from 'lucide-react';
 import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
