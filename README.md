@@ -1,6 +1,7 @@
 # Event Booking System
 
-[![EventHub CI Pipeline](https://github.com/kritagya025/Event-Booking-System/actions/workflows/ci.yml/badge.svg)](https://github.com/kritagya025/Event-Booking-System/actions/workflows/ci.yml)
+[![Backend CI](https://github.com/kritagya025/Event-Booking-System/actions/workflows/backend.yml/badge.svg)](https://github.com/kritagya025/Event-Booking-System/actions/workflows/backend.yml)
+[![Frontend CI](https://github.com/kritagya025/Event-Booking-System/actions/workflows/frontend.yml/badge.svg)](https://github.com/kritagya025/Event-Booking-System/actions/workflows/frontend.yml)
 
 A distributed event management and ticket reservation platform built with Spring Boot 3, React 19, and PostgreSQL. The system supports seat selection and locking, QR-coded ticket generation, real-time seat availability over WebSocket (STOMP), payment processing, and administrative analytics.
 
