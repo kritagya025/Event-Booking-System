@@ -111,7 +111,17 @@ export default function MyBookings({ currentUser, showToast }) {
           <head>
             <title>EVENTHUB VIP PASS #${booking.id}</title>
             <style>
-              * { box-sizing: border-box; }
+              * {
+                box-sizing: border-box;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+              }
+              html, body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+              }
               body { font-family: 'JetBrains Mono', 'Courier New', monospace; background: #0a0a0e; color: #f8fafc; padding: 32px 16px; text-align: center; margin: 0; }
               .pass-container { max-width: 740px; margin: 0 auto; text-align: left; }
               .doc-header { display: flex; justify-content: space-between; align-items: center; background: #121420; border: 2px solid #00f0ff; padding: 10px 16px; margin-bottom: 16px; }
@@ -170,12 +180,118 @@ export default function MyBookings({ currentUser, showToast }) {
               .protocol-col:nth-child(2) h4 { color: #ff006e; }
               .protocol-col:nth-child(3) h4 { color: #10e68c; }
               .protocol-col p { margin: 0; font-size: 8px; color: #94a3b8; line-height: 1.4; }
-              .print-btn { display: block; width: 100%; background: #ff006e; color: #ffffff; border: 2px solid #ffffff; padding: 12px; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #fef02a; transition: all 0.2s; margin-top: 16px; }
+              .print-tip { font-size: 10px; color: #fef02a; background: #1a1e2e; border: 1px dashed #fef02a; padding: 8px; margin-top: 16px; text-align: center; font-weight: bold; letter-spacing: 0.5px; }
+              .print-btn { display: block; width: 100%; background: #ff006e; color: #ffffff; border: 2px solid #ffffff; padding: 12px; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #fef02a; transition: all 0.2s; margin-top: 8px; }
               .print-btn:hover { background: #fef02a; color: #0a0a0e; }
               @media print {
-                body { background: #fff; padding: 0; }
-                .pass-card { box-shadow: none; border-color: #000; }
-                .print-btn { display: none; }
+                @page {
+                  size: A4 portrait;
+                  margin: 8mm 6mm;
+                }
+                html, body {
+                  background: #0a0a0e !important;
+                  color: #f8fafc !important;
+                  padding: 0 !important;
+                  margin: 0 !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                  color-adjust: exact !important;
+                }
+                .pass-container {
+                  max-width: 100% !important;
+                  margin: 0 auto !important;
+                  page-break-inside: avoid;
+                  break-inside: avoid;
+                }
+                .doc-header {
+                  background: #121420 !important;
+                  border: 2px solid #00f0ff !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .pass-card {
+                  background: #121420 !important;
+                  border: 3px solid #fef02a !important;
+                  box-shadow: none !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                  page-break-inside: avoid;
+                  break-inside: avoid;
+                }
+                .hazard {
+                  background: repeating-linear-gradient(-45deg, #fef02a, #fef02a 12px, #0a0a0e 12px, #0a0a0e 24px, #ff006e 24px, #ff006e 36px, #0a0a0e 36px, #0a0a0e 48px) !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .left-pass {
+                  background: #121420 !important;
+                  border-right: 2px dashed #00f0ff !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .right-stub {
+                  background: #f8fafc !important;
+                  color: #0a0a0e !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .event-banner-art {
+                  border: 2px solid #00f0ff !important;
+                  background: #0a0a0e !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .seat-banner {
+                  background: #fef02a !important;
+                  color: #0a0a0e !important;
+                  border: 2px solid #0a0a0e !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .seat-tier {
+                  background: #ff006e !important;
+                  color: #ffffff !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .live-pill {
+                  background: #ff006e !important;
+                  color: #ffffff !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .season-pill {
+                  background: #fef02a !important;
+                  color: #0a0a0e !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .pass-badge {
+                  background: #fef02a !important;
+                  color: #0a0a0e !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .season-badge {
+                  background: #ff006e !important;
+                  color: #ffffff !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .stub-seat {
+                  background: #fef02a !important;
+                  color: #0a0a0e !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .venue-box, .holder-box, .protocol-grid, .protocol-col {
+                  background: #1a1e2e !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .print-tip, .print-btn {
+                  display: none !important;
+                }
               }
             </style>
           </head>
@@ -304,6 +420,9 @@ export default function MyBookings({ currentUser, showToast }) {
                 </div>
               </div>
 
+              <div class="print-tip">
+                [COLOR PRINTING NOTICE: In your browser print dialog, ensure "Background graphics" is enabled under More Settings to output complete vivid colors.]
+              </div>
               <button class="print-btn" onclick="window.print()">PRINT / EXPORT PASS</button>
             </div>
           </body>

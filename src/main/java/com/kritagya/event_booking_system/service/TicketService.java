@@ -252,6 +252,22 @@ public class TicketService {
     private static final DeviceRgb COLOR_BORDER_CYAN = new DeviceRgb(0, 240, 255);    // #00F0FF
     private static final DeviceRgb COLOR_BORDER_MUTED = new DeviceRgb(51, 65, 85);    // #334155
 
+    private static class PageBackgroundHandler implements com.itextpdf.kernel.events.IEventHandler {
+        @Override
+        public void handleEvent(com.itextpdf.kernel.events.Event event) {
+            com.itextpdf.kernel.events.PdfDocumentEvent docEvent = (com.itextpdf.kernel.events.PdfDocumentEvent) event;
+            com.itextpdf.kernel.pdf.PdfPage page = docEvent.getPage();
+            com.itextpdf.kernel.pdf.canvas.PdfCanvas canvas = new com.itextpdf.kernel.pdf.canvas.PdfCanvas(
+                    page.newContentStreamBefore(), page.getResources(), docEvent.getDocument());
+            com.itextpdf.kernel.geom.Rectangle area = page.getPageSize();
+            canvas.saveState()
+                    .setFillColor(COLOR_OBSIDIAN_BG)
+                    .rectangle(area.getLeft(), area.getBottom(), area.getWidth(), area.getHeight())
+                    .fill()
+                    .restoreState();
+        }
+    }
+
     private Table createHazardTape(float height) {
         Table hazard = new Table(UnitValue.createPercentArray(new float[]{
                 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f,
@@ -715,6 +731,7 @@ public class TicketService {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfWriter writer = new PdfWriter(baos);
             PdfDocument pdf = new PdfDocument(writer);
+            pdf.addEventHandler(com.itextpdf.kernel.events.PdfDocumentEvent.START_PAGE, new PageBackgroundHandler());
             pdf.setDefaultPageSize(PageSize.A4);
             Document document = new Document(pdf);
             document.setMargins(20f, 20f, 20f, 20f);
@@ -778,6 +795,7 @@ public class TicketService {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfWriter writer = new PdfWriter(baos);
             PdfDocument pdf = new PdfDocument(writer);
+            pdf.addEventHandler(com.itextpdf.kernel.events.PdfDocumentEvent.START_PAGE, new PageBackgroundHandler());
             pdf.setDefaultPageSize(PageSize.A4);
             Document document = new Document(pdf);
             document.setMargins(20f, 20f, 20f, 20f);
