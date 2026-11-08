@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.1] - 2026-11-08
 
 ### Enhanced
+- **Neo-Brutalist Admission Pass & Booking PDF Generation Engine (`TicketService.java` & `MyBookings.jsx`)**:
+  - **High-Contrast Neo-Brutalist Layout**: Upgraded dull plain black-and-white ticket PDFs to high-impact VIP concert passes featuring Asphalt Black (`#0E0E11`), Card Surface (`#16161C`), Acid Yellow (`#E2F13C`), Neon Magenta (`#FF1F6D`), Grit White (`#F5F5F0`), and Slate Dim (`#90929E`).
+  - **Dual Hazard Tape Borders**: Added alternating diagonal warning bands framing the top and bottom margins of the admission credential.
+  - **VIP Accreditation Brand Header**: Integrated `EVENTHUB // ADMISSION PASS` branding with Season 2026 badge and dynamic gate serial (`EHB-[EVENTID]-[TICKETID]`).
+  - **Concert Hero Banner**: Formatted event title in oversized brutalist sans typography with calendar scheduling, start/end timestamps, full venue name, street address, and sector clearance.
+  - **Split Dual-Column Credential Grid**: Formatted attendee details (name, email, unique badge ID) alongside allocated seat chips (Row/Number, Tier) and venue entry rules.
+  - **Optical Gate Scanner Token**: Embedded a 100x100px vector QR turnstile code and simulated Code-128 concert barcode for rapid on-site scanning.
+  - **Turnstile Perforation Tear Line**: Added dotted scissor guide marking (`✂ DETACH AT GATE TURNSTILE FOR PHYSICAL SCAN ✂`).
+  - **Brutalist Printable Fallback Pass**: Redesigned the frontend HTML printable pass stub in `MyBookings.jsx` to visually mirror the neo-brutalist VIP badge with hazard tape, gold badges, and high-contrast typography.
+  - **Authenticated PDF Download Pipeline**: Added `Authorization: Bearer <token>` to the frontend PDF download request in `MyBookings.jsx` ensuring reliable authenticated downloads.
 - **High-Fidelity Neo-Brutalist VIP Pass & Ticket Stub Architecture (`BackstageAuthTerminal.jsx`)**:
   - **Tactical Lanyard & Mechanical Carabiner**: Added heavy-duty woven strap ribbon with repeating `EVENTHUB VIP` micro-text, brushed steel swivel ring, mechanical pivot block, and spring-loaded carabiner latch hook.
   - **Laminated Punch Slot & Industrial Hardware**: Added realistic top oval punch slot cutout where the carabiner attaches, plus 4 corner tactical rivet markers.

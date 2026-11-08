@@ -72,7 +72,14 @@ export default function MyBookings({ currentUser, showToast }) {
     }
 
     try {
+      const token = localStorage.getItem('access_token');
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${BASE_URL}/tickets/booking/${booking.id}/pdf`, {
+        headers,
         credentials: 'include'
       }).catch(() => null);
 
@@ -93,7 +100,7 @@ export default function MyBookings({ currentUser, showToast }) {
       console.warn('PDF API notice:', e);
     }
 
-    // EventHub Brutalist Printable Pass Stub
+    // High-Fidelity EventHub Brutalist Printable Pass Stub Fallback
     try {
       const passWindow = window.open('', '_blank');
       if (passWindow) {
@@ -101,39 +108,97 @@ export default function MyBookings({ currentUser, showToast }) {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>EVENTHUB TICKET #${booking.id}</title>
+            <title>EVENTHUB VIP PASS #${booking.id}</title>
             <style>
-              body { font-family: 'Courier New', monospace; background: #0e0e11; color: #f5f5f0; padding: 40px; text-align: center; }
-              .pass-card { max-width: 480px; margin: 0 auto; background: #16161c; border: 4px solid #f5f5f0; padding: 24px; box-shadow: 10px 10px 0px #eefc54; text-align: left; }
-              .hazard { height: 12px; background: repeating-linear-gradient( -45deg, #eefc54, #eefc54 10px, #0e0e11 10px, #0e0e11 20px ); margin-bottom: 16px; }
-              .badge { display: inline-block; background: #eefc54; color: #0e0e11; padding: 4px 10px; font-weight: 900; font-size: 11px; text-transform: uppercase; }
-              h2 { font-size: 26px; margin: 12px 0 6px 0; color: #f5f5f0; font-weight: 900; text-transform: uppercase; }
-              p { color: #90929e; font-size: 12px; margin: 0 0 16px 0; }
-              .qr-container { text-align: center; margin: 20px 0; }
-              .qr-img { width: 180px; height: 180px; padding: 12px; background: #FFF; border: 3px solid #0e0e11; }
-              .info-row { display: flex; justify-content: space-between; margin-top: 14px; border-top: 2px dashed #90929e; padding-top: 10px; font-size: 11px; }
-              .print-btn { display: block; width: 100%; background: #ff1f6d; color: #FFF; border: 2px solid #0e0e11; padding: 12px; font-weight: 900; font-size: 14px; cursor: pointer; margin-top: 20px; text-transform: uppercase; box-shadow: 4px 4px 0px #eefc54; }
+              * { box-sizing: border-box; }
+              body { font-family: 'JetBrains Mono', 'Courier New', monospace; background: #0e0e11; color: #f5f5f0; padding: 40px 16px; text-align: center; margin: 0; }
+              .pass-card { max-width: 520px; margin: 0 auto; background: #16161c; border: 3px solid #f5f5f0; padding: 0; box-shadow: 10px 10px 0px #eefc54; text-align: left; overflow: hidden; position: relative; }
+              .hazard { height: 10px; background: repeating-linear-gradient(-45deg, #eefc54, #eefc54 10px, #0e0e11 10px, #0e0e11 20px); }
+              .pass-body { padding: 24px; }
+              .top-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #2d2d38; padding-bottom: 12px; margin-bottom: 16px; }
+              .logo { font-size: 22px; font-weight: 900; color: #f5f5f0; letter-spacing: -1px; }
+              .pass-badge { background: #eefc54; color: #0e0e11; padding: 2px 6px; font-size: 10px; font-weight: 900; vertical-align: middle; margin-left: 6px; }
+              .season-badge { background: #ff1f6d; color: #f5f5f0; padding: 3px 8px; font-size: 9px; font-weight: 900; text-transform: uppercase; border: 1px solid #0e0e11; }
+              .serial { color: #eefc54; font-size: 10px; font-weight: bold; margin-top: 4px; text-align: right; }
+              .event-title { font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #f5f5f0; text-transform: uppercase; line-height: 1.1; }
+              .event-meta { font-size: 11px; color: #eefc54; margin: 0 0 16px 0; font-weight: bold; text-transform: uppercase; }
+              .venue-box { background: #1c1c24; border: 1px solid #2d2d38; padding: 12px; margin-bottom: 16px; }
+              .venue-label { font-size: 9px; color: #90929e; text-transform: uppercase; letter-spacing: 1px; }
+              .venue-name { font-size: 13px; font-weight: bold; color: #f5f5f0; margin-top: 2px; }
+              .split-grid { display: grid; grid-template-columns: 1fr 140px; gap: 16px; align-items: center; background: #1c1c24; border: 1px solid #2d2d38; padding: 14px; margin-bottom: 16px; }
+              .holder-label { font-size: 9px; color: #90929e; text-transform: uppercase; }
+              .holder-name { font-size: 15px; font-weight: 900; color: #f5f5f0; margin: 2px 0; text-transform: uppercase; }
+              .holder-email { font-size: 10px; color: #90929e; word-break: break-all; }
+              .seat-badge { display: inline-block; background: #eefc54; color: #0e0e11; padding: 4px 8px; font-size: 13px; font-weight: 900; margin-top: 8px; }
+              .qr-box { text-align: center; background: #ffffff; padding: 8px; border: 2px solid #0e0e11; }
+              .qr-box img { width: 110px; height: 110px; display: block; margin: 0 auto; }
+              .qr-label { font-size: 8px; font-weight: 900; color: #0e0e11; margin-top: 4px; text-transform: uppercase; }
+              .perf-line { border-top: 2px dashed #374151; margin: 16px 0; position: relative; text-align: center; }
+              .perf-label { background: #16161c; padding: 0 8px; font-size: 9px; color: #90929e; text-transform: uppercase; position: relative; top: -7px; }
+              .guarantees { display: flex; justify-content: space-between; font-size: 8px; color: #eefc54; text-transform: uppercase; font-weight: bold; margin-bottom: 12px; }
+              .print-btn { display: block; width: 100%; background: #ff1f6d; color: #f5f5f0; border: 2px solid #f5f5f0; padding: 14px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #eefc54; transition: all 0.2s; }
+              .print-btn:hover { background: #eefc54; color: #0e0e11; }
+              @media print {
+                body { background: #fff; padding: 0; }
+                .pass-card { box-shadow: none; border-color: #000; }
+                .print-btn { display: none; }
+              }
             </style>
           </head>
           <body>
             <div class="pass-card">
               <div class="hazard"></div>
-              <span class="badge">${booking.isCinema ? 'CINEMA OFFICIAL ADMISSION PASS' : 'EVENTHUB OFFICIAL ADMISSION PASS'}</span>
-              <h2>${booking.event?.name || 'LIVE EVENT'}</h2>
-              <p>${booking.event?.eventDate || '2026-09-15'} · ${booking.isCinema ? (booking.showtime ? 'SHOWTIME ' + booking.showtime : 'SHOWTIME 06:15 PM') : (booking.event?.startTime || '19:00')} · ${booking.screenName || booking.event?.venue?.name || 'MAIN CONCERT ARENA'}</p>
-              <div class="qr-container">
-                <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=EVENTHUB-PASS-${booking.id}`}" class="qr-img" alt="Pass QR" />
+              <div class="pass-body">
+                <div class="top-row">
+                  <div>
+                    <span class="logo">EVENTHUB<span class="pass-badge">VIP PASS</span></span>
+                    <div style="font-size: 8px; color: #90929e; letter-spacing: 1px; margin-top: 4px; text-transform: uppercase;">
+                      AUTHENTICATED ADMISSION GATEWAY
+                    </div>
+                  </div>
+                  <div>
+                    <div class="season-badge">SEASON 2026</div>
+                    <div class="serial">EHB-${booking.id}</div>
+                  </div>
+                </div>
+
+                <h1 class="event-title">${booking.event?.name || 'LIVE ARENA EVENT'}</h1>
+                <div class="event-meta">
+                  ⚡ ${booking.event?.eventDate || '2026-10-24'} @ ${booking.isCinema ? (booking.showtime || '06:15 PM') : (booking.event?.startTime || '07:30 PM')}
+                </div>
+
+                <div class="venue-box">
+                  <div class="venue-label">LOCATION & AUDITORIUM:</div>
+                  <div class="venue-name">${booking.screenName || booking.event?.venue?.name || 'MAIN CONCERT ARENA'}</div>
+                  <div style="font-size: 10px; color: #90929e; margin-top: 2px;">${booking.event?.venue?.address || 'MAIN EVENT GATE 01'}</div>
+                </div>
+
+                <div class="split-grid">
+                  <div>
+                    <div class="holder-label">ACCREDITED ATTENDEE:</div>
+                    <div class="holder-name">${currentUser?.firstName || 'VIP'} ${currentUser?.lastName || 'ATTENDEE'}</div>
+                    <div class="holder-email">${currentUser?.email || 'AUTHENTICATED HOLDER'}</div>
+                    <div class="seat-badge">SEAT: ${booking.selectedSeats || 'GENERAL ADMISSION'}</div>
+                  </div>
+                  <div class="qr-box">
+                    <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=EVENTHUB-PASS-${booking.id}`}" alt="Pass QR" />
+                    <div class="qr-label">SCAN AT GATE</div>
+                  </div>
+                </div>
+
+                <div class="perf-line">
+                  <span class="perf-label">✂ DETACH AT TURNSTILE GATE ✂</span>
+                </div>
+
+                <div class="guarantees">
+                  <span>⚡ 10-MIN CART LOCK</span>
+                  <span>🛡️ ZERO OVERBOOKING</span>
+                  <span>🎟️ OFFLINE GATE VERIFIED</span>
+                </div>
+
+                <button class="print-btn" onclick="window.print()">PRINT / EXPORT PASS</button>
               </div>
-              <div class="info-row">
-                <div><span>ATTENDEE</span><br><strong>${currentUser?.firstName || 'GUEST'} ${currentUser?.lastName || 'ATTENDEE'}</strong></div>
-                <div style="text-align:right"><span>SEATS / AUDITORIUM</span><br><strong>${booking.selectedSeats || 'GENERAL ADMISSION'}</strong></div>
-              </div>
-              ${booking.snacks && Object.keys(booking.snacks).length > 0 ? `
-              <div class="info-row" style="background:#222; padding:8px 10px; margin-top:10px;">
-                <div><span>CONCESSIONS VOUCHER</span><br><strong>${Object.entries(booking.snacks).map(([k, q]) => `${q}x ${k.replace(/_/g, ' ').toUpperCase()}`).join(', ')}</strong></div>
-                <div style="text-align:right"><span>PICKUP</span><br><strong>SNACK BAR COUNTER 01</strong></div>
-              </div>` : ''}
-              <button class="print-btn" onclick="window.print()">PRINT / EXPORT TICKET</button>
+              <div class="hazard"></div>
             </div>
           </body>
           </html>
@@ -143,6 +208,8 @@ export default function MyBookings({ currentUser, showToast }) {
       }
     } catch {
       showToast('GENERATING TICKET PASS...', 'success');
+    }
+  };
     }
   };
 

@@ -15,6 +15,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.DashedBorder;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
+
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -212,6 +235,189 @@ public class TicketService {
         return qrCodeService.generateQrCodeImage(ticket.getQrCode());
     }
 
+    // Neo-Brutalist PDF Color Palette
+    private static final DeviceRgb COLOR_ASPHALT_BG = new DeviceRgb(14, 14, 17);
+    private static final DeviceRgb COLOR_ASPHALT_CARD = new DeviceRgb(22, 22, 28);
+    private static final DeviceRgb COLOR_ASPHALT_INNER = new DeviceRgb(28, 28, 36);
+    private static final DeviceRgb COLOR_ACID_YELLOW = new DeviceRgb(226, 241, 60);
+    private static final DeviceRgb COLOR_NEON_MAGENTA = new DeviceRgb(255, 31, 109);
+    private static final DeviceRgb COLOR_GRIT_WHITE = new DeviceRgb(245, 245, 240);
+    private static final DeviceRgb COLOR_GRIT_DIM = new DeviceRgb(144, 146, 158);
+    private static final DeviceRgb COLOR_BORDER = new DeviceRgb(55, 65, 81);
+
+    private void renderBrutalistTicketPass(Document document, Ticket ticket, Booking booking, Event event,
+                                           com.kritagya.event_booking_system.entity.Seat seat,
+                                           int ticketIndex, int totalTickets) throws Exception {
+        // Outer Container Card Table
+        Table passBox = new Table(UnitValue.createPercentArray(new float[]{100}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(COLOR_ASPHALT_CARD)
+                .setBorder(new SolidBorder(COLOR_GRIT_WHITE, 2f))
+                .setMarginBottom(16f);
+
+        // 1. Top Hazard Tape Banner
+        Table hazardTop = new Table(UnitValue.createPercentArray(new float[]{
+                8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.37f
+        })).useAllAvailableWidth();
+        for (int h = 0; h < 12; h++) {
+            Cell c = new Cell().setHeight(5f).setBorder(Border.NO_BORDER)
+                    .setBackgroundColor(h % 2 == 0 ? COLOR_ACID_YELLOW : COLOR_ASPHALT_BG);
+            hazardTop.addCell(c);
+        }
+        passBox.addCell(new Cell().add(hazardTop).setPadding(0).setBorder(Border.NO_BORDER));
+
+        // 2. Brand Header Block
+        Table brandHeader = new Table(UnitValue.createPercentArray(new float[]{65, 35}))
+                .useAllAvailableWidth()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(6f);
+
+        Paragraph brandP = new Paragraph()
+                .add(new Text("EVENTHUB ").setFontSize(16).setBold().setFontColor(COLOR_GRIT_WHITE))
+                .add(new Text(" VIP PASS ").setFontSize(8).setBold().setBackgroundColor(COLOR_ACID_YELLOW).setFontColor(COLOR_ASPHALT_BG))
+                .setMargin(0);
+        Paragraph subBrand = new Paragraph("AUTHENTICATED ADMISSION GATEWAY // REVENUE PASS")
+                .setFontSize(7).setFontColor(COLOR_GRIT_DIM).setMarginTop(1f).setMarginBottom(0);
+
+        brandHeader.addCell(new Cell().add(brandP).add(subBrand).setBorder(Border.NO_BORDER).setPadding(4f));
+
+        String serialCode = "EHB-" + (event.getId() != null ? event.getId() : "2026") + "-" + ticket.getId();
+        Paragraph seasonP = new Paragraph()
+                .add(new Text(" SEASON 2026 // ALL-ACCESS ").setFontSize(7.5f).setBold().setBackgroundColor(COLOR_NEON_MAGENTA).setFontColor(COLOR_GRIT_WHITE))
+                .setTextAlignment(TextAlignment.RIGHT).setMargin(0);
+        Paragraph serialP = new Paragraph(serialCode)
+                .setFontSize(8.5f).setBold().setFontColor(COLOR_ACID_YELLOW).setTextAlignment(TextAlignment.RIGHT).setMarginTop(2f).setMarginBottom(0);
+
+        brandHeader.addCell(new Cell().add(seasonP).add(serialP).setBorder(Border.NO_BORDER).setPadding(4f));
+        passBox.addCell(new Cell().add(brandHeader).setBorder(Border.NO_BORDER).setPadding(2f));
+
+        // 3. Event Hero Banner Box
+        Table eventBanner = new Table(UnitValue.createPercentArray(new float[]{100}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(COLOR_ASPHALT_INNER)
+                .setBorder(new SolidBorder(COLOR_BORDER, 1f))
+                .setMarginLeft(6f).setMarginRight(6f).setMarginBottom(5f);
+
+        Paragraph eventTitle = new Paragraph(event.getName().toUpperCase())
+                .setFontSize(13).setBold().setFontColor(COLOR_GRIT_WHITE).setMargin(3f);
+        eventBanner.addCell(new Cell().add(eventTitle).setBorder(Border.NO_BORDER));
+
+        Table metaRow = new Table(UnitValue.createPercentArray(new float[]{35, 38, 27}))
+                .useAllAvailableWidth()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3f);
+
+        String dateStr = event.getEventDate() != null ? event.getEventDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy")) : "SEASON 2026";
+        String timeStr = (event.getStartTime() != null ? event.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")) : "TBD");
+        Paragraph dateP = new Paragraph()
+                .add(new Text("DATE & SHOWTIME:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text(dateStr + " @ " + timeStr).setFontSize(8.5f).setBold().setFontColor(COLOR_ACID_YELLOW));
+        metaRow.addCell(new Cell().add(dateP).setBorder(Border.NO_BORDER));
+
+        String venueName = event.getVenue() != null ? event.getVenue().getName() : "MAIN ARENA";
+        String venueAddr = event.getVenue() != null && event.getVenue().getAddress() != null ? event.getVenue().getAddress() : "CENTRAL SECTOR";
+        Paragraph venueP = new Paragraph()
+                .add(new Text("VENUE / AUDITORIUM:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text(venueName + "\n" + venueAddr).setFontSize(7.5f).setFontColor(COLOR_GRIT_WHITE));
+        metaRow.addCell(new Cell().add(venueP).setBorder(Border.NO_BORDER));
+
+        String seatTypeStr = seat != null && seat.getSeatType() != null ? seat.getSeatType().name() : "GENERAL";
+        Paragraph tierP = new Paragraph()
+                .add(new Text("CLEARANCE SECTOR:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text("TIER: " + seatTypeStr + " // GATE 01").setFontSize(7.5f).setBold().setFontColor(COLOR_GRIT_WHITE));
+        metaRow.addCell(new Cell().add(tierP).setBorder(Border.NO_BORDER));
+
+        eventBanner.addCell(new Cell().add(metaRow).setBorder(Border.NO_BORDER));
+        passBox.addCell(new Cell().add(eventBanner).setBorder(Border.NO_BORDER).setPadding(2f));
+
+        // 4. Core Split: Attendee Details & QR Optical Gate Stub
+        Table coreTable = new Table(UnitValue.createPercentArray(new float[]{65, 35}))
+                .useAllAvailableWidth()
+                .setMarginLeft(6f).setMarginRight(6f).setMarginBottom(5f)
+                .setBorder(Border.NO_BORDER);
+
+        // Left Container
+        Table leftInfo = new Table(UnitValue.createPercentArray(new float[]{100}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(COLOR_ASPHALT_INNER)
+                .setBorder(new SolidBorder(COLOR_BORDER, 1f))
+                .setPadding(5f);
+
+        String attendeeName = (booking.getUser().getFirstName() + " " + booking.getUser().getLastName()).toUpperCase();
+        Paragraph holderP = new Paragraph()
+                .add(new Text("ACCREDITED HOLDER:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text(attendeeName + "\n").setFontSize(10.5f).setBold().setFontColor(COLOR_GRIT_WHITE))
+                .add(new Text(booking.getUser().getEmail().toUpperCase()).setFontSize(7f).setFontColor(COLOR_GRIT_DIM))
+                .setMargin(2f);
+        leftInfo.addCell(new Cell().add(holderP).setBorder(Border.NO_BORDER));
+
+        // Seat Allocation & Status Row
+        Table seatTable = new Table(UnitValue.createPercentArray(new float[]{50, 50}))
+                .useAllAvailableWidth()
+                .setBorder(Border.NO_BORDER)
+                .setMarginTop(3f);
+
+        String seatNum = seat != null ? seat.getSeatNumber() : "GA-" + (ticketIndex + 1);
+        Paragraph seatP = new Paragraph()
+                .add(new Text("SEAT ALLOCATION:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text(seatNum).setFontSize(12f).setBold().setFontColor(COLOR_ACID_YELLOW));
+        seatTable.addCell(new Cell().add(seatP).setBorder(Border.NO_BORDER));
+
+        Paragraph statusP = new Paragraph()
+                .add(new Text("ADMISSION STATUS:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text(ticket.getTicketStatus().name() + " // VERIFIED").setFontSize(8.5f).setBold().setFontColor(COLOR_GRIT_WHITE));
+        seatTable.addCell(new Cell().add(statusP).setBorder(Border.NO_BORDER));
+
+        leftInfo.addCell(new Cell().add(seatTable).setBorder(Border.NO_BORDER));
+
+        // Guarantees Ribbon
+        Paragraph guarP = new Paragraph("⚡ 10-MIN CART LOCK   🛡️ ZERO OVERBOOKING   🎟️ OFFLINE GATE VERIFIED")
+                .setFontSize(6f).setFontColor(COLOR_ACID_YELLOW).setMarginTop(3f).setMarginBottom(1f);
+        leftInfo.addCell(new Cell().add(guarP).setBorder(Border.NO_BORDER));
+
+        coreTable.addCell(new Cell().add(leftInfo).setBorder(Border.NO_BORDER).setPaddingRight(4f));
+
+        // Right QR Optical Gate Stub
+        Table rightStub = new Table(UnitValue.createPercentArray(new float[]{100}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(ColorConstants.WHITE)
+                .setBorder(new SolidBorder(COLOR_GRIT_WHITE, 1.5f))
+                .setPadding(3f);
+
+        byte[] qrBytes = qrCodeService.generateQrCodeImage(ticket.getQrCode());
+        ImageData imgData = ImageDataFactory.create(qrBytes);
+        Image qrImg = new Image(imgData).setWidth(75).setHeight(75).setHorizontalAlignment(HorizontalAlignment.CENTER);
+
+        rightStub.addCell(new Cell().add(qrImg).setBorder(Border.NO_BORDER).setPadding(1f));
+
+        Paragraph stubLabel = new Paragraph("OPTICAL GATE TOKEN")
+                .setFontSize(6.5f).setBold().setFontColor(ColorConstants.BLACK).setTextAlignment(TextAlignment.CENTER).setMargin(0);
+        Paragraph stubCode = new Paragraph(ticket.getQrCode().length() > 22 ? ticket.getQrCode().substring(0, 22) + "..." : ticket.getQrCode())
+                .setFontSize(5.5f).setFontColor(ColorConstants.DARK_GRAY).setTextAlignment(TextAlignment.CENTER).setMargin(0);
+        Paragraph stubBarcode = new Paragraph("|| | ||| | || |||| | ||| | || | ||||")
+                .setFontSize(7f).setBold().setFontColor(ColorConstants.BLACK).setTextAlignment(TextAlignment.CENTER).setMargin(1f);
+
+        rightStub.addCell(new Cell().add(stubLabel).add(stubCode).add(stubBarcode).setBorder(Border.NO_BORDER).setPadding(1f));
+        coreTable.addCell(new Cell().add(rightStub).setBorder(Border.NO_BORDER).setPaddingLeft(4f));
+
+        passBox.addCell(new Cell().add(coreTable).setBorder(Border.NO_BORDER).setPadding(2f));
+
+        // 5. Perforation Tear Line
+        Paragraph perfP = new Paragraph("✂  - - - - - - - - - - - - - - DETACH AT GATE TURNSTILE FOR PHYSICAL SCAN - - - - - - - - - - - - - -  ✂")
+                .setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginTop(2f).setMarginBottom(2f);
+        passBox.addCell(new Cell().add(perfP).setBorder(Border.NO_BORDER));
+
+        // 6. Security Microprint Footer
+        Paragraph microP = new Paragraph("EVENTHUB INFRASTRUCTURE // SECURE SHA-256 DIGITAL GATE CREDENTIAL // NON-TRANSFERABLE PASS // EHB-2026")
+                .setFontSize(5.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginBottom(3f);
+        passBox.addCell(new Cell().add(microP).setBorder(Border.NO_BORDER));
+
+        // 7. Bottom Hazard Tape
+        passBox.addCell(new Cell().add(hazardTop).setPadding(0).setBorder(Border.NO_BORDER));
+
+        document.add(passBox);
+    }
+
     public byte[] generateTicketPdf(Long ticketId) {
         return generateTicketPdf(ticketId, null);
     }
@@ -235,68 +441,21 @@ public class TicketService {
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PdfWriter writer = new PdfWriter(baos);
+            PdfDocument pdf = new PdfDocument(writer);
+            pdf.setDefaultPageSize(PageSize.A4);
+            Document document = new Document(pdf);
+            document.setMargins(24f, 24f, 24f, 24f);
 
-            // Create PDF using iText
-            com.itextpdf.kernel.pdf.PdfWriter writer = new com.itextpdf.kernel.pdf.PdfWriter(baos);
-            com.itextpdf.kernel.pdf.PdfDocument pdf = new com.itextpdf.kernel.pdf.PdfDocument(writer);
-            com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdf);
+            com.kritagya.event_booking_system.entity.Seat seat = null;
+            if (booking.getSeats() != null && !booking.getSeats().isEmpty()) {
+                seat = booking.getSeats().get(0);
+            }
 
-            // Title
-            document.add(new com.itextpdf.layout.element.Paragraph("EVENT TICKET")
-                    .setFontSize(24)
-                    .setBold()
-                    .setTextAlignment(com.itextpdf.layout.properties.TextAlignment.CENTER));
-
-            document.add(new com.itextpdf.layout.element.Paragraph("\n"));
-
-            // Event details
-            document.add(new com.itextpdf.layout.element.Paragraph("Event: " + event.getName())
-                    .setFontSize(16).setBold());
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Date: " + event.getEventDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))));
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Time: " + event.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"))
-                            + " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("hh:mm a"))));
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Venue: " + event.getVenue().getName()));
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Address: " + event.getVenue().getAddress()));
-
-            document.add(new com.itextpdf.layout.element.Paragraph("\n"));
-
-            // Ticket details
-            document.add(new com.itextpdf.layout.element.Paragraph("Ticket Code: " + ticket.getQrCode())
-                    .setFontSize(14).setBold());
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Status: " + ticket.getTicketStatus().name()));
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Issued: " + ticket.getIssueDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))));
-
-            document.add(new com.itextpdf.layout.element.Paragraph("\n"));
-
-            // Booking info
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Booked by: " + booking.getUser().getFirstName() + " " + booking.getUser().getLastName()));
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Booking ID: " + booking.getId()));
-
-            document.add(new com.itextpdf.layout.element.Paragraph("\n"));
-
-            // QR Code image
-            byte[] qrCodeBytes = qrCodeService.generateQrCodeImage(ticket.getQrCode());
-            com.itextpdf.io.image.ImageData imageData = com.itextpdf.io.image.ImageDataFactory.create(qrCodeBytes);
-            com.itextpdf.layout.element.Image qrImage = new com.itextpdf.layout.element.Image(imageData);
-            qrImage.setWidth(150);
-            qrImage.setHeight(150);
-            qrImage.setHorizontalAlignment(com.itextpdf.layout.properties.HorizontalAlignment.CENTER);
-            document.add(qrImage);
-
-            document.add(new com.itextpdf.layout.element.Paragraph("Scan this QR code at the venue entrance")
-                    .setFontSize(10)
-                    .setTextAlignment(com.itextpdf.layout.properties.TextAlignment.CENTER));
+            renderBrutalistTicketPass(document, ticket, booking, event, seat, 0, 1);
 
             document.close();
-            log.info("Generated PDF for ticket ID: {}", ticketId);
+            log.info("Generated high-fidelity brutalist PDF pass for ticket ID: {}", ticketId);
             return baos.toByteArray();
 
         } catch (Exception e) {
@@ -333,71 +492,49 @@ public class TicketService {
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            com.itextpdf.kernel.pdf.PdfWriter writer = new com.itextpdf.kernel.pdf.PdfWriter(baos);
-            com.itextpdf.kernel.pdf.PdfDocument pdf = new com.itextpdf.kernel.pdf.PdfDocument(writer);
-            com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdf);
+            PdfWriter writer = new PdfWriter(baos);
+            PdfDocument pdf = new PdfDocument(writer);
+            pdf.setDefaultPageSize(PageSize.A4);
+            Document document = new Document(pdf);
+            document.setMargins(20f, 20f, 20f, 20f);
 
-            document.add(new com.itextpdf.layout.element.Paragraph("EVENT BOOKING CONFIRMATION & TICKETS")
-                    .setFontSize(20)
-                    .setBold()
-                    .setTextAlignment(com.itextpdf.layout.properties.TextAlignment.CENTER));
+            // Executive Booking Summary Header Table
+            Table summaryBox = new Table(UnitValue.createPercentArray(new float[]{60, 40}))
+                    .useAllAvailableWidth()
+                    .setBackgroundColor(COLOR_ASPHALT_BG)
+                    .setBorder(new SolidBorder(COLOR_ACID_YELLOW, 2f))
+                    .setPadding(6f)
+                    .setMarginBottom(12f);
 
-            document.add(new com.itextpdf.layout.element.Paragraph("\n"));
+            Paragraph sumTitle = new Paragraph()
+                    .add(new Text("EVENTHUB BOOKING CONFIRMATION\n").setFontSize(12).setBold().setFontColor(COLOR_ACID_YELLOW))
+                    .add(new Text("ORDER #EHB-" + booking.getId() + " • " + (booking.getUser().getFirstName() + " " + booking.getUser().getLastName()).toUpperCase()).setFontSize(8.5f).setFontColor(COLOR_GRIT_WHITE));
+            summaryBox.addCell(new Cell().add(sumTitle).setBorder(Border.NO_BORDER).setPadding(3f));
 
-            document.add(new com.itextpdf.layout.element.Paragraph("Event: " + event.getName())
-                    .setFontSize(14).setBold());
-            if (event.getEventDate() != null) {
-                document.add(new com.itextpdf.layout.element.Paragraph(
-                        "Date: " + event.getEventDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))));
-            }
-            if (event.getStartTime() != null && event.getEndTime() != null) {
-                document.add(new com.itextpdf.layout.element.Paragraph(
-                        "Time: " + event.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"))
-                                + " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("hh:mm a"))));
-            }
-            if (event.getVenue() != null) {
-                document.add(new com.itextpdf.layout.element.Paragraph(
-                        "Venue: " + event.getVenue().getName() + " (" + event.getVenue().getAddress() + ")"));
-            }
+            String totalPaid = booking.getTotalAmount() != null ? "$" + booking.getTotalAmount() : "$0.00";
+            Paragraph sumRight = new Paragraph()
+                    .add(new Text("TOTAL CONFIRMED ADMISSION\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                    .add(new Text(tickets.size() + " PASSES ISSUED • " + totalPaid).setFontSize(9.5f).setBold().setFontColor(COLOR_GRIT_WHITE))
+                    .setTextAlignment(TextAlignment.RIGHT);
+            summaryBox.addCell(new Cell().add(sumRight).setBorder(Border.NO_BORDER).setPadding(3f));
 
-            document.add(new com.itextpdf.layout.element.Paragraph("\n"));
+            document.add(summaryBox);
 
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Customer: " + booking.getUser().getFirstName() + " " + booking.getUser().getLastName()
-                            + " (" + booking.getUser().getEmail() + ")"));
-            document.add(new com.itextpdf.layout.element.Paragraph(
-                    "Booking ID: #" + booking.getId() + " | Status: " + booking.getBookingStatus()
-                            + " | Total Amount: $" + booking.getTotalAmount()));
-
-            document.add(new com.itextpdf.layout.element.Paragraph("\n--- TICKETS ---").setFontSize(12).setBold());
-
+            // Render each ticket pass
             for (int i = 0; i < tickets.size(); i++) {
                 Ticket t = tickets.get(i);
                 if (t.getTicketStatus() == TicketStatus.CANCELLED) {
                     continue;
                 }
-                document.add(new com.itextpdf.layout.element.Paragraph(
-                        "Ticket #" + (i + 1) + " | Code: " + t.getQrCode() + " | Status: " + t.getTicketStatus())
-                        .setFontSize(11).setBold());
-
+                com.kritagya.event_booking_system.entity.Seat seat = null;
                 if (booking.getSeats() != null && i < booking.getSeats().size()) {
-                    com.kritagya.event_booking_system.entity.Seat seat = booking.getSeats().get(i);
-                    document.add(new com.itextpdf.layout.element.Paragraph(
-                            "Seat: " + seat.getSeatNumber() + " (" + seat.getSeatType() + ")"));
+                    seat = booking.getSeats().get(i);
                 }
-
-                byte[] qrCodeBytes = qrCodeService.generateQrCodeImage(t.getQrCode());
-                com.itextpdf.io.image.ImageData imageData = com.itextpdf.io.image.ImageDataFactory.create(qrCodeBytes);
-                com.itextpdf.layout.element.Image qrImage = new com.itextpdf.layout.element.Image(imageData);
-                qrImage.setWidth(120);
-                qrImage.setHeight(120);
-                qrImage.setHorizontalAlignment(com.itextpdf.layout.properties.HorizontalAlignment.CENTER);
-                document.add(qrImage);
-                document.add(new com.itextpdf.layout.element.Paragraph("\n"));
+                renderBrutalistTicketPass(document, t, booking, event, seat, i, tickets.size());
             }
 
             document.close();
-            log.info("Generated booking PDF for booking ID: {} with {} tickets", bookingId, tickets.size());
+            log.info("Generated high-fidelity brutalist booking PDF for booking ID: {} with {} tickets", bookingId, tickets.size());
             return baos.toByteArray();
 
         } catch (Exception e) {
