@@ -19,6 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Cryptographic Gate Token & Concert Barcode**: Added dynamic hex hash generation based on attendee identity (`gateHash`), realistic variable-width concert ticket barcode (`* 8 4 9 2 0 1 7 4 3 *`), and high-contrast vector QR code with animated neon-magenta laser sweep beam.
   - **Audio VU Decibel / Security Entropy Meter**: Upgraded real-time decibel meter with glowing multi-tier LED bars, reactive overdrive animations, and live dB readouts.
   - **Prismatic Holographic Foil Overlay (`index.css`)**: Enhanced multi-frequency iridescence with cyan/sky blue prism refraction highlights and interactive hover lift.
+- **Architectural Arena & Auditorium Seatmap Engine (`SeatMapModal.jsx`)**:
+  - **Curved IMAX & Live Concert Proscenium**: Built ambient projector aperture beams, concave IMAX screen curvature, Dolby Atmos audio spec badges, and concert rigging truss with active audio graphic EQ spectrum visualizers.
+  - **Smart Consecutive Adjacent Seat Selection**: Implemented sliding-window algorithm for `+2 PAIR` and `+4 SQUAD` that automatically identifies and selects adjacent side-by-side seats in the same row.
+  - **Tactical Venue Blueprint Mini-Map**: Added compass-oriented spatial arena overview displaying real-time stage alignment and pulsing cart reservation dots.
+  - **Tiered Architectural Dividers**: Grouped rows into distinct physical tiers (VIP Orchestra Pit, Mezzanine Club, Balcony Loge, and General Auditorium) with colored section accent dividers.
+  - **Tactile Recliner Stadium Seats**: Upgraded seat silhouettes with ergonomic curved headrests, section-specific neon glow outlines, 3D hover lift, and high-voltage selection states.
+  - **Illuminated Runway Aisle**: Replaced basic aisle text with an illuminated stadium runway featuring directional chevrons and floor step lights.
+  - **Real-Time Seat Radar & Telemetry HUD**: Enhanced hover telemetry with distance to stage, direct line-of-sight metrics, and live rate indicators.
+  - **Perforated Ticket Stubs Dock**: Displayed reserved cart seats as mini concert tickets with tear notches, section tags, and 1-click removal.
 
 ---
 

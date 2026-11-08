@@ -3,7 +3,7 @@ import {
   X, Check, ArrowRight, ArrowLeft,
   Smartphone, CreditCard, Landmark, Gift, Wallet, AlertCircle,
   Volume2, Zap, Filter, RotateCcw, Trash2, Eye, Ticket,
-  Film, Clapperboard
+  Film, Clapperboard, Sparkles, Users, Compass
 } from 'lucide-react';
 import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
@@ -88,6 +88,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   const isCinema = event?.category === 'CINEMA' || event?.category === 'MOVIE' || (event?.name && /imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(event.name));
   const [selectedShowtime, setSelectedShowtime] = useState(event?.selectedShowtime || event?.showtimes?.[0] || '06:15 PM');
   const [selectedSnacks, setSelectedSnacks] = useState({});
+  const [showMiniMap, setShowMiniMap] = useState(false);
 
   useEffect(() => {
     if (event) {
@@ -380,6 +381,57 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   };
 
   const handleAutoSelect = (count, targetType = null) => {
+    const availableSlots = 6 - selectedSeats.length;
+    if (availableSlots <= 0) {
+      showToast('MAXIMUM 6 SEATS PER BOOKING REACHED', 'info');
+      return;
+    }
+    const needed = Math.min(count, availableSlots);
+
+    // If looking for 2 or more seats, prioritize finding consecutive adjacent seats in the same row
+    if (needed >= 2) {
+      const rows = Array.from(new Set(seatMap.map(s => s.rowNumber || 'A'))).sort();
+      let bestAdjacentGroup = null;
+
+      for (const r of rows) {
+        const rowSeats = seatMap
+          .filter(s => s.rowNumber === r && (!targetType || s.seatType === targetType))
+          .sort((a, b) => {
+            const numA = parseInt(a.seatNumber.replace(/\D/g, ''), 10) || 0;
+            const numB = parseInt(b.seatNumber.replace(/\D/g, ''), 10) || 0;
+            return numA - numB;
+          });
+
+        for (let i = 0; i <= rowSeats.length - needed; i++) {
+          const window = rowSeats.slice(i, i + needed);
+          const allAvailable = window.every(s => s.status === 'AVAILABLE' && !selectedSeats.some(sel => sel.id === s.id));
+          if (allAvailable) {
+            let consecutive = true;
+            for (let j = 0; j < window.length - 1; j++) {
+              const curNum = parseInt(window[j].seatNumber.replace(/\D/g, ''), 10);
+              const nextNum = parseInt(window[j + 1].seatNumber.replace(/\D/g, ''), 10);
+              if (nextNum !== curNum + 1) {
+                consecutive = false;
+                break;
+              }
+            }
+            if (consecutive) {
+              bestAdjacentGroup = window;
+              break;
+            }
+          }
+        }
+        if (bestAdjacentGroup) break;
+      }
+
+      if (bestAdjacentGroup) {
+        setSelectedSeats(prev => [...prev, ...bestAdjacentGroup]);
+        showToast(`RESERVED ${bestAdjacentGroup.length} ADJACENT SEATS: ${bestAdjacentGroup.map(s => s.seatNumber).join(', ')}`, 'success');
+        return;
+      }
+    }
+
+    // Default: Best available candidate seats
     let candidates = seatMap.filter(s => s.status === 'AVAILABLE' && !selectedSeats.some(sel => sel.id === s.id));
     if (targetType) {
       candidates = candidates.filter(s => s.seatType === targetType);
@@ -389,15 +441,9 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
       return;
     }
 
-    const availableSlots = 6 - selectedSeats.length;
-    if (availableSlots <= 0) {
-      showToast('MAXIMUM 6 SEATS PER BOOKING REACHED', 'info');
-      return;
-    }
-
-    const toAdd = candidates.slice(0, Math.min(count, availableSlots));
+    const toAdd = candidates.slice(0, needed);
     setSelectedSeats(prev => [...prev, ...toAdd]);
-    showToast(`ADDED ${toAdd.length} SEAT(S) TO CART`, 'success');
+    showToast(`ADDED ${toAdd.length} BEST AVAILABLE SEAT(S) TO CART`, 'success');
   };
 
   const handleClearSelection = () => {
@@ -583,11 +629,11 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 <div>
                   {/* ─── Cinema Showtime Selector Bar (Cinema Mode) ─── */}
                   {isCinema && (
-                    <div className="mb-4 p-3 bg-asphalt-black border-2 border-acid-yellow flex flex-wrap items-center justify-between gap-2 shadow-[2px_2px_0px_#ffffff]">
+                    <div className="mb-4 p-3 bg-asphalt-black border-2 border-acid-yellow flex flex-wrap items-center justify-between gap-2 shadow-[3px_3px_0px_#ffffff]">
                       <div className="flex items-center gap-2">
-                        <Clapperboard size={15} className="text-acid-yellow" />
+                        <Clapperboard size={15} className="text-acid-yellow animate-pulse" />
                         <span className="font-ticker text-[10px] text-grit-white uppercase tracking-wider font-bold">
-                          SCREEN 01 // SELECT SHOWTIME:
+                          SCREEN 01 // AUDITORIUM SHOWTIME:
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
@@ -610,57 +656,113 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   )}
 
                   {/* ─── A. Proscenium: Cinema Curved Screen OR Live Concert Stage ─── */}
-                  <div className="relative mb-6 bg-asphalt-black border-2 border-asphalt-border p-3 sm:p-4 overflow-hidden">
+                  <div className="relative mb-5 bg-asphalt-black border-2 border-asphalt-border p-3 sm:p-4 overflow-hidden">
                     <div className="hazard-tape h-2 w-full mb-3" />
 
                     {isCinema ? (
-                      /* Cinema Curved Screen */
-                      <div className="text-center py-4 px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_24px_rgba(226,241,60,0.15)] relative rounded-b-[40px]">
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <Film size={16} className="text-acid-yellow animate-pulse" />
-                          <span className="font-impact text-base sm:text-lg tracking-widest text-grit-white uppercase">
-                            ▲ CURVED IMAX CINEMA SCREEN // ALL EYES FORWARD ▲
-                          </span>
-                          <Film size={16} className="text-neon-magenta animate-pulse" />
+                      /* Cinema Curved IMAX Screen */
+                      <div className="relative">
+                        {/* Overhead Projector Aperture & Beam */}
+                        <div className="flex flex-col items-center mb-1">
+                          <div className="flex items-center gap-1.5 px-3 py-0.5 bg-asphalt-card border border-asphalt-border text-[8px] font-mono-zine text-grit-dim uppercase tracking-widest">
+                            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping inline-block"></span>
+                            4K DUAL LASER BOOTH • 1.43:1 RATIO
+                          </div>
+                          {/* Angled projection beam lines */}
+                          <div className="w-40 h-3 bg-gradient-to-b from-sky-400/20 via-sky-400/5 to-transparent"></div>
                         </div>
-                        <p className="font-mono-zine text-[10px] text-grit-dim uppercase tracking-wider">
-                          SCREEN 01 • DUAL 4K LASER PROJECTION • 128-CH DOLBY ATMOS • OPTIMAL SWEET-SPOT: ROWS B-C
-                        </p>
-                        <div className="w-56 h-1 bg-gradient-to-r from-transparent via-acid-yellow to-transparent mx-auto mt-2 opacity-70"></div>
+
+                        {/* Curved Screen Curve */}
+                        <div className="text-center py-4 px-4 bg-gradient-to-b from-asphalt-card via-asphalt-black to-asphalt-black border-2 border-acid-yellow shadow-[0_0_30px_rgba(226,241,60,0.18)] relative rounded-b-[48px] overflow-hidden">
+                          {/* Prismatic reflection sheen */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-400/10 to-transparent pointer-events-none"></div>
+
+                          <div className="flex items-center justify-center gap-2 mb-1 relative z-10">
+                            <Film size={16} className="text-acid-yellow animate-pulse" />
+                            <span className="font-impact text-base sm:text-lg tracking-widest text-grit-white uppercase">
+                              ▲ CURVED IMAX CINEMA SCREEN // ALL EYES FORWARD ▲
+                            </span>
+                            <Film size={16} className="text-neon-magenta animate-pulse" />
+                          </div>
+                          <p className="font-mono-zine text-[9px] sm:text-[10px] text-grit-dim uppercase tracking-wider relative z-10">
+                            128-CH DOLBY ATMOS 3D AUDIO • ACOUSTIC SWEET-SPOT: ROWS B-C
+                          </p>
+                          <div className="w-56 h-1 bg-gradient-to-r from-transparent via-acid-yellow to-transparent mx-auto mt-2 opacity-80"></div>
+                        </div>
+
+                        {/* Sweet-spot reference guide */}
+                        <div className="text-center mt-1">
+                          <span className="font-ticker text-[8px] text-acid-yellow tracking-widest uppercase">
+                            ▼ OPTIMAL STEREO & VISUAL AXIS ▼
+                          </span>
+                        </div>
                       </div>
                     ) : (
-                      /* Concert Stage Rig */
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="hidden sm:flex flex-col items-center p-2 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11]">
-                          <Volume2 size={16} className="text-acid-yellow animate-pulse" />
-                          <span className="font-ticker text-[8px] text-grit-dim uppercase tracking-wider mt-1">L-RIG 40kW</span>
-                          <div className="flex gap-0.5 mt-1.5 h-3 items-end">
-                            <span className="w-1 h-2 bg-acid-yellow animate-pulse" />
-                            <span className="w-1 h-3 bg-acid-yellow" />
-                            <span className="w-1 h-1 bg-neon-magenta" />
-                          </div>
+                      /* Live Concert Stage Rig */
+                      <div className="relative">
+                        {/* Stage Rigging Truss */}
+                        <div className="hidden sm:flex justify-between items-center px-6 mb-1 text-[8px] font-mono-zine text-grit-dim">
+                          <span>RIGGING TRUSS A1</span>
+                          <span className="flex items-center gap-2 text-acid-yellow">
+                            <span className="w-1.5 h-1.5 rounded-full bg-neon-magenta animate-ping"></span>
+                            AUDIO PEAK: 128 dB SPL
+                          </span>
+                          <span>RIGGING TRUSS B1</span>
                         </div>
 
-                        <div className="flex-1 text-center py-2.5 px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_20px_rgba(238,252,84,0.12)] relative rounded-b-[20px]">
-                          <div className="flex items-center justify-center gap-2 mb-0.5">
-                            <Zap size={15} className="text-acid-yellow animate-bounce" />
-                            <span className="font-impact text-sm sm:text-base tracking-widest text-grit-white uppercase">
-                              ▲ MAIN STAGE & LIVE SOUND RIG ▲
-                            </span>
-                            <Zap size={15} className="text-neon-magenta animate-bounce" />
+                        <div className="flex items-stretch justify-between gap-3">
+                          {/* Left Speaker Tower Array */}
+                          <div className="hidden sm:flex flex-col items-center justify-between p-2.5 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11] w-20">
+                            <div className="flex items-center gap-1 text-[8px] font-ticker text-grit-dim uppercase">
+                              <Volume2 size={13} className="text-acid-yellow animate-pulse" />
+                              <span>L-RIG</span>
+                            </div>
+                            {/* Graphic EQ Visualizer Bars */}
+                            <div className="flex gap-1 h-6 items-end my-1">
+                              <span className="w-1.5 h-4 bg-acid-yellow animate-pulse" />
+                              <span className="w-1.5 h-6 bg-acid-yellow" />
+                              <span className="w-1.5 h-3 bg-neon-magenta animate-pulse" />
+                              <span className="w-1.5 h-5 bg-acid-yellow" />
+                            </div>
+                            <span className="font-ticker text-[7px] text-grit-dim uppercase">40kW LINE-ARRAY</span>
                           </div>
-                          <p className="font-mono-zine text-[10px] text-grit-dim uppercase tracking-wider">
-                            DIRECT STAGE SIGHTLINE // 10-MINUTE SEAT HOLD ACTIVE
-                          </p>
-                        </div>
 
-                        <div className="hidden sm:flex flex-col items-center p-2 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11]">
-                          <Volume2 size={16} className="text-neon-magenta animate-pulse" />
-                          <span className="font-ticker text-[8px] text-grit-dim uppercase tracking-wider mt-1">R-RIG 40kW</span>
-                          <div className="flex gap-0.5 mt-1.5 h-3 items-end">
-                            <span className="w-1 h-1 bg-neon-magenta" />
-                            <span className="w-1 h-3 bg-acid-yellow" />
-                            <span className="w-1 h-2 bg-acid-yellow animate-pulse" />
+                          {/* Center Main Stage Floor Rig */}
+                          <div className="flex-1 text-center py-3 px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_24px_rgba(238,252,84,0.15)] relative rounded-b-[24px]">
+                            {/* Overhead spotlight cone glow */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-acid-yellow/5 to-transparent pointer-events-none"></div>
+
+                            <div className="flex items-center justify-center gap-2 mb-1">
+                              <Zap size={15} className="text-acid-yellow animate-bounce" />
+                              <span className="font-impact text-sm sm:text-base tracking-widest text-grit-white uppercase">
+                                ▲ MAIN CONCERT STAGE & LIVE SOUND RIG ▲
+                              </span>
+                              <Zap size={15} className="text-neon-magenta animate-bounce" />
+                            </div>
+                            <p className="font-mono-zine text-[9px] sm:text-[10px] text-grit-dim uppercase tracking-wider">
+                              DIRECT STAGE SIGHTLINE • 10-MINUTE SEAT LOCK ACTIVE
+                            </p>
+                            <div className="mt-2 inline-flex items-center gap-2 px-2.5 py-0.5 bg-asphalt-black border border-asphalt-border font-ticker text-[8px] text-acid-yellow uppercase">
+                              <span>🎙️ CENTER PERFORMER APEX</span>
+                              <span>•</span>
+                              <span>STAGE FRONT MOSH BARRIER</span>
+                            </div>
+                          </div>
+
+                          {/* Right Speaker Tower Array */}
+                          <div className="hidden sm:flex flex-col items-center justify-between p-2.5 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11] w-20">
+                            <div className="flex items-center gap-1 text-[8px] font-ticker text-grit-dim uppercase">
+                              <Volume2 size={13} className="text-neon-magenta animate-pulse" />
+                              <span>R-RIG</span>
+                            </div>
+                            {/* Graphic EQ Visualizer Bars */}
+                            <div className="flex gap-1 h-6 items-end my-1">
+                              <span className="w-1.5 h-5 bg-acid-yellow" />
+                              <span className="w-1.5 h-3 bg-neon-magenta animate-pulse" />
+                              <span className="w-1.5 h-6 bg-acid-yellow" />
+                              <span className="w-1.5 h-4 bg-acid-yellow animate-pulse" />
+                            </div>
+                            <span className="font-ticker text-[7px] text-grit-dim uppercase">40kW LINE-ARRAY</span>
                           </div>
                         </div>
                       </div>
@@ -668,49 +770,74 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   </div>
 
                   {/* ─── B. Quick Filters & Smart Selection Bar ─── */}
-                  <div className="flex flex-wrap items-center justify-between gap-2.5 mb-5 pb-3 border-b border-asphalt-border">
+                  <div className="flex flex-wrap items-center justify-between gap-2.5 mb-4 pb-3 border-b border-asphalt-border">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-wider flex items-center gap-1 mr-1">
-                        <Filter size={11} /> FILTER:
+                        <Filter size={11} /> SECTION:
                       </span>
                       {[
-                        { id: 'ALL', label: 'ALL SECTIONS' },
-                        { id: 'ORCHESTRA', label: 'ORCHESTRA PIT' },
-                        { id: 'MEZZANINE', label: 'MEZZANINE' },
-                        { id: 'BALCONY', label: 'BALCONY' },
-                        { id: 'GENERAL', label: 'GENERAL FLOOR' }
+                        { id: 'ALL', label: 'ALL SECTIONS', color: 'bg-grit-white' },
+                        { id: 'ORCHESTRA', label: 'ORCHESTRA PIT', color: 'bg-neon-magenta' },
+                        { id: 'MEZZANINE', label: 'MEZZANINE', color: 'bg-blue-400' },
+                        { id: 'BALCONY', label: 'BALCONY', color: 'bg-amber-400' },
+                        { id: 'GENERAL', label: 'GENERAL', color: 'bg-grit-dim' }
                       ].map(f => (
                         <button
                           key={f.id}
                           type="button"
                           onClick={() => setActiveSection(f.id)}
-                          className={`px-2.5 py-1 text-[11px] font-impact tracking-wider uppercase border transition-all cursor-pointer ${
+                          className={`px-2.5 py-1 text-[11px] font-impact tracking-wider uppercase border transition-all cursor-pointer flex items-center gap-1.5 ${
                             activeSection === f.id
                               ? 'bg-acid-yellow text-asphalt-black border-grit-white shadow-[2px_2px_0px_#ffffff]'
                               : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-acid-yellow hover:text-grit-white'
                           }`}
                         >
+                          <span className={`w-1.5 h-1.5 rounded-full ${f.color}`}></span>
                           {f.label}
                         </button>
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <button
                         type="button"
                         onClick={() => handleAutoSelect(1)}
-                        className="px-2.5 py-1 bg-asphalt-surface border border-asphalt-border hover:border-acid-yellow text-grit-white font-mono-zine text-[10px] uppercase transition-colors cursor-pointer"
+                        className="px-2.5 py-1 bg-asphalt-surface border border-asphalt-border hover:border-acid-yellow text-grit-white font-mono-zine text-[10px] uppercase transition-colors cursor-pointer flex items-center gap-1"
                         title="Auto-pick 1 best available seat"
                       >
+                        <Sparkles size={10} className="text-acid-yellow" />
                         +1 BEST
                       </button>
                       <button
                         type="button"
                         onClick={() => handleAutoSelect(2)}
-                        className="px-2.5 py-1 bg-asphalt-surface border border-asphalt-border hover:border-acid-yellow text-grit-white font-mono-zine text-[10px] uppercase transition-colors cursor-pointer"
-                        title="Auto-pick 2 best available seats"
+                        className="px-2.5 py-1 bg-asphalt-surface border border-asphalt-border hover:border-acid-yellow text-grit-white font-mono-zine text-[10px] uppercase transition-colors cursor-pointer flex items-center gap-1"
+                        title="Auto-pick 2 adjacent seats side-by-side"
                       >
+                        <Users size={10} className="text-acid-yellow" />
                         +2 PAIR
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAutoSelect(4)}
+                        className="px-2.5 py-1 bg-asphalt-surface border border-asphalt-border hover:border-acid-yellow text-grit-white font-mono-zine text-[10px] uppercase transition-colors cursor-pointer flex items-center gap-1"
+                        title="Auto-pick 4 adjacent seats together"
+                      >
+                        <Users size={10} className="text-neon-magenta" />
+                        +4 SQUAD
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowMiniMap(prev => !prev)}
+                        className={`px-2 py-1 font-mono-zine text-[10px] uppercase border transition-colors cursor-pointer flex items-center gap-1 ${
+                          showMiniMap 
+                            ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' 
+                            : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:text-grit-white'
+                        }`}
+                        title="Toggle venue blueprint mini-map"
+                      >
+                        <Compass size={11} />
+                        {showMiniMap ? 'HIDE MAP' : 'VENUE MAP'}
                       </button>
                       {selectedSeats.length > 0 && (
                         <button
@@ -724,43 +851,124 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     </div>
                   </div>
 
+                  {/* ─── Tactical Venue Blueprint Mini-Map (When Toggled) ─── */}
+                  {showMiniMap && (
+                    <div className="mb-4 p-3 bg-asphalt-black border-2 border-acid-yellow shadow-[4px_4px_0px_#0e0e11] flex flex-col sm:flex-row items-center justify-between gap-3 animate-fadeIn">
+                      <div className="flex items-center gap-3">
+                        <div className="w-24 h-16 bg-asphalt-surface border border-asphalt-border relative p-1 flex flex-col justify-between overflow-hidden shadow-inner">
+                          {/* Mini Stage Header */}
+                          <div className="w-full h-2.5 bg-acid-yellow rounded-b-sm text-[6px] text-asphalt-black text-center font-bold tracking-wider">
+                            STAGE NORTH
+                          </div>
+                          {/* Mini Tier Blocks */}
+                          <div className="space-y-0.5 my-auto">
+                            <div className="h-1.5 w-full bg-neon-magenta/40 rounded-xs flex items-center justify-center">
+                              {selectedSeats.some(s => s.rowNumber === 'A') && (
+                                <span className="w-1 h-1 bg-acid-yellow rounded-full animate-ping"></span>
+                              )}
+                            </div>
+                            <div className="h-1.5 w-full bg-blue-500/40 rounded-xs flex items-center justify-center">
+                              {selectedSeats.some(s => s.rowNumber === 'B') && (
+                                <span className="w-1 h-1 bg-acid-yellow rounded-full animate-ping"></span>
+                              )}
+                            </div>
+                            <div className="h-1.5 w-full bg-amber-500/40 rounded-xs flex items-center justify-center">
+                              {selectedSeats.some(s => s.rowNumber === 'C') && (
+                                <span className="w-1 h-1 bg-acid-yellow rounded-full animate-ping"></span>
+                              )}
+                            </div>
+                            <div className="h-1.5 w-full bg-stone-500/40 rounded-xs flex items-center justify-center">
+                              {selectedSeats.some(s => s.rowNumber >= 'D') && (
+                                <span className="w-1 h-1 bg-acid-yellow rounded-full animate-ping"></span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <span className="font-impact text-xs text-grit-white uppercase block">
+                            ARENA SPATIAL ORIENTATION
+                          </span>
+                          <span className="font-mono-zine text-[9px] text-grit-dim uppercase block">
+                            NORTH FACING STAGE • AISLE 01 CENTER RUNWAY • CAPACITY {seatMap.length} SEATS
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 font-ticker text-[9px] text-grit-dim uppercase">
+                        <span className="text-acid-yellow font-bold">
+                          ● {selectedSeats.length} SEATS IN CART
+                        </span>
+                        <span>•</span>
+                        <span>{seatMap.filter(s => s.status === 'AVAILABLE').length} AVAILABLE</span>
+                      </div>
+                    </div>
+                  )}
+
                   {/* ─── C. Interactive Arena Seat Grid with Center Aisle ─── */}
                   <div className="flex sm:hidden items-center justify-center gap-1.5 py-1 px-3 bg-asphalt-black border border-asphalt-border text-[10px] font-mono-zine text-acid-yellow uppercase mb-2">
                     <span>← SWIPE HORIZONTALLY TO VIEW ALL ROWS & SEATS →</span>
                   </div>
 
                   <div className="overflow-x-auto pb-4 touch-scroll scrollbar-none">
-                    <div className="min-w-[560px] flex flex-col gap-2.5 items-center">
-                      {rowsList.map((row) => {
+                    <div className="min-w-[580px] flex flex-col gap-3 items-center">
+                      {rowsList.map((row, rowIndex) => {
                         const rowSeats = seatMap.filter(s => s.rowNumber === row);
                         const leftWing = rowSeats.slice(0, 5);
                         const rightWing = rowSeats.slice(5, 10);
+
+                        // Tier Header Detection
+                        let tierHeader = null;
+                        if (row === 'A') {
+                          tierHeader = {
+                            title: 'TIER 01 // VIP ORCHESTRA PIT • DIRECT SIGHTLINE',
+                            badge: 'VIP ORCHESTRA',
+                            color: 'text-neon-magenta border-neon-magenta bg-neon-magenta/10'
+                          };
+                        } else if (row === 'B') {
+                          tierHeader = {
+                            title: 'TIER 02 // MEZZANINE CLUB • ACOUSTIC SWEET-SPOT',
+                            badge: 'MEZZANINE',
+                            color: 'text-blue-400 border-blue-400 bg-blue-950/20'
+                          };
+                        } else if (row === 'C') {
+                          tierHeader = {
+                            title: 'TIER 03 // BALCONY LOGE • ELEVATED OVERVIEW',
+                            badge: 'BALCONY',
+                            color: 'text-amber-400 border-amber-400 bg-amber-950/20'
+                          };
+                        } else if (row === 'D' && rowIndex === 3) {
+                          tierHeader = {
+                            title: 'TIER 04 // GENERAL AUDITORIUM',
+                            badge: 'GENERAL',
+                            color: 'text-grit-dim border-asphalt-border bg-asphalt-card'
+                          };
+                        }
 
                         const renderSeatBtn = (seat) => {
                           const isSelected = selectedSeats.some(s => s.id === seat.id);
                           const isDimmed = activeSection !== 'ALL' && seat.seatType !== activeSection;
 
                           let container = "group relative flex flex-col items-center justify-center transition-all duration-150 cursor-pointer select-none ";
-                          let headrest = "w-full h-1.5 rounded-t-[3px] border-b ";
-                          let cushion = "w-8 h-8 sm:w-9 sm:h-9 flex flex-col items-center justify-center font-ticker text-xs font-bold border-2 border-t-0 rounded-b-[3px] ";
+                          let headrest = "w-full h-1.5 sm:h-2 rounded-t-[4px] border-b ";
+                          let cushion = "w-8 h-7 sm:w-9 sm:h-8 flex items-center justify-center font-mono-zine text-[11px] font-bold border-2 border-t-0 rounded-b-[4px] relative ";
 
                           if (isSelected) {
-                            container += "scale-105 z-10 ";
+                            container += "scale-105 z-20 -translate-y-0.5 ";
                             headrest += "bg-acid-yellow border-asphalt-black ";
-                            cushion += "bg-acid-yellow text-asphalt-black border-grit-white shadow-[0_0_12px_rgba(238,252,84,0.6),2px_2px_0px_#ffffff] font-black ";
+                            cushion += "bg-acid-yellow text-asphalt-black border-grit-white shadow-[0_0_14px_rgba(226,241,60,0.7),2px_2px_0px_#ffffff] font-black ";
                           } else if (seat.status === 'AVAILABLE') {
+                            container += "hover:-translate-y-0.5 ";
                             if (seat.seatType === 'ORCHESTRA' || seat.seatType === 'VIP') {
                               headrest += "bg-neon-magenta border-asphalt-black ";
-                              cushion += "bg-neon-magenta/20 text-neon-magenta border-neon-magenta hover:bg-neon-magenta hover:text-asphalt-black ";
+                              cushion += "bg-neon-magenta/15 text-neon-magenta border-neon-magenta hover:bg-neon-magenta hover:text-asphalt-black hover:shadow-[0_0_10px_#ff1f6d] ";
                             } else if (seat.seatType === 'MEZZANINE' || seat.seatType === 'PREMIUM') {
                               headrest += "bg-blue-400 border-asphalt-black ";
-                              cushion += "bg-blue-950/40 text-blue-300 border-blue-400 hover:bg-blue-400 hover:text-asphalt-black ";
+                              cushion += "bg-blue-950/40 text-blue-300 border-blue-400 hover:bg-blue-400 hover:text-asphalt-black hover:shadow-[0_0_10px_#60a5fa] ";
                             } else if (seat.seatType === 'BALCONY') {
                               headrest += "bg-amber-400 border-asphalt-black ";
-                              cushion += "bg-amber-950/40 text-amber-300 border-amber-400 hover:bg-amber-400 hover:text-asphalt-black ";
+                              cushion += "bg-amber-950/40 text-amber-300 border-amber-400 hover:bg-amber-400 hover:text-asphalt-black hover:shadow-[0_0_10px_#fbbf24] ";
                             } else {
                               headrest += "bg-asphalt-border border-asphalt-black group-hover:bg-acid-yellow ";
-                              cushion += "bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow ";
+                              cushion += "bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow hover:shadow-[0_0_8px_#E2F13C] ";
                             }
                             if (isDimmed) container += "opacity-25 ";
                           } else if (seat.status === 'LOCKED') {
@@ -795,46 +1003,63 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                                 )}
                               </span>
                               {seat.seatType === 'VIP' && !isSelected && seat.status === 'AVAILABLE' && (
-                                <span className="absolute -top-1 -right-0.5 w-2 h-2 bg-neon-magenta rounded-full border border-asphalt-black" />
+                                <span className="absolute -top-1 -right-0.5 w-2 h-2 bg-neon-magenta rounded-full border border-asphalt-black shadow-[0_0_4px_#ff1f6d]" />
                               )}
                             </button>
                           );
                         };
 
                         return (
-                          <div key={row} className="flex items-center gap-2 sm:gap-3">
-                            {/* Left Stanchion */}
-                            <div className="w-6 sm:w-7 text-center">
-                              <span className="font-impact text-grit-white text-xs bg-asphalt-card border border-asphalt-border px-1.5 py-0.5 shadow-[1px_1px_0px_#0e0e11]">
-                                {row}
-                              </span>
-                            </div>
+                          <React.Fragment key={row}>
+                            {/* Tier Architectural Header Divider */}
+                            {tierHeader && (
+                              <div className="w-full flex items-center justify-between gap-3 pt-2 pb-1 border-t border-asphalt-border/60">
+                                <div className="h-px flex-1 bg-asphalt-border"></div>
+                                <span className={`px-2.5 py-0.5 text-[9px] font-mono-zine uppercase tracking-wider border ${tierHeader.color}`}>
+                                  {tierHeader.title}
+                                </span>
+                                <div className="h-px flex-1 bg-asphalt-border"></div>
+                              </div>
+                            )}
 
-                            {/* Left Wing */}
-                            <div className="flex gap-1 sm:gap-1.5">
-                              {leftWing.map(renderSeatBtn)}
-                            </div>
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              {/* Left Stanchion */}
+                              <div className="w-6 sm:w-7 text-center">
+                                <span className="font-impact text-grit-white text-xs bg-asphalt-card border border-asphalt-border px-1.5 py-0.5 shadow-[1px_1px_0px_#0e0e11] block">
+                                  {row}
+                                </span>
+                              </div>
 
-                            {/* Center Aisle */}
-                            <div className="w-8 sm:w-10 text-center flex flex-col items-center justify-center pointer-events-none opacity-60">
-                              <span className="font-ticker text-[8px] text-grit-dim tracking-widest uppercase">
-                                AISLE
-                              </span>
-                              <div className="h-3 w-px border-r border-dashed border-asphalt-border my-0.5" />
-                            </div>
+                              {/* Left Wing */}
+                              <div className="flex gap-1 sm:gap-1.5">
+                                {leftWing.map(renderSeatBtn)}
+                              </div>
 
-                            {/* Right Wing */}
-                            <div className="flex gap-1 sm:gap-1.5">
-                              {rightWing.map(renderSeatBtn)}
-                            </div>
+                              {/* Center Illuminated Runway Aisle */}
+                              <div className="w-8 sm:w-10 text-center flex flex-col items-center justify-center pointer-events-none opacity-70">
+                                <span className="font-ticker text-[7px] text-acid-yellow tracking-widest uppercase leading-none">
+                                  ▲ AISLE ▲
+                                </span>
+                                <div className="flex items-center gap-1 my-0.5">
+                                  <span className="w-1 h-1 rounded-full bg-acid-yellow/60"></span>
+                                  <div className="h-3 w-px border-r border-dashed border-asphalt-border" />
+                                  <span className="w-1 h-1 rounded-full bg-acid-yellow/60"></span>
+                                </div>
+                              </div>
 
-                            {/* Right Stanchion */}
-                            <div className="w-6 sm:w-7 text-center">
-                              <span className="font-impact text-grit-white text-xs bg-asphalt-card border border-asphalt-border px-1.5 py-0.5 shadow-[1px_1px_0px_#0e0e11]">
-                                {row}
-                              </span>
+                              {/* Right Wing */}
+                              <div className="flex gap-1 sm:gap-1.5">
+                                {rightWing.map(renderSeatBtn)}
+                              </div>
+
+                              {/* Right Stanchion */}
+                              <div className="w-6 sm:w-7 text-center">
+                                <span className="font-impact text-grit-white text-xs bg-asphalt-card border border-asphalt-border px-1.5 py-0.5 shadow-[1px_1px_0px_#0e0e11] block">
+                                  {row}
+                                </span>
+                              </div>
                             </div>
-                          </div>
+                          </React.Fragment>
                         );
                       })}
                     </div>
@@ -845,27 +1070,34 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     {hoveredSeat ? (
                       <>
                         <div className="flex items-center gap-2.5">
-                          <span className={`px-2 py-0.5 font-bold text-[10px] uppercase border ${
+                          <span className={`px-2 py-0.5 font-bold text-[10px] uppercase border shadow-sm ${
                             hoveredSeat.seatType === 'ORCHESTRA' || hoveredSeat.seatType === 'VIP' 
                               ? 'bg-neon-magenta text-grit-white border-neon-magenta' 
                               : (hoveredSeat.seatType === 'MEZZANINE' || hoveredSeat.seatType === 'PREMIUM'
-                                ? 'bg-blue-500 text-asphalt-black border-blue-400'
+                                ? 'bg-blue-500 text-asphalt-black border-blue-400 font-bold'
                                 : (hoveredSeat.seatType === 'BALCONY'
-                                  ? 'bg-amber-500 text-asphalt-black border-amber-400'
+                                  ? 'bg-amber-500 text-asphalt-black border-amber-400 font-bold'
                                   : 'bg-asphalt-card text-grit-white border-asphalt-border'))
                           }`}>
                             {hoveredSeat.seatType || 'GENERAL'}
                           </span>
                           <div>
-                            <span className="font-bold text-grit-white text-sm">
-                              SEAT {hoveredSeat.seatNumber} (ROW {hoveredSeat.rowNumber})
-                            </span>
-                            <span className="text-grit-dim text-[10px] block">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-grit-white text-sm">
+                                SEAT {hoveredSeat.seatNumber} (ROW {hoveredSeat.rowNumber})
+                              </span>
+                              <span className="font-mono-zine text-[9px] text-acid-yellow">
+                                {hoveredSeat.rowNumber === 'A' ? '• 8m TO STAGE' : hoveredSeat.rowNumber === 'B' ? '• 14m TO STAGE' : '• 22m TO STAGE'}
+                              </span>
+                            </div>
+                            <span className="text-grit-dim text-[10px] block font-mono-zine">
                               {hoveredSeat.rowNumber === 'A' 
-                                ? 'FRONT MOSH PIT // 100% DIRECT LINE-OF-SIGHT' 
+                                ? 'VIP FRONT ROW // 100% UNRESTRICTED SIGHTLINE' 
                                 : hoveredSeat.rowNumber === 'B' 
-                                  ? 'MEZZANINE ACOUSTIC CENTER' 
-                                  : 'AUDITORIUM SEATING'}
+                                  ? 'MEZZANINE CLUB // ACOUSTIC STEREO SWEET-SPOT' 
+                                  : hoveredSeat.rowNumber === 'C'
+                                    ? 'BALCONY LOGE // ELEVATED PANORAMIC VIEW'
+                                    : 'GENERAL AUDITORIUM SEATING'}
                             </span>
                           </div>
                         </div>
@@ -876,7 +1108,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                               {formatPrice(hoveredSeat.price, event.currency)}
                             </span>
                           </div>
-                          <span className={`px-2 py-0.5 text-[9px] uppercase font-bold border ${
+                          <span className={`px-2.5 py-1 text-[9px] uppercase font-bold border ${
                             hoveredSeat.status === 'AVAILABLE'
                               ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500'
                               : hoveredSeat.status === 'LOCKED'
@@ -891,9 +1123,9 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       <div className="w-full flex items-center justify-between text-grit-dim text-[11px]">
                         <span className="flex items-center gap-1.5 uppercase font-mono-zine">
                           <Eye size={13} className="text-acid-yellow" />
-                          HOVER OVER ANY SEAT TO PREVIEW SIGHTLINE & PRICING
+                          HOVER OVER ANY SEAT TO PREVIEW SIGHTLINE, DISTANCE & RATE
                         </span>
-                        <span className="font-ticker text-acid-yellow uppercase text-[10px]">
+                        <span className="font-ticker text-acid-yellow uppercase text-[10px] font-bold">
                           MAX 6 SEATS PER BOOKING
                         </span>
                       </div>
@@ -901,7 +1133,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   </div>
 
                   {/* ─── E. Upgraded Legend with Dynamic Tier Counts ─── */}
-                  <div className="mt-3 pt-3 border-t border-asphalt-border flex justify-center gap-4 text-[11px] font-mono-zine text-grit-dim flex-wrap uppercase">
+                  <div className="mt-3 pt-3 border-t border-asphalt-border flex justify-center gap-3 sm:gap-4 text-[10px] sm:text-[11px] font-mono-zine text-grit-dim flex-wrap uppercase">
                     <div className="flex items-center gap-1.5">
                       <div className="w-3.5 h-3.5 bg-neon-magenta/20 border-2 border-neon-magenta rounded-t-sm"></div> 
                       <span>ORCHESTRA ({seatMap.filter(s => (s.seatType === 'ORCHESTRA' || s.seatType === 'VIP') && s.status === 'AVAILABLE').length} LEFT)</span>
@@ -919,7 +1151,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                       <span>GENERAL ({seatMap.filter(s => (s.seatType === 'GENERAL' || s.seatType === 'REGULAR') && s.status === 'AVAILABLE').length} LEFT)</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3.5 h-3.5 bg-acid-yellow border-2 border-grit-white rounded-t-sm"></div> 
+                      <div className="w-3.5 h-3.5 bg-acid-yellow border-2 border-grit-white rounded-t-sm shadow-[0_0_6px_#E2F13C]"></div> 
                       <span className="text-acid-yellow font-bold">SELECTED ({selectedSeats.length})</span>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -930,10 +1162,10 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
                   {/* ─── F. Selected Seats Ticket Stubs Dock ─── */}
                   {selectedSeats.length > 0 && (
-                    <div className="mt-4 p-3 bg-asphalt-card border-2 border-acid-yellow shadow-[4px_4px_0px_#0e0e11]">
-                      <div className="flex items-center justify-between mb-2">
+                    <div className="mt-4 p-3 sm:p-4 bg-asphalt-card border-2 border-acid-yellow shadow-[4px_4px_0px_#0e0e11]">
+                      <div className="flex items-center justify-between mb-2.5">
                         <span className="font-impact text-xs uppercase tracking-wider text-acid-yellow flex items-center gap-1.5">
-                          <Ticket size={13} /> RESERVED PASSES IN CART ({selectedSeats.length}/6 SEATS)
+                          <Ticket size={14} /> RESERVED PASSES IN CART ({selectedSeats.length}/6 SEATS)
                         </span>
                         <button
                           type="button"
@@ -947,17 +1179,21 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                         {selectedSeats.map(seat => (
                           <div
                             key={seat.id}
-                            className="flex items-center gap-2 bg-asphalt-surface border border-asphalt-border px-2.5 py-1 text-xs font-mono-zine"
+                            className="flex items-center gap-2 bg-asphalt-surface border-2 border-asphalt-border pl-2 pr-2.5 py-1 text-xs font-mono-zine relative shadow-sm group/stub hover:border-acid-yellow transition-colors"
                           >
-                            <span className={`w-2 h-2 rounded-full ${
+                            {/* Stub notch */}
+                            <span className={`w-2 h-2 rounded-full shrink-0 ${
                               seat.seatType === 'ORCHESTRA' || seat.seatType === 'VIP' ? 'bg-neon-magenta' : (seat.seatType === 'MEZZANINE' || seat.seatType === 'PREMIUM' ? 'bg-blue-400' : (seat.seatType === 'BALCONY' ? 'bg-amber-400' : 'bg-acid-yellow'))
                             }`} />
                             <strong className="text-grit-white font-ticker">{seat.seatNumber}</strong>
+                            <span className="text-grit-dim text-[10px] uppercase">
+                              {seat.seatType || 'GEN'}
+                            </span>
                             <span className="text-acid-yellow font-bold">{formatPrice(seat.price, event.currency)}</span>
                             <button
                               type="button"
                               onClick={() => handleRemoveSeat(seat.id)}
-                              className="text-grit-dim hover:text-neon-magenta ml-1 p-0.5 cursor-pointer"
+                              className="text-grit-dim hover:text-neon-magenta ml-1 p-0.5 cursor-pointer rounded hover:bg-asphalt-black"
                               title={`Remove seat ${seat.seatNumber}`}
                             >
                               <X size={12} />
