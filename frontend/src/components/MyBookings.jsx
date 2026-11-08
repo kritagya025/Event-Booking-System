@@ -111,52 +111,59 @@ export default function MyBookings({ currentUser, showToast }) {
             <title>EVENTHUB VIP PASS #${booking.id}</title>
             <style>
               * { box-sizing: border-box; }
-              body { font-family: 'JetBrains Mono', 'Courier New', monospace; background: #0e0e11; color: #f5f5f0; padding: 32px 16px; text-align: center; margin: 0; }
-              .pass-container { max-width: 720px; margin: 0 auto; text-align: left; }
-              .doc-header { display: flex; justify-content: space-between; align-items: center; background: #0e0e11; border: 2px solid #eefc54; padding: 10px 16px; margin-bottom: 16px; }
-              .doc-title { font-size: 13px; font-weight: 900; color: #f5f5f0; letter-spacing: 0.5px; }
-              .doc-meta { font-size: 9px; color: #90929e; margin-top: 2px; }
-              .doc-status { text-align: right; font-size: 10px; font-weight: bold; color: #eefc54; }
-              .pass-card { background: #16161c; border: 3px solid #eefc54; padding: 0; box-shadow: 10px 10px 0px #eefc54; overflow: hidden; position: relative; }
-              .hazard { height: 8px; background: repeating-linear-gradient(-45deg, #eefc54, #eefc54 10px, #0e0e11 10px, #0e0e11 20px); }
-              .pass-body { display: grid; grid-template-columns: 1fr 220px; position: relative; }
-              .left-pass { padding: 20px 24px; border-right: 2px dashed #374151; position: relative; }
-              .right-stub { padding: 20px 16px; background: #1c1c24; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-              .notch-top { position: absolute; top: -10px; right: 210px; width: 20px; height: 20px; background: #0e0e11; border-radius: 50%; border: 2px solid #eefc54; z-index: 10; }
-              .notch-bottom { position: absolute; bottom: -10px; right: 210px; width: 20px; height: 20px; background: #0e0e11; border-radius: 50%; border: 2px solid #eefc54; z-index: 10; }
-              .top-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #2d2d38; padding-bottom: 10px; margin-bottom: 12px; }
-              .logo { font-size: 20px; font-weight: 900; color: #f5f5f0; letter-spacing: -1px; }
-              .pass-badge { background: #eefc54; color: #0e0e11; padding: 2px 6px; font-size: 9px; font-weight: 900; vertical-align: middle; margin-left: 6px; }
-              .season-badge { background: #ff1f6d; color: #f5f5f0; padding: 2px 6px; font-size: 8px; font-weight: 900; text-transform: uppercase; border: 1px solid #0e0e11; margin-left: 4px; }
-              .serial { color: #eefc54; font-size: 9px; font-weight: bold; text-align: right; }
-              .event-title { font-size: 20px; font-weight: 900; margin: 0 0 4px 0; color: #f5f5f0; text-transform: uppercase; line-height: 1.1; }
-              .event-meta { font-size: 10px; color: #eefc54; margin: 0 0 12px 0; font-weight: bold; text-transform: uppercase; }
-              .venue-box { background: #1c1c24; border: 1px solid #2d2d38; padding: 10px; margin-bottom: 12px; }
-              .venue-label { font-size: 8px; color: #90929e; text-transform: uppercase; letter-spacing: 1px; }
-              .venue-name { font-size: 12px; font-weight: bold; color: #f5f5f0; margin-top: 2px; }
-              .seat-banner { background: #eefc54; color: #0e0e11; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+              body { font-family: 'JetBrains Mono', 'Courier New', monospace; background: #0a0a0e; color: #f8fafc; padding: 32px 16px; text-align: center; margin: 0; }
+              .pass-container { max-width: 740px; margin: 0 auto; text-align: left; }
+              .doc-header { display: flex; justify-content: space-between; align-items: center; background: #121420; border: 2px solid #00f0ff; padding: 10px 16px; margin-bottom: 16px; }
+              .doc-title { font-size: 13px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
+              .doc-meta { font-size: 9px; color: #94a3b8; margin-top: 2px; }
+              .doc-status { text-align: right; font-size: 10px; font-weight: bold; color: #00f0ff; }
+              .pass-card { background: #121420; border: 3px solid #fef02a; padding: 0; box-shadow: 10px 10px 0px #00f0ff; overflow: hidden; position: relative; }
+              .hazard { height: 9px; background: repeating-linear-gradient(-45deg, #fef02a, #fef02a 12px, #0a0a0e 12px, #0a0a0e 24px, #ff006e 24px, #ff006e 36px, #0a0a0e 36px, #0a0a0e 48px); }
+              .pass-body { display: grid; grid-template-columns: 1fr 230px; position: relative; }
+              .left-pass { padding: 20px 24px; border-right: 2px dashed #00f0ff; position: relative; background: #121420; }
+              .right-stub { padding: 20px 16px; background: #f8fafc; color: #0a0a0e; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+              .notch-top { position: absolute; top: -10px; right: 220px; width: 20px; height: 20px; background: #0a0a0e; border-radius: 50%; border: 2px solid #fef02a; z-index: 10; }
+              .notch-bottom { position: absolute; bottom: -10px; right: 220px; width: 20px; height: 20px; background: #0a0a0e; border-radius: 50%; border: 2px solid #fef02a; z-index: 10; }
+              .top-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 12px; }
+              .logo { font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: -1px; }
+              .pass-badge { background: #fef02a; color: #0a0a0e; padding: 2px 6px; font-size: 9px; font-weight: 900; vertical-align: middle; margin-left: 6px; }
+              .season-badge { background: #ff006e; color: #ffffff; padding: 2px 6px; font-size: 8px; font-weight: 900; text-transform: uppercase; border: 1px solid #0a0a0e; margin-left: 4px; }
+              .serial { color: #fef02a; font-size: 9px; font-weight: bold; text-align: right; }
+              .event-title { font-size: 22px; font-weight: 900; margin: 0 0 4px 0; color: #ffffff; text-transform: uppercase; line-height: 1.1; }
+              .event-meta { font-size: 10px; color: #00f0ff; margin: 0 0 12px 0; font-weight: bold; text-transform: uppercase; }
+              .venue-box { background: #1a1e2e; border: 1px solid #334155; border-left: 4px solid #ff006e; padding: 10px; margin-bottom: 12px; }
+              .venue-label { font-size: 8px; color: #ff006e; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+              .venue-name { font-size: 13px; font-weight: bold; color: #ffffff; margin-top: 2px; }
+              .seat-banner { background: #fef02a; color: #0a0a0e; border: 2px solid #0a0a0e; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
               .seat-big { font-size: 16px; font-weight: 900; }
-              .seat-tier { font-size: 10px; font-weight: 900; text-transform: uppercase; }
-              .holder-box { background: #1c1c24; border: 1px solid #2d2d38; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; }
-              .holder-label { font-size: 8px; color: #90929e; text-transform: uppercase; }
-              .holder-name { font-size: 13px; font-weight: 900; color: #f5f5f0; margin: 2px 0; text-transform: uppercase; }
-              .holder-email { font-size: 9px; color: #90929e; }
-              .guarantees { display: flex; gap: 8px; font-size: 8px; color: #eefc54; text-transform: uppercase; font-weight: bold; }
-              .stub-head { font-size: 10px; font-weight: 900; color: #eefc54; margin-bottom: 2px; }
-              .stub-sub { font-size: 8px; color: #90929e; margin-bottom: 8px; }
-              .stub-seat { background: #16161c; border: 1px solid #eefc54; color: #eefc54; font-size: 12px; font-weight: 900; padding: 4px; margin-bottom: 8px; }
-              .qr-box { background: #ffffff; padding: 6px; border: 2px solid #0e0e11; margin-bottom: 8px; }
-              .qr-box img { width: 100px; height: 100px; display: block; margin: 0 auto; }
-              .qr-label { font-size: 7px; font-weight: 900; color: #0e0e11; margin-top: 3px; text-transform: uppercase; }
-              .barcode-box { background: #ffffff; padding: 4px; border: 1px solid #0e0e11; margin-bottom: 6px; }
-              .barcode-box .bars { font-size: 12px; font-weight: 900; letter-spacing: -1px; color: #000; margin: 0; line-height: 1; }
-              .barcode-box .serial { font-size: 7px; color: #000; font-weight: bold; text-align: center; }
-              .tear-bar { border-top: 1px dashed #374151; padding: 6px 0; text-align: center; font-size: 8px; color: #90929e; letter-spacing: 1px; }
-              .protocol-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; background: #16161c; border: 1px solid #2d2d38; padding: 14px; margin-top: 16px; }
-              .protocol-col h4 { margin: 0 0 6px 0; font-size: 9px; color: #eefc54; text-transform: uppercase; }
-              .protocol-col p { margin: 0; font-size: 8px; color: #90929e; line-height: 1.4; }
-              .print-btn { display: block; width: 100%; background: #ff1f6d; color: #f5f5f0; border: 2px solid #f5f5f0; padding: 12px; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #eefc54; transition: all 0.2s; margin-top: 16px; }
-              .print-btn:hover { background: #eefc54; color: #0e0e11; }
+              .seat-tier { font-size: 9px; font-weight: 900; text-transform: uppercase; background: #ff006e; color: #ffffff; padding: 3px 6px; }
+              .holder-box { background: #1a1e2e; border: 1px solid #334155; border-left: 4px solid #00f0ff; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+              .holder-label { font-size: 8px; color: #00f0ff; text-transform: uppercase; font-weight: bold; }
+              .holder-name { font-size: 13px; font-weight: 900; color: #ffffff; margin: 2px 0; text-transform: uppercase; }
+              .holder-email { font-size: 9px; color: #00f0ff; }
+              .guarantees { display: flex; gap: 8px; font-size: 8px; text-transform: uppercase; font-weight: bold; }
+              .stub-head { font-size: 10px; font-weight: 900; color: #0a0a0e; margin-bottom: 2px; }
+              .stub-sub { font-size: 8px; color: #ff006e; font-weight: bold; margin-bottom: 8px; }
+              .stub-seat { background: #fef02a; border: 2px solid #0a0a0e; color: #0a0a0e; font-size: 12px; font-weight: 900; padding: 4px; margin-bottom: 8px; }
+              .qr-box { background: #ffffff; padding: 6px; border: 2px solid #0a0a0e; margin-bottom: 8px; }
+              .qr-box img { width: 105px; height: 105px; display: block; margin: 0 auto; }
+              .qr-label { font-size: 7px; font-weight: 900; color: #0a0a0e; margin-top: 3px; text-transform: uppercase; }
+              .barcode-box { background: #ffffff; padding: 4px; border: 2px solid #0a0a0e; margin-bottom: 6px; }
+              .barcode-box .bars { font-size: 12px; font-weight: 900; letter-spacing: -1px; color: #0a0a0e; margin: 0; line-height: 1; }
+              .barcode-box .serial { font-size: 7px; color: #0a0a0e; font-weight: bold; text-align: center; }
+              .tear-bar { border-top: 1px dashed #00f0ff; padding: 6px 0; text-align: center; font-size: 8px; color: #00f0ff; letter-spacing: 1px; font-weight: bold; }
+              .protocol-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; background: #121420; border: 1px solid #334155; padding: 14px; margin-top: 16px; }
+              .protocol-col { padding: 8px; background: #1a1e2e; }
+              .protocol-col:nth-child(1) { border-top: 3px solid #00f0ff; }
+              .protocol-col:nth-child(2) { border-top: 3px solid #ff006e; }
+              .protocol-col:nth-child(3) { border-top: 3px solid #10e68c; }
+              .protocol-col h4 { margin: 0 0 6px 0; font-size: 9px; text-transform: uppercase; font-weight: 900; }
+              .protocol-col:nth-child(1) h4 { color: #00f0ff; }
+              .protocol-col:nth-child(2) h4 { color: #ff006e; }
+              .protocol-col:nth-child(3) h4 { color: #10e68c; }
+              .protocol-col p { margin: 0; font-size: 8px; color: #94a3b8; line-height: 1.4; }
+              .print-btn { display: block; width: 100%; background: #ff006e; color: #ffffff; border: 2px solid #ffffff; padding: 12px; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #fef02a; transition: all 0.2s; margin-top: 16px; }
+              .print-btn:hover { background: #fef02a; color: #0a0a0e; }
               @media print {
                 body { background: #fff; padding: 0; }
                 .pass-card { box-shadow: none; border-color: #000; }
@@ -173,7 +180,7 @@ export default function MyBookings({ currentUser, showToast }) {
                 </div>
                 <div class="doc-status">
                   VERIFIED ADMISSION<br />
-                  <span style="font-size: 12px;">CONFIRMED</span>
+                  <span style="font-size: 12px; color: #fef02a;">CONFIRMED</span>
                 </div>
               </div>
 
@@ -186,13 +193,13 @@ export default function MyBookings({ currentUser, showToast }) {
                     <div class="top-row">
                       <div>
                         <span class="logo">EVENTHUB<span class="pass-badge">VIP PASS</span><span class="season-badge">SEASON 2026</span></span>
-                        <div style="font-size: 7px; color: #90929e; letter-spacing: 1px; margin-top: 3px; text-transform: uppercase;">
+                        <div style="font-size: 7px; color: #94a3b8; letter-spacing: 1px; margin-top: 3px; text-transform: uppercase;">
                           AUTHENTICATED ADMISSION GATEWAY // REVENUE PASS
                         </div>
                       </div>
                       <div class="serial">
                         SERIAL: EHB-${booking.id}<br />
-                        <span style="color: #90929e; font-size: 7px;">STATUS: ACTIVE // VERIFIED</span>
+                        <span style="color: #10e68c; font-size: 7px;">STATUS: ACTIVE // VERIFIED</span>
                       </div>
                     </div>
 
@@ -204,7 +211,7 @@ export default function MyBookings({ currentUser, showToast }) {
                     <div class="venue-box">
                       <div class="venue-label">LOCATION & AUDITORIUM:</div>
                       <div class="venue-name">${booking.screenName || booking.event?.venue?.name || 'MAIN CONCERT ARENA'}</div>
-                      <div style="font-size: 9px; color: #90929e; margin-top: 2px;">${booking.event?.venue?.address || 'MAIN EVENT GATE 01'} // NORTH ENTRY</div>
+                      <div style="font-size: 9px; color: #94a3b8; margin-top: 2px;">${booking.event?.venue?.address || 'MAIN EVENT GATE 01'} // NORTH ENTRY</div>
                     </div>
 
                     <div class="seat-banner">
@@ -212,7 +219,7 @@ export default function MyBookings({ currentUser, showToast }) {
                         <div style="font-size: 7px; font-weight: bold; text-transform: uppercase;">CONFIRMED SEATING ASSIGNMENT:</div>
                         <div class="seat-big">SEAT: ${booking.selectedSeats || 'GENERAL ADMISSION'}</div>
                       </div>
-                      <div class="seat-tier">TIER: VIP RESERVED</div>
+                      <div class="seat-tier">VIP RESERVED</div>
                     </div>
 
                     <div class="holder-box">
@@ -222,17 +229,17 @@ export default function MyBookings({ currentUser, showToast }) {
                         <div class="holder-email">${currentUser?.email || 'AUTHENTICATED HOLDER'}</div>
                       </div>
                       <div style="text-align: right;">
-                        <div class="holder-label">BOOKING REFERENCE:</div>
-                        <div style="font-size: 11px; font-weight: bold; color: #eefc54; margin-top: 2px;">#EHB-${booking.id}</div>
-                        <div style="font-size: 8px; color: #90929e;">ADMIT ONE PERSON</div>
+                        <div class="holder-label" style="color: #fef02a;">BOOKING REFERENCE:</div>
+                        <div style="font-size: 11px; font-weight: bold; color: #fef02a; margin-top: 2px;">#EHB-${booking.id}</div>
+                        <div style="font-size: 8px; color: #10e68c;">ADMIT ONE PERSON</div>
                       </div>
                     </div>
 
                     <div class="guarantees">
-                      <span>[ 10-MIN CART LOCK ]</span>
-                      <span>[ ZERO OVERBOOKING ]</span>
-                      <span>[ OFFLINE GATE AUDITED ]</span>
-                      <span>[ PHOTO ID REQ ]</span>
+                      <span style="color: #fef02a;">[ 10-MIN CART LOCK ]</span>
+                      <span style="color: #10e68c;">[ ZERO OVERBOOKING ]</span>
+                      <span style="color: #00f0ff;">[ OFFLINE GATE AUDITED ]</span>
+                      <span style="color: #ff006e;">[ PHOTO ID REQ ]</span>
                     </div>
                   </div>
 
@@ -253,7 +260,7 @@ export default function MyBookings({ currentUser, showToast }) {
                       <div class="serial">* EHB-${booking.id} *</div>
                     </div>
 
-                    <div style="font-size: 7px; color: #90929e;">SINGLE USE // TURNSTILE SCAN</div>
+                    <div style="font-size: 7px; color: #475569; font-weight: bold;">SINGLE USE // TURNSTILE SCAN</div>
                   </div>
                 </div>
 
