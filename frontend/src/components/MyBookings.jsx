@@ -210,8 +210,6 @@ export default function MyBookings({ currentUser, showToast }) {
       showToast('GENERATING TICKET PASS...', 'success');
     }
   };
-    }
-  };
 
   const handleDownloadCalendar = (eventId) => {
     window.open(`${BASE_URL}/events/${eventId}/calendar.ics`, '_blank');
