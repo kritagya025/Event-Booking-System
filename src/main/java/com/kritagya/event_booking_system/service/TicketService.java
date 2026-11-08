@@ -337,6 +337,52 @@ public class TicketService {
         return protocolBox;
     }
 
+    private byte[] loadEventImageBytes(Event event) {
+        if (event != null && event.getBannerImageUrl() != null && !event.getBannerImageUrl().isBlank()) {
+            String url = event.getBannerImageUrl().trim();
+            try {
+                if (url.startsWith("/") || url.contains(":\\") || url.startsWith("uploads") || url.startsWith("frontend")) {
+                    java.io.File file = new java.io.File(url);
+                    if (file.exists() && file.canRead()) {
+                        return java.nio.file.Files.readAllBytes(file.toPath());
+                    }
+                }
+                if (url.startsWith("http://") || url.startsWith("https://")) {
+                    try (java.io.InputStream in = new java.net.URL(url).openStream()) {
+                        return in.readAllBytes();
+                    }
+                }
+            } catch (Exception e) {
+                log.debug("Could not load custom event banner from {}: {}", url, e.getMessage());
+            }
+        }
+
+        String resourcePath = "/images/concert.jpg";
+        if (event != null && event.getCategory() != null) {
+            String cat = event.getCategory().toUpperCase();
+            if (cat.contains("TECH") || cat.contains("CONFERENCE") || cat.contains("SUMMIT") || cat.contains("WORKSHOP")) {
+                resourcePath = "/images/tech.jpg";
+            }
+        }
+
+        try (java.io.InputStream in = getClass().getResourceAsStream(resourcePath)) {
+            if (in != null) {
+                return in.readAllBytes();
+            }
+        } catch (Exception e) {
+            log.debug("Could not load classpath image {}: {}", resourcePath, e.getMessage());
+        }
+
+        try {
+            java.io.File fallback = new java.io.File("frontend/public/images/concert.jpg");
+            if (fallback.exists()) {
+                return java.nio.file.Files.readAllBytes(fallback.toPath());
+            }
+        } catch (Exception ignored) {}
+
+        return null;
+    }
+
     private void renderBrutalistTicketPass(Document document, Ticket ticket, Booking booking, Event event,
                                            com.kritagya.event_booking_system.entity.Seat seat,
                                            int ticketIndex, int totalTickets) throws Exception {
@@ -389,14 +435,37 @@ public class TicketService {
         headerRow.addCell(new Cell().add(serialP).setBorder(Border.NO_BORDER));
         leftPanel.add(headerRow);
 
-        // B. Event Hero Box (Rich Slate Container with Electric Cyan Accent Border)
+        // B. Full-Color Event Background Artwork Banner
+        byte[] bannerBytes = loadEventImageBytes(event);
+        if (bannerBytes != null && bannerBytes.length > 0) {
+            try {
+                ImageData bannerImgData = ImageDataFactory.create(bannerBytes);
+                Image bannerImg = new Image(bannerImgData)
+                        .setWidth(UnitValue.createPercentValue(100))
+                        .setMaxHeight(85f)
+                        .setHorizontalAlignment(HorizontalAlignment.CENTER);
+
+                Table bannerContainer = new Table(UnitValue.createPercentArray(new float[]{100}))
+                        .useAllAvailableWidth()
+                        .setBackgroundColor(COLOR_OBSIDIAN_BG)
+                        .setBorder(new SolidBorder(COLOR_ELECTRIC_CYAN, 1.5f))
+                        .setMarginTop(3f)
+                        .setMarginBottom(3f)
+                        .setPadding(0);
+                bannerContainer.addCell(new Cell().add(bannerImg).setBorder(Border.NO_BORDER).setPadding(0));
+                leftPanel.add(bannerContainer);
+            } catch (Exception e) {
+                log.debug("Event banner image render notice: {}", e.getMessage());
+            }
+        }
+
+        // Event Hero Box (Rich Slate Container with Electric Cyan Accent Border)
         Table heroBox = new Table(UnitValue.createPercentArray(new float[]{100}))
                 .useAllAvailableWidth()
                 .setBackgroundColor(COLOR_SLATE_CONTAINER)
                 .setBorder(new SolidBorder(COLOR_BORDER_MUTED, 1f))
                 .setBorderLeft(new SolidBorder(COLOR_ELECTRIC_CYAN, 3.5f))
                 .setPadding(4f)
-                .setMarginTop(4f)
                 .setMarginBottom(4f);
 
         Paragraph heroTitle = new Paragraph(event.getName().toUpperCase())
@@ -516,9 +585,26 @@ public class TicketService {
         Paragraph stubHead = new Paragraph("GATE TURNSTILE STUB")
                 .setFontSize(8f).setBold().setFontColor(COLOR_OBSIDIAN_BG).setTextAlignment(TextAlignment.CENTER).setMargin(0);
         Paragraph stubAdmit = new Paragraph("ADMIT ONE // SCAN AT GATE")
-                .setFontSize(6f).setBold().setFontColor(COLOR_NEON_MAGENTA).setTextAlignment(TextAlignment.CENTER).setMarginBottom(3f);
+                .setFontSize(6f).setBold().setFontColor(COLOR_NEON_MAGENTA).setTextAlignment(TextAlignment.CENTER).setMarginBottom(2f);
         rightStub.add(stubHead);
         rightStub.add(stubAdmit);
+
+        if (bannerBytes != null && bannerBytes.length > 0) {
+            try {
+                ImageData thumbData = ImageDataFactory.create(bannerBytes);
+                Image thumbImg = new Image(thumbData)
+                        .setWidth(UnitValue.createPercentValue(100))
+                        .setMaxHeight(34f)
+                        .setHorizontalAlignment(HorizontalAlignment.CENTER);
+                Table thumbBox = new Table(UnitValue.createPercentArray(new float[]{100}))
+                        .useAllAvailableWidth()
+                        .setBorder(new SolidBorder(COLOR_OBSIDIAN_BG, 1f))
+                        .setPadding(0)
+                        .setMarginBottom(3f);
+                thumbBox.addCell(new Cell().add(thumbImg).setBorder(Border.NO_BORDER).setPadding(0));
+                rightStub.add(thumbBox);
+            } catch (Exception ignored) {}
+        }
 
         // Stub Seat Banner (Electric Acid Yellow with Jet Black Text)
         Table stubSeatBox = new Table(UnitValue.createPercentArray(new float[]{100}))

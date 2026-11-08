@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Enhanced
 - **Zero-Emoji Professional Neo-Brutalist Admission Pass & PDF Generation Engine (`TicketService.java`, `QrCodeService.java`, `MyBookings.jsx`, `BackstageAuthTerminal.jsx`)**:
+  - **Full-Color Event Artwork Background Banner**: Embedded high-resolution, full-color concert and summit artwork directly into the hero section of the admission pass (with automated category-aware image resolution for music concerts vs tech conferences, and custom `bannerImageUrl` support) plus an artwork continuity thumbnail on the detachable turnstile gate stub.
   - **High-Vibrancy Electric Concert Palette**: Replaced dull dark charcoal fills with an electric VIP concert color system featuring Deep Midnight Navy (`#121420`), Electric Laser Cyan (`#00F0FF`), Hot Neon Magenta (`#FF006E`), Electric Acid Yellow (`#FEF02A`), Laser Gate Emerald (`#10E68C`), and Sunset Orange (`#FF6B00`).
   - **Inverted High-Contrast Gate Stub**: Transformed the detachable turnstile stub into a bright, crisp Snow White (`#F8FAFC`) card with Jet Black typography, a high-voltage Acid Yellow seat banner, and bold scan tags, creating immediate visual separation between the pass body and the audit stub.
   - **Color-Coded Coordinate & Protocol Grids**: Individualized event coordinates into distinct themed modules (Night Blue/Cyan for showtime, Deep Plum/Magenta for venue, and Deep Forest/Emerald for sector clearance) and added matching colored 3pt accent top borders to the Gate Admission Protocol cards.
