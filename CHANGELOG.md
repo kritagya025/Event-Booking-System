@@ -10,16 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.1] - 2026-11-08
 
 ### Enhanced
-- **Neo-Brutalist Admission Pass & Booking PDF Generation Engine (`TicketService.java` & `MyBookings.jsx`)**:
-  - **High-Contrast Neo-Brutalist Layout**: Upgraded dull plain black-and-white ticket PDFs to high-impact VIP concert passes featuring Asphalt Black (`#0E0E11`), Card Surface (`#16161C`), Acid Yellow (`#E2F13C`), Neon Magenta (`#FF1F6D`), Grit White (`#F5F5F0`), and Slate Dim (`#90929E`).
-  - **Dual Hazard Tape Borders**: Added alternating diagonal warning bands framing the top and bottom margins of the admission credential.
-  - **VIP Accreditation Brand Header**: Integrated `EVENTHUB // ADMISSION PASS` branding with Season 2026 badge and dynamic gate serial (`EHB-[EVENTID]-[TICKETID]`).
-  - **Concert Hero Banner**: Formatted event title in oversized brutalist sans typography with calendar scheduling, start/end timestamps, full venue name, street address, and sector clearance.
-  - **Split Dual-Column Credential Grid**: Formatted attendee details (name, email, unique badge ID) alongside allocated seat chips (Row/Number, Tier) and venue entry rules.
-  - **Optical Gate Scanner Token**: Embedded a 100x100px vector QR turnstile code and simulated Code-128 concert barcode for rapid on-site scanning.
-  - **Turnstile Perforation Tear Line**: Added dotted scissor guide marking (`✂ DETACH AT GATE TURNSTILE FOR PHYSICAL SCAN ✂`).
-  - **Brutalist Printable Fallback Pass**: Redesigned the frontend HTML printable pass stub in `MyBookings.jsx` to visually mirror the neo-brutalist VIP badge with hazard tape, gold badges, and high-contrast typography.
-  - **Authenticated PDF Download Pipeline**: Added `Authorization: Bearer <token>` to the frontend PDF download request in `MyBookings.jsx` ensuring reliable authenticated downloads.
+- **Zero-Emoji Professional Neo-Brutalist Admission Pass & PDF Generation Engine (`TicketService.java`, `QrCodeService.java`, `MyBookings.jsx`, `BackstageAuthTerminal.jsx`)**:
+  - **Complete Emoji Elimination**: Removed all emojis across the entire ticketing pipeline (PDF generation, printable web stubs, and terminal cards), replacing them with clean industrial ASCII indicators, bracketed security tags (`[ 10-MIN CART LOCK ]`, `[ ZERO OVERBOOKING ]`, `[ OFFLINE GATE AUDITED ]`), and crisp geometric microprint.
+  - **Executive Document Layout**: Upgraded the A4 PDF canvas from an isolated floating box to a fully composed **Official Digital Admission Document** featuring an Executive Header bar (`EVENTHUB OFFICIAL PASS ISSUANCE NETWORK`), the central concert pass card, and a comprehensive 3-column **Gate Admission Protocol & Security Guide** filling the page with zero awkward empty voids.
+  - **Authentic Two-Panel Concert Pass Architecture**: Structured tickets with a 71% Main Admission Panel (Event hero, 3-column temporal/spatial coordinates grid, giant Acid Yellow seat assignment chip, accredited attendee credential) separated by a dashed perforation notch divider from a 27% **Turnstile Gate Stub**.
+  - **Real Scannable Code-128 Barcode Engine (`QrCodeService.java`)**: Integrated ZXing's `Code128Writer` to dynamically generate authentic, high-density 1D concert barcodes directly beneath the optical QR gate token.
+  - **Multi-Ticket Booking Pagination**: Configured clean multi-ticket pagination (up to 2 passes per page with `AreaBreak`) for multi-seat orders.
+  - **Upgraded Horizontal Printable Web Stub (`MyBookings.jsx`)**: Redesigned the HTML fallback window to feature circular tear notches, split 2-panel architecture, QR token, and turnstile protocol grid.
+  - **Terminal Pass Refinement (`BackstageAuthTerminal.jsx`)**: Replaced Unicode tear scissors with industrial `::: DETACH AT TURNSTILE :::` typography.
 - **High-Fidelity Neo-Brutalist VIP Pass & Ticket Stub Architecture (`BackstageAuthTerminal.jsx`)**:
   - **Tactical Lanyard & Mechanical Carabiner**: Added heavy-duty woven strap ribbon with repeating `EVENTHUB VIP` micro-text, brushed steel swivel ring, mechanical pivot block, and spring-loaded carabiner latch hook.
   - **Laminated Punch Slot & Industrial Hardware**: Added realistic top oval punch slot cutout where the carabiner attaches, plus 4 corner tactical rivet markers.

@@ -379,7 +379,7 @@ export default function BackstageAuthTerminal({
                   <div className="absolute -left-6 sm:-left-7 w-5 h-5 rounded-full bg-asphalt-black border-2 border-grit-white z-20 shadow-inner"></div>
                   <div className="w-full border-t-2 border-dashed border-asphalt-border relative flex items-center justify-center">
                     <span className="bg-asphalt-surface px-2 text-[7px] font-mono-zine text-grit-dim uppercase tracking-widest -mt-2">
-                      ✂ DETACH AT TURNSTILE ✂
+                      ::: DETACH AT TURNSTILE :::
                     </span>
                   </div>
                   <div className="absolute -right-6 sm:-right-7 w-5 h-5 rounded-full bg-asphalt-black border-2 border-grit-white z-20 shadow-inner"></div>

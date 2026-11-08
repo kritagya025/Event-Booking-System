@@ -27,12 +27,14 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
@@ -238,184 +240,341 @@ public class TicketService {
     // Neo-Brutalist PDF Color Palette
     private static final DeviceRgb COLOR_ASPHALT_BG = new DeviceRgb(14, 14, 17);
     private static final DeviceRgb COLOR_ASPHALT_CARD = new DeviceRgb(22, 22, 28);
-    private static final DeviceRgb COLOR_ASPHALT_INNER = new DeviceRgb(28, 28, 36);
+    private static final DeviceRgb COLOR_ASPHALT_INNER = new DeviceRgb(30, 30, 38);
     private static final DeviceRgb COLOR_ACID_YELLOW = new DeviceRgb(226, 241, 60);
     private static final DeviceRgb COLOR_NEON_MAGENTA = new DeviceRgb(255, 31, 109);
     private static final DeviceRgb COLOR_GRIT_WHITE = new DeviceRgb(245, 245, 240);
     private static final DeviceRgb COLOR_GRIT_DIM = new DeviceRgb(144, 146, 158);
     private static final DeviceRgb COLOR_BORDER = new DeviceRgb(55, 65, 81);
 
+    private Table createHazardTape(float height) {
+        Table hazard = new Table(UnitValue.createPercentArray(new float[]{
+                4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f,
+                4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f,
+                4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.16f, 4.32f
+        })).useAllAvailableWidth();
+        for (int h = 0; h < 24; h++) {
+            Cell c = new Cell().setHeight(height).setBorder(Border.NO_BORDER)
+                    .setBackgroundColor(h % 2 == 0 ? COLOR_ACID_YELLOW : COLOR_ASPHALT_BG);
+            hazard.addCell(c);
+        }
+        return hazard;
+    }
+
+    private Table createExecutiveHeader(Booking booking, Event event, int totalTickets) {
+        Table header = new Table(UnitValue.createPercentArray(new float[]{65, 35}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(COLOR_ASPHALT_BG)
+                .setBorder(new SolidBorder(COLOR_ACID_YELLOW, 1.5f))
+                .setPadding(6f)
+                .setMarginBottom(8f);
+
+        Paragraph leftP = new Paragraph()
+                .add(new Text("EVENTHUB ").setFontSize(13).setBold().setFontColor(COLOR_GRIT_WHITE))
+                .add(new Text(" OFFICIAL PASS ISSUANCE NETWORK ").setFontSize(7.5f).setBold().setBackgroundColor(COLOR_ACID_YELLOW).setFontColor(COLOR_ASPHALT_BG))
+                .add(new Text("\nORDER NO: #EHB-" + booking.getId() + "  |  ISSUED: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")) + "  |  VALIDATED PASS").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .setMargin(0);
+        header.addCell(new Cell().add(leftP).setBorder(Border.NO_BORDER).setPadding(4f));
+
+        String totalPaid = booking.getTotalAmount() != null ? "$" + booking.getTotalAmount() : "$0.00";
+        Paragraph rightP = new Paragraph()
+                .add(new Text("VERIFIED ADMISSION\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text(totalTickets + (totalTickets > 1 ? " PASSES ISSUED" : " PASS ISSUED") + "  |  " + totalPaid).setFontSize(9f).setBold().setFontColor(COLOR_ACID_YELLOW))
+                .setTextAlignment(TextAlignment.RIGHT).setMargin(0);
+        header.addCell(new Cell().add(rightP).setBorder(Border.NO_BORDER).setPadding(4f));
+
+        return header;
+    }
+
+    private Table createGateProtocolBox() {
+        Table protocolBox = new Table(UnitValue.createPercentArray(new float[]{34, 33, 33}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(COLOR_ASPHALT_INNER)
+                .setBorder(new SolidBorder(COLOR_BORDER, 1.5f))
+                .setPadding(6f)
+                .setMarginTop(8f)
+                .setMarginBottom(4f);
+
+        // Column 1: Gate Entry Protocol
+        Cell c1 = new Cell().setBorder(Border.NO_BORDER).setPadding(4f);
+        c1.add(new Paragraph("01 // TURNSTILE ENTRY PROTOCOL")
+                .setFontSize(7.5f).setBold().setFontColor(COLOR_ACID_YELLOW).setMarginBottom(3f));
+        c1.add(new Paragraph("[>] Present this physical pass or display on mobile screen at 100% brightness.\n[>] Align optical QR code or 1D barcode with gate scanner.\n[>] Walk through turnstile when indicator turns GREEN.")
+                .setFontSize(6.5f).setFontColor(COLOR_GRIT_WHITE).setMultipliedLeading(1.2f));
+        protocolBox.addCell(c1);
+
+        // Column 2: Admission & Identity Rules
+        Cell c2 = new Cell().setBorder(new DashedBorder(COLOR_BORDER, 1f)).setBorderTop(Border.NO_BORDER).setBorderBottom(Border.NO_BORDER).setPadding(4f);
+        c2.add(new Paragraph("02 // ADMISSION & IDENTITY")
+                .setFontSize(7.5f).setBold().setFontColor(COLOR_NEON_MAGENTA).setMarginBottom(3f));
+        c2.add(new Paragraph("[*] Government-issued photo ID required matching accredited attendee name.\n[*] Single-entry pass. Duplicate scans trigger automatic security lockout.\n[*] Issued wristbands must remain intact for re-entry.")
+                .setFontSize(6.5f).setFontColor(COLOR_GRIT_WHITE).setMultipliedLeading(1.2f));
+        protocolBox.addCell(c2);
+
+        // Column 3: Zero Overbooking & Support
+        Cell c3 = new Cell().setBorder(Border.NO_BORDER).setPadding(4f);
+        c3.add(new Paragraph("03 // ZERO OVERBOOKING GUARANTEE")
+                .setFontSize(7.5f).setBold().setFontColor(COLOR_ACID_YELLOW).setMarginBottom(3f));
+        c3.add(new Paragraph("[#] Distributed real-time inventory locking eliminates double-booking.\n[#] Cryptographically signed gate token with SHA-256 verification.\n[#] On-site Gate Dispatch: support@eventhub.live")
+                .setFontSize(6.5f).setFontColor(COLOR_GRIT_WHITE).setMultipliedLeading(1.2f));
+        protocolBox.addCell(c3);
+
+        return protocolBox;
+    }
+
     private void renderBrutalistTicketPass(Document document, Ticket ticket, Booking booking, Event event,
                                            com.kritagya.event_booking_system.entity.Seat seat,
                                            int ticketIndex, int totalTickets) throws Exception {
+        String serialCode = "EHB-" + (event.getId() != null ? event.getId() : "2026") + "-" + ticket.getId();
+        String attendeeName = (booking.getUser().getFirstName() + " " + booking.getUser().getLastName()).toUpperCase();
+        String seatNum = seat != null ? seat.getSeatNumber() : "GA-" + (ticketIndex + 1);
+        String seatTypeStr = seat != null && seat.getSeatType() != null ? seat.getSeatType().name() : "GENERAL";
+        String dateStr = event.getEventDate() != null ? event.getEventDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy")).toUpperCase() : "SEASON 2026";
+        String timeStr = (event.getStartTime() != null ? event.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")) : "TBD");
+        String venueName = event.getVenue() != null ? event.getVenue().getName().toUpperCase() : "MAIN ARENA";
+        String venueAddr = event.getVenue() != null && event.getVenue().getAddress() != null ? event.getVenue().getAddress().toUpperCase() : "CENTRAL SECTOR";
+
         // Outer Container Card Table
-        Table passBox = new Table(UnitValue.createPercentArray(new float[]{100}))
+        Table passCard = new Table(UnitValue.createPercentArray(new float[]{100}))
                 .useAllAvailableWidth()
                 .setBackgroundColor(COLOR_ASPHALT_CARD)
-                .setBorder(new SolidBorder(COLOR_GRIT_WHITE, 2f))
-                .setMarginBottom(16f);
+                .setBorder(new SolidBorder(COLOR_ACID_YELLOW, 2f))
+                .setMarginBottom(8f);
 
-        // 1. Top Hazard Tape Banner
-        Table hazardTop = new Table(UnitValue.createPercentArray(new float[]{
-                8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.33f, 8.37f
-        })).useAllAvailableWidth();
-        for (int h = 0; h < 12; h++) {
-            Cell c = new Cell().setHeight(5f).setBorder(Border.NO_BORDER)
-                    .setBackgroundColor(h % 2 == 0 ? COLOR_ACID_YELLOW : COLOR_ASPHALT_BG);
-            hazardTop.addCell(c);
-        }
-        passBox.addCell(new Cell().add(hazardTop).setPadding(0).setBorder(Border.NO_BORDER));
+        // 1. Top Hazard Warning Tape
+        passCard.addCell(new Cell().add(createHazardTape(5f)).setPadding(0).setBorder(Border.NO_BORDER));
 
-        // 2. Brand Header Block
-        Table brandHeader = new Table(UnitValue.createPercentArray(new float[]{65, 35}))
+        // 2. Main 2-Panel Structure: [ Left Main Pass (71%) | Center Perforation (2%) | Right Turnstile Stub (27%) ]
+        Table twoPanel = new Table(UnitValue.createPercentArray(new float[]{71, 2, 27}))
                 .useAllAvailableWidth()
                 .setBorder(Border.NO_BORDER)
-                .setPadding(6f);
+                .setPadding(0);
 
-        Paragraph brandP = new Paragraph()
-                .add(new Text("EVENTHUB ").setFontSize(16).setBold().setFontColor(COLOR_GRIT_WHITE))
-                .add(new Text(" VIP PASS ").setFontSize(8).setBold().setBackgroundColor(COLOR_ACID_YELLOW).setFontColor(COLOR_ASPHALT_BG))
-                .setMargin(0);
-        Paragraph subBrand = new Paragraph("AUTHENTICATED ADMISSION GATEWAY // REVENUE PASS")
-                .setFontSize(7).setFontColor(COLOR_GRIT_DIM).setMarginTop(1f).setMarginBottom(0);
+        // ==================== LEFT MAIN PASS PANEL ====================
+        Cell leftPanel = new Cell().setBorder(Border.NO_BORDER).setPadding(6f);
 
-        brandHeader.addCell(new Cell().add(brandP).add(subBrand).setBorder(Border.NO_BORDER).setPadding(4f));
-
-        String serialCode = "EHB-" + (event.getId() != null ? event.getId() : "2026") + "-" + ticket.getId();
-        Paragraph seasonP = new Paragraph()
-                .add(new Text(" SEASON 2026 // ALL-ACCESS ").setFontSize(7.5f).setBold().setBackgroundColor(COLOR_NEON_MAGENTA).setFontColor(COLOR_GRIT_WHITE))
-                .setTextAlignment(TextAlignment.RIGHT).setMargin(0);
-        Paragraph serialP = new Paragraph(serialCode)
-                .setFontSize(8.5f).setBold().setFontColor(COLOR_ACID_YELLOW).setTextAlignment(TextAlignment.RIGHT).setMarginTop(2f).setMarginBottom(0);
-
-        brandHeader.addCell(new Cell().add(seasonP).add(serialP).setBorder(Border.NO_BORDER).setPadding(4f));
-        passBox.addCell(new Cell().add(brandHeader).setBorder(Border.NO_BORDER).setPadding(2f));
-
-        // 3. Event Hero Banner Box
-        Table eventBanner = new Table(UnitValue.createPercentArray(new float[]{100}))
+        // A. Header Row: Brand + Season + Serial
+        Table headerRow = new Table(UnitValue.createPercentArray(new float[]{60, 40}))
                 .useAllAvailableWidth()
-                .setBackgroundColor(COLOR_ASPHALT_INNER)
-                .setBorder(new SolidBorder(COLOR_BORDER, 1f))
-                .setMarginLeft(6f).setMarginRight(6f).setMarginBottom(5f);
-
-        Paragraph eventTitle = new Paragraph(event.getName().toUpperCase())
-                .setFontSize(13).setBold().setFontColor(COLOR_GRIT_WHITE).setMargin(3f);
-        eventBanner.addCell(new Cell().add(eventTitle).setBorder(Border.NO_BORDER));
-
-        Table metaRow = new Table(UnitValue.createPercentArray(new float[]{35, 38, 27}))
-                .useAllAvailableWidth()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3f);
-
-        String dateStr = event.getEventDate() != null ? event.getEventDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy")) : "SEASON 2026";
-        String timeStr = (event.getStartTime() != null ? event.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")) : "TBD");
-        Paragraph dateP = new Paragraph()
-                .add(new Text("DATE & SHOWTIME:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
-                .add(new Text(dateStr + " @ " + timeStr).setFontSize(8.5f).setBold().setFontColor(COLOR_ACID_YELLOW));
-        metaRow.addCell(new Cell().add(dateP).setBorder(Border.NO_BORDER));
-
-        String venueName = event.getVenue() != null ? event.getVenue().getName() : "MAIN ARENA";
-        String venueAddr = event.getVenue() != null && event.getVenue().getAddress() != null ? event.getVenue().getAddress() : "CENTRAL SECTOR";
-        Paragraph venueP = new Paragraph()
-                .add(new Text("VENUE / AUDITORIUM:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
-                .add(new Text(venueName + "\n" + venueAddr).setFontSize(7.5f).setFontColor(COLOR_GRIT_WHITE));
-        metaRow.addCell(new Cell().add(venueP).setBorder(Border.NO_BORDER));
-
-        String seatTypeStr = seat != null && seat.getSeatType() != null ? seat.getSeatType().name() : "GENERAL";
-        Paragraph tierP = new Paragraph()
-                .add(new Text("CLEARANCE SECTOR:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
-                .add(new Text("TIER: " + seatTypeStr + " // GATE 01").setFontSize(7.5f).setBold().setFontColor(COLOR_GRIT_WHITE));
-        metaRow.addCell(new Cell().add(tierP).setBorder(Border.NO_BORDER));
-
-        eventBanner.addCell(new Cell().add(metaRow).setBorder(Border.NO_BORDER));
-        passBox.addCell(new Cell().add(eventBanner).setBorder(Border.NO_BORDER).setPadding(2f));
-
-        // 4. Core Split: Attendee Details & QR Optical Gate Stub
-        Table coreTable = new Table(UnitValue.createPercentArray(new float[]{65, 35}))
-                .useAllAvailableWidth()
-                .setMarginLeft(6f).setMarginRight(6f).setMarginBottom(5f)
                 .setBorder(Border.NO_BORDER);
 
-        // Left Container
-        Table leftInfo = new Table(UnitValue.createPercentArray(new float[]{100}))
+        Paragraph brandP = new Paragraph()
+                .add(new Text("EVENTHUB ").setFontSize(14).setBold().setFontColor(COLOR_GRIT_WHITE))
+                .add(new Text(" VIP PASS ").setFontSize(7.5f).setBold().setBackgroundColor(COLOR_ACID_YELLOW).setFontColor(COLOR_ASPHALT_BG))
+                .add(new Text(" ALL-ACCESS ").setFontSize(7f).setBold().setBackgroundColor(COLOR_NEON_MAGENTA).setFontColor(COLOR_GRIT_WHITE))
+                .setMargin(0);
+        Paragraph subBrand = new Paragraph("AUTHENTICATED ADMISSION GATEWAY // REVENUE PASS")
+                .setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM).setMarginTop(1f).setMarginBottom(0);
+        headerRow.addCell(new Cell().add(brandP).add(subBrand).setBorder(Border.NO_BORDER));
+
+        Paragraph serialP = new Paragraph()
+                .add(new Text("SERIAL: " + serialCode + "\n").setFontSize(7.5f).setBold().setFontColor(COLOR_ACID_YELLOW))
+                .add(new Text("STATUS: " + ticket.getTicketStatus().name() + " // VERIFIED").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .setTextAlignment(TextAlignment.RIGHT).setMargin(0);
+        headerRow.addCell(new Cell().add(serialP).setBorder(Border.NO_BORDER));
+        leftPanel.add(headerRow);
+
+        // B. Event Hero Box
+        Table heroBox = new Table(UnitValue.createPercentArray(new float[]{100}))
                 .useAllAvailableWidth()
                 .setBackgroundColor(COLOR_ASPHALT_INNER)
                 .setBorder(new SolidBorder(COLOR_BORDER, 1f))
+                .setPadding(4f)
+                .setMarginTop(4f)
+                .setMarginBottom(4f);
+
+        Paragraph heroTitle = new Paragraph(event.getName().toUpperCase())
+                .setFontSize(13.5f).setBold().setFontColor(COLOR_GRIT_WHITE).setMargin(0);
+        Paragraph heroCategory = new Paragraph("LIVE ARENA CONCERT // OFFICIAL TOUR // ADMIT ONE")
+                .setFontSize(6.5f).setBold().setFontColor(COLOR_ACID_YELLOW).setMarginTop(1f).setMarginBottom(0);
+        heroBox.addCell(new Cell().add(heroTitle).add(heroCategory).setBorder(Border.NO_BORDER));
+        leftPanel.add(heroBox);
+
+        // C. 3-Column Coordinates Grid: Date/Time | Venue | Clearance
+        Table coordsGrid = new Table(UnitValue.createPercentArray(new float[]{34, 34, 32}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(COLOR_ASPHALT_INNER)
+                .setBorder(new SolidBorder(COLOR_BORDER, 1f))
+                .setPadding(4f)
+                .setMarginBottom(4f);
+
+        Cell dateCell = new Cell().setBorder(Border.NO_BORDER);
+        dateCell.add(new Paragraph("DATE & SHOWTIME:").setFontSize(6f).setBold().setFontColor(COLOR_GRIT_DIM).setMargin(0));
+        dateCell.add(new Paragraph(dateStr).setFontSize(8.5f).setBold().setFontColor(COLOR_ACID_YELLOW).setMargin(0));
+        dateCell.add(new Paragraph("DOORS: 18:30 // START: " + timeStr).setFontSize(6.5f).setFontColor(COLOR_GRIT_WHITE).setMargin(0));
+        coordsGrid.addCell(dateCell);
+
+        Cell venueCell = new Cell().setBorder(Border.NO_BORDER);
+        venueCell.add(new Paragraph("VENUE & AUDITORIUM:").setFontSize(6f).setBold().setFontColor(COLOR_GRIT_DIM).setMargin(0));
+        venueCell.add(new Paragraph(venueName).setFontSize(8.5f).setBold().setFontColor(COLOR_GRIT_WHITE).setMargin(0));
+        venueCell.add(new Paragraph(venueAddr).setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM).setMargin(0));
+        coordsGrid.addCell(venueCell);
+
+        Cell clearCell = new Cell().setBorder(Border.NO_BORDER);
+        clearCell.add(new Paragraph("CLEARANCE SECTOR:").setFontSize(6f).setBold().setFontColor(COLOR_GRIT_DIM).setMargin(0));
+        clearCell.add(new Paragraph("TIER: " + seatTypeStr).setFontSize(8.5f).setBold().setFontColor(COLOR_GRIT_WHITE).setMargin(0));
+        clearCell.add(new Paragraph("GATE 01 // NORTH ENTRY").setFontSize(6.5f).setFontColor(COLOR_ACID_YELLOW).setMargin(0));
+        coordsGrid.addCell(clearCell);
+
+        leftPanel.add(coordsGrid);
+
+        // D. Seat Master Banner (Acid Yellow Accent Block)
+        Table seatMaster = new Table(UnitValue.createPercentArray(new float[]{65, 35}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(COLOR_ACID_YELLOW)
+                .setBorder(new SolidBorder(COLOR_ASPHALT_BG, 1.5f))
+                .setPadding(4f)
+                .setMarginBottom(4f);
+
+        Paragraph seatTitleP = new Paragraph()
+                .add(new Text("CONFIRMED SEAT ASSIGNMENT\n").setFontSize(6f).setBold().setFontColor(COLOR_ASPHALT_BG))
+                .add(new Text(seatNum).setFontSize(12.5f).setBold().setFontColor(COLOR_ASPHALT_BG))
+                .setMargin(0);
+        seatMaster.addCell(new Cell().add(seatTitleP).setBorder(Border.NO_BORDER));
+
+        Paragraph tierP = new Paragraph()
+                .add(new Text("SECTOR TIER\n").setFontSize(6f).setBold().setFontColor(COLOR_ASPHALT_BG))
+                .add(new Text(seatTypeStr + " // VIP").setFontSize(8.5f).setBold().setFontColor(COLOR_ASPHALT_BG))
+                .setTextAlignment(TextAlignment.RIGHT).setMargin(0);
+        seatMaster.addCell(new Cell().add(tierP).setBorder(Border.NO_BORDER));
+        leftPanel.add(seatMaster);
+
+        // E. Attendee Clearance & Order Reference Row
+        Table attendeeRow = new Table(UnitValue.createPercentArray(new float[]{60, 40}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(COLOR_ASPHALT_INNER)
+                .setBorder(new SolidBorder(COLOR_BORDER, 1f))
+                .setPadding(3f)
+                .setMarginBottom(4f);
+
+        Paragraph holderP = new Paragraph()
+                .add(new Text("ACCREDITED ATTENDEE:\n").setFontSize(6f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text(attendeeName + "\n").setFontSize(8.5f).setBold().setFontColor(COLOR_GRIT_WHITE))
+                .add(new Text(booking.getUser().getEmail().toUpperCase()).setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
+                .setMargin(0);
+        attendeeRow.addCell(new Cell().add(holderP).setBorder(Border.NO_BORDER));
+
+        Paragraph orderRefP = new Paragraph()
+                .add(new Text("BOOKING ORDER ID:\n").setFontSize(6f).setFontColor(COLOR_GRIT_DIM))
+                .add(new Text("#EHB-" + booking.getId() + "\n").setFontSize(8.5f).setBold().setFontColor(COLOR_ACID_YELLOW))
+                .add(new Text("TICKET PASS " + (ticketIndex + 1) + " OF " + totalTickets).setFontSize(6.5f).setFontColor(COLOR_GRIT_WHITE))
+                .setTextAlignment(TextAlignment.RIGHT).setMargin(0);
+        attendeeRow.addCell(new Cell().add(orderRefP).setBorder(Border.NO_BORDER));
+        leftPanel.add(attendeeRow);
+
+        // F. Security Guarantee Tags (STRICTLY NO EMOJIS)
+        Paragraph badgesP = new Paragraph()
+                .add(new Text("[ 10-MIN CART LOCK ]   ").setFontSize(6.5f).setBold().setFontColor(COLOR_ACID_YELLOW))
+                .add(new Text("[ ZERO OVERBOOKING ]   ").setFontSize(6.5f).setBold().setFontColor(COLOR_ACID_YELLOW))
+                .add(new Text("[ SHA-256 ENCRYPTED ]   ").setFontSize(6.5f).setBold().setFontColor(COLOR_ACID_YELLOW))
+                .add(new Text("[ PHOTO ID REQ ]").setFontSize(6.5f).setBold().setFontColor(COLOR_GRIT_WHITE))
+                .setMargin(0);
+        leftPanel.add(badgesP);
+
+        twoPanel.addCell(leftPanel);
+
+        // ==================== CENTER PERFORATION NOTCH ====================
+        Cell perfDivider = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .setBorderLeft(new DashedBorder(COLOR_BORDER, 1.5f))
+                .setPadding(0);
+        twoPanel.addCell(perfDivider);
+
+        // ==================== RIGHT GATE TURNSTILE STUB ====================
+        Cell rightStub = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .setBackgroundColor(COLOR_ASPHALT_INNER)
                 .setPadding(5f);
 
-        String attendeeName = (booking.getUser().getFirstName() + " " + booking.getUser().getLastName()).toUpperCase();
-        Paragraph holderP = new Paragraph()
-                .add(new Text("ACCREDITED HOLDER:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
-                .add(new Text(attendeeName + "\n").setFontSize(10.5f).setBold().setFontColor(COLOR_GRIT_WHITE))
-                .add(new Text(booking.getUser().getEmail().toUpperCase()).setFontSize(7f).setFontColor(COLOR_GRIT_DIM))
-                .setMargin(2f);
-        leftInfo.addCell(new Cell().add(holderP).setBorder(Border.NO_BORDER));
+        Paragraph stubHead = new Paragraph("GATE TURNSTILE STUB")
+                .setFontSize(7.5f).setBold().setFontColor(COLOR_ACID_YELLOW).setTextAlignment(TextAlignment.CENTER).setMargin(0);
+        Paragraph stubAdmit = new Paragraph("ADMIT ONE // SCAN AT GATE")
+                .setFontSize(6f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginBottom(3f);
+        rightStub.add(stubHead);
+        rightStub.add(stubAdmit);
 
-        // Seat Allocation & Status Row
-        Table seatTable = new Table(UnitValue.createPercentArray(new float[]{50, 50}))
+        // Stub Seat Banner
+        Table stubSeatBox = new Table(UnitValue.createPercentArray(new float[]{100}))
                 .useAllAvailableWidth()
-                .setBorder(Border.NO_BORDER)
-                .setMarginTop(3f);
+                .setBackgroundColor(COLOR_ASPHALT_CARD)
+                .setBorder(new SolidBorder(COLOR_ACID_YELLOW, 1f))
+                .setPadding(2f)
+                .setMarginBottom(4f);
+        stubSeatBox.addCell(new Cell().add(new Paragraph(seatNum)
+                .setFontSize(9.5f).setBold().setFontColor(COLOR_ACID_YELLOW).setTextAlignment(TextAlignment.CENTER).setMargin(0))
+                .setBorder(Border.NO_BORDER));
+        rightStub.add(stubSeatBox);
 
-        String seatNum = seat != null ? seat.getSeatNumber() : "GA-" + (ticketIndex + 1);
-        Paragraph seatP = new Paragraph()
-                .add(new Text("SEAT ALLOCATION:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
-                .add(new Text(seatNum).setFontSize(12f).setBold().setFontColor(COLOR_ACID_YELLOW));
-        seatTable.addCell(new Cell().add(seatP).setBorder(Border.NO_BORDER));
-
-        Paragraph statusP = new Paragraph()
-                .add(new Text("ADMISSION STATUS:\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
-                .add(new Text(ticket.getTicketStatus().name() + " // VERIFIED").setFontSize(8.5f).setBold().setFontColor(COLOR_GRIT_WHITE));
-        seatTable.addCell(new Cell().add(statusP).setBorder(Border.NO_BORDER));
-
-        leftInfo.addCell(new Cell().add(seatTable).setBorder(Border.NO_BORDER));
-
-        // Guarantees Ribbon
-        Paragraph guarP = new Paragraph("⚡ 10-MIN CART LOCK   🛡️ ZERO OVERBOOKING   🎟️ OFFLINE GATE VERIFIED")
-                .setFontSize(6f).setFontColor(COLOR_ACID_YELLOW).setMarginTop(3f).setMarginBottom(1f);
-        leftInfo.addCell(new Cell().add(guarP).setBorder(Border.NO_BORDER));
-
-        coreTable.addCell(new Cell().add(leftInfo).setBorder(Border.NO_BORDER).setPaddingRight(4f));
-
-        // Right QR Optical Gate Stub
-        Table rightStub = new Table(UnitValue.createPercentArray(new float[]{100}))
+        // Optical QR Token Container (Crisp White Box)
+        Table qrBox = new Table(UnitValue.createPercentArray(new float[]{100}))
                 .useAllAvailableWidth()
                 .setBackgroundColor(ColorConstants.WHITE)
-                .setBorder(new SolidBorder(COLOR_GRIT_WHITE, 1.5f))
-                .setPadding(3f);
+                .setBorder(new SolidBorder(COLOR_ASPHALT_BG, 1.5f))
+                .setPadding(2f)
+                .setMarginBottom(4f);
 
         byte[] qrBytes = qrCodeService.generateQrCodeImage(ticket.getQrCode());
-        ImageData imgData = ImageDataFactory.create(qrBytes);
-        Image qrImg = new Image(imgData).setWidth(75).setHeight(75).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        if (qrBytes != null && qrBytes.length > 0) {
+            ImageData imgData = ImageDataFactory.create(qrBytes);
+            Image qrImg = new Image(imgData).setWidth(68).setHeight(68).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            qrBox.addCell(new Cell().add(qrImg).setBorder(Border.NO_BORDER).setPadding(1f));
+        }
+        Paragraph qrLabel = new Paragraph("OPTICAL GATE TOKEN")
+                .setFontSize(5.5f).setBold().setFontColor(ColorConstants.BLACK).setTextAlignment(TextAlignment.CENTER).setMargin(0);
+        qrBox.addCell(new Cell().add(qrLabel).setBorder(Border.NO_BORDER));
+        rightStub.add(qrBox);
 
-        rightStub.addCell(new Cell().add(qrImg).setBorder(Border.NO_BORDER).setPadding(1f));
+        // Scannable 1D Barcode Container (Real Code-128)
+        Table barcodeBox = new Table(UnitValue.createPercentArray(new float[]{100}))
+                .useAllAvailableWidth()
+                .setBackgroundColor(ColorConstants.WHITE)
+                .setBorder(new SolidBorder(COLOR_ASPHALT_BG, 1f))
+                .setPadding(2f)
+                .setMarginBottom(3f);
 
-        Paragraph stubLabel = new Paragraph("OPTICAL GATE TOKEN")
-                .setFontSize(6.5f).setBold().setFontColor(ColorConstants.BLACK).setTextAlignment(TextAlignment.CENTER).setMargin(0);
-        Paragraph stubCode = new Paragraph(ticket.getQrCode().length() > 22 ? ticket.getQrCode().substring(0, 22) + "..." : ticket.getQrCode())
-                .setFontSize(5.5f).setFontColor(ColorConstants.DARK_GRAY).setTextAlignment(TextAlignment.CENTER).setMargin(0);
-        Paragraph stubBarcode = new Paragraph("|| | ||| | || |||| | ||| | || | ||||")
-                .setFontSize(7f).setBold().setFontColor(ColorConstants.BLACK).setTextAlignment(TextAlignment.CENTER).setMargin(1f);
+        byte[] barcodeBytes = null;
+        try {
+            barcodeBytes = qrCodeService.generateBarcode128Image(serialCode, 140, 26);
+        } catch (Exception e) {
+            log.debug("Code-128 barcode fallback: {}", e.getMessage());
+        }
 
-        rightStub.addCell(new Cell().add(stubLabel).add(stubCode).add(stubBarcode).setBorder(Border.NO_BORDER).setPadding(1f));
-        coreTable.addCell(new Cell().add(rightStub).setBorder(Border.NO_BORDER).setPaddingLeft(4f));
+        if (barcodeBytes != null && barcodeBytes.length > 0) {
+            ImageData bcImgData = ImageDataFactory.create(barcodeBytes);
+            Image bcImg = new Image(bcImgData).setWidth(105).setHeight(20).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            barcodeBox.addCell(new Cell().add(bcImg).setBorder(Border.NO_BORDER).setPadding(1f));
+        } else {
+            Paragraph simBc = new Paragraph("|| | ||| | || |||| | ||| | || | ||||")
+                    .setFontSize(7.5f).setBold().setFontColor(ColorConstants.BLACK).setTextAlignment(TextAlignment.CENTER).setMargin(0);
+            barcodeBox.addCell(new Cell().add(simBc).setBorder(Border.NO_BORDER));
+        }
 
-        passBox.addCell(new Cell().add(coreTable).setBorder(Border.NO_BORDER).setPadding(2f));
+        Paragraph bcSerial = new Paragraph("* " + serialCode + " *")
+                .setFontSize(5.5f).setBold().setFontColor(ColorConstants.BLACK).setTextAlignment(TextAlignment.CENTER).setMargin(0);
+        barcodeBox.addCell(new Cell().add(bcSerial).setBorder(Border.NO_BORDER));
+        rightStub.add(barcodeBox);
 
-        // 5. Perforation Tear Line
-        Paragraph perfP = new Paragraph("✂  - - - - - - - - - - - - - - DETACH AT GATE TURNSTILE FOR PHYSICAL SCAN - - - - - - - - - - - - - -  ✂")
-                .setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginTop(2f).setMarginBottom(2f);
-        passBox.addCell(new Cell().add(perfP).setBorder(Border.NO_BORDER));
+        Paragraph stubFoot = new Paragraph("SINGLE USE // TURNSTILE SCAN")
+                .setFontSize(5.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMargin(0);
+        rightStub.add(stubFoot);
 
-        // 6. Security Microprint Footer
-        Paragraph microP = new Paragraph("EVENTHUB INFRASTRUCTURE // SECURE SHA-256 DIGITAL GATE CREDENTIAL // NON-TRANSFERABLE PASS // EHB-2026")
+        twoPanel.addCell(rightStub);
+        passCard.addCell(new Cell().add(twoPanel).setBorder(Border.NO_BORDER).setPadding(0));
+
+        // 3. Tear Line Notice (NO EMOJIS)
+        Paragraph tearP = new Paragraph("--------------------- TEAR / SCAN AT GATE TURNSTILE ---------------------")
+                .setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginTop(3f).setMarginBottom(2f);
+        passCard.addCell(new Cell().add(tearP).setBorder(Border.NO_BORDER));
+
+        // 4. Security Microprint Line
+        Paragraph microP = new Paragraph("EVENTHUB INFRASTRUCTURE // SECURE SHA-256 DIGITAL GATE CREDENTIAL // NON-TRANSFERABLE ADMISSION PASS")
                 .setFontSize(5.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginBottom(3f);
-        passBox.addCell(new Cell().add(microP).setBorder(Border.NO_BORDER));
+        passCard.addCell(new Cell().add(microP).setBorder(Border.NO_BORDER));
 
-        // 7. Bottom Hazard Tape
-        passBox.addCell(new Cell().add(hazardTop).setPadding(0).setBorder(Border.NO_BORDER));
+        // 5. Bottom Hazard Warning Tape
+        passCard.addCell(new Cell().add(createHazardTape(5f)).setPadding(0).setBorder(Border.NO_BORDER));
 
-        document.add(passBox);
+        document.add(passCard);
     }
 
     public byte[] generateTicketPdf(Long ticketId) {
@@ -445,14 +604,26 @@ public class TicketService {
             PdfDocument pdf = new PdfDocument(writer);
             pdf.setDefaultPageSize(PageSize.A4);
             Document document = new Document(pdf);
-            document.setMargins(24f, 24f, 24f, 24f);
+            document.setMargins(20f, 20f, 20f, 20f);
+
+            // Executive Pass Header
+            document.add(createExecutiveHeader(booking, event, 1));
 
             com.kritagya.event_booking_system.entity.Seat seat = null;
             if (booking.getSeats() != null && !booking.getSeats().isEmpty()) {
                 seat = booking.getSeats().get(0);
             }
 
+            // Ticket Pass Card
             renderBrutalistTicketPass(document, ticket, booking, event, seat, 0, 1);
+
+            // Gate Protocol Guide
+            document.add(createGateProtocolBox());
+
+            // Page Microprint Footer
+            Paragraph pageFooter = new Paragraph("EVENTHUB OFFICIAL DIGITAL ADMISSION DOCUMENT // SEASON 2026 // ALL RIGHTS RESERVED")
+                    .setFontSize(5.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginTop(4f);
+            document.add(pageFooter);
 
             document.close();
             log.info("Generated high-fidelity brutalist PDF pass for ticket ID: {}", ticketId);
@@ -498,43 +669,48 @@ public class TicketService {
             Document document = new Document(pdf);
             document.setMargins(20f, 20f, 20f, 20f);
 
-            // Executive Booking Summary Header Table
-            Table summaryBox = new Table(UnitValue.createPercentArray(new float[]{60, 40}))
-                    .useAllAvailableWidth()
-                    .setBackgroundColor(COLOR_ASPHALT_BG)
-                    .setBorder(new SolidBorder(COLOR_ACID_YELLOW, 2f))
-                    .setPadding(6f)
-                    .setMarginBottom(12f);
+            int totalValidTickets = (int) tickets.stream().filter(t -> t.getTicketStatus() != TicketStatus.CANCELLED).count();
 
-            Paragraph sumTitle = new Paragraph()
-                    .add(new Text("EVENTHUB BOOKING CONFIRMATION\n").setFontSize(12).setBold().setFontColor(COLOR_ACID_YELLOW))
-                    .add(new Text("ORDER #EHB-" + booking.getId() + " • " + (booking.getUser().getFirstName() + " " + booking.getUser().getLastName()).toUpperCase()).setFontSize(8.5f).setFontColor(COLOR_GRIT_WHITE));
-            summaryBox.addCell(new Cell().add(sumTitle).setBorder(Border.NO_BORDER).setPadding(3f));
-
-            String totalPaid = booking.getTotalAmount() != null ? "$" + booking.getTotalAmount() : "$0.00";
-            Paragraph sumRight = new Paragraph()
-                    .add(new Text("TOTAL CONFIRMED ADMISSION\n").setFontSize(6.5f).setFontColor(COLOR_GRIT_DIM))
-                    .add(new Text(tickets.size() + " PASSES ISSUED • " + totalPaid).setFontSize(9.5f).setBold().setFontColor(COLOR_GRIT_WHITE))
-                    .setTextAlignment(TextAlignment.RIGHT);
-            summaryBox.addCell(new Cell().add(sumRight).setBorder(Border.NO_BORDER).setPadding(3f));
-
-            document.add(summaryBox);
-
-            // Render each ticket pass
-            for (int i = 0; i < tickets.size(); i++) {
-                Ticket t = tickets.get(i);
-                if (t.getTicketStatus() == TicketStatus.CANCELLED) {
-                    continue;
-                }
+            if (totalValidTickets == 1) {
+                document.add(createExecutiveHeader(booking, event, totalValidTickets));
+                Ticket t = tickets.get(0);
                 com.kritagya.event_booking_system.entity.Seat seat = null;
-                if (booking.getSeats() != null && i < booking.getSeats().size()) {
-                    seat = booking.getSeats().get(i);
+                if (booking.getSeats() != null && !booking.getSeats().isEmpty()) {
+                    seat = booking.getSeats().get(0);
                 }
-                renderBrutalistTicketPass(document, t, booking, event, seat, i, tickets.size());
+                renderBrutalistTicketPass(document, t, booking, event, seat, 0, 1);
+                document.add(createGateProtocolBox());
+                Paragraph pageFooter = new Paragraph("EVENTHUB OFFICIAL DIGITAL ADMISSION DOCUMENT // SEASON 2026 // ALL RIGHTS RESERVED")
+                        .setFontSize(5.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginTop(4f);
+                document.add(pageFooter);
+            } else {
+                int renderedCount = 0;
+                for (int i = 0; i < tickets.size(); i++) {
+                    Ticket t = tickets.get(i);
+                    if (t.getTicketStatus() == TicketStatus.CANCELLED) {
+                        continue;
+                    }
+                    if (renderedCount > 0 && renderedCount % 2 == 0) {
+                        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+                    }
+                    if (renderedCount % 2 == 0) {
+                        document.add(createExecutiveHeader(booking, event, totalValidTickets));
+                    }
+                    com.kritagya.event_booking_system.entity.Seat seat = null;
+                    if (booking.getSeats() != null && i < booking.getSeats().size()) {
+                        seat = booking.getSeats().get(i);
+                    }
+                    renderBrutalistTicketPass(document, t, booking, event, seat, renderedCount, totalValidTickets);
+                    renderedCount++;
+                }
+                document.add(createGateProtocolBox());
+                Paragraph pageFooter = new Paragraph("EVENTHUB OFFICIAL DIGITAL ADMISSION DOCUMENT // SEASON 2026 // ALL RIGHTS RESERVED")
+                        .setFontSize(5.5f).setFontColor(COLOR_GRIT_DIM).setTextAlignment(TextAlignment.CENTER).setMarginTop(4f);
+                document.add(pageFooter);
             }
 
             document.close();
-            log.info("Generated high-fidelity brutalist booking PDF for booking ID: {} with {} tickets", bookingId, tickets.size());
+            log.info("Generated high-fidelity brutalist booking PDF for booking ID: {} with {} tickets", bookingId, totalValidTickets);
             return baos.toByteArray();
 
         } catch (Exception e) {
