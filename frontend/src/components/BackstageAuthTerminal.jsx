@@ -13,7 +13,10 @@ import {
   Sparkles, 
   CheckCircle2, 
   Zap,
-  Key
+  Key,
+  Wifi,
+  Fingerprint,
+  Activity
 } from 'lucide-react';
 import { apiFetch, setAuthSession } from '../services/api';
 
@@ -65,6 +68,25 @@ export default function BackstageAuthTerminal({
     const fn = (formData.firstName || 'VIP').slice(0, 3).toUpperCase();
     const ln = (formData.lastName || 'PASS').slice(0, 3).toUpperCase();
     return `EHB-${fn}${ln}-2026`;
+  }, [formData.firstName, formData.lastName]);
+
+  // Dynamic gate cryptographic authentication hash
+  const gateHash = useMemo(() => {
+    const raw = (formData.email || 'guest@eventhub.com').toLowerCase();
+    let hash = 0;
+    for (let i = 0; i < raw.length; i++) {
+      hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+      hash |= 0;
+    }
+    const hex = Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
+    return `0x${hex}`;
+  }, [formData.email]);
+
+  // Attendee initials for the tactical security badge
+  const attendeeInitials = useMemo(() => {
+    const fn = (formData.firstName || '').trim().charAt(0).toUpperCase();
+    const ln = (formData.lastName || '').trim().charAt(0).toUpperCase();
+    return (fn + ln) || 'VP';
   }, [formData.firstName, formData.lastName]);
 
   const handleDemoFill = (type) => {
@@ -187,97 +209,194 @@ export default function BackstageAuthTerminal({
               ══════════════════════════════════════════════════════════════ */}
           <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col items-center w-full">
             
-            {/* Lanyard Strap & Clip Graphic */}
-            <div className="w-full flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full border-4 border-grit-dim/40 bg-asphalt-card flex items-center justify-center shadow-inner mb-[-14px] z-20">
-                <div className="w-3 h-3 bg-grit-white rounded-full"></div>
+            {/* Realistic Lanyard Strap & Industrial Swivel Hook Hardware */}
+            <div className="w-full flex flex-col items-center select-none pointer-events-none">
+              {/* Heavy-duty woven ribbon strap with branded micro-typography */}
+              <div className="w-20 sm:w-24 h-10 bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 border-x-2 border-acid-yellow/60 relative overflow-hidden flex items-center justify-center shadow-lg">
+                <div className="absolute inset-0 opacity-15 bg-[repeating-linear-gradient(45deg,#000_0px,#000_2px,transparent_2px,transparent_6px)]"></div>
+                <span className="font-ticker text-[8px] text-acid-yellow font-bold uppercase tracking-widest rotate-90 scale-90 whitespace-nowrap">
+                  EVENTHUB VIP
+                </span>
               </div>
-              <div className="w-12 h-5 bg-grit-dim/70 border-2 border-asphalt-black shadow-sm mb-[-4px] z-10"></div>
+
+              {/* Metal Swivel Ring & Carabiner Clasp */}
+              <div className="flex flex-col items-center mb-[-16px] z-30">
+                {/* Brushed steel swivel ring */}
+                <div className="w-7 h-7 rounded-full border-[3px] border-stone-400 bg-gradient-to-b from-stone-600 via-stone-400 to-stone-700 shadow-md flex items-center justify-center -mb-2">
+                  <div className="w-2.5 h-2.5 bg-stone-900 rounded-full border border-stone-500"></div>
+                </div>
+                {/* Swivel mechanical pivot block */}
+                <div className="w-4 h-2.5 bg-stone-400 border border-stone-600 shadow-sm z-20"></div>
+                {/* Lobster claw / spring carabiner latch */}
+                <div className="w-6 h-6 border-2 border-stone-300 bg-gradient-to-b from-stone-500 to-stone-700 rounded-t-sm rounded-b-md shadow-lg flex items-center justify-center relative z-20">
+                  <div className="w-1.5 h-3 bg-stone-300 rounded-full"></div>
+                </div>
+              </div>
             </div>
 
             {/* The Physical VIP Pass Card */}
-            <div className="w-full max-w-sm bg-asphalt-surface border-2 border-grit-white shadow-[4px_4px_0px_#E2F13C] sm:shadow-[8px_8px_0px_#E2F13C] relative overflow-hidden transition-all duration-300">
+            <div className="w-full max-w-sm bg-asphalt-surface border-2 border-grit-white shadow-[6px_6px_0px_#E2F13C] sm:shadow-[8px_8px_0px_#E2F13C] hover:shadow-[10px_10px_0px_#ff1f6d] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
               
               {/* Shimmering Hologram Foil Overlay */}
-              <div className="absolute inset-0 holo-foil pointer-events-none opacity-40 z-10"></div>
+              <div className="absolute inset-0 holo-foil pointer-events-none opacity-40 group-hover:opacity-65 transition-opacity duration-500 z-10"></div>
+
+              {/* Corner Tactical Rivets */}
+              <div className="absolute top-2 left-2 w-2 h-2 rounded-full border border-stone-400 bg-stone-600 z-30 shadow-inner flex items-center justify-center">
+                <div className="w-1 h-0.5 bg-stone-300"></div>
+              </div>
+              <div className="absolute top-2 right-2 w-2 h-2 rounded-full border border-stone-400 bg-stone-600 z-30 shadow-inner flex items-center justify-center">
+                <div className="w-1 h-0.5 bg-stone-300"></div>
+              </div>
+              <div className="absolute bottom-2 left-2 w-2 h-2 rounded-full border border-stone-400 bg-stone-600 z-30 shadow-inner flex items-center justify-center">
+                <div className="w-1 h-0.5 bg-stone-300"></div>
+              </div>
+              <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full border border-stone-400 bg-stone-600 z-30 shadow-inner flex items-center justify-center">
+                <div className="w-1 h-0.5 bg-stone-300"></div>
+              </div>
 
               {/* Pass Top Warning Header */}
               <div className="hazard-tape h-2 w-full"></div>
-              
-              <div className="p-4 sm:p-5 md:p-6 relative z-20 flex flex-col justify-between">
+
+              {/* Laminated Badge Slot Cutout (where clip latches) */}
+              <div className="w-14 h-2.5 rounded-full bg-asphalt-black border-2 border-grit-dim/70 shadow-[inset_0_2px_4px_rgba(0,0,0,0.9)] mx-auto mt-2 mb-1 relative z-20"></div>
+
+              <div className="p-3.5 sm:p-4 md:p-5 relative z-20 flex flex-col justify-between">
                 
-                {/* Header Banner */}
-                <div className="flex items-start justify-between border-b-2 border-asphalt-border pb-3 mb-4">
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-display text-2xl tracking-tight text-grit-white">EVENTHUB</span>
-                      <span className="bg-acid-yellow text-asphalt-black font-impact text-[10px] px-1.5 py-0.2 tracking-wider">
-                        PASS
-                      </span>
+                {/* Header Banner with RFID Chip and EventHub Pass Brand */}
+                <div className="flex items-start justify-between border-b-2 border-asphalt-border pb-3 mb-3">
+                  <div className="flex items-center gap-2.5">
+                    {/* Simulated Gold Smart Card RFID Chip */}
+                    <div className="w-10 h-7 rounded-sm bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 border border-amber-600 p-0.5 shadow-sm relative overflow-hidden shrink-0 flex flex-col justify-between">
+                      <div className="border-b border-amber-700/60 h-1.5 flex justify-between">
+                        <div className="w-1.5 h-full border-r border-amber-700/60"></div>
+                        <div className="w-1.5 h-full border-l border-amber-700/60"></div>
+                      </div>
+                      <div className="h-1.5 border-t border-amber-700/60 flex justify-between">
+                        <div className="w-1.5 h-full border-r border-amber-700/60"></div>
+                        <div className="w-1.5 h-full border-l border-amber-700/60"></div>
+                      </div>
+                      {/* Holographic chip shine */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent pointer-events-none"></div>
                     </div>
-                    <span className="font-ticker text-[9px] text-grit-dim tracking-widest uppercase block mt-0.5">
-                      AUTHENTICATED ADMISSION
-                    </span>
+
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-display text-xl sm:text-2xl tracking-tight text-grit-white leading-none">
+                          EVENTHUB
+                        </span>
+                        <span className="bg-acid-yellow text-asphalt-black font-impact text-[9px] px-1 py-0.2 tracking-wider">
+                          VIP PASS
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="font-ticker text-[8px] text-grit-dim tracking-widest uppercase">
+                          ACCREDITATION 2026
+                        </span>
+                        <span className="inline-flex items-center text-acid-yellow">
+                          <Wifi size={10} className="rotate-90" />
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="text-right">
-                    <span className="bg-neon-magenta text-grit-white font-impact text-[10px] tracking-wider px-2 py-0.5 border border-asphalt-black uppercase block">
-                      SEASON 2026
+                    <span className="bg-neon-magenta text-grit-white font-impact text-[9px] sm:text-[10px] tracking-wider px-2 py-0.5 border border-asphalt-black uppercase block shadow-sm">
+                      ALL-ACCESS
                     </span>
-                    <span className="font-ticker text-[9px] text-acid-yellow font-bold uppercase tracking-wider block mt-1">
+                    <span className="font-mono-zine text-[9px] text-acid-yellow font-bold uppercase tracking-wider block mt-1">
                       {ticketSerial}
                     </span>
                   </div>
                 </div>
 
-                {/* Live Stamped Attendee Name */}
-                <div className="bg-asphalt-card border-2 border-asphalt-border p-3.5 mb-4 relative">
-                  <div className="flex items-center justify-between text-[10px] font-ticker text-grit-dim uppercase tracking-wider mb-1">
-                    <span>ACCREDITED HOLDER:</span>
+                {/* Live Stamped Attendee Badge Box */}
+                <div className="bg-asphalt-card border-2 border-asphalt-border p-3 mb-3 relative">
+                  <div className="flex items-center justify-between text-[9px] font-ticker text-grit-dim uppercase tracking-wider mb-2">
+                    <span className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-acid-yellow animate-ping inline-block"></span>
+                      ACCREDITED HOLDER:
+                    </span>
                     <span className="text-acid-yellow flex items-center gap-1 font-bold">
-                      <Sparkles size={11} /> LIVE PREVIEW
+                      <Sparkles size={10} /> LIVE SYNCED
                     </span>
                   </div>
 
-                  <div className="font-display text-3xl sm:text-4xl text-grit-white uppercase tracking-tight leading-none truncate">
-                    {formData.firstName || formData.lastName ? (
-                      `${formData.firstName} ${formData.lastName}`.trim()
-                    ) : (
-                      <span className="text-grit-dim/60">GUEST ATTENDEE</span>
-                    )}
+                  <div className="flex items-center gap-3">
+                    {/* Tactical ID Photo / Viewfinder Reticle */}
+                    <div className="w-12 h-12 bg-asphalt-black border-2 border-asphalt-border relative flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
+                      {/* Corner HUD reticle marks */}
+                      <span className="absolute top-0.5 left-0.5 text-[8px] text-acid-yellow/70 font-mono leading-none">┌</span>
+                      <span className="absolute top-0.5 right-0.5 text-[8px] text-acid-yellow/70 font-mono leading-none">┐</span>
+                      <span className="absolute bottom-0.5 left-0.5 text-[8px] text-acid-yellow/70 font-mono leading-none">└</span>
+                      <span className="absolute bottom-0.5 right-0.5 text-[8px] text-acid-yellow/70 font-mono leading-none">┘</span>
+
+                      {/* Attendee Avatar Initials or Fingerprint Graphic */}
+                      {formData.firstName || formData.lastName ? (
+                        <span className="font-display font-black text-lg text-grit-white tracking-wider">
+                          {attendeeInitials}
+                        </span>
+                      ) : (
+                        <Fingerprint size={22} className="text-grit-dim/70 animate-pulse" />
+                      )}
+
+                      {/* Subtle scanline */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-acid-yellow/10 to-transparent pointer-events-none"></div>
+                    </div>
+
+                    {/* Attendee Full Name & Verified Identity */}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-display text-2xl sm:text-3xl text-grit-white uppercase tracking-tight leading-none truncate">
+                        {formData.firstName || formData.lastName ? (
+                          `${formData.firstName} ${formData.lastName}`.trim()
+                        ) : (
+                          <span className="text-grit-dim/60">GUEST ATTENDEE</span>
+                        )}
+                      </div>
+
+                      <div className="font-mono-zine text-[10px] text-grit-dim uppercase tracking-wider mt-1 truncate">
+                        {formData.email || 'GUEST@EVENTHUB.LOCAL'}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="font-mono-zine text-[11px] text-grit-dim uppercase tracking-wider mt-1.5 truncate">
-                    {formData.email || 'AUTHENTICATED TICKETING ACCOUNT'}
-                  </div>
-
-                  {/* Role Accreditation Stamp */}
-                  <div className="mt-3 pt-2.5 border-t border-asphalt-border/60 flex items-center justify-between">
-                    <span className="text-[10px] font-mono-zine text-grit-dim uppercase">CLEARANCE:</span>
+                  {/* Role Accreditation Clearance Stamp */}
+                  <div className="mt-2.5 pt-2 border-t border-asphalt-border/60 flex items-center justify-between">
+                    <span className="text-[9px] font-mono-zine text-grit-dim uppercase">CLEARANCE:</span>
                     {formData.role === 'ORGANIZER' ? (
-                      <span className="bg-neon-magenta text-grit-white font-impact text-xs tracking-wider px-2 py-0.5 uppercase border border-asphalt-black">
-                        ALL-ACCESS // PRODUCTION CREW
+                      <span className="bg-neon-magenta text-grit-white font-impact text-[11px] tracking-wider px-2 py-0.5 uppercase border border-asphalt-black flex items-center gap-1 shadow-sm">
+                        <Radio size={11} /> CREW // STAGE + BOOTH
                       </span>
                     ) : (
-                      <span className="bg-acid-yellow text-asphalt-black font-impact text-xs tracking-wider px-2 py-0.5 uppercase border border-asphalt-black">
-                        LEVEL 01 // VIP ATTENDEE
+                      <span className="bg-acid-yellow text-asphalt-black font-impact text-[11px] tracking-wider px-2 py-0.5 uppercase border border-asphalt-black flex items-center gap-1 shadow-sm">
+                        <Sparkles size={11} /> LEVEL 01 // VIP PIT + LOUNGE
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Perforated Tear Line with Half-Circle Notches */}
-                <div className="relative my-2 py-2 flex items-center">
-                  <div className="absolute -left-7 w-5 h-5 rounded-full bg-asphalt-black border-2 border-grit-white z-20"></div>
-                  <div className="w-full border-t-2 border-dashed border-asphalt-border"></div>
-                  <div className="absolute -right-7 w-5 h-5 rounded-full bg-asphalt-black border-2 border-grit-white z-20"></div>
+                {/* Perforated Tear Line with Semicircle Notches & Scissor Microtext */}
+                <div className="relative my-1.5 py-1.5 flex items-center">
+                  <div className="absolute -left-6 sm:-left-7 w-5 h-5 rounded-full bg-asphalt-black border-2 border-grit-white z-20 shadow-inner"></div>
+                  <div className="w-full border-t-2 border-dashed border-asphalt-border relative flex items-center justify-center">
+                    <span className="bg-asphalt-surface px-2 text-[7px] font-mono-zine text-grit-dim uppercase tracking-widest -mt-2">
+                      ✂ DETACH AT TURNSTILE ✂
+                    </span>
+                  </div>
+                  <div className="absolute -right-6 sm:-right-7 w-5 h-5 rounded-full bg-asphalt-black border-2 border-grit-white z-20 shadow-inner"></div>
                 </div>
 
                 {/* Interactive Dynamic QR Code & Optical Scan Sweep */}
-                <div className="grid grid-cols-12 gap-3 items-center mt-2">
-                  <div className="col-span-4 relative bg-grit-white p-1.5 border-2 border-asphalt-black aspect-square flex items-center justify-center overflow-hidden">
+                <div className="grid grid-cols-12 gap-3 items-center mt-1">
+                  {/* Left Column: QR Code with Target Brackets and Laser Sweep */}
+                  <div className="col-span-4 relative bg-grit-white p-1.5 border-2 border-asphalt-black aspect-square flex flex-col items-center justify-center overflow-hidden shadow-sm">
+                    {/* Corner Targeting Marks */}
+                    <div className="absolute top-0.5 left-0.5 w-1.5 h-1.5 border-t-2 border-l-2 border-neon-magenta z-20"></div>
+                    <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 border-t-2 border-r-2 border-neon-magenta z-20"></div>
+                    <div className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 border-b-2 border-l-2 border-neon-magenta z-20"></div>
+                    <div className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 border-b-2 border-r-2 border-neon-magenta z-20"></div>
+
                     {/* Laser Scanner Beam */}
-                    <div className="absolute left-0 right-0 h-1 bg-neon-magenta shadow-[0_0_8px_#ff1f6d] animate-laser-sweep z-20"></div>
+                    <div className="absolute left-0 right-0 h-1 bg-neon-magenta shadow-[0_0_10px_#ff1f6d] animate-laser-sweep z-20"></div>
                     
                     {/* Stylized Vector QR Pattern */}
                     <svg viewBox="0 0 45 45" className="w-full h-full text-asphalt-black" fill="currentColor">
@@ -298,22 +417,51 @@ export default function BackstageAuthTerminal({
                       <rect x="34" y="35" width="8" height="8"/>
                       <rect x="25" y="38" width="5" height="4"/>
                     </svg>
+
+                    <span className="font-ticker text-[7px] text-asphalt-black font-bold uppercase tracking-wider mt-0.5 block">
+                      SCAN GATE
+                    </span>
                   </div>
 
-                  <div className="col-span-8 flex flex-col justify-between space-y-1">
-                    <div className="flex items-center gap-1.5 text-xs font-impact tracking-wider text-grit-white uppercase">
-                      <ShieldCheck size={14} className="text-acid-yellow" />
-                      <span>CRYPTOGRAPHIC GATE TOKEN</span>
+                  {/* Right Column: Gate Token, Barcode & Decibel VU Meter */}
+                  <div className="col-span-8 flex flex-col justify-between space-y-1.5">
+                    {/* Gate Hash Token Header */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-[11px] font-impact tracking-wider text-grit-white uppercase">
+                        <ShieldCheck size={13} className="text-acid-yellow" />
+                        <span>GATE TOKEN</span>
+                      </div>
+                      <span className="font-mono-zine text-[9px] text-acid-yellow font-bold">
+                        {gateHash}
+                      </span>
                     </div>
-                    <span className="font-ticker text-[10px] text-grit-dim uppercase">
-                      SCAN VIA WEBCAM OR GATE SCANNER
-                    </span>
 
-                    {/* Audio VU Decibel Meter */}
-                    <div className="bg-asphalt-card border border-asphalt-border p-1.5 mt-1">
-                      <div className="flex justify-between items-center text-[9px] font-ticker uppercase mb-1">
-                        <span className="text-grit-dim">SECURITY VU:</span>
-                        <span className={`font-bold ${passwordStats.color}`}>{passwordStats.db} // {passwordStats.label}</span>
+                    {/* Realistic Concert Ticket Barcode Graphic */}
+                    <div className="bg-grit-white/95 p-1 border border-asphalt-black flex flex-col items-center">
+                      <div className="w-full h-4 flex items-stretch justify-between gap-[1px] px-0.5">
+                        {[2,1,3,1,1,2,1,4,1,2,1,1,3,2,1,1,2,1,3,1,2,1,1,4,1,2,1,3,1,1,2,1].map((w, idx) => (
+                          <div 
+                            key={idx} 
+                            className="bg-asphalt-black h-full" 
+                            style={{ width: `${w * 1.5}px` }}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-mono text-[7px] text-asphalt-black tracking-widest font-bold mt-0.5">
+                        * 8 4 9 2 0 1 7 4 3 *
+                      </span>
+                    </div>
+
+                    {/* Audio VU Decibel / Password Entropy Meter */}
+                    <div className="bg-asphalt-card border border-asphalt-border p-1.5">
+                      <div className="flex justify-between items-center text-[8px] font-ticker uppercase mb-1">
+                        <span className="text-grit-dim flex items-center gap-1">
+                          <Activity size={9} className="text-acid-yellow" />
+                          SECURITY VU:
+                        </span>
+                        <span className={`font-bold ${passwordStats.color}`}>
+                          {passwordStats.db} // {passwordStats.label}
+                        </span>
                       </div>
                       <div className="grid grid-cols-10 gap-0.5 h-2">
                         {Array.from({ length: 10 }).map((_, i) => (
@@ -321,7 +469,7 @@ export default function BackstageAuthTerminal({
                             key={i} 
                             className={`h-full transition-all duration-200 ${
                               i < (passwordStats.bars || 0) 
-                                ? (i < 4 ? 'bg-acid-yellow' : i < 8 ? 'bg-acid-yellow' : 'bg-neon-magenta animate-vu-pulse') 
+                                ? (i < 4 ? 'bg-acid-yellow' : i < 8 ? 'bg-acid-yellow shadow-[0_0_4px_#E2F13C]' : 'bg-neon-magenta shadow-[0_0_6px_#ff1f6d] animate-vu-pulse') 
                                 : 'bg-asphalt-border/40'
                             }`}
                           />
@@ -332,23 +480,30 @@ export default function BackstageAuthTerminal({
                 </div>
 
                 {/* Admission Guarantees Checklist */}
-                <div className="mt-4 pt-3 border-t border-asphalt-border/60 grid grid-cols-2 gap-1.5 font-ticker text-[9px] text-grit-dim uppercase tracking-wider">
+                <div className="mt-3 pt-2.5 border-t border-asphalt-border/60 grid grid-cols-2 gap-1.5 font-ticker text-[8px] sm:text-[9px] text-grit-dim uppercase tracking-wider">
                   <div className="flex items-center gap-1 text-grit-white">
-                    <CheckCircle2 size={10} className="text-acid-yellow" />
-                    <span>10-MIN CART HOLD</span>
+                    <CheckCircle2 size={10} className="text-acid-yellow shrink-0" />
+                    <span>10-MIN CART LOCK</span>
                   </div>
                   <div className="flex items-center gap-1 text-grit-white">
-                    <CheckCircle2 size={10} className="text-acid-yellow" />
+                    <CheckCircle2 size={10} className="text-acid-yellow shrink-0" />
                     <span>ZERO OVERBOOKING</span>
                   </div>
                   <div className="flex items-center gap-1 text-grit-white">
-                    <CheckCircle2 size={10} className="text-acid-yellow" />
-                    <span>PDF INVOICE STUB</span>
+                    <CheckCircle2 size={10} className="text-acid-yellow shrink-0" />
+                    <span>OFFLINE QR TOKEN</span>
                   </div>
                   <div className="flex items-center gap-1 text-acid-yellow font-bold">
-                    <Zap size={10} className="text-neon-magenta" />
-                    <span>OFFLINE VERIFIED</span>
+                    <Zap size={10} className="text-neon-magenta shrink-0" />
+                    <span>INSTANT STUB PDF</span>
                   </div>
+                </div>
+
+                {/* Microprint Security Ribbon */}
+                <div className="mt-2.5 pt-1.5 border-t border-asphalt-border/40 text-center">
+                  <span className="font-mono-zine text-[7px] text-grit-dim/70 uppercase tracking-widest block truncate">
+                    AUTHENTICATED GATE SYSTEM // EHB-SEC-2026 // NON-TRANSFERABLE
+                  </span>
                 </div>
 
               </div>

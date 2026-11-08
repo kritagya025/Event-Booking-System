@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.1] - 2026-11-08
+
+### Enhanced
+- **High-Fidelity Neo-Brutalist VIP Pass & Ticket Stub Architecture (`BackstageAuthTerminal.jsx`)**:
+  - **Tactical Lanyard & Mechanical Carabiner**: Added heavy-duty woven strap ribbon with repeating `EVENTHUB VIP` micro-text, brushed steel swivel ring, mechanical pivot block, and spring-loaded carabiner latch hook.
+  - **Laminated Punch Slot & Industrial Hardware**: Added realistic top oval punch slot cutout where the carabiner attaches, plus 4 corner tactical rivet markers.
+  - **Gold RFID Smart Card Chip**: Integrated simulated gold EMV/RFID contact microchip with etched contact pads, circuitry traces, and contactless NFC wave indicator.
+  - **Dynamic Attendee HUD Viewfinder**: Designed tactical corner-bracketed reticle avatar displaying real-time user initials (with fallback fingerprint scanner graphic), synchronized live update indicator, and clear clearance badge tags (`CREW // STAGE + BOOTH` vs `LEVEL 01 // VIP PIT + LOUNGE`).
+  - **Turnstile Tear-Line Perforation**: Upgraded perforation with deep semicircular edge punch notches and `✂ DETACH AT TURNSTILE ✂` laser guide micro-text.
+  - **Cryptographic Gate Token & Concert Barcode**: Added dynamic hex hash generation based on attendee identity (`gateHash`), realistic variable-width concert ticket barcode (`* 8 4 9 2 0 1 7 4 3 *`), and high-contrast vector QR code with animated neon-magenta laser sweep beam.
+  - **Audio VU Decibel / Security Entropy Meter**: Upgraded real-time decibel meter with glowing multi-tier LED bars, reactive overdrive animations, and live dB readouts.
+  - **Prismatic Holographic Foil Overlay (`index.css`)**: Enhanced multi-frequency iridescence with cyan/sky blue prism refraction highlights and interactive hover lift.
+
+---
+
 ## [1.4.0] - 2026-11-07
 
 ### Added

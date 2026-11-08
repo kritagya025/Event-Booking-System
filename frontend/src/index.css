@@ -715,14 +715,15 @@ h1, h2, h3, h4, .font-display {
 .holo-foil {
   background: linear-gradient(
     135deg,
-    rgba(238, 252, 84, 0.22) 0%,
-    rgba(255, 31, 109, 0.28) 25%,
-    rgba(29, 78, 216, 0.25) 50%,
-    rgba(238, 252, 84, 0.22) 75%,
-    rgba(255, 31, 109, 0.28) 100%
+    rgba(226, 241, 60, 0.20) 0%,
+    rgba(255, 31, 109, 0.26) 20%,
+    rgba(56, 189, 248, 0.22) 40%,
+    rgba(226, 241, 60, 0.24) 60%,
+    rgba(255, 31, 109, 0.24) 80%,
+    rgba(29, 78, 216, 0.22) 100%
   );
   background-size: 300% 300%;
-  animation: holoShimmer 7s ease infinite;
+  animation: holoShimmer 6s ease infinite;
 }
 
 @keyframes laserSweep {
