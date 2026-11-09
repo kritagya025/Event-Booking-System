@@ -197,10 +197,10 @@ export default function AdminDashboard({ showToast }) {
                   </span>
                   <button 
                     onClick={() => handleDeleteEvent(event.id, event.name)} 
-                    className="text-neon-magenta hover:text-grit-white bg-asphalt-surface border border-asphalt-border hover:border-neon-magenta p-1.5 cursor-pointer transition-colors"
+                    className="text-neon-magenta hover:text-grit-white bg-asphalt-surface border border-asphalt-border hover:border-neon-magenta p-2 min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer transition-colors"
                     title="Remove from Catalog"
                   >
-                    <Trash2 size={13} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
@@ -210,32 +210,32 @@ export default function AdminDashboard({ showToast }) {
         </div>
 
         {/* System Infrastructure */}
-        <div className="bg-asphalt-surface border-2 border-grit-white p-6 shadow-[3px_3px_0px_#F43F5E]">
-          <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 shadow-[3px_3px_0px_#F43F5E]">
+          <h3 className="font-display text-xl sm:text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-neon-magenta"></span> SYSTEM PROTOCOL & INFRASTRUCTURE STATE
           </h3>
           <div className="space-y-2.5 font-mono-zine text-xs uppercase">
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
+            <div className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
               <span className="text-grit-dim">DATABASE ENCRYPTION</span>
-              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs">
+              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs self-start sm:self-auto">
                 ENCRYPTED STORAGE // SECURE
               </span>
             </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
-              <span className="text-grit-dim">SEAT LOCK CACHE</span>
-              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs">
+            <div className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
+              <span className="text-grit-dim">SEAT HOLD CONCURRENCY</span>
+              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs self-start sm:self-auto">
                 REAL-TIME SEAT HOLD // ACTIVE
               </span>
             </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
+            <div className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
               <span className="text-grit-dim">AUTH SECURITY PIPELINE</span>
-              <span className="bg-neon-magenta text-grit-white font-impact px-2 py-0.5 text-xs">
+              <span className="bg-neon-magenta text-grit-white font-impact px-2 py-0.5 text-xs self-start sm:self-auto">
                 HTTPONLY JWT COOKIE
               </span>
             </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex justify-between items-center">
+            <div className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
               <span className="text-grit-dim">WEBSOCKET CONCURRENCY</span>
-              <span className="text-acid-yellow font-bold">
+              <span className="text-acid-yellow font-bold self-start sm:self-auto">
                 100% OPERATIONAL (10 REQ/MIN)
               </span>
             </div>

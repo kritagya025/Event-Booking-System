@@ -505,7 +505,7 @@ export default function App() {
         <Wishlist currentUser={currentUser} onSelectEvent={openBookingModal} showToast={showToast} />
       ) : (
         <main className="w-full relative overflow-hidden pb-16">
-          <div className="max-w-[1360px] mx-auto px-4 md:px-6 pt-8">
+          <div className="max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 pt-5 sm:pt-8">
             
             {/* 2. BRUTALIST HERO SECTION */}
             <section className="relative mb-12 border-2 sm:border-4 border-grit-white bg-asphalt-surface p-4 sm:p-6 md:p-10 shadow-[6px_6px_0px_#eefc54] sm:shadow-[8px_8px_0px_#eefc54]">
@@ -526,7 +526,7 @@ export default function App() {
                     </span>
                   </div>
 
-                  <h1 className="font-display text-4xl sm:text-6xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.92] sm:leading-[0.9]">
+                  <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.95] sm:leading-[0.9]">
                     YOUR FRONT ROW TO <span className="text-acid-yellow underline decoration-neon-magenta decoration-4">LIVE EVENTS</span> & PREMIERES.
                   </h1>
 
@@ -1133,89 +1133,91 @@ function HeroProductDemo({ onOpenBooking }) {
       <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-asphalt-border">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-acid-yellow text-lg">event_seat</span>
-          <span className="font-display text-2xl uppercase tracking-wider text-grit-white">SEATING GRID // AUDITORIUM & STAGE</span>
+          <span className="font-display text-lg sm:text-2xl uppercase tracking-wider text-grit-white">SEATING GRID // AUDITORIUM & STAGE</span>
         </div>
-        <span className="font-ticker text-[10px] bg-neon-magenta text-grit-white px-2 py-0.5 font-bold uppercase">
-          LIVE SEATING PREVIEW
+        <span className="font-ticker text-[10px] bg-neon-magenta text-grit-white px-2 py-0.5 font-bold uppercase shrink-0">
+          LIVE PREVIEW
         </span>
       </div>
 
       <div className="w-full py-2 hazard-tape text-center border-2 border-asphalt-black mb-4 select-none">
-        <span className="font-impact text-sm tracking-widest text-asphalt-black uppercase bg-acid-yellow px-2 py-0.5 font-black">
+        <span className="font-impact text-xs sm:text-sm tracking-widest text-asphalt-black uppercase bg-acid-yellow px-2 py-0.5 font-black">
           [ STAGE / PERFORMANCE SCREEN ]
         </span>
       </div>
 
-      <div className="space-y-2 mb-4 select-none">
-        {/* Row 1 */}
-        <div className="flex items-center gap-2">
-          <span className="font-ticker text-xs font-bold text-neon-magenta w-6">ROW A</span>
-          <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
-            {tilesRow1.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                disabled={!t.available}
-                onClick={() => handleSelect(t)}
-                className={
-                  !t.available
-                    ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
-                    : selectedTile === t.id
-                    ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
-                    : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
-                }
-              >
-                {t.label}
-              </button>
-            ))}
+      <div className="overflow-x-auto touch-scroll scrollbar-none mb-4 select-none">
+        <div className="min-w-[340px] space-y-2">
+          {/* Row 1 */}
+          <div className="flex items-center gap-2">
+            <span className="font-ticker text-xs font-bold text-neon-magenta w-8 shrink-0">ROW A</span>
+            <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+              {tilesRow1.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  disabled={!t.available}
+                  onClick={() => handleSelect(t)}
+                  className={
+                    !t.available
+                      ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                      : selectedTile === t.id
+                      ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
+                      : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                  }
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Row 2 */}
-        <div className="flex items-center gap-2">
-          <span className="font-ticker text-xs font-bold text-acid-yellow w-6">ROW B</span>
-          <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
-            {tilesRow2.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                disabled={!t.available}
-                onClick={() => handleSelect(t)}
-                className={
-                  !t.available
-                    ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
-                    : selectedTile === t.id
-                    ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
-                    : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
-                }
-              >
-                {t.label}
-              </button>
-            ))}
+          {/* Row 2 */}
+          <div className="flex items-center gap-2">
+            <span className="font-ticker text-xs font-bold text-acid-yellow w-8 shrink-0">ROW B</span>
+            <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+              {tilesRow2.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  disabled={!t.available}
+                  onClick={() => handleSelect(t)}
+                  className={
+                    !t.available
+                      ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                      : selectedTile === t.id
+                      ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
+                      : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                  }
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Row 3 */}
-        <div className="flex items-center gap-2">
-          <span className="font-ticker text-xs font-bold text-grit-dim w-6">ROW C</span>
-          <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
-            {tilesRow3.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                disabled={!t.available}
-                onClick={() => handleSelect(t)}
-                className={
-                  !t.available
-                    ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
-                    : selectedTile === t.id
-                    ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
-                    : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
-                }
-              >
-                {t.label}
-              </button>
-            ))}
+          {/* Row 3 */}
+          <div className="flex items-center gap-2">
+            <span className="font-ticker text-xs font-bold text-grit-dim w-8 shrink-0">ROW C</span>
+            <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+              {tilesRow3.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  disabled={!t.available}
+                  onClick={() => handleSelect(t)}
+                  className={
+                    !t.available
+                      ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                      : selectedTile === t.id
+                      ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
+                      : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                  }
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -1387,7 +1389,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
 
   return (
     <div 
-      className="relative w-full max-w-xs sm:max-w-sm md:max-w-md h-[470px] sm:h-[520px] pt-10 sm:pt-12 select-none touch-pan-y"
+      className="relative w-full max-w-xs sm:max-w-sm md:max-w-md h-[440px] sm:h-[500px] md:h-[520px] pt-10 sm:pt-12 select-none touch-pan-y"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -1624,7 +1626,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
               <button 
                 type="button"
                 onClick={onDelete}
-                className="bg-danger-red/90 hover:bg-danger-red text-grit-white p-1 border border-asphalt-black text-xs font-bold cursor-pointer transition-colors"
+                className="bg-danger-red/90 hover:bg-danger-red text-grit-white p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center border border-asphalt-black text-xs font-bold cursor-pointer transition-colors"
                 title="Remove Event"
               >
                 ✕
@@ -1633,7 +1635,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
             <button 
               type="button"
               onClick={onWishlist}
-              className="bg-asphalt-black/80 hover:bg-neon-magenta text-grit-white p-1.5 border border-grit-white/40 text-xs cursor-pointer transition-colors"
+              className="bg-asphalt-black/80 hover:bg-neon-magenta text-grit-white p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center border border-grit-white/40 text-xs cursor-pointer transition-colors"
               title="Save to wishlist"
             >
               <Heart size={14} />
@@ -1691,7 +1693,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
               <span className="block font-ticker text-[10px] text-grit-dim uppercase tracking-wider mb-1.5">
                 SHOWTIMES // {isSoldOut ? 'ALL SESSIONS SOLD OUT:' : 'SELECT TIME:'}
               </span>
-              <div className="grid grid-cols-4 gap-1">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-1">
                 {cinemaShowtimes.slice(0, 4).map((time) => (
                   <button
                     key={time}
@@ -1701,7 +1703,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
                       e.stopPropagation();
                       if (!isSoldOut) onBook(time);
                     }}
-                    className={`font-mono-zine text-[10px] py-1 border transition-colors text-center font-bold ${
+                    className={`font-mono-zine text-xs sm:text-[10px] py-1.5 min-h-[32px] flex items-center justify-center border transition-colors text-center font-bold ${
                       isSoldOut
                         ? 'bg-asphalt-card text-grit-dim/50 border-asphalt-border line-through cursor-not-allowed'
                         : 'bg-asphalt-surface hover:bg-acid-yellow hover:text-asphalt-black text-grit-white border-asphalt-border cursor-pointer'

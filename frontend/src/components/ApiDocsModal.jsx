@@ -76,7 +76,7 @@ export default function ApiDocsModal({ isOpen, onClose }) {
           <button 
             type="button"
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
             aria-label="Close help modal"
           >
             <X size={18} />
@@ -90,7 +90,7 @@ export default function ApiDocsModal({ isOpen, onClose }) {
               key={cat}
               type="button"
               onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1 text-xs font-impact tracking-wider uppercase border transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 py-1.5 min-h-[36px] flex items-center text-xs font-impact tracking-wider uppercase border transition-all cursor-pointer whitespace-nowrap touch-manipulation ${
                 activeCategory === cat
                   ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[2px_2px_0px_#ffffff]'
                   : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
@@ -102,11 +102,11 @@ export default function ApiDocsModal({ isOpen, onClose }) {
         </div>
 
         {/* Body Content */}
-        <div className="p-6 overflow-y-auto space-y-4">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 touch-scroll">
           {filteredFaqs.map((faq) => {
             const Icon = faq.icon || HelpCircle;
             return (
-              <div key={faq.title} className="bg-asphalt-card border-2 border-asphalt-border p-4 space-y-2">
+              <div key={faq.title} className="bg-asphalt-card border-2 border-asphalt-border p-3.5 sm:p-4 space-y-2">
                 <div className="flex items-center gap-2 text-acid-yellow font-impact text-sm tracking-wider uppercase">
                   <Icon size={16} className="text-neon-magenta flex-shrink-0" />
                   <span>{faq.title}</span>
@@ -120,14 +120,14 @@ export default function ApiDocsModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <span className="font-ticker text-[10px] text-grit-dim uppercase">
             24/7 CUSTOMER CONCIERGE: SUPPORT@EVENTHUB.COM
           </span>
           <button 
             type="button"
             onClick={onClose} 
-            className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer"
+            className="w-full sm:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation text-center"
           >
             CLOSE HELP CENTER
           </button>

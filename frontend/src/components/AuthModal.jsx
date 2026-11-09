@@ -106,16 +106,16 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-asphalt-black/85 backdrop-blur-md" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-asphalt-black/85 backdrop-blur-md overflow-y-auto safe-pb touch-scroll" onClick={onClose}>
       <div 
-        className="w-full max-w-md bg-asphalt-surface border-2 border-grit-white shadow-[8px_8px_0px_#E2F13C] relative overflow-hidden select-none"
+        className="w-full max-w-md max-h-[92vh] flex flex-col bg-asphalt-surface border-2 border-grit-white shadow-[6px_6px_0px_#E2F13C] sm:shadow-[8px_8px_0px_#E2F13C] relative overflow-hidden select-none my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Hazard Warning Tape */}
-        <div className="hazard-tape h-2.5 w-full"></div>
+        <div className="hazard-tape h-2.5 w-full shrink-0"></div>
 
         {/* Modal Header */}
-        <div className="p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card/60">
+        <div className="p-4 sm:p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card/60 shrink-0">
           <div>
             <div className="flex items-center gap-1.5 mb-1">
               <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-[10px] px-1.5 py-0.2 uppercase">
@@ -125,7 +125,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
                 VERIFIED ADMISSION // SECURE CHECKOUT
               </span>
             </div>
-            <h3 className="font-display text-3xl uppercase tracking-tight text-grit-white leading-none">
+            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight text-grit-white leading-none">
               {mode === 'login' && 'ACCOUNT SIGN-IN'}
               {mode === 'register' && 'ISSUE VIP PASS'}
               {mode === 'forgot' && 'RESET PASSWORD'}
@@ -135,7 +135,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
           <button 
             type="button"
             onClick={onClose} 
-            className="p-1.5 bg-asphalt-card border border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white transition-colors cursor-pointer"
+            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center bg-asphalt-card border border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white transition-colors cursor-pointer touch-manipulation"
             aria-label="Close authentication modal"
           >
             <X size={16} />
@@ -143,11 +143,11 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
         </div>
 
         {/* Mode Switcher Tabs */}
-        <div className="grid grid-cols-2 border-b-2 border-asphalt-border bg-asphalt-black">
+        <div className="grid grid-cols-2 border-b-2 border-asphalt-border bg-asphalt-black shrink-0">
           <button
             type="button"
             onClick={() => setMode('login')}
-            className={`py-2 px-3 font-impact text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`py-2.5 px-3 min-h-[40px] font-impact text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation ${
               mode === 'login'
                 ? 'bg-acid-yellow text-asphalt-black'
                 : 'text-grit-dim hover:text-grit-white'
@@ -160,7 +160,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
           <button
             type="button"
             onClick={() => setMode('register')}
-            className={`py-2 px-3 font-impact text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`py-2.5 px-3 min-h-[40px] font-impact text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation ${
               mode === 'register'
                 ? 'bg-neon-magenta text-grit-white'
                 : 'text-grit-dim hover:text-grit-white'
@@ -172,7 +172,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
         </div>
 
         {/* Modal Form Body */}
-        <div className="p-5">
+        <div className="p-4 sm:p-5 overflow-y-auto touch-scroll">
           <form onSubmit={handleSubmit} className="space-y-3.5">
             
             {/* Register: Account Type Mini Selector */}
@@ -213,7 +213,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
 
             {/* Register: First & Last Name */}
             {mode === 'register' && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-mono-zine text-[11px] text-grit-dim uppercase tracking-wider mb-1">
                     FIRST NAME <span className="text-neon-magenta">*</span>
@@ -302,7 +302,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-2 text-grit-dim hover:text-grit-white cursor-pointer"
+                    className="absolute right-1.5 top-1 p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center text-grit-dim hover:text-grit-white cursor-pointer touch-manipulation"
                     aria-label="Toggle password visibility"
                   >
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -322,17 +322,17 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
                   <button
                     type="button"
                     onClick={() => handleDemoFill('customer')}
-                    className="py-1 px-2 bg-asphalt-card border border-asphalt-border hover:border-acid-yellow font-ticker text-[9px] text-grit-dim hover:text-acid-yellow uppercase transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    className="py-2 px-2 min-h-[36px] bg-asphalt-card border border-asphalt-border hover:border-acid-yellow font-ticker text-[10px] text-grit-dim hover:text-acid-yellow uppercase transition-all flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
                   >
-                    <Ticket size={11} className="text-acid-yellow" />
+                    <Ticket size={12} className="text-acid-yellow" />
                     DEMO ATTENDEE
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDemoFill('admin')}
-                    className="py-1 px-2 bg-asphalt-card border border-asphalt-border hover:border-neon-magenta font-ticker text-[9px] text-grit-dim hover:text-neon-magenta uppercase transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    className="py-2 px-2 min-h-[36px] bg-asphalt-card border border-asphalt-border hover:border-neon-magenta font-ticker text-[10px] text-grit-dim hover:text-neon-magenta uppercase transition-all flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
                   >
-                    <ShieldCheck size={11} className="text-neon-magenta" />
+                    <ShieldCheck size={12} className="text-neon-magenta" />
                     DEMO ADMIN
                   </button>
                 </div>

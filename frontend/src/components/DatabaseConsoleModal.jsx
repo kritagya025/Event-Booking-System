@@ -88,7 +88,8 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
+            aria-label="Close database telemetry"
           >
             <X size={18} />
           </button>
@@ -98,10 +99,10 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
         <div className="p-4 sm:p-6 overflow-y-auto space-y-4 touch-scroll">
           
           {/* Top Engine Specs Banner */}
-          <div className="bg-asphalt-card border-2 border-asphalt-border p-4 flex items-center justify-between">
+          <div className="bg-asphalt-card border-2 border-asphalt-border p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="space-y-1">
               <span className="text-[10px] text-grit-dim uppercase block">ENGINE INSTANCE</span>
-              <span className="font-impact text-lg text-grit-white tracking-wider uppercase block">
+              <span className="font-impact text-base sm:text-lg text-grit-white tracking-wider uppercase block">
                 {stats.dbEngine}
               </span>
               <span className="text-xs text-acid-yellow uppercase">
@@ -111,7 +112,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
             <button 
               onClick={fetchDbMetrics} 
               disabled={loading}
-              className="bg-asphalt-surface border border-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-3 py-1.5 font-impact text-xs uppercase flex items-center gap-1.5 cursor-pointer transition-colors"
+              className="bg-asphalt-surface border border-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-3 py-2 min-h-[36px] font-impact text-xs uppercase flex items-center justify-center gap-1.5 cursor-pointer transition-colors touch-manipulation w-full sm:w-auto"
             >
               <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> RE-QUERY SCHEMA
             </button>
@@ -130,7 +131,7 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
               </div>
             ) : (
               tables.map((t) => (
-                <div key={t.name} className="bg-asphalt-card border border-asphalt-border p-3 flex items-center justify-between">
+                <div key={t.name} className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <div>
                     <h4 className="font-impact text-sm uppercase text-grit-white tracking-wider leading-none mb-0.5">
                       TABLE: {t.name}
@@ -139,8 +140,8 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
                       {t.description}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <span className="bg-acid-yellow text-asphalt-black font-ticker text-xs px-2 py-0.5 font-bold uppercase">
+                  <div className="text-right self-start sm:self-auto">
+                    <span className="bg-acid-yellow text-asphalt-black font-ticker text-xs px-2 py-0.5 font-bold uppercase inline-block">
                       {t.rows} TUPLES
                     </span>
                   </div>
@@ -152,13 +153,13 @@ export default function DatabaseConsoleModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <span className="font-ticker text-[10px] text-grit-dim uppercase">
             DATA INTEGRITY: ACID COMPLIANT // WAL ACTIVE
           </span>
           <button 
             onClick={onClose} 
-            className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer"
+            className="w-full sm:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation text-center"
           >
             DISMISS TELEMETRY
           </button>

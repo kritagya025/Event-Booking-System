@@ -108,8 +108,9 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
                     </div>
                     <button 
                       onClick={() => handleRemoveFromWishlist(event.id)}
-                      className="text-neon-magenta hover:text-grit-white bg-asphalt-card border border-asphalt-border hover:border-neon-magenta p-1 cursor-pointer transition-colors"
+                      className="text-neon-magenta hover:text-grit-white bg-asphalt-card border border-asphalt-border hover:border-neon-magenta p-2 min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer transition-colors touch-manipulation"
                       title="Remove from saved"
+                      aria-label="Remove from saved"
                     >
                       <Trash2 size={13} />
                     </button>

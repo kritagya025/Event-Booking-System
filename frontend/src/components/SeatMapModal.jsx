@@ -590,7 +590,8 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
+            aria-label="Close Seat Map"
           >
             <X size={18} />
           </button>
@@ -1369,7 +1370,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 <label className="block font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-2">
                   PROMO CODE / DISCOUNT COUPON
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     placeholder="ENTER COUPON CODE (E.G. EARLYBIRD)"
@@ -1381,7 +1382,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     type="button" 
                     onClick={handleApplyCoupon} 
                     disabled={validatingCoupon}
-                    className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black font-impact tracking-wider px-4 uppercase text-sm transition-colors cursor-pointer"
+                    className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black font-impact tracking-wider px-4 py-2 uppercase text-sm transition-colors cursor-pointer touch-manipulation text-center"
                   >
                     {validatingCoupon ? 'VERIFYING...' : 'APPLY CODE'}
                   </button>
@@ -1559,7 +1560,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 )}
 
                 {paymentMethod === 'GIFT_CARD' && (
-                  <div className="grid grid-cols-2 gap-3 font-mono-zine text-xs uppercase">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono-zine text-xs uppercase">
                     <div>
                       <label className="block text-grit-dim mb-1">GIFT CARD VOUCHER</label>
                       <input type="text" name="giftCardCode" required placeholder="GIFT-2026-XXXX" value={paymentDetails.giftCardCode} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none" />
@@ -1572,7 +1573,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 )}
 
                 {paymentMethod === 'WALLET' && (
-                  <div className="grid grid-cols-2 gap-3 font-mono-zine text-xs uppercase">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono-zine text-xs uppercase">
                     <div>
                       <label className="block text-grit-dim mb-1">WALLET PROVIDER</label>
                       <select name="walletType" value={paymentDetails.walletType} onChange={handleDetailsChange} className="w-full bg-asphalt-surface border-2 border-asphalt-border focus:border-acid-yellow text-grit-white p-2 outline-none uppercase">

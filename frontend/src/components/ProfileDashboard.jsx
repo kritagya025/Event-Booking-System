@@ -310,9 +310,9 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                 <span className="text-grit-dim">FULL NAME:</span>
                 <span className="text-grit-white font-bold">{profile.firstName} {profile.lastName}</span>
               </div>
-              <div className="flex justify-between border-b border-asphalt-border pb-2">
-                <span className="text-grit-dim">EMAIL ADDRESS:</span>
-                <span className="text-grit-white font-bold">{profile.email}</span>
+              <div className="flex justify-between items-center border-b border-asphalt-border pb-2 gap-2">
+                <span className="text-grit-dim shrink-0">EMAIL ADDRESS:</span>
+                <span className="text-grit-white font-bold truncate text-right">{profile.email}</span>
               </div>
               <div className="flex justify-between border-b border-asphalt-border pb-2">
                 <span className="text-grit-dim">PHONE NUMBER:</span>
@@ -344,11 +344,18 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
 
       {/* Edit Profile Modal */}
       {isEditOpen && (
-        <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#E2F13C] p-6 relative font-mono-zine">
+        <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto safe-pb touch-scroll" onClick={() => setIsEditOpen(false)}>
+          <div 
+            className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#E2F13C] p-4 sm:p-6 relative font-mono-zine my-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center border-b-2 border-asphalt-border pb-3 mb-4">
-              <h3 className="font-display text-2xl uppercase">EDIT ACCOUNT PROFILE</h3>
-              <button onClick={() => setIsEditOpen(false)} className="text-grit-dim hover:text-neon-magenta p-1">
+              <h3 className="font-display text-xl sm:text-2xl uppercase">EDIT ACCOUNT PROFILE</h3>
+              <button 
+                onClick={() => setIsEditOpen(false)} 
+                className="text-grit-dim hover:text-neon-magenta p-2 min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer touch-manipulation"
+                aria-label="Close modal"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -384,18 +391,18 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                 />
               </div>
 
-              <div className="flex justify-between items-center pt-3 border-t border-asphalt-border">
+              <div className="flex justify-between items-center pt-3 border-t border-asphalt-border gap-2">
                 <button 
                   type="button" 
                   onClick={() => setIsEditOpen(false)} 
-                  className="bg-asphalt-card border border-asphalt-border text-grit-white font-mono-zine text-xs px-3 py-1.5 uppercase"
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-grit-white font-mono-zine text-xs px-3 py-2 min-h-[38px] uppercase cursor-pointer touch-manipulation"
                 >
                   CANCEL
                 </button>
                 <button
                   type="submit"
                   disabled={savingProfile}
-                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-5 py-2 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[2px_2px_0px_#ffffff]"
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-5 py-2 min-h-[38px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation"
                 >
                   {savingProfile ? 'SAVING...' : 'SAVE CHANGES'}
                 </button>

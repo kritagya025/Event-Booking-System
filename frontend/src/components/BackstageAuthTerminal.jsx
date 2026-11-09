@@ -557,7 +557,7 @@ export default function BackstageAuthTerminal({
 
               {/* Form Title & Subtitle */}
               <div className="mb-5 text-left">
-                <h1 className="font-display text-4xl uppercase tracking-tight text-grit-white leading-none">
+                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-none">
                   {mode === 'login' && 'ACCESS YOUR PASSES'}
                   {mode === 'register' && 'ISSUE VIP ACCREDITATION'}
                   {mode === 'forgot' && 'CREDENTIAL RECOVERY'}
@@ -742,7 +742,7 @@ export default function BackstageAuthTerminal({
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-2.5 text-grit-dim hover:text-grit-white cursor-pointer"
+                        className="absolute right-1.5 top-1 p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-grit-dim hover:text-grit-white cursor-pointer touch-manipulation"
                         aria-label="Toggle password visibility"
                       >
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -762,7 +762,7 @@ export default function BackstageAuthTerminal({
                       <button
                         type="button"
                         onClick={() => handleDemoFill('customer')}
-                        className="py-1.5 px-2 bg-asphalt-card border border-asphalt-border hover:border-acid-yellow font-ticker text-[10px] text-grit-dim hover:text-acid-yellow uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="py-2 px-2 min-h-[36px] bg-asphalt-card border border-asphalt-border hover:border-acid-yellow font-ticker text-[10px] text-grit-dim hover:text-acid-yellow uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
                       >
                         <Ticket size={12} className="text-acid-yellow" />
                         DEMO ATTENDEE
@@ -770,7 +770,7 @@ export default function BackstageAuthTerminal({
                       <button
                         type="button"
                         onClick={() => handleDemoFill('admin')}
-                        className="py-1.5 px-2 bg-asphalt-card border border-asphalt-border hover:border-neon-magenta font-ticker text-[10px] text-grit-dim hover:text-neon-magenta uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="py-2 px-2 min-h-[36px] bg-asphalt-card border border-asphalt-border hover:border-neon-magenta font-ticker text-[10px] text-grit-dim hover:text-neon-magenta uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
                       >
                         <ShieldCheck size={12} className="text-neon-magenta" />
                         DEMO ADMIN
@@ -818,7 +818,7 @@ export default function BackstageAuthTerminal({
                   <button 
                     type="button"
                     onClick={() => setMode('login')} 
-                    className="text-acid-yellow hover:text-grit-white font-bold underline cursor-pointer"
+                    className="text-acid-yellow hover:text-grit-white font-bold underline cursor-pointer py-1.5 inline-block touch-manipulation"
                   >
                     ← RETURN TO SIGN IN
                   </button>
@@ -828,7 +828,7 @@ export default function BackstageAuthTerminal({
                     <button 
                       type="button"
                       onClick={() => setMode('register')} 
-                      className="text-acid-yellow hover:text-neon-magenta font-bold underline ml-1 cursor-pointer"
+                      className="text-acid-yellow hover:text-neon-magenta font-bold underline ml-1 cursor-pointer py-1.5 inline-block touch-manipulation"
                     >
                       ISSUE A NEW PASS HERE
                     </button>
@@ -839,7 +839,7 @@ export default function BackstageAuthTerminal({
                     <button 
                       type="button"
                       onClick={() => setMode('login')} 
-                      className="text-acid-yellow hover:text-neon-magenta font-bold underline ml-1 cursor-pointer"
+                      className="text-acid-yellow hover:text-neon-magenta font-bold underline ml-1 cursor-pointer py-1.5 inline-block touch-manipulation"
                     >
                       SIGN IN HERE
                     </button>

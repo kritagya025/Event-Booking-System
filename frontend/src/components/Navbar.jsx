@@ -207,7 +207,7 @@ export default function Navbar({
             <button 
               onClick={toggleTheme} 
               type="button" 
-              className="w-8 h-8 bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer overflow-hidden"
+              className="w-9 h-9 sm:w-8 sm:h-8 min-w-[36px] min-h-[36px] bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer overflow-hidden touch-manipulation"
               title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
               aria-label="Toggle Theme"
             >
@@ -222,7 +222,7 @@ export default function Navbar({
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="w-9 h-9 bg-acid-yellow text-asphalt-black font-ticker font-extrabold text-sm border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] flex items-center justify-center cursor-pointer"
+                  className="w-9 h-9 sm:w-9 sm:h-9 min-w-[36px] min-h-[36px] bg-acid-yellow text-asphalt-black font-ticker font-extrabold text-sm border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] flex items-center justify-center cursor-pointer touch-manipulation"
                   title={`${currentUser.firstName || ''} ${currentUser.lastName || ''}`}
                 >
                   {currentUser.avatarUrl ? (
@@ -233,7 +233,7 @@ export default function Navbar({
                 </button>
 
                 {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-asphalt-surface border-3 border-grit-white shadow-[6px_6px_0px_#ff1f6d] p-3 z-50">
+                  <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-asphalt-surface border-3 border-grit-white shadow-[6px_6px_0px_#ff1f6d] p-3 z-50">
                     <div className="pb-2 mb-2 border-b border-asphalt-border">
                       <span className="block font-ticker text-xs font-bold text-acid-yellow uppercase">
                         {currentUser.firstName} {currentUser.lastName}
@@ -247,7 +247,7 @@ export default function Navbar({
                       <button
                         type="button"
                         onClick={() => { handleNavClick('profile'); setProfileDropdownOpen(false); }}
-                        className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
+                        className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
                       >
                         <User size={13} /> Account Profile
                       </button>
@@ -256,7 +256,7 @@ export default function Navbar({
                         <button
                           type="button"
                           onClick={() => { handleNavClick('my-bookings'); setProfileDropdownOpen(false); }}
-                          className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
+                          className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
                         >
                           <Ticket size={13} /> My Tickets
                         </button>
@@ -267,14 +267,14 @@ export default function Navbar({
                           <button
                             type="button"
                             onClick={() => { handleNavClick('create-event'); setProfileDropdownOpen(false); }}
-                            className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
+                            className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
                           >
                             <PlusCircle size={13} /> Create New Event
                           </button>
                           <button
                             type="button"
                             onClick={() => { handleNavClick('checkin'); setProfileDropdownOpen(false); }}
-                            className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
+                            className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
                           >
                             <QrCode size={13} /> Gate Scanner
                           </button>
@@ -285,7 +285,7 @@ export default function Navbar({
                         <button
                           type="button"
                           onClick={() => { handleNavClick('admin'); setProfileDropdownOpen(false); }}
-                          className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left"
+                          className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
                         >
                           <ShieldCheck size={13} /> Admin Panel
                         </button>
@@ -296,7 +296,7 @@ export default function Navbar({
                       <button
                         type="button"
                         onClick={() => { onLogout(); setProfileDropdownOpen(false); }}
-                        className="flex items-center gap-2 p-1.5 hover:bg-asphalt-card text-danger-red text-left font-bold"
+                        className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-danger-red text-left font-bold cursor-pointer"
                       >
                         <LogOut size={13} /> Sign Out
                       </button>
@@ -308,13 +308,13 @@ export default function Navbar({
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => handleNavClick('login')} 
-                  className="bg-asphalt-card hover:bg-asphalt-surface text-grit-white px-3 py-1 font-display text-base tracking-wider uppercase border border-asphalt-border hover:border-acid-yellow"
+                  className="bg-asphalt-card hover:bg-asphalt-surface text-grit-white px-3 py-1.5 min-h-[38px] flex items-center justify-center font-display text-base tracking-wider uppercase border border-asphalt-border hover:border-acid-yellow cursor-pointer touch-manipulation"
                 >
                   SIGN IN
                 </button>
                 <button 
                   onClick={() => handleNavClick('register')} 
-                  className="bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white px-3 sm:px-4 py-1.5 font-display text-base tracking-wider uppercase border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] active:translate-x-0.5 active:translate-y-0.5 transition-all"
+                  className="bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white px-3 sm:px-4 py-1.5 min-h-[38px] flex items-center justify-center font-display text-base tracking-wider uppercase border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer touch-manipulation"
                 >
                   REGISTER
                 </button>
@@ -325,7 +325,7 @@ export default function Navbar({
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="md:hidden w-9 h-9 bg-asphalt-card hover:bg-asphalt-surface border-2 border-grit-white text-grit-white hover:text-acid-yellow flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#ff1f6d] active:scale-95 transition-all touch-manipulation"
+              className="md:hidden w-10 h-10 min-w-[40px] min-h-[40px] bg-asphalt-card hover:bg-asphalt-surface border-2 border-grit-white text-grit-white hover:text-acid-yellow flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#ff1f6d] active:scale-95 transition-all touch-manipulation"
               aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             >
               {mobileMenuOpen ? <X size={20} className="text-neon-magenta" /> : <Menu size={20} />}

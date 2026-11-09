@@ -197,7 +197,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
           >
             <X size={18} />
           </button>
@@ -333,7 +333,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
               <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">
                 SCHEDULE & TIMING PROTOCOL
               </span>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-[11px] font-mono-zine text-grit-dim uppercase mb-1">DATE</label>
                   <input type="date" name="eventDate" required value={formData.eventDate} onChange={handleChange} className="w-full bg-asphalt-surface border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine p-2 text-xs outline-none" />
@@ -350,7 +350,7 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
             </div>
 
             {/* PRICING & SEATS */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-mono-zine text-grit-dim uppercase tracking-wider mb-1">
                   TICKET PRICE ($ USD) <span className="text-neon-magenta">*</span>
@@ -413,8 +413,8 @@ export default function CreateEventModal({ isOpen, onClose, showToast, onEventCr
                     <span className="bg-acid-yellow text-asphalt-black font-impact text-[10px] px-2 py-0.5 uppercase">
                       ARTWORK LOADED
                     </span>
-                    <button type="button" onClick={handleRemoveImage} className="bg-asphalt-black/80 border border-grit-white p-1 text-neon-magenta hover:text-grit-white cursor-pointer">
-                      <Trash2 size={12} />
+                    <button type="button" onClick={handleRemoveImage} className="bg-asphalt-black/80 border border-grit-white p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center text-neon-magenta hover:text-grit-white cursor-pointer touch-manipulation">
+                      <Trash2 size={13} />
                     </button>
                   </div>
                 </div>

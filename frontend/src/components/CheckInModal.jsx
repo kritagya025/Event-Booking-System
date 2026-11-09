@@ -131,7 +131,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
           >
             <X size={18} />
           </button>
@@ -167,7 +167,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
           {/* SCANNER VIEW */}
           {activeTab === 'scan' && (
             <div className="text-center space-y-3">
-              <div className="relative w-full h-64 bg-asphalt-black border-2 border-dashed border-asphalt-border overflow-hidden flex items-center justify-center">
+              <div className="relative w-full h-48 sm:h-64 bg-asphalt-black border-2 border-dashed border-asphalt-border overflow-hidden flex items-center justify-center">
                 <video
                   ref={videoRef}
                   autoPlay
@@ -207,16 +207,16 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
               </div>
 
               {/* Controls */}
-              <div className="flex justify-center gap-3">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                 <button 
                   onClick={toggleCamera} 
-                  className="bg-asphalt-card border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-3 py-1.5 uppercase cursor-pointer"
+                  className="bg-asphalt-card border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-3 py-2 min-h-[36px] uppercase cursor-pointer flex items-center justify-center touch-manipulation"
                 >
                   {isCameraActive ? 'STOP CAMERA' : 'START CAMERA'}
                 </button>
                 <button 
                   onClick={() => handleSimulateScan('TKT-DEMO123')} 
-                  className="bg-asphalt-card border border-acid-yellow text-acid-yellow hover:bg-acid-yellow hover:text-asphalt-black font-mono-zine text-xs px-3 py-1.5 uppercase flex items-center gap-1.5 cursor-pointer transition-colors"
+                  className="bg-asphalt-card border border-acid-yellow text-acid-yellow hover:bg-acid-yellow hover:text-asphalt-black font-mono-zine text-xs px-3 py-2 min-h-[36px] uppercase flex items-center justify-center gap-1.5 cursor-pointer transition-colors touch-manipulation"
                 >
                   <RefreshCw size={12} /> SCAN TEST TICKET
                 </button>

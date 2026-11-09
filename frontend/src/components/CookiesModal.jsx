@@ -46,30 +46,31 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
+            aria-label="Close cookies modal"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Body Content */}
-        <div className="p-6 overflow-y-auto space-y-4">
-          <div className="bg-asphalt-card border border-asphalt-border p-4 flex items-center justify-between">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 touch-scroll">
+          <div className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4 flex items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-impact text-base text-grit-white tracking-wider">ESSENTIAL AUTHENTICATION</span>
+                <span className="font-impact text-sm sm:text-base text-grit-white tracking-wider">ESSENTIAL AUTHENTICATION</span>
                 <span className="bg-acid-yellow text-asphalt-black font-impact text-[10px] px-1.5 py-0.2">MANDATORY</span>
               </div>
               <p className="text-[11px] text-grit-dim uppercase mt-1">
                 REQUIRED FOR HTTPONLY JWT TOKENS AND STOMP PROTOCOL CONNECTION SEALS.
               </p>
             </div>
-            <input type="checkbox" checked disabled className="w-5 h-5 accent-acid-yellow" />
+            <input type="checkbox" checked disabled className="w-5 h-5 accent-acid-yellow shrink-0" />
           </div>
 
-          <div className="bg-asphalt-card border border-asphalt-border p-4 flex items-center justify-between">
+          <div className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4 flex items-center justify-between gap-3">
             <div>
-              <span className="font-impact text-base text-grit-white tracking-wider block">LOCAL PASS CACHING</span>
+              <span className="font-impact text-sm sm:text-base text-grit-white tracking-wider block">LOCAL PASS CACHING</span>
               <p className="text-[11px] text-grit-dim uppercase mt-1">
                 PRESERVES RECENT TICKET PASSES IN LOCALSTORAGE FOR FAST OFFLINE ACCESS.
               </p>
@@ -78,13 +79,13 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
               type="checkbox" 
               checked={preferences.functional} 
               onChange={(e) => setPreferences({ ...preferences, functional: e.target.checked })}
-              className="w-5 h-5 accent-acid-yellow cursor-pointer" 
+              className="w-5 h-5 accent-acid-yellow cursor-pointer shrink-0" 
             />
           </div>
 
-          <div className="bg-asphalt-card border border-asphalt-border p-4 flex items-center justify-between">
+          <div className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4 flex items-center justify-between gap-3">
             <div>
-              <span className="font-impact text-base text-grit-white tracking-wider block">TELEMETRY DIAGNOSTICS</span>
+              <span className="font-impact text-sm sm:text-base text-grit-white tracking-wider block">TELEMETRY DIAGNOSTICS</span>
               <p className="text-[11px] text-grit-dim uppercase mt-1">
                 MEASURES REST API ROUND-TRIP LATENCY AND REAL-TIME SEAT LOCK CONCURRENCY.
               </p>
@@ -93,19 +94,19 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
               type="checkbox" 
               checked={preferences.analytics} 
               onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}
-              className="w-5 h-5 accent-acid-yellow cursor-pointer" 
+              className="w-5 h-5 accent-acid-yellow cursor-pointer shrink-0" 
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <span className="font-ticker text-[10px] text-grit-dim uppercase">
             POLICY COMPLIANCE: ZERO AD TELEMETRY
           </span>
           <button 
             onClick={handleSave} 
-            className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer"
+            className="w-full sm:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation text-center"
           >
             COMMIT PREFERENCES
           </button>

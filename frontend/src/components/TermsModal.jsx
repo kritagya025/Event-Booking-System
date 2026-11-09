@@ -35,15 +35,16 @@ export default function TermsModal({ isOpen, onClose }) {
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
+            aria-label="Close terms modal"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Body Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 text-xs text-grit-dim uppercase leading-relaxed font-mono-zine touch-scroll">
-          <section className="bg-asphalt-card border border-asphalt-border p-4">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 text-xs text-grit-dim uppercase leading-relaxed font-mono-zine touch-scroll">
+          <section className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
               01. VERIFIED TICKETING & DIGITAL ADMISSION
             </h4>
@@ -52,7 +53,7 @@ export default function TermsModal({ isOpen, onClose }) {
             </p>
           </section>
 
-          <section className="bg-asphalt-card border border-asphalt-border p-4">
+          <section className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
               02. REAL-TIME SEAT HOLD & RESERVATION POLICY
             </h4>
@@ -61,7 +62,7 @@ export default function TermsModal({ isOpen, onClose }) {
             </p>
           </section>
 
-          <section className="bg-asphalt-card border border-asphalt-border p-4">
+          <section className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
               03. ZERO TOLERANCE SCALPING & BOT PROHIBITION
             </h4>
@@ -70,7 +71,7 @@ export default function TermsModal({ isOpen, onClose }) {
             </p>
           </section>
 
-          <section className="bg-asphalt-card border border-asphalt-border p-4">
+          <section className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4">
             <h4 className="font-impact text-base text-acid-yellow tracking-wider mb-1">
               04. CANCELLATION, REFUNDS & VENUE ADMISSION RULES
             </h4>
@@ -81,13 +82,13 @@ export default function TermsModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <span className="font-ticker text-[10px] text-grit-dim uppercase">
             LEGAL STATUS: RATIFIED BY EVENTHUB PLATFORM
           </span>
           <button 
             onClick={onClose} 
-            className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] cursor-pointer"
+            className="w-full sm:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] cursor-pointer touch-manipulation text-center"
           >
             I ACCEPT TERMS OF SERVICE
           </button>

@@ -92,7 +92,8 @@ export default function SystemStatusModal({ isOpen, onClose }) {
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-1.5 transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
+            aria-label="Close platform status"
           >
             <X size={18} />
           </button>
@@ -102,14 +103,14 @@ export default function SystemStatusModal({ isOpen, onClose }) {
         <div className="p-4 sm:p-6 overflow-y-auto space-y-4 touch-scroll">
           
           {/* Main Status Banner */}
-          <div className="bg-asphalt-card border-2 border-acid-yellow p-4 flex items-center justify-between">
+          <div className="bg-asphalt-card border-2 border-acid-yellow p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-3.5 h-3.5 bg-acid-yellow animate-pulse"></div>
+              <div className="w-3.5 h-3.5 bg-acid-yellow animate-pulse shrink-0"></div>
               <div>
-                <div className="font-impact text-base uppercase text-grit-white tracking-wider">
+                <div className="font-impact text-sm sm:text-base uppercase text-grit-white tracking-wider">
                   {apiStatus === 'operational' ? 'ALL PLATFORM SERVICES OPERATIONAL' : 'BACKEND SERVICES STANDBY / TESTING'}
                 </div>
-                <div className="font-mono-zine text-[11px] text-grit-dim uppercase">
+                <div className="font-mono-zine text-[10px] sm:text-[11px] text-grit-dim uppercase">
                   ZERO DUPLICATE BOOKINGS // 100% VERIFIED AUTHENTIC TICKETS
                 </div>
               </div>
@@ -117,7 +118,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
             <button 
               onClick={checkStatus} 
               disabled={loading}
-              className="bg-asphalt-surface border border-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-3 py-1.5 font-impact text-xs uppercase flex items-center gap-1.5 cursor-pointer transition-colors"
+              className="bg-asphalt-surface border border-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-3 py-2 min-h-[36px] font-impact text-xs uppercase flex items-center justify-center gap-1.5 cursor-pointer transition-colors touch-manipulation w-full sm:w-auto"
             >
               <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> RE-PROBE
             </button>
@@ -146,7 +147,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
           {/* Service items */}
           <div className="space-y-2">
             {services.map((srv) => (
-              <div key={srv.name} className="bg-asphalt-card border border-asphalt-border p-3.5 flex items-center justify-between">
+              <div key={srv.name} className="bg-asphalt-card border border-asphalt-border p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
                   <h4 className="font-impact text-sm uppercase text-grit-white tracking-wider leading-none mb-1">
                     {srv.name}
@@ -155,7 +156,7 @@ export default function SystemStatusModal({ isOpen, onClose }) {
                     {srv.description}
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="text-right self-start sm:self-auto">
                   <span className="bg-acid-yellow/20 text-acid-yellow border border-acid-yellow font-ticker text-[10px] px-2 py-0.5 uppercase block mb-1">
                     {srv.status}
                   </span>
@@ -170,13 +171,13 @@ export default function SystemStatusModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex items-center justify-between">
+        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <span className="font-ticker text-[10px] text-grit-dim uppercase">
             UPTIME PROTOCOL: 99.98% VERIFIED
           </span>
           <button 
             onClick={onClose} 
-            className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer"
+            className="w-full sm:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation text-center"
           >
             CLOSE STATUS
           </button>

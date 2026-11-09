@@ -183,6 +183,20 @@ export default function MyBookings({ currentUser, showToast }) {
               .print-tip { font-size: 10px; color: #fef02a; background: #1a1e2e; border: 1px dashed #fef02a; padding: 8px; margin-top: 16px; text-align: center; font-weight: bold; letter-spacing: 0.5px; }
               .print-btn { display: block; width: 100%; background: #ff006e; color: #ffffff; border: 2px solid #ffffff; padding: 12px; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #fef02a; transition: all 0.2s; margin-top: 8px; }
               .print-btn:hover { background: #fef02a; color: #0a0a0e; }
+              @media screen and (max-width: 640px) {
+                body { padding: 12px 8px; }
+                .pass-container { max-width: 100%; }
+                .pass-body { display: flex; flex-direction: column; }
+                .left-pass { border-right: none; border-bottom: 2px dashed #00f0ff; padding: 16px; }
+                .right-stub { padding: 16px; }
+                .event-banner-art { height: 110px; }
+                .notch-top, .notch-bottom { display: none; }
+                .protocol-grid { grid-template-columns: 1fr; gap: 8px; }
+                .qr-box img { width: 95px; height: 95px; }
+                .event-title { font-size: 18px; }
+                .seat-banner { flex-direction: column; gap: 6px; text-align: center; }
+                .holder-box { flex-direction: column; gap: 6px; }
+              }
               @media print {
                 @page {
                   size: A4 portrait;
@@ -661,9 +675,9 @@ export default function MyBookings({ currentUser, showToast }) {
                 </div>
 
                 {/* Perforated Barcode Line */}
-                <div className="pt-3 border-t-2 border-dashed border-asphalt-border flex items-center justify-between opacity-50 select-none">
-                  <span className="font-ticker text-[8px] text-grit-dim uppercase">PASS_BARCODE_VERIFIED</span>
-                  <svg className="h-4 w-28" viewBox="0 0 112 16" fill="currentColor">
+                <div className="pt-3 border-t-2 border-dashed border-asphalt-border flex items-center justify-between opacity-50 select-none gap-2">
+                  <span className="font-ticker text-[8px] text-grit-dim uppercase truncate">PASS_BARCODE_VERIFIED</span>
+                  <svg className="h-4 w-28 max-w-[112px] shrink-0" viewBox="0 0 112 16" fill="currentColor">
                     <rect x="0" y="0" width="3" height="16"/>
                     <rect x="5" y="0" width="2" height="16"/>
                     <rect x="9" y="0" width="4" height="16"/>
@@ -694,7 +708,7 @@ export default function MyBookings({ currentUser, showToast }) {
                 {b.bookingStatus !== 'CANCELLED' && (
                   <button 
                     onClick={() => handleDownloadPdf(b)} 
-                    className="flex-1 bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase py-2 px-3 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 min-w-[140px] bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase py-2.5 px-3 min-h-[38px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
                   >
                     <Download size={13} /> PRINT TICKET PASS
                   </button>
@@ -702,7 +716,7 @@ export default function MyBookings({ currentUser, showToast }) {
 
                 <button 
                   onClick={() => handleDownloadCalendar(b.event?.id || 1)} 
-                  className="bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-1.5 uppercase cursor-pointer"
+                  className="bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer flex items-center justify-center gap-1 touch-manipulation"
                   title="Download .ics file"
                 >
                   <Calendar size={13} /> .ICS
@@ -710,7 +724,7 @@ export default function MyBookings({ currentUser, showToast }) {
 
                 <button 
                   onClick={() => handleOpenGoogleCalendar(b.event?.id || 1, b.event)} 
-                  className="bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-1.5 uppercase cursor-pointer"
+                  className="bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer flex items-center justify-center gap-1 touch-manipulation"
                   title="Add to Google Calendar"
                 >
                   <ExternalLink size={13} /> GCAL
@@ -719,7 +733,7 @@ export default function MyBookings({ currentUser, showToast }) {
                 {b.bookingStatus === 'CONFIRMED' && (
                   <button 
                     onClick={() => handleCancelBooking(b.id)} 
-                    className="bg-asphalt-surface border border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-mono-zine text-xs px-2.5 py-1.5 uppercase cursor-pointer transition-colors"
+                    className="bg-asphalt-surface border border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer transition-colors flex items-center justify-center gap-1 touch-manipulation"
                     title="Cancel booking"
                   >
                     <XCircle size={13} /> CANCEL
