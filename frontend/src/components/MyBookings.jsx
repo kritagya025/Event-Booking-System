@@ -534,31 +534,31 @@ export default function MyBookings({ currentUser, showToast }) {
       </div>
 
       {/* 4 Brutalist Metric Stamps */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-4 shadow-[4px_4px_0px_#eefc54] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL BOOKINGS</span>
-          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-4 shadow-[3px_3px_0px_#eefc54] sm:shadow-[4px_4px_0px_#eefc54] relative">
+          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">TOTAL BOOKINGS</span>
+          <span className="font-display text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
             {stats.totalCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-4 shadow-[4px_4px_0px_#ff1f6d] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">CONFIRMED PASSES</span>
-          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-4 shadow-[3px_3px_0px_#ff1f6d] sm:shadow-[4px_4px_0px_#ff1f6d] relative">
+          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">CONFIRMED PASSES</span>
+          <span className="font-display text-xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
             {stats.confirmedCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-4 shadow-[4px_4px_0px_#1d4ed8] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">UPCOMING EVENTS</span>
-          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-4 shadow-[3px_3px_0px_#1d4ed8] sm:shadow-[4px_4px_0px_#1d4ed8] relative">
+          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">UPCOMING EVENTS</span>
+          <span className="font-display text-xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
             {stats.upcomingCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-4 shadow-[4px_4px_0px_#ffffff] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL AMOUNT SPENT</span>
-          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-4 shadow-[3px_3px_0px_#ffffff] sm:shadow-[4px_4px_0px_#ffffff] relative">
+          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">TOTAL AMOUNT SPENT</span>
+          <span className="font-display text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
             {formatPrice(stats.totalSpent)}
           </span>
         </div>

@@ -472,7 +472,7 @@ export default function App() {
       />
 
       {/* Top Protocol Status Ribbon */}
-      <div className="w-full bg-asphalt-surface border-b border-asphalt-border py-2 px-4">
+      <div className="hidden sm:block w-full bg-asphalt-surface border-b border-asphalt-border py-2 px-4">
         <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between text-xs font-ticker gap-2">
           <div className="flex items-center gap-2 text-grit-dim">
             <span className="bg-neon-magenta text-grit-white font-bold px-1.5 py-0.2 -rotate-2">BOX OFFICE</span>
@@ -505,29 +505,29 @@ export default function App() {
         <Wishlist currentUser={currentUser} onSelectEvent={openBookingModal} showToast={showToast} />
       ) : (
         <main className="w-full relative overflow-hidden pb-16">
-          <div className="max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 pt-5 sm:pt-8">
+          <div className="max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 pt-4 sm:pt-8">
             
             {/* 2. BRUTALIST HERO SECTION */}
-            <section className="relative mb-12 border-2 sm:border-4 border-grit-white bg-asphalt-surface p-4 sm:p-6 md:p-10 shadow-[6px_6px_0px_#eefc54] sm:shadow-[8px_8px_0px_#eefc54]">
-              {/* Slanted Badges */}
-              <div className="absolute -top-3 sm:-top-5 right-2 sm:-right-4 bg-neon-magenta text-grit-white font-display text-sm sm:text-xl lg:text-2xl px-2.5 sm:px-4 py-1 sm:py-1.5 rotate-2 sm:rotate-3 border-2 border-asphalt-black shadow-[3px_3px_0px_#0e0e11] z-20">
+            <section className="relative mb-8 sm:mb-12 border-2 sm:border-4 border-grit-white bg-asphalt-surface p-3.5 sm:p-6 md:p-10 shadow-[3px_3px_0px_#eefc54] sm:shadow-[8px_8px_0px_#eefc54] overflow-hidden">
+              {/* Slanted Badges (Shown on sm+ to prevent mobile viewport clipping) */}
+              <div className="hidden sm:inline-block absolute -top-3 sm:-top-5 right-2 sm:-right-4 bg-neon-magenta text-grit-white font-display text-sm sm:text-xl lg:text-2xl px-2.5 sm:px-4 py-1 sm:py-1.5 rotate-2 sm:rotate-3 border-2 border-asphalt-black shadow-[3px_3px_0px_#0e0e11] z-20">
                 ★ 100% VERIFIED TICKETS & PASSES ★
               </div>
-              <div className="absolute -bottom-3 sm:-bottom-4 left-2 sm:-left-3 bg-electric-cobalt text-acid-yellow font-ticker text-[10px] sm:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-1 -rotate-2 sm:-rotate-3 border-2 border-grit-white z-20">
+              <div className="hidden sm:inline-block absolute -bottom-3 sm:-bottom-4 left-2 sm:-left-3 bg-electric-cobalt text-acid-yellow font-ticker text-[10px] sm:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-1 -rotate-2 sm:-rotate-3 border-2 border-grit-white z-20">
                 ZERO SECONDARY SCALPING // 100% VERIFIED
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-2.5 sm:px-3 py-1 stamp-slant-1">
-                    <Sparkles size={14} className="text-acid-yellow" />
-                    <span className="font-ticker text-[10px] sm:text-xs font-bold uppercase text-acid-yellow tracking-widest">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center relative z-10">
+                <div className="lg:col-span-7 space-y-3 sm:space-y-4">
+                  <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-2 sm:px-3 py-1 stamp-slant-1">
+                    <Sparkles size={13} className="text-acid-yellow" />
+                    <span className="font-ticker text-[9px] sm:text-xs font-bold uppercase text-acid-yellow tracking-widest">
                       OFFICIAL LIVE EVENT & CINEMA BOX OFFICE
                     </span>
                   </div>
 
-                  <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.95] sm:leading-[0.9]">
-                    YOUR FRONT ROW TO <span className="text-acid-yellow underline decoration-neon-magenta decoration-4">LIVE EVENTS</span> & PREMIERES.
+                  <h1 className="font-display text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-8xl uppercase tracking-tight text-grit-white leading-[0.95] sm:leading-[0.9]">
+                    YOUR FRONT ROW TO <span className="text-acid-yellow underline decoration-neon-magenta decoration-2 sm:decoration-4">LIVE EVENTS</span> & PREMIERES.
                   </h1>
 
                   <p className="font-mono-zine text-xs sm:text-base text-grit-white/90 max-w-2xl leading-relaxed">
@@ -535,34 +535,34 @@ export default function App() {
                   </p>
 
                   {/* Value Highlights */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 sm:pt-2">
                     <div className="bg-asphalt-black p-2 sm:p-2.5 border-2 border-asphalt-border">
-                      <span className="text-[9px] sm:text-[10px] text-grit-dim block font-ticker uppercase">TICKETS</span>
-                      <span className="font-display text-lg sm:text-xl text-acid-yellow">100% VERIFIED</span>
+                      <span className="text-[8px] sm:text-[10px] text-grit-dim block font-ticker uppercase">TICKETS</span>
+                      <span className="font-display text-base sm:text-xl text-acid-yellow">100% VERIFIED</span>
                     </div>
                     <div className="bg-asphalt-black p-2 sm:p-2.5 border-2 border-asphalt-border">
-                      <span className="text-[9px] sm:text-[10px] text-grit-dim block font-ticker uppercase">CART HOLD</span>
-                      <span className="font-display text-lg sm:text-xl text-neon-magenta">10-MIN WINDOW</span>
+                      <span className="text-[8px] sm:text-[10px] text-grit-dim block font-ticker uppercase">CART HOLD</span>
+                      <span className="font-display text-base sm:text-xl text-neon-magenta">10-MIN WINDOW</span>
                     </div>
                     <div className="bg-asphalt-black p-2 sm:p-2.5 border-2 border-asphalt-border">
-                      <span className="text-[9px] sm:text-[10px] text-grit-dim block font-ticker uppercase">EXPERIENCE</span>
-                      <span className="font-display text-lg sm:text-xl text-electric-cobalt">IMAX 3D & ARENA</span>
+                      <span className="text-[8px] sm:text-[10px] text-grit-dim block font-ticker uppercase">EXPERIENCE</span>
+                      <span className="font-display text-base sm:text-xl text-electric-cobalt">IMAX 3D & ARENA</span>
                     </div>
                     <div className="bg-asphalt-black p-2 sm:p-2.5 border-2 border-asphalt-border">
-                      <span className="text-[9px] sm:text-[10px] text-grit-dim block font-ticker uppercase">DELIVERY</span>
-                      <span className="font-display text-lg sm:text-xl text-grit-white">INSTANT QR PASS</span>
+                      <span className="text-[8px] sm:text-[10px] text-grit-dim block font-ticker uppercase">DELIVERY</span>
+                      <span className="font-display text-base sm:text-xl text-grit-white">INSTANT QR PASS</span>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2 sm:pt-3">
                     <button
                       type="button"
                       onClick={scrollToResults}
-                      className="px-5 sm:px-6 py-3 bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-base sm:text-lg uppercase tracking-wider border-2 border-asphalt-black shadow-[4px_4px_0px_#ffffff] transition-all flex items-center justify-center gap-2 cursor-pointer font-bold touch-manipulation"
+                      className="px-4 sm:px-6 py-2.5 sm:py-3 min-h-[44px] bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-sm sm:text-lg uppercase tracking-wider border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] sm:shadow-[4px_4px_0px_#ffffff] transition-all flex items-center justify-center gap-2 cursor-pointer font-bold touch-manipulation"
                     >
                       <span>EXPLORE UPCOMING EVENTS</span>
-                      <ArrowRight size={18} />
+                      <ArrowRight size={16} />
                     </button>
                     <button
                       type="button"
@@ -571,9 +571,9 @@ export default function App() {
                         setFilters(nextFilters);
                         handleSearchAndFilter(nextFilters);
                       }}
-                      className="px-5 sm:px-6 py-3 bg-asphalt-black hover:bg-asphalt-surface text-grit-white font-impact text-base sm:text-lg uppercase tracking-wider border-2 border-grit-white shadow-[4px_4px_0px_#eefc54] transition-all flex items-center justify-center gap-2 cursor-pointer font-bold touch-manipulation"
+                      className="px-4 sm:px-6 py-2.5 sm:py-3 min-h-[44px] bg-asphalt-black hover:bg-asphalt-surface text-grit-white font-impact text-sm sm:text-lg uppercase tracking-wider border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] sm:shadow-[4px_4px_0px_#eefc54] transition-all flex items-center justify-center gap-2 cursor-pointer font-bold touch-manipulation"
                     >
-                      <Film size={18} className="text-acid-yellow" />
+                      <Film size={16} className="text-acid-yellow" />
                       <span>CINEMA SCREENINGS</span>
                     </button>
                   </div>
@@ -590,8 +590,8 @@ export default function App() {
             </section>
 
             {/* 3. EVENT SEARCH & DISPATCH CAPSULE */}
-            <section className="mb-14">
-              <div className="bg-acid-yellow p-4 sm:p-5 border-4 border-asphalt-black shadow-[6px_6px_0px_#ffffff]">
+            <section className="mb-10 sm:mb-14">
+              <div className="bg-acid-yellow p-3.5 sm:p-5 border-2 sm:border-4 border-asphalt-black shadow-[3px_3px_0px_#ffffff] sm:shadow-[6px_6px_0px_#ffffff]">
                 <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-asphalt-black font-ticker text-xs font-bold text-asphalt-black">
                   <span className="flex items-center gap-2">
                     <Search size={16} />
@@ -800,109 +800,109 @@ export default function App() {
             </section>
 
             {/* 5. INTERACTIVE VENUE & SEATING EXPERIENCE */}
-            <section className="mb-16 border-4 border-grit-white bg-asphalt-surface p-6 md:p-8 shadow-[8px_8px_0px_#ff1f6d]" id="sound-engine">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <section className="mb-12 sm:mb-16 border-2 sm:border-4 border-grit-white bg-asphalt-surface p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_#ff1f6d] sm:shadow-[8px_8px_0px_#ff1f6d]" id="sound-engine">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
                 {/* Seating Experience Manifesto */}
-                <div className="lg:col-span-5 space-y-4">
-                  <div className="inline-block bg-neon-magenta text-grit-white font-display text-sm tracking-widest px-2 py-0.5 -rotate-2">
+                <div className="lg:col-span-5 space-y-3 sm:space-y-4">
+                  <div className="inline-block bg-neon-magenta text-grit-white font-display text-xs sm:text-sm tracking-widest px-2 py-0.5 -rotate-2">
                     RESERVED SEATING // AUDITORIUM & ARENA
                   </div>
-                  <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white leading-none">
+                  <h2 className="font-display text-2xl xs:text-3xl sm:text-5xl uppercase tracking-tight text-grit-white leading-none">
                     CHOOSE YOUR EXACT SEATS IN REAL TIME
                   </h2>
                   <p className="font-mono-zine text-xs sm:text-sm text-grit-dim leading-relaxed">
                     Select your preferred viewpoint across auditoriums, IMAX halls, and arenas. Your chosen seats are locked exclusively for 10 minutes while you complete checkout—guaranteeing zero double-bookings or surprise sold-outs.
                   </p>
                   <div className="space-y-2 font-ticker text-xs">
-                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
+                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2 sm:p-2.5 flex items-center justify-between">
                       <span className="text-grit-dim">RESERVATION HOLD:</span>
                       <span className="text-acid-yellow font-bold">10-Minute Lock Window</span>
                     </div>
-                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
+                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2 sm:p-2.5 flex items-center justify-between">
                       <span className="text-grit-dim">SIGHTLINE PREVIEW:</span>
                       <span className="text-grit-white font-bold">Auditorium & Screen Sightlines</span>
                     </div>
-                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2.5 flex items-center justify-between">
+                    <div className="bg-asphalt-black border-2 border-asphalt-border p-2 sm:p-2.5 flex items-center justify-between">
                       <span className="text-grit-dim">ADMISSION PASS:</span>
                       <span className="text-neon-magenta font-bold">Instant Tamper-Proof QR Pass</span>
                     </div>
                   </div>
-                  <div className="pt-2 flex items-center gap-2 font-ticker text-xs text-acid-yellow">
-                    <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping" />
-                    LIVE SEATING GRID: REAL-TIME AUDITORIUM SYNC ACTIVE
+                  <div className="pt-1 sm:pt-2 flex items-center gap-2 font-ticker text-[11px] sm:text-xs text-acid-yellow">
+                    <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping shrink-0" />
+                    <span>LIVE SEATING GRID: REAL-TIME AUDITORIUM SYNC ACTIVE</span>
                   </div>
                 </div>
 
                 {/* Interactive Pit / Floor Grid */}
-                <div className="lg:col-span-7 bg-asphalt-black p-4 sm:p-6 border-3 border-grit-white shadow-[6px_6px_0px_#eefc54]">
+                <div className="lg:col-span-7 bg-asphalt-black p-3.5 sm:p-6 border-2 sm:border-3 border-grit-white shadow-[4px_4px_0px_#eefc54] sm:shadow-[6px_6px_0px_#eefc54]">
                   <HeroProductDemo onOpenBooking={() => openBookingModal(popularEvents[0] || events[0])} />
                 </div>
               </div>
             </section>
 
             {/* 6. PLATFORM COMMITMENTS */}
-            <section className="mb-16">
-              <div className="mb-6">
+            <section className="mb-12 sm:mb-16">
+              <div className="mb-4 sm:mb-6">
                 <div className="font-ticker text-xs font-bold text-acid-yellow uppercase tracking-widest">
                   PLATFORM COMMITMENTS // TRUST & RELIABILITY
                 </div>
-                <h2 className="font-display text-4xl sm:text-5xl uppercase tracking-tight text-grit-white">
+                <h2 className="font-display text-2xl xs:text-3xl sm:text-5xl uppercase tracking-tight text-grit-white">
                   OUR TICKETING GUARANTEES
                 </h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {/* Rule 1 */}
-                <div className="bg-asphalt-surface border-3 border-grit-white p-5 relative shadow-[4px_4px_0px_#eefc54] -rotate-1 hover:rotate-0 transition-transform">
-                  <div className="w-10 h-10 bg-acid-yellow text-asphalt-black flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
+                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[3px_3px_0px_#eefc54] sm:shadow-[4px_4px_0px_#eefc54] -rotate-1 hover:rotate-0 transition-transform">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-acid-yellow text-asphalt-black flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black">
                     01
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">100% VERIFIED PASSES</h3>
+                  <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wide text-grit-white mb-1">100% VERIFIED PASSES</h3>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
                     Official digital passes equipped with tamper-proof cryptographic QR codes. Zero fake or duplicate tickets.
                   </p>
-                  <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-neon-magenta">
+                  <div className="mt-3 sm:mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-neon-magenta">
                     GUARANTEE: 100% VALID GATE ENTRY
                   </div>
                 </div>
 
                 {/* Rule 2 */}
-                <div className="bg-asphalt-surface border-3 border-grit-white p-5 relative shadow-[4px_4px_0px_#ff1f6d] rotate-1 hover:rotate-0 transition-transform">
-                  <div className="w-10 h-10 bg-neon-magenta text-grit-white flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
+                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[3px_3px_0px_#ff1f6d] sm:shadow-[4px_4px_0px_#ff1f6d] rotate-1 hover:rotate-0 transition-transform">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-neon-magenta text-grit-white flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black">
                     02
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">REAL-TIME SEAT HOLD</h3>
+                  <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wide text-grit-white mb-1">REAL-TIME SEAT HOLD</h3>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
                     Once selected, your seat is held exclusively for 10 minutes so no other buyer can claim it during checkout.
                   </p>
-                  <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-acid-yellow">
+                  <div className="mt-3 sm:mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-acid-yellow">
                     CONCURRENCY: 10-MIN HOLD WINDOW
                   </div>
                 </div>
 
                 {/* Rule 3 */}
-                <div className="bg-asphalt-surface border-3 border-grit-white p-5 relative shadow-[4px_4px_0px_#1d4ed8] -rotate-1 hover:rotate-0 transition-transform">
-                  <div className="w-10 h-10 bg-electric-cobalt text-grit-white flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
+                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[3px_3px_0px_#1d4ed8] sm:shadow-[4px_4px_0px_#1d4ed8] -rotate-1 hover:rotate-0 transition-transform">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-electric-cobalt text-grit-white flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black">
                     03
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">INSTANT DIGITAL PASSES</h3>
+                  <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wide text-grit-white mb-1">INSTANT DIGITAL PASSES</h3>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
                     Digital passes generated immediately upon payment with printable PDF download and ICS calendar sync.
                   </p>
-                  <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-grit-white">
+                  <div className="mt-3 sm:mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-grit-white">
                     DELIVERY: REAL-TIME CONFIRMATION
                   </div>
                 </div>
 
                 {/* Rule 4 */}
-                <div className="bg-asphalt-surface border-3 border-grit-white p-5 relative shadow-[4px_4px_0px_#ffffff] rotate-2 hover:rotate-0 transition-transform">
-                  <div className="w-10 h-10 bg-grit-white text-asphalt-black flex items-center justify-center font-display text-2xl font-black mb-3 border-2 border-asphalt-black">
+                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[3px_3px_0px_#ffffff] sm:shadow-[4px_4px_0px_#ffffff] rotate-2 hover:rotate-0 transition-transform">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-grit-white text-asphalt-black flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black">
                     04
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white mb-1">RAPID GATE SCANNER</h3>
+                  <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wide text-grit-white mb-1">RAPID GATE SCANNER</h3>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
                     Organizers scan attendee tickets in milliseconds using the built-in optical camera scanner or manual cipher code.
                   </p>
-                  <div className="mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-neon-magenta">
+                  <div className="mt-3 sm:mt-4 pt-2 border-t border-asphalt-border font-ticker text-[10px] text-neon-magenta">
                     ACCESS: HIGH-SPEED GATE ADMISSION
                   </div>
                 </div>
@@ -910,36 +910,36 @@ export default function App() {
             </section>
 
             {/* 7. ORGANIZER PORTAL CALLOUT */}
-            <section className="bg-asphalt-black border-2 border-acid-yellow p-6 md:p-8 relative shadow-[4px_4px_0px_rgba(255,255,255,0.7)] mb-12" id="gatekeeper">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-acid-yellow text-asphalt-black flex items-center justify-center -rotate-3 border-2 border-asphalt-black shadow-[2px_2px_0px_#ff1f6d]">
-                    <Radio size={28} className="stroke-[2.5]" />
+            <section className="bg-asphalt-black border-2 border-acid-yellow p-4 sm:p-6 md:p-8 relative shadow-[3px_3px_0px_rgba(255,255,255,0.7)] sm:shadow-[4px_4px_0px_rgba(255,255,255,0.7)] mb-10 sm:mb-12" id="gatekeeper">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-acid-yellow text-asphalt-black flex items-center justify-center -rotate-3 border-2 border-asphalt-black shadow-[2px_2px_0px_#ff1f6d] shrink-0">
+                    <Radio size={24} className="stroke-[2.5]" />
                   </div>
                   <div>
-                    <div className="font-ticker text-xs font-bold text-neon-magenta uppercase tracking-wider mb-1">
+                    <div className="font-ticker text-[10px] sm:text-xs font-bold text-neon-magenta uppercase tracking-wider mb-0.5 sm:mb-1">
                       ORGANIZER & PROMOTER PORTAL
                     </div>
-                    <h3 className="font-display text-3xl uppercase tracking-wide text-grit-white">
+                    <h3 className="font-display text-xl sm:text-3xl uppercase tracking-wide text-grit-white leading-tight">
                       HOSTING A CONCERT, CONFERENCE, OR MATCH?
                     </h3>
-                    <p className="font-mono-zine text-xs text-grit-dim">
+                    <p className="font-mono-zine text-xs text-grit-dim mt-0.5">
                       Publish your event, define tiered seating maps, set ticket tariffs, and access live gate check-in scanners.
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full md:w-auto">
                   <button 
                     type="button"
                     onClick={() => setIsCheckInOpen(true)}
-                    className="w-full md:w-auto px-6 py-3 bg-acid-yellow hover:bg-acid-yellow-hover text-asphalt-black font-display text-2xl tracking-wider uppercase border-2 border-asphalt-black shadow-[4px_4px_0px_#ff1f6d] font-bold cursor-pointer"
+                    className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 min-h-[44px] bg-acid-yellow hover:bg-acid-yellow-hover text-asphalt-black font-display text-xl sm:text-2xl tracking-wider uppercase border-2 border-asphalt-black shadow-[3px_3px_0px_#ff1f6d] font-bold cursor-pointer touch-manipulation flex items-center justify-center"
                   >
                     GATE SCANNER
                   </button>
                   <button 
                     type="button"
                     onClick={() => handleNavigate('create-event')}
-                    className="w-full md:w-auto px-6 py-3 bg-asphalt-card hover:bg-asphalt-surface text-grit-white font-display text-2xl tracking-wider uppercase border-2 border-grit-white shadow-[4px_4px_0px_#eefc54] font-bold cursor-pointer"
+                    className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 min-h-[44px] bg-asphalt-card hover:bg-asphalt-surface text-grit-white font-display text-xl sm:text-2xl tracking-wider uppercase border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] font-bold cursor-pointer touch-manipulation flex items-center justify-center"
                   >
                     PUBLISH EVENT
                   </button>
@@ -1147,11 +1147,11 @@ function HeroProductDemo({ onOpenBooking }) {
       </div>
 
       <div className="overflow-x-auto touch-scroll scrollbar-none mb-4 select-none">
-        <div className="min-w-[340px] space-y-2">
+        <div className="min-w-fit w-full space-y-1.5 sm:space-y-2">
           {/* Row 1 */}
-          <div className="flex items-center gap-2">
-            <span className="font-ticker text-xs font-bold text-neon-magenta w-8 shrink-0">ROW A</span>
-            <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="font-ticker text-[10px] sm:text-xs font-bold text-neon-magenta w-7 sm:w-8 shrink-0">ROW A</span>
+            <div className="flex-1 grid grid-cols-8 gap-1 sm:gap-2">
               {tilesRow1.map((t) => (
                 <button
                   key={t.id}
@@ -1160,10 +1160,10 @@ function HeroProductDemo({ onOpenBooking }) {
                   onClick={() => handleSelect(t)}
                   className={
                     !t.available
-                      ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                      ? 'py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-[10px] sm:text-xs border border-asphalt-border touch-manipulation'
                       : selectedTile === t.id
-                      ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
-                      : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                      ? 'pit-tile py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-acid-yellow text-asphalt-black font-ticker text-[10px] sm:text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer touch-manipulation'
+                      : 'pit-tile py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-[10px] sm:text-xs font-bold border border-grit-white/20 transition-all cursor-pointer touch-manipulation'
                   }
                 >
                   {t.label}
@@ -1173,9 +1173,9 @@ function HeroProductDemo({ onOpenBooking }) {
           </div>
 
           {/* Row 2 */}
-          <div className="flex items-center gap-2">
-            <span className="font-ticker text-xs font-bold text-acid-yellow w-8 shrink-0">ROW B</span>
-            <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="font-ticker text-[10px] sm:text-xs font-bold text-acid-yellow w-7 sm:w-8 shrink-0">ROW B</span>
+            <div className="flex-1 grid grid-cols-8 gap-1 sm:gap-2">
               {tilesRow2.map((t) => (
                 <button
                   key={t.id}
@@ -1184,10 +1184,10 @@ function HeroProductDemo({ onOpenBooking }) {
                   onClick={() => handleSelect(t)}
                   className={
                     !t.available
-                      ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                      ? 'py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-[10px] sm:text-xs border border-asphalt-border touch-manipulation'
                       : selectedTile === t.id
-                      ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
-                      : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                      ? 'pit-tile py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-acid-yellow text-asphalt-black font-ticker text-[10px] sm:text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer touch-manipulation'
+                      : 'pit-tile py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-[10px] sm:text-xs font-bold border border-grit-white/20 transition-all cursor-pointer touch-manipulation'
                   }
                 >
                   {t.label}
@@ -1197,9 +1197,9 @@ function HeroProductDemo({ onOpenBooking }) {
           </div>
 
           {/* Row 3 */}
-          <div className="flex items-center gap-2">
-            <span className="font-ticker text-xs font-bold text-grit-dim w-8 shrink-0">ROW C</span>
-            <div className="flex-1 grid grid-cols-8 gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="font-ticker text-[10px] sm:text-xs font-bold text-grit-dim w-7 sm:w-8 shrink-0">ROW C</span>
+            <div className="flex-1 grid grid-cols-8 gap-1 sm:gap-2">
               {tilesRow3.map((t) => (
                 <button
                   key={t.id}
@@ -1208,10 +1208,10 @@ function HeroProductDemo({ onOpenBooking }) {
                   onClick={() => handleSelect(t)}
                   className={
                     !t.available
-                      ? 'py-2 bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-xs border border-asphalt-border'
+                      ? 'py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-asphalt-surface text-grit-dim opacity-30 cursor-not-allowed font-ticker text-[10px] sm:text-xs border border-asphalt-border touch-manipulation'
                       : selectedTile === t.id
-                      ? 'pit-tile py-2 bg-acid-yellow text-asphalt-black font-ticker text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer'
-                      : 'pit-tile py-2 bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-xs font-bold border border-grit-white/20 transition-all cursor-pointer'
+                      ? 'pit-tile py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-acid-yellow text-asphalt-black font-ticker text-[10px] sm:text-xs font-black border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] transition-all cursor-pointer touch-manipulation'
+                      : 'pit-tile py-1.5 sm:py-2 min-h-[36px] flex items-center justify-center bg-asphalt-card hover:bg-asphalt-border text-grit-white font-ticker text-[10px] sm:text-xs font-bold border border-grit-white/20 transition-all cursor-pointer touch-manipulation'
                   }
                 >
                   {t.label}
@@ -1224,26 +1224,26 @@ function HeroProductDemo({ onOpenBooking }) {
 
       {/* Legend Bar */}
       <div className="flex flex-wrap items-center justify-between text-xs font-ticker pt-2 border-t border-asphalt-border text-grit-dim gap-2">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-asphalt-card border border-grit-white/40" /> AVAILABLE</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-acid-yellow border border-asphalt-black" /> SELECTED</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 bg-asphalt-surface border border-asphalt-border opacity-40" /> OCCUPIED</span>
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap text-[10px] sm:text-xs">
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 bg-asphalt-card border border-grit-white/40" /> AVAILABLE</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 bg-acid-yellow border border-asphalt-black" /> SELECTED</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 bg-asphalt-surface border border-asphalt-border opacity-40" /> OCCUPIED</span>
         </div>
-        <span className="text-neon-magenta font-bold">1 SEAT SELECTED (10-MIN HOLD WINDOW)</span>
+        <span className="text-neon-magenta font-bold text-[10px] sm:text-xs">1 SEAT SELECTED (10-MIN HOLD)</span>
       </div>
 
       {/* Total Calculation & Commit Button */}
-      <div className="mt-4 pt-3 bg-asphalt-card p-3 border-2 border-grit-white flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="mt-4 pt-3 bg-asphalt-card p-3 border-2 border-grit-white flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         <div>
           <span className="block text-[10px] font-ticker text-grit-dim uppercase">TICKET SUBTOTAL</span>
-          <span className="font-display text-3xl text-acid-yellow">${tariff}.00 USD</span>
+          <span className="font-display text-2xl sm:text-3xl text-acid-yellow">${tariff}.00 USD</span>
         </div>
         <button 
           type="button"
           onClick={handleLock}
-          className="w-full sm:w-auto px-6 py-2.5 bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white font-display text-2xl tracking-wider uppercase border-2 border-asphalt-black shadow-[3px_3px_0px_#eefc54] active:translate-y-0.5 transition-all flex items-center justify-center gap-2 font-bold cursor-pointer"
+          className="w-full sm:w-auto px-5 sm:px-6 py-2.5 min-h-[44px] bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white font-display text-lg sm:text-2xl tracking-wider uppercase border-2 border-asphalt-black shadow-[3px_3px_0px_#eefc54] active:translate-y-0.5 transition-all flex items-center justify-center gap-2 font-bold cursor-pointer touch-manipulation"
         >
-          <span>{lockedSuccess ? 'SEAT RESERVED // OPENING CHECKOUT' : 'SELECT SEAT & PROCEED TO CHECKOUT'}</span>
+          <span>{lockedSuccess ? 'SEAT RESERVED // OPENING CHECKOUT' : 'SELECT SEAT & PROCEED'}</span>
           <span className="material-symbols-outlined text-lg">{lockedSuccess ? 'check_circle' : 'lock'}</span>
         </button>
       </div>
@@ -1389,7 +1389,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
 
   return (
     <div 
-      className="relative w-full max-w-xs sm:max-w-sm md:max-w-md h-[440px] sm:h-[500px] md:h-[520px] pt-10 sm:pt-12 select-none touch-pan-y"
+      className="relative w-full max-w-xs sm:max-w-sm md:max-w-md h-[410px] sm:h-[500px] md:h-[520px] pt-8 sm:pt-12 select-none touch-pan-y overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -1408,7 +1408,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
             key={current.id || eventIndex}
             onClick={() => isTop && handleSlideNext('right')}
             style={getStackStyle(pos)}
-            className={`absolute inset-x-0 bottom-0 top-12 bg-asphalt-black border-4 ${
+            className={`absolute inset-x-0 bottom-0 top-8 sm:top-12 bg-asphalt-black border-4 ${
               isTop 
                 ? (isSoldOut ? 'sold-out-monochrome border-grit-dim shadow-[6px_6px_0px_#222226]' : 'border-grit-white shadow-[6px_6px_0px_#ff1f6d]')
                 : 'border-asphalt-border shadow-[4px_4px_0px_rgba(0,0,0,0.6)]'
@@ -1440,7 +1440,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
             </div>
 
             {/* Image Area */}
-            <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-asphalt-card">
+            <div className="relative h-36 sm:h-48 w-full overflow-hidden bg-asphalt-card">
               <img 
                 src={getImage(current)} 
                 alt={current.name} 
@@ -1596,7 +1596,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
     }`}>
       
       {/* 1. Artwork & Image Overlay */}
-      <div className="relative h-56 w-full overflow-hidden bg-asphalt-black">
+      <div className="relative h-48 sm:h-56 w-full overflow-hidden bg-asphalt-black">
         <img 
           src={getImageForEvent(event)} 
           alt={event.name} 
@@ -1626,7 +1626,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
               <button 
                 type="button"
                 onClick={onDelete}
-                className="bg-danger-red/90 hover:bg-danger-red text-grit-white p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center border border-asphalt-black text-xs font-bold cursor-pointer transition-colors"
+                className="bg-danger-red/90 hover:bg-danger-red text-grit-white p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center border border-asphalt-black text-xs font-bold cursor-pointer transition-colors touch-manipulation"
                 title="Remove Event"
               >
                 ✕
@@ -1635,7 +1635,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
             <button 
               type="button"
               onClick={onWishlist}
-              className="bg-asphalt-black/80 hover:bg-neon-magenta text-grit-white p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center border border-grit-white/40 text-xs cursor-pointer transition-colors"
+              className="bg-asphalt-black/80 hover:bg-neon-magenta text-grit-white p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center border border-grit-white/40 text-xs cursor-pointer transition-colors touch-manipulation"
               title="Save to wishlist"
             >
               <Heart size={14} />
@@ -1651,7 +1651,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
       </div>
 
       {/* 2. Content Body */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+      <div className="p-3.5 sm:p-5 flex-1 flex flex-col justify-between">
         <div>
           {/* Cinema metadata pills (Format, Runtime, Rating) */}
           {isCinema && (
@@ -1703,7 +1703,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
                       e.stopPropagation();
                       if (!isSoldOut) onBook(time);
                     }}
-                    className={`font-mono-zine text-xs sm:text-[10px] py-1.5 min-h-[32px] flex items-center justify-center border transition-colors text-center font-bold ${
+                    className={`font-mono-zine text-xs sm:text-[10px] py-1.5 min-h-[34px] flex items-center justify-center border transition-colors text-center font-bold touch-manipulation ${
                       isSoldOut
                         ? 'bg-asphalt-card text-grit-dim/50 border-asphalt-border line-through cursor-not-allowed'
                         : 'bg-asphalt-surface hover:bg-acid-yellow hover:text-asphalt-black text-grit-white border-asphalt-border cursor-pointer'
@@ -1743,7 +1743,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
             <button 
               type="button"
               onClick={onWaitlist}
-              className="w-full py-2.5 bg-asphalt-surface hover:bg-grit-white text-grit-white hover:text-asphalt-black font-impact text-sm uppercase tracking-wider border-2 border-grit-dim hover:border-grit-white shadow-[3px_3px_0px_#222] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold"
+              className="w-full py-2.5 min-h-[44px] bg-asphalt-surface hover:bg-grit-white text-grit-white hover:text-asphalt-black font-impact text-sm uppercase tracking-wider border-2 border-grit-dim hover:border-grit-white shadow-[3px_3px_0px_#222] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold touch-manipulation"
             >
               <span>JOIN WAITLIST // SOLD OUT</span>
               <ArrowRight size={14} />
@@ -1752,7 +1752,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
             <button 
               type="button"
               onClick={() => onBook()}
-              className="w-full py-2.5 bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-base uppercase tracking-wider border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold"
+              className="w-full py-2.5 min-h-[44px] bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-base uppercase tracking-wider border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-bold touch-manipulation"
             >
               <span>{isCinema ? 'BOOK SEATS' : 'SELECT SEATS'}</span>
               <ArrowRight size={15} />

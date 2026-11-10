@@ -31,42 +31,42 @@ export default function SeatMapSkeleton({ isCinema = false }) {
       </div>
 
       {/* 3. Seat Grid Skeleton */}
-      <div className="overflow-x-auto pb-4">
-        <div className="min-w-[560px] flex flex-col gap-3 items-center">
+      <div className="overflow-x-auto pb-4 touch-scroll scrollbar-none">
+        <div className="min-w-fit w-full flex flex-col gap-2 sm:gap-3 items-center">
           {rows.map((row) => (
-            <div key={row} className="flex items-center gap-2">
+            <div key={row} className="flex items-center gap-1 sm:gap-2">
               {/* Row Label Left */}
-              <div className="w-6 h-7 skeleton-box font-ticker text-xs font-bold flex items-center justify-center border border-asphalt-border text-grit-dim">
+              <div className="w-5 sm:w-6 h-6 sm:h-7 skeleton-box font-ticker text-[10px] sm:text-xs font-bold flex items-center justify-center border border-asphalt-border text-grit-dim">
                 {row}
               </div>
 
               {/* Left Wing (5 Seats) */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-0.5 sm:gap-1.5">
                 {leftSeats.map((s) => (
                   <div
                     key={`l-${s}`}
-                    className="w-8 h-8 sm:w-9 sm:h-9 skeleton-box border border-asphalt-border rounded-[3px]"
+                    className="w-7 h-6 sm:w-8 sm:h-7 md:w-9 md:h-8 skeleton-box border border-asphalt-border rounded-[3px]"
                   />
                 ))}
               </div>
 
               {/* Aisle */}
-              <div className="w-6 sm:w-8 text-center text-grit-dim font-ticker text-[9px] tracking-widest opacity-40">
+              <div className="w-4 sm:w-8 text-center text-grit-dim font-ticker text-[7px] sm:text-[9px] tracking-widest opacity-40">
                 AISLE
               </div>
 
               {/* Right Wing (5 Seats) */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-0.5 sm:gap-1.5">
                 {rightSeats.map((s) => (
                   <div
                     key={`r-${s}`}
-                    className="w-8 h-8 sm:w-9 sm:h-9 skeleton-box border border-asphalt-border rounded-[3px]"
+                    className="w-7 h-6 sm:w-8 sm:h-7 md:w-9 md:h-8 skeleton-box border border-asphalt-border rounded-[3px]"
                   />
                 ))}
               </div>
 
               {/* Row Label Right */}
-              <div className="w-6 h-7 skeleton-box font-ticker text-xs font-bold flex items-center justify-center border border-asphalt-border text-grit-dim">
+              <div className="w-5 sm:w-6 h-6 sm:h-7 skeleton-box font-ticker text-[10px] sm:text-xs font-bold flex items-center justify-center border border-asphalt-border text-grit-dim">
                 {row}
               </div>
             </div>

@@ -305,7 +305,7 @@ export default function Navbar({
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <button 
                   onClick={() => handleNavClick('login')} 
                   className="bg-asphalt-card hover:bg-asphalt-surface text-grit-white px-3 py-1.5 min-h-[38px] flex items-center justify-center font-display text-base tracking-wider uppercase border border-asphalt-border hover:border-acid-yellow cursor-pointer touch-manipulation"

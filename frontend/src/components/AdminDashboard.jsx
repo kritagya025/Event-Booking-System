@@ -106,53 +106,53 @@ export default function AdminDashboard({ showToast }) {
       ) : (
         <>
           {/* 4 Brutalist Metric Stamps */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-5 shadow-[3px_3px_0px_#E2F13C] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TOTAL PLATFORM REVENUE</span>
-          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-5 shadow-[3px_3px_0px_#E2F13C] relative">
+          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">PLATFORM REVENUE</span>
+          <span className="font-display text-xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block truncate">
             {formatPrice(displayTotalRevenue)}
           </span>
-          <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
+          <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
             +{formatPrice(displayTodayRevenue)} TODAY
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-5 shadow-[3px_3px_0px_#F43F5E] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">TICKETS ISSUED</span>
-          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-5 shadow-[3px_3px_0px_#F43F5E] relative">
+          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">TICKETS ISSUED</span>
+          <span className="font-display text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
             {dbBookingsCount.toLocaleString()}
           </span>
-          <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
-            STOMP VERIFIED RESERVATIONS
+          <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
+            VERIFIED PASSES
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-5 shadow-[3px_3px_0px_#1d4ed8] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">REGISTERED USERS</span>
-          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-5 shadow-[3px_3px_0px_#1d4ed8] relative">
+          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">REGISTERED USERS</span>
+          <span className="font-display text-xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block truncate">
             {dbUsersCount.toLocaleString()}
           </span>
-          <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
-            REGISTERED ATTENDEES & ORGANIZERS
+          <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
+            ACTIVE ACCOUNTS
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-5 shadow-[3px_3px_0px_#ffffff] relative">
-          <span className="font-impact text-xs tracking-wider text-grit-dim uppercase block">PUBLISHED EVENTS</span>
-          <span className="font-display text-2xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-5 shadow-[3px_3px_0px_#ffffff] relative">
+          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">PUBLISHED SHOWS</span>
+          <span className="font-display text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
             {dbEventsCount}
           </span>
-          <span className="text-[10px] font-ticker text-grit-dim uppercase mt-2 block">
-            ACTIVE LIVE EVENTS
+          <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
+            ACTIVE INVENTORY
           </span>
         </div>
       </div>
 
       {/* Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         
         {/* Top Performing Events */}
-        <div className="bg-asphalt-surface border-2 border-grit-white p-6 shadow-[3px_3px_0px_#E2F13C]">
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-6 shadow-[3px_3px_0px_#E2F13C]">
           <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-acid-yellow"></span> TOP POPULAR EVENTS
           </h3>
@@ -191,13 +191,13 @@ export default function AdminDashboard({ showToast }) {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <span className={`font-display text-xl font-bold ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
+                <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-asphalt-border">
+                  <span className={`font-display text-lg sm:text-xl font-bold ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
                     {formatPrice(event.ticketPrice, event.currency)}
                   </span>
                   <button 
                     onClick={() => handleDeleteEvent(event.id, event.name)} 
-                    className="text-neon-magenta hover:text-grit-white bg-asphalt-surface border border-asphalt-border hover:border-neon-magenta p-2 min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer transition-colors"
+                    className="text-neon-magenta hover:text-grit-white bg-asphalt-surface border border-asphalt-border hover:border-neon-magenta p-2 min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer transition-colors touch-manipulation"
                     title="Remove from Catalog"
                   >
                     <Trash2 size={14} />

@@ -559,38 +559,38 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   const rowsList = Array.from(new Set(seatMap.map(s => s.rowNumber || 'A'))).sort();
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto safe-pb touch-scroll" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-hidden safe-pb" onClick={onClose}>
       <div 
-        className="w-full max-w-4xl bg-asphalt-surface border-2 sm:border-4 border-grit-white text-grit-white shadow-[6px_6px_0px_#eefc54] sm:shadow-[12px_12px_0px_#eefc54] my-auto relative select-none"
+        className="w-full h-full sm:h-auto max-h-[100dvh] sm:max-h-[90vh] max-w-4xl bg-asphalt-surface border-0 sm:border-4 border-grit-white text-grit-white shadow-none sm:shadow-[12px_12px_0px_#eefc54] relative select-none flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top Slanted Sticker */}
-        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
+        {/* Top Slanted Sticker (Shown on sm+ to prevent mobile clipping) */}
+        <div className="hidden sm:inline-block absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
           EVENTHUB // RESERVATION ENGINE
         </div>
 
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 md:p-6 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+        <div className="p-3.5 sm:p-5 md:p-6 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card shrink-0">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-[11px] sm:text-xs px-2 py-0.5">
                 LIVE SEAT RESERVATION
               </span>
-              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
+              <span className="font-ticker text-[9px] sm:text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
                 LIVE SEAT INVENTORY SYNCED
               </span>
             </div>
-            <h3 className="font-display text-2xl md:text-3xl uppercase tracking-tight text-grit-white mt-1 leading-none">
+            <h3 className="font-display text-xl sm:text-2xl md:text-3xl uppercase tracking-tight text-grit-white mt-1 leading-none line-clamp-1">
               {event.name}
             </h3>
-            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
+            <p className="font-mono-zine text-[11px] sm:text-xs text-grit-dim uppercase tracking-wider mt-1 truncate">
               VENUE: {event.venueName || 'MAIN ARENA'} · {availableCount} SEATS AVAILABLE
             </p>
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
+            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[40px] min-h-[40px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation ml-2 shrink-0"
             aria-label="Close Seat Map"
           >
             <X size={18} />
@@ -598,8 +598,22 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         </div>
 
         {/* Multi-Step Protocol Bar */}
-        <div className="bg-asphalt-black border-b border-asphalt-border px-3 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between text-xs font-ticker overflow-x-auto touch-scroll scrollbar-none gap-2">
-          <div className="flex items-center gap-2">
+        <div className="bg-asphalt-black border-b border-asphalt-border px-3.5 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between text-xs font-ticker shrink-0">
+          {/* Mobile: Compact Progress */}
+          <div className="flex sm:hidden items-center justify-between w-full">
+            <span className="font-bold text-acid-yellow font-ticker text-xs flex items-center gap-1.5">
+              <span className="bg-acid-yellow text-asphalt-black px-1.5 py-0.2 font-black text-[10px]">0{step}/04</span>
+              {step === 1 ? 'SELECT SEATS' : step === 2 ? 'REVIEW BOOKING' : step === 3 ? 'PAYMENT METHOD' : 'CONFIRMATION'}
+            </span>
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4].map(s => (
+                <span key={s} className={`h-1.5 rounded-full transition-all ${s === step ? 'w-5 bg-acid-yellow' : s < step ? 'w-2 bg-neon-magenta' : 'w-2 bg-asphalt-border'}`} />
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop sm+: Multi-Step Protocol Bar */}
+          <div className="hidden sm:flex items-center gap-2 overflow-x-auto touch-scroll scrollbar-none">
             <span className={step === 1 ? 'text-acid-yellow font-bold bg-asphalt-surface px-2 py-0.5 border border-acid-yellow' : 'text-grit-dim'}>
               [01] SELECT SEATS
             </span>
@@ -619,7 +633,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 md:p-6 max-h-[75vh] overflow-y-auto">
+        <div className="p-3.5 sm:p-5 md:p-6 flex-1 overflow-y-auto touch-scroll safe-pb">
           
           {/* STEP 1: SELECT SEATS */}
           {step === 1 && (
@@ -657,43 +671,43 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   )}
 
                   {/* ─── A. Proscenium: Cinema Curved Screen OR Live Concert Stage ─── */}
-                  <div className="relative mb-5 bg-asphalt-black border-2 border-asphalt-border p-3 sm:p-4 overflow-hidden">
-                    <div className="hazard-tape h-2 w-full mb-3" />
+                  <div className="relative mb-4 sm:mb-5 bg-asphalt-black border-2 border-asphalt-border p-2 sm:p-4 overflow-hidden">
+                    <div className="hazard-tape h-1.5 sm:h-2 w-full mb-2 sm:mb-3" />
 
                     {isCinema ? (
                       /* Cinema Curved IMAX Screen */
                       <div className="relative">
                         {/* Overhead Projector Aperture & Beam */}
                         <div className="flex flex-col items-center mb-1">
-                          <div className="flex items-center gap-1.5 px-3 py-0.5 bg-asphalt-card border border-asphalt-border text-[8px] font-mono-zine text-grit-dim uppercase tracking-widest">
+                          <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-asphalt-card border border-asphalt-border text-[7px] sm:text-[8px] font-mono-zine text-grit-dim uppercase tracking-widest">
                             <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping inline-block"></span>
                             4K DUAL LASER BOOTH • 1.43:1 RATIO
                           </div>
                           {/* Angled projection beam lines */}
-                          <div className="w-40 h-3 bg-gradient-to-b from-sky-400/20 via-sky-400/5 to-transparent"></div>
+                          <div className="w-28 sm:w-40 h-2 sm:h-3 bg-gradient-to-b from-sky-400/20 via-sky-400/5 to-transparent"></div>
                         </div>
 
                         {/* Curved Screen Curve */}
-                        <div className="text-center py-4 px-4 bg-gradient-to-b from-asphalt-card via-asphalt-black to-asphalt-black border-2 border-acid-yellow shadow-[0_0_30px_rgba(226,241,60,0.18)] relative rounded-b-[48px] overflow-hidden">
+                        <div className="text-center py-2.5 sm:py-4 px-2 sm:px-4 bg-gradient-to-b from-asphalt-card via-asphalt-black to-asphalt-black border-2 border-acid-yellow shadow-[0_0_30px_rgba(226,241,60,0.18)] relative rounded-b-[24px] sm:rounded-b-[48px] overflow-hidden">
                           {/* Prismatic reflection sheen */}
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-400/10 to-transparent pointer-events-none"></div>
 
-                          <div className="flex items-center justify-center gap-2 mb-1 relative z-10">
-                            <Film size={16} className="text-acid-yellow animate-pulse" />
-                            <span className="font-impact text-base sm:text-lg tracking-widest text-grit-white uppercase">
+                          <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1 relative z-10">
+                            <Film size={14} className="text-acid-yellow animate-pulse shrink-0" />
+                            <span className="font-impact text-xs sm:text-lg tracking-widest text-grit-white uppercase truncate">
                               ▲ CURVED IMAX CINEMA SCREEN // ALL EYES FORWARD ▲
                             </span>
-                            <Film size={16} className="text-neon-magenta animate-pulse" />
+                            <Film size={14} className="text-neon-magenta animate-pulse shrink-0" />
                           </div>
-                          <p className="font-mono-zine text-[9px] sm:text-[10px] text-grit-dim uppercase tracking-wider relative z-10">
+                          <p className="font-mono-zine text-[8px] sm:text-[10px] text-grit-dim uppercase tracking-wider relative z-10">
                             128-CH DOLBY ATMOS 3D AUDIO • ACOUSTIC SWEET-SPOT: ROWS B-C
                           </p>
-                          <div className="w-56 h-1 bg-gradient-to-r from-transparent via-acid-yellow to-transparent mx-auto mt-2 opacity-80"></div>
+                          <div className="w-36 sm:w-56 h-1 bg-gradient-to-r from-transparent via-acid-yellow to-transparent mx-auto mt-1 sm:mt-2 opacity-80"></div>
                         </div>
 
                         {/* Sweet-spot reference guide */}
                         <div className="text-center mt-1">
-                          <span className="font-ticker text-[8px] text-acid-yellow tracking-widest uppercase">
+                          <span className="font-ticker text-[7px] sm:text-[8px] text-acid-yellow tracking-widest uppercase">
                             ▼ OPTIMAL STEREO & VISUAL AXIS ▼
                           </span>
                         </div>
@@ -711,7 +725,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                           <span>RIGGING TRUSS B1</span>
                         </div>
 
-                        <div className="flex items-stretch justify-between gap-3">
+                        <div className="flex items-stretch justify-between gap-2 sm:gap-3">
                           {/* Left Speaker Tower Array */}
                           <div className="hidden sm:flex flex-col items-center justify-between p-2.5 bg-asphalt-card border border-asphalt-border shadow-[2px_2px_0px_#0e0e11] w-20">
                             <div className="flex items-center gap-1 text-[8px] font-ticker text-grit-dim uppercase">
@@ -729,24 +743,24 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                           </div>
 
                           {/* Center Main Stage Floor Rig */}
-                          <div className="flex-1 text-center py-3 px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_24px_rgba(238,252,84,0.15)] relative rounded-b-[24px]">
+                          <div className="flex-1 text-center py-2 sm:py-3 px-2 sm:px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_24px_rgba(238,252,84,0.15)] relative rounded-b-[18px] sm:rounded-b-[24px]">
                             {/* Overhead spotlight cone glow */}
                             <div className="absolute inset-0 bg-gradient-to-b from-acid-yellow/5 to-transparent pointer-events-none"></div>
 
-                            <div className="flex items-center justify-center gap-2 mb-1">
-                              <Zap size={15} className="text-acid-yellow animate-bounce" />
-                              <span className="font-impact text-sm sm:text-base tracking-widest text-grit-white uppercase">
+                            <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                              <Zap size={14} className="text-acid-yellow animate-bounce shrink-0" />
+                              <span className="font-impact text-xs sm:text-base tracking-widest text-grit-white uppercase truncate">
                                 ▲ MAIN CONCERT STAGE & LIVE SOUND RIG ▲
                               </span>
-                              <Zap size={15} className="text-neon-magenta animate-bounce" />
+                              <Zap size={14} className="text-neon-magenta animate-bounce shrink-0" />
                             </div>
-                            <p className="font-mono-zine text-[9px] sm:text-[10px] text-grit-dim uppercase tracking-wider">
+                            <p className="font-mono-zine text-[8px] sm:text-[10px] text-grit-dim uppercase tracking-wider">
                               DIRECT STAGE SIGHTLINE • 10-MINUTE SEAT LOCK ACTIVE
                             </p>
-                            <div className="mt-2 inline-flex items-center gap-2 px-2.5 py-0.5 bg-asphalt-black border border-asphalt-border font-ticker text-[8px] text-acid-yellow uppercase">
-                              <span>🎙️ CENTER PERFORMER APEX</span>
+                            <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 bg-asphalt-black border border-asphalt-border font-ticker text-[7.5px] sm:text-[8px] text-acid-yellow uppercase">
+                              <span>CENTER PERFORMER APEX</span>
                               <span>•</span>
-                              <span>STAGE FRONT MOSH BARRIER</span>
+                              <span>STAGE FRONT BARRIER</span>
                             </div>
                           </div>
 
@@ -905,12 +919,12 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   )}
 
                   {/* ─── C. Interactive Arena Seat Grid with Center Aisle ─── */}
-                  <div className="flex sm:hidden items-center justify-center gap-1.5 py-1 px-3 bg-asphalt-black border border-asphalt-border text-[10px] font-mono-zine text-acid-yellow uppercase mb-2">
-                    <span>← SWIPE HORIZONTALLY TO VIEW ALL ROWS & SEATS →</span>
+                  <div className="flex sm:hidden items-center justify-center gap-1.5 py-1 px-3 bg-asphalt-black border border-asphalt-border text-[9px] font-mono-zine text-acid-yellow uppercase mb-2">
+                    <span>TAP SEAT TO SELECT // LIVE SEAT AVAILABILITY</span>
                   </div>
 
                   <div className="overflow-x-auto pb-4 touch-scroll scrollbar-none">
-                    <div className="min-w-[580px] flex flex-col gap-3 items-center">
+                    <div className="min-w-fit w-full flex flex-col gap-2 sm:gap-3 items-center">
                       {rowsList.map((row, rowIndex) => {
                         const rowSeats = seatMap.filter(s => s.rowNumber === row);
                         const leftWing = rowSeats.slice(0, 5);
@@ -950,7 +964,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
 
                           let container = "group relative flex flex-col items-center justify-center transition-all duration-150 cursor-pointer select-none ";
                           let headrest = "w-full h-1.5 sm:h-2 rounded-t-[4px] border-b ";
-                          let cushion = "w-8 h-7 sm:w-9 sm:h-8 flex items-center justify-center font-mono-zine text-[11px] font-bold border-2 border-t-0 rounded-b-[4px] relative ";
+                          let cushion = "w-7 h-6 sm:w-8 sm:h-7 md:w-9 md:h-8 flex items-center justify-center font-mono-zine text-[9.5px] sm:text-[11px] font-bold border-2 border-t-0 rounded-b-[4px] relative seat-btn ";
 
                           if (isSelected) {
                             container += "scale-105 z-20 -translate-y-0.5 ";
@@ -996,15 +1010,15 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                               <span className={headrest} />
                               <span className={cushion}>
                                 {isSelected ? (
-                                  <Check size={14} className="stroke-[3]" />
+                                  <Check size={13} className="stroke-[3]" />
                                 ) : (
-                                  <span className="leading-none text-[11px] tracking-tight">
+                                  <span className="leading-none text-[9.5px] sm:text-[11px] tracking-tight">
                                     {seat.seatNumber}
                                   </span>
                                 )}
                               </span>
                               {seat.seatType === 'VIP' && !isSelected && seat.status === 'AVAILABLE' && (
-                                <span className="absolute -top-1 -right-0.5 w-2 h-2 bg-neon-magenta rounded-full border border-asphalt-black shadow-[0_0_4px_#ff1f6d]" />
+                                <span className="absolute -top-1 -right-0.5 w-1.5 sm:w-2 h-1.5 sm:h-2 bg-neon-magenta rounded-full border border-asphalt-black shadow-[0_0_4px_#ff1f6d]" />
                               )}
                             </button>
                           );
@@ -1014,48 +1028,48 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                           <React.Fragment key={row}>
                             {/* Tier Architectural Header Divider */}
                             {tierHeader && (
-                              <div className="w-full flex items-center justify-between gap-3 pt-2 pb-1 border-t border-asphalt-border/60">
+                              <div className="w-full flex items-center justify-between gap-2 sm:gap-3 pt-2 pb-1 border-t border-asphalt-border/60">
                                 <div className="h-px flex-1 bg-asphalt-border"></div>
-                                <span className={`px-2.5 py-0.5 text-[9px] font-mono-zine uppercase tracking-wider border ${tierHeader.color}`}>
+                                <span className={`px-2 sm:px-2.5 py-0.5 text-[8px] sm:text-[9px] font-mono-zine uppercase tracking-wider border ${tierHeader.color}`}>
                                   {tierHeader.title}
                                 </span>
                                 <div className="h-px flex-1 bg-asphalt-border"></div>
                               </div>
                             )}
 
-                            <div className="flex items-center gap-2 sm:gap-3">
+                            <div className="flex items-center gap-1 sm:gap-3">
                               {/* Left Stanchion */}
-                              <div className="w-6 sm:w-7 text-center">
-                                <span className="font-impact text-grit-white text-xs bg-asphalt-card border border-asphalt-border px-1.5 py-0.5 shadow-[1px_1px_0px_#0e0e11] block">
+                              <div className="w-5 sm:w-7 text-center">
+                                <span className="font-impact text-grit-white text-[10px] sm:text-xs bg-asphalt-card border border-asphalt-border px-1 sm:px-1.5 py-0.5 shadow-[1px_1px_0px_#0e0e11] block">
                                   {row}
                                 </span>
                               </div>
 
                               {/* Left Wing */}
-                              <div className="flex gap-1 sm:gap-1.5">
+                              <div className="flex gap-0.5 sm:gap-1.5">
                                 {leftWing.map(renderSeatBtn)}
                               </div>
 
                               {/* Center Illuminated Runway Aisle */}
-                              <div className="w-8 sm:w-10 text-center flex flex-col items-center justify-center pointer-events-none opacity-70">
-                                <span className="font-ticker text-[7px] text-acid-yellow tracking-widest uppercase leading-none">
-                                  ▲ AISLE ▲
+                              <div className="w-4 sm:w-10 text-center flex flex-col items-center justify-center pointer-events-none opacity-70">
+                                <span className="font-ticker text-[6px] sm:text-[7px] text-acid-yellow tracking-widest uppercase leading-none">
+                                  AISLE
                                 </span>
-                                <div className="flex items-center gap-1 my-0.5">
-                                  <span className="w-1 h-1 rounded-full bg-acid-yellow/60"></span>
-                                  <div className="h-3 w-px border-r border-dashed border-asphalt-border" />
-                                  <span className="w-1 h-1 rounded-full bg-acid-yellow/60"></span>
+                                <div className="flex items-center gap-0.5 sm:gap-1 my-0.5">
+                                  <span className="w-0.5 sm:w-1 h-0.5 sm:h-1 rounded-full bg-acid-yellow/60"></span>
+                                  <div className="h-2.5 sm:h-3 w-px border-r border-dashed border-asphalt-border" />
+                                  <span className="w-0.5 sm:w-1 h-0.5 sm:h-1 rounded-full bg-acid-yellow/60"></span>
                                 </div>
                               </div>
 
                               {/* Right Wing */}
-                              <div className="flex gap-1 sm:gap-1.5">
+                              <div className="flex gap-0.5 sm:gap-1.5">
                                 {rightWing.map(renderSeatBtn)}
                               </div>
 
                               {/* Right Stanchion */}
-                              <div className="w-6 sm:w-7 text-center">
-                                <span className="font-impact text-grit-white text-xs bg-asphalt-card border border-asphalt-border px-1.5 py-0.5 shadow-[1px_1px_0px_#0e0e11] block">
+                              <div className="w-5 sm:w-7 text-center">
+                                <span className="font-impact text-grit-white text-[10px] sm:text-xs bg-asphalt-card border border-asphalt-border px-1 sm:px-1.5 py-0.5 shadow-[1px_1px_0px_#0e0e11] block">
                                   {row}
                                 </span>
                               </div>
@@ -1207,21 +1221,21 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 </div>
               )}
 
-              {/* ─── G. Bottom Actions ─── */}
-              <div className="mt-6 pt-4 border-t-2 border-asphalt-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-                <div>
-                  <span className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider block">
+              {/* ─── G. Sticky Bottom Actions Bar ─── */}
+              <div className="sticky bottom-0 -mx-3.5 sm:-mx-5 md:-mx-6 -mb-3.5 sm:-mb-5 md:-mb-6 mt-6 p-3 sm:p-4 bg-asphalt-black/95 backdrop-blur-md border-t-2 border-asphalt-border flex flex-row items-center justify-between gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.6)] z-30">
+                <div className="min-w-0">
+                  <span className="font-mono-zine text-[10px] sm:text-xs text-grit-dim uppercase tracking-wider block truncate">
                     {selectedSeats.length > 0 ? (
                       <span className="text-acid-yellow font-bold">
-                        {selectedSeats.length} SEAT(S) SELECTED: {selectedSeats.map(s => s.seatNumber).join(', ')}
+                        {selectedSeats.length} SEAT{selectedSeats.length > 1 ? 'S' : ''} ({selectedSeats.map(s => s.seatNumber).join(', ')})
                       </span>
                     ) : (
                       <span className="text-neon-magenta flex items-center gap-1 font-bold">
-                        <AlertCircle size={13} /> NO SEATS SELECTED // PLEASE CHOOSE YOUR SEATS
+                        <AlertCircle size={12} className="shrink-0" /> TAP TO SELECT
                       </span>
                     )}
                   </span>
-                  <span className="font-display text-2xl sm:text-3xl text-acid-yellow font-bold leading-none mt-0.5 block">
+                  <span className="font-display text-xl sm:text-3xl text-acid-yellow font-bold leading-none mt-0.5 block">
                     {formatPrice(calculateSubtotal(), event.currency)}
                   </span>
                 </div>
@@ -1229,14 +1243,16 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   type="button"
                   onClick={handleProceedToReview}
                   disabled={selectedSeats.length === 0}
-                  className={`font-impact tracking-wider text-base sm:text-lg uppercase px-6 py-3 sm:py-2.5 border-2 border-asphalt-black flex items-center justify-center gap-2 transition-all touch-manipulation ${
+                  className={`font-impact tracking-wider text-sm sm:text-lg uppercase px-4 sm:px-6 py-2.5 sm:py-2.5 min-h-[44px] border-2 border-asphalt-black flex items-center justify-center gap-1.5 sm:gap-2 transition-all touch-manipulation shrink-0 ${
                     selectedSeats.length > 0
-                      ? 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff] cursor-pointer'
+                      ? 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[3px_3px_0px_#ffffff] cursor-pointer'
                       : 'bg-asphalt-card text-grit-dim/50 border-asphalt-border cursor-not-allowed opacity-50'
                   }`}
                   title={selectedSeats.length === 0 ? 'Select at least one seat to proceed' : 'Review Selected Seats'}
                 >
-                  REVIEW BOOKING <ArrowRight size={16} />
+                  <span>REVIEW</span>
+                  <span className="hidden xs:inline">BOOKING</span>
+                  <ArrowRight size={15} />
                 </button>
               </div>
             </div>
@@ -1335,12 +1351,12 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1 shrink-0 bg-asphalt-card border border-asphalt-border p-1">
+                          <div className="flex items-center gap-1.5 shrink-0 bg-asphalt-card border border-asphalt-border p-1">
                             <button
                               type="button"
                               onClick={() => handleUpdateSnack(snack.id, -1)}
                               disabled={qty <= 0}
-                              className="w-6 h-6 flex items-center justify-center font-impact text-sm bg-asphalt-surface hover:bg-neon-magenta hover:text-grit-white text-grit-white border border-asphalt-border disabled:opacity-30 disabled:hover:bg-asphalt-surface cursor-pointer"
+                              className="w-8 h-8 min-w-[32px] min-h-[32px] flex items-center justify-center font-impact text-base bg-asphalt-surface hover:bg-neon-magenta hover:text-grit-white text-grit-white border border-asphalt-border disabled:opacity-30 disabled:hover:bg-asphalt-surface cursor-pointer touch-manipulation"
                               title="Decrease"
                             >
                               -
@@ -1352,7 +1368,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                               type="button"
                               onClick={() => handleUpdateSnack(snack.id, 1)}
                               disabled={qty >= 10}
-                              className="w-6 h-6 flex items-center justify-center font-impact text-sm bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-bold cursor-pointer"
+                              className="w-8 h-8 min-w-[32px] min-h-[32px] flex items-center justify-center font-impact text-base bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-bold cursor-pointer touch-manipulation"
                               title="Increase"
                             >
                               +
@@ -1382,7 +1398,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                     type="button" 
                     onClick={handleApplyCoupon} 
                     disabled={validatingCoupon}
-                    className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black font-impact tracking-wider px-4 py-2 uppercase text-sm transition-colors cursor-pointer touch-manipulation text-center"
+                    className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black font-impact tracking-wider px-4 py-2.5 min-h-[44px] uppercase text-sm transition-colors cursor-pointer touch-manipulation text-center flex items-center justify-center"
                   >
                     {validatingCoupon ? 'VERIFYING...' : 'APPLY CODE'}
                   </button>
@@ -1398,7 +1414,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 <button 
                   type="button"
                   onClick={() => setStep(1)} 
-                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 min-h-[44px] uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
                 >
                   <ArrowLeft size={14} /> BACK TO SEATS
                 </button>
@@ -1406,7 +1422,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   type="button"
                   onClick={handleProceedToPayment} 
                   disabled={selectedSeats.length === 0}
-                  className={`font-impact tracking-wider text-base uppercase px-5 py-3 border-2 border-asphalt-black flex items-center justify-center gap-2 transition-all touch-manipulation ${
+                  className={`font-impact tracking-wider text-base uppercase px-5 py-3 min-h-[44px] border-2 border-asphalt-black flex items-center justify-center gap-2 transition-all touch-manipulation ${
                     selectedSeats.length > 0
                       ? 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff] cursor-pointer'
                       : 'bg-asphalt-card text-grit-dim/50 border-asphalt-border cursor-not-allowed opacity-50'
@@ -1594,14 +1610,14 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                 <button 
                   type="button"
                   onClick={() => setStep(2)} 
-                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 min-h-[44px] uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
                 >
                   <ArrowLeft size={14} /> BACK
                 </button>
                 <button 
                   type="button"
                   onClick={handleProceedToConfirm} 
-                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-3 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-5 py-3 min-h-[44px] border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
                 >
                   REVIEW ORDER <ArrowRight size={16} />
                 </button>
@@ -1705,7 +1721,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   type="button"
                   onClick={() => setStep(3)} 
                   disabled={bookingLoading || selectedSeats.length === 0}
-                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
+                  className="bg-asphalt-card border border-asphalt-border text-grit-white hover:border-acid-yellow font-mono-zine text-xs px-4 py-2.5 min-h-[44px] uppercase flex items-center justify-center gap-1 cursor-pointer touch-manipulation"
                 >
                   <ArrowLeft size={14} /> EDIT PAYMENT
                 </button>
@@ -1713,7 +1729,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                   type="button"
                   onClick={handleConfirmBooking} 
                   disabled={bookingLoading || selectedSeats.length === 0}
-                  className="bg-neon-magenta text-grit-white font-impact tracking-wider text-base sm:text-lg uppercase px-6 py-3 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer disabled:opacity-50 touch-manipulation flex items-center justify-center"
+                  className="bg-neon-magenta text-grit-white font-impact tracking-wider text-base sm:text-lg uppercase px-6 py-3 min-h-[48px] border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer disabled:opacity-50 touch-manipulation flex items-center justify-center"
                 >
                   {bookingLoading ? 'PROCESSING RESERVATION...' : `CONFIRM & PAY (${formatPrice(calculateFinalTotal(), event.currency)})`}
                 </button>
