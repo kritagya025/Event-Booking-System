@@ -1,0 +1,38 @@
+{
+  "java.compile.nullAnalysis.mode": "disabled",
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.configuration.checkProjectSettingsExclusions": false,
+  "vscode-edge-devtools.webhint": false,
+  "css.lint.vendorPrefix": "ignore",
+  "css.lint.unknownAtRules": "ignore",
+  "css.validate": true,
+  "markdownlint.run": "off",
+  "markdownlint.config": {
+    "default": false
+  },
+
+  "files.exclude": {
+    "**/.git": true,
+    "**/target": true,
+    "**/build": true,
+    "**/.gradle": true,
+    "**/node_modules": true,
+    "**/logs": true
+  },
+  "search.exclude": {
+    "**/target": true,
+    "**/build": true,
+    "**/.gradle": true,
+    "**/node_modules": true,
+    "**/logs": true,
+    "**/*.class": true,
+    "**/*.jar": true
+  },
+  "files.watcherExclude": {
+    "**/target/**": true,
+    "**/build/**": true,
+    "**/.gradle/**": true,
+    "**/node_modules/**": true,
+    "**/logs/**": true
+  }
+}
