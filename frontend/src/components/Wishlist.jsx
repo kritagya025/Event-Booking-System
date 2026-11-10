@@ -48,7 +48,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
     <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
       
       {/* Header */}
-      <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex items-end justify-between">
+      <div className="mb-6 sm:mb-8 border-b-2 border-asphalt-border pb-4 sm:pb-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
@@ -142,14 +142,14 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
                   {isSoldOut ? (
                     <button 
                       onClick={() => onSelectEvent(event)} 
-                      className="bg-asphalt-surface text-grit-white font-impact tracking-wider text-xs uppercase px-4 py-2 border border-grit-dim hover:border-grit-white hover:bg-grit-white hover:text-asphalt-black transition-all shadow-[2px_2px_0px_#222] flex items-center gap-1.5 cursor-pointer font-bold"
+                      className="bg-asphalt-surface text-grit-white font-impact tracking-wider text-xs uppercase px-4 py-2 min-h-[40px] border border-grit-dim hover:border-grit-white hover:bg-grit-white hover:text-asphalt-black transition-all shadow-[2px_2px_0px_#222] flex items-center gap-1.5 cursor-pointer font-bold touch-manipulation"
                     >
                       WAITLIST // SOLD OUT <ArrowRight size={13} />
                     </button>
                   ) : (
                     <button 
                       onClick={() => onSelectEvent(event)} 
-                      className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase px-4 py-2 border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center gap-1.5 cursor-pointer"
+                      className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase px-4 py-2 min-h-[40px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center gap-1.5 cursor-pointer touch-manipulation"
                     >
                       BOOK TICKETS <ArrowRight size={13} />
                     </button>

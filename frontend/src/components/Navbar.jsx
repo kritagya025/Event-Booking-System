@@ -91,16 +91,16 @@ export default function Navbar({
       </div>
 
       {/* ─── 1. BRUTALIST DIY CLUB FLYER NAVIGATION BAR ─── */}
-      <header className="sticky top-0 z-50 bg-asphalt-black/95 backdrop-blur-md border-b-2 border-asphalt-border px-4 py-3">
-        <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-50 bg-asphalt-black/95 backdrop-blur-md border-b-2 border-asphalt-border px-3 sm:px-4 py-2.5 sm:py-3">
+        <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Brand Stamp Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div 
               onClick={() => handleNavClick('home')} 
               className="flex items-center gap-2 group cursor-pointer"
             >
-              <div className="bg-acid-yellow text-asphalt-black px-2.5 py-0.5 font-display text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
+              <div className="bg-acid-yellow text-asphalt-black px-2 sm:px-2.5 py-0.5 font-display text-xl sm:text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] sm:shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
                 EVENTHUB
               </div>
               <div className="hidden sm:flex flex-col font-ticker leading-none">
@@ -185,7 +185,7 @@ export default function Navbar({
               <select 
                 value={currency} 
                 onChange={(e) => setActiveCurrency(e.target.value)}
-                className="bg-asphalt-card text-acid-yellow font-ticker text-xs font-bold border-2 border-acid-yellow px-2 py-1 focus:outline-none appearance-none cursor-pointer pr-6 shadow-[2px_2px_0px_#ff1f6d]"
+                className="bg-asphalt-card text-acid-yellow font-ticker text-[11px] sm:text-xs font-bold border-2 border-acid-yellow px-1.5 sm:px-2 py-0.5 sm:py-1 focus:outline-none appearance-none cursor-pointer pr-5 sm:pr-6 shadow-[2px_2px_0px_#ff1f6d]"
               >
                 {getAvailableCurrencies().map((c) => (
                   <option key={c.code} value={c.code}>
@@ -193,7 +193,7 @@ export default function Navbar({
                   </option>
                 ))}
               </select>
-              <span className="material-symbols-outlined text-acid-yellow pointer-events-none absolute right-1 text-xs font-bold">arrow_drop_down</span>
+              <span className="material-symbols-outlined text-acid-yellow pointer-events-none absolute right-0.5 sm:right-1 text-xs font-bold">arrow_drop_down</span>
             </div>
 
             {/* Live Inventory Counter */}

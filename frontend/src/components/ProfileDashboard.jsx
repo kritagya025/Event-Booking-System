@@ -301,7 +301,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       {/* Tab Content */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-asphalt-surface border-2 border-grit-white p-6 shadow-[3px_3px_0px_#E2F13C]">
+          <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 shadow-[3px_3px_0px_#E2F13C]">
             <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4">
               ACCOUNT PROFILE DETAILS
             </h3>
@@ -325,7 +325,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
             </div>
           </div>
 
-          <div className="bg-asphalt-surface border-2 border-grit-white p-6 shadow-[3px_3px_0px_#F43F5E]">
+          <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 shadow-[3px_3px_0px_#F43F5E]">
             <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4">
               SECURITY PROTOCOL
             </h3>
@@ -402,7 +402,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                 <button
                   type="submit"
                   disabled={savingProfile}
-                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-5 py-2 min-h-[38px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation"
+                  className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-5 py-2 min-h-[40px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation"
                 >
                   {savingProfile ? 'SAVING...' : 'SAVE CHANGES'}
                 </button>

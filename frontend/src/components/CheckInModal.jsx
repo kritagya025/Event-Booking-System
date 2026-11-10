@@ -237,7 +237,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
               <button 
                 type="submit" 
                 disabled={loading}
-                className="bg-acid-yellow text-asphalt-black font-impact tracking-wider px-4 text-sm uppercase border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white cursor-pointer disabled:opacity-50"
+                className="bg-acid-yellow text-asphalt-black font-impact tracking-wider px-4 min-h-[38px] text-sm uppercase border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white cursor-pointer disabled:opacity-50 touch-manipulation"
               >
                 {loading ? 'VALIDATING...' : 'VALIDATE'}
               </button>
@@ -272,7 +272,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
                 <button
                   onClick={handleConfirmCheckIn}
                   disabled={loading}
-                  className="w-full bg-neon-magenta text-grit-white font-impact tracking-wider text-base uppercase py-2.5 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black shadow-[4px_4px_0px_#0e0e11] cursor-pointer transition-all"
+                  className="w-full bg-neon-magenta text-grit-white font-impact tracking-wider text-base uppercase py-2.5 min-h-[44px] border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black shadow-[4px_4px_0px_#0e0e11] cursor-pointer transition-all touch-manipulation"
                 >
                   {loading ? 'CONFIRMING ENTRY...' : 'CONFIRM ENTRY & MARK TICKET USED'}
                 </button>

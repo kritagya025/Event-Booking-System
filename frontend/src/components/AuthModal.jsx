@@ -343,7 +343,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
             <button
               type="submit"
               disabled={loading}
-              className={`w-full mt-2 font-impact tracking-wider text-base uppercase py-3 border-2 border-asphalt-black transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 ${
+              className={`w-full mt-2 font-impact tracking-wider text-base uppercase py-3 min-h-[44px] border-2 border-asphalt-black transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 touch-manipulation ${
                 mode === 'register'
                   ? 'bg-neon-magenta text-grit-white hover:bg-acid-yellow hover:text-asphalt-black shadow-[3px_3px_0px_#E2F13C]'
                   : 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[3px_3px_0px_#ffffff]'

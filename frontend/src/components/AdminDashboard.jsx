@@ -71,7 +71,7 @@ export default function AdminDashboard({ showToast }) {
   const displayTodayRevenue = rawTodayRev > 0 ? rawTodayRev : 359125.00;
 
   return (
-    <div className="w-full max-w-[1360px] mx-auto px-4 md:px-6 py-8 text-grit-white font-mono-zine">
+    <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
       
       {/* Header */}
       <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">

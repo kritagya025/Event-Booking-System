@@ -848,9 +848,9 @@ export default function BackstageAuthTerminal({
               </div>
 
               {/* Barcode Watermark Footer */}
-              <div className="mt-5 pt-3 border-t border-asphalt-border/40 flex justify-between items-center opacity-40 select-none">
+              <div className="mt-5 pt-3 border-t border-asphalt-border/40 flex flex-col sm:flex-row justify-between items-center gap-2 opacity-40 select-none text-center sm:text-left">
                 <span className="font-ticker text-[8px] text-grit-dim uppercase">OFFICIAL EVENTHUB BOX OFFICE // VERIFIED PASS</span>
-                <svg className="h-5 w-32" viewBox="0 0 144 24" fill="currentColor">
+                <svg className="h-5 w-32 shrink-0" viewBox="0 0 144 24" fill="currentColor">
                   <rect x="0" y="0" width="3" height="24"/>
                   <rect x="5" y="0" width="1" height="24"/>
                   <rect x="8" y="0" width="4" height="24"/>
