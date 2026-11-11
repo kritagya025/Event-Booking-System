@@ -63,22 +63,23 @@ src/main/java/com/kritagya/event_booking_system/
 ## Authentication Architecture
 
 - JWT-based authentication with access + refresh tokens.
-- `JwtUtil` for token generation/validation.
-- `JwtAuthenticationFilter` for request filtering.
+- `JwtUtil` for token generation/validation, signing key caching, and startup `@PostConstruct` security validation (validates Base64, minimum 256 bits, non-blank, and rejection of known insecure default keys).
+- `JwtAuthenticationFilter` for request filtering (supporting `Authorization: Bearer` and HttpOnly session cookies).
 - `CustomUserDetailsService` loads user by email.
 - `SecurityConfig` defines endpoint access rules.
 - Role-based authorization via `Role` enum.
 
 ## Configuration Profiles
 
-- `application.properties` — shared/default configuration.
-- `application-dev.properties` — development environment.
-- `application-prod.properties` — production environment.
+- `application.properties` — shared/base configuration (insecure fallback removed; requires `JWT_SECRET`).
+- `application-dev.properties` — development environment (uses dedicated safe dev key fallback).
+- `application-prod.properties` — production environment (strictly requires `jwt.secret=${JWT_SECRET}`).
+- `application-test.properties` — test environment (dedicated test key, consolidated auto-configuration exclusions).
 
 ## Testing
 
 - Test root: `src/test/java/com/kritagya/event_booking_system/`
-- Controller tests, service tests, repository tests, security tests.
+- Controller tests, service tests, repository tests, security tests (including `JwtSecretValidationTest` for startup validation).
 - **Run specific test**: `./mvnw test -Dtest=ClassName`
 - **Run all tests**: `./mvnw test`
 - **Run tests in a package**: `./mvnw test -Dtest="com.kritagya.event_booking_system.service.*"`

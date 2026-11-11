@@ -174,10 +174,10 @@ The platform uses a decoupled client-server architecture:
 |   `-- websocket/          # WebSocket publishers for real-time seat status
 |-- src/main/resources/
 |   |-- application.properties          # Base settings & test profile fallbacks
-|   |-- application-dev.properties      # Development overrides (seed data, DDL update)
-|   `-- application-prod.properties     # Production profile (DDL validate)
-|-- src/test/java/                      # 24 automated unit and integration test suites
-|-- frontend/                           # React 19 single-page application (26 components, Tailwind, Oxlint)
+|   |-- application-dev.properties      # Development overrides (seed data, DDL update, dev secret)
+|   `-- application-prod.properties     # Production profile (DDL validate, mandatory JWT_SECRET)
+|-- src/test/java/                      # 25 automated unit and integration test suites
+|-- frontend/                           # React 19 single-page application (27 components, Tailwind, Oxlint)
 |   |-- README.md                       # Dedicated frontend architecture and setup guide
 |   |-- src/components/                 # UI components, modals, and zero-CLS skeleton suite
 |   `-- vite.config.js                  # Proxy configuration & dynamic manualChunks
@@ -211,7 +211,7 @@ The application reads settings from environment variables or Spring property pro
 | `DB_URL` | Yes | `jdbc:postgresql://localhost:5432/event_booking_db` | JDBC connection string |
 | `DB_USERNAME` | Yes | `postgres` | Database username |
 | `DB_PASSWORD` | Yes | `kritagya` | Database password |
-| `JWT_SECRET` | Yes | Configured in dev properties | Base64-encoded secret key (256-bit minimum) |
+| `JWT_SECRET` | Yes | Safe dev fallback in `application-dev.properties` | Base64-encoded HMAC-SHA256 secret key (>= 256 bits). Mandatory in production; validated on startup |
 | `JWT_EXPIRATION` | No | `86400000` (24 hours) | Access token validity in milliseconds |
 | `JWT_REFRESH_EXPIRATION` | No | `604800000` (7 days) | Refresh token validity in milliseconds |
 | `CACHE_TYPE` | No | `simple` | Caching provider (`simple` or `redis`) |

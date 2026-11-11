@@ -7,7 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.4.1] - 2026-11-08
+## [1.5.0] - 2026-11-11
+
+### Security
+- **JWT Secret Hardening & Startup Security Validation (`JwtUtil.java`)**:
+  - Implemented `@PostConstruct` startup validation (`validateAndInitializeKey`) in `JwtUtil` that fails fast with `IllegalStateException` on missing or blank secrets, invalid Base64 encoding, or decoded HMAC keys shorter than 256 bits (32 bytes).
+  - Explicitly blocked the historical compromised public default key (`dGhpcyBpcyBhIHZlcnkgc2VjcmV0IGtleSBmb3Igand0IGV2ZW50IGJvb2tpbmc=`) and its byte sequence from being configured.
+  - Pre-computed and cached the signing `SecretKey` during container startup to optimize runtime verification throughput.
+  - Sanitized startup validation exceptions and logs to guarantee zero secret leakage.
+- **Environment Profile Separation & Configuration Isolation**:
+  - Removed the insecure default secret fallback from base `application.properties`, defining `jwt.secret=${JWT_SECRET:}`.
+  - Strictly required `jwt.secret=${JWT_SECRET}` in `application-prod.properties` with no fallback for production environments (`SPRING_PROFILES_ACTIVE=prod`).
+  - Added a dedicated, safe local development fallback key in `application-dev.properties` (`ZGV2LXNlY3JldC1rZXktZm9yLWxvY2FsLWRldmVsb3BtZW50LW9ubHktMjU2Yml0cw==`), isolated from production.
+  - Preserved the dedicated test secret in `application-test.properties` and consolidated `spring.autoconfigure.exclude` into a single canonical comma-separated declaration (`MailAutoConfiguration,RedisAutoConfiguration,RedisRepositoriesAutoConfiguration`).
+- **Comprehensive JWT Automated Test Suite (`JwtSecretValidationTest.java`)**:
+  - Added automated unit and Spring `ApplicationContextRunner` tests covering 8 validation scenarios: missing secret, blank secret, public default rejection, invalid Base64, undersized keys (< 256 bits), valid keys, token issuance, and claim verification (all 8 passed in 1.3s).
+
+### Fixed
+- **Profile PDF Download Authentication (`ProfileDashboard.jsx`)**:
+  - Added `credentials: 'include'` to the PDF download fetch call to pass HttpOnly session cookies, eliminating an invalid dependency on `localStorage.getItem('access_token')`.
+- **Search Label Accessibility (`App.jsx`)**:
+  - Associated search and filter labels with corresponding `<input>` and `<select>` controls using `htmlFor` (`search-keyword`, `search-category`, `search-city`).
+- **Booking Cancellation Offline Reconciliation (`MyBookings.jsx`)**:
+  - Added state reconciliation for local/demo bookings during cancellation while preserving backend error handling.
+
+### Enhanced
+- **Full-Spectrum Multi-Viewport Responsive Optimization**:
+  - Verified and refined layouts across 6 standard viewports (320px, 360px, 375px, 390px, 414px, and 1280px) across all routes (`#home`, `#explore`, `#my-bookings`, `#wishlist`, `#profile`, `#login`, `#register`, `#admin`) and modals (`SeatMapModal`, `BackstageAuthTerminal`).
+  - Implemented touch momentum scrolling, sticky action bars, full-width touch targets, and overflow clipping.
 
 ### Enhanced
 - **Zero-Emoji Professional Neo-Brutalist Admission Pass & PDF Generation Engine (`TicketService.java`, `QrCodeService.java`, `MyBookings.jsx`, `BackstageAuthTerminal.jsx`)**:

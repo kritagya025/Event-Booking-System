@@ -44,12 +44,15 @@ Configure the following environment variables in production. Default fallback cr
 
 | Variable | Description | Production Example |
 |---|---|---|
-| `SPRING_PROFILES_ACTIVE` | Active Spring profile | `production` |
+| `SPRING_PROFILES_ACTIVE` | Active Spring profile (`prod`, `dev`, `test`) | `prod` |
 | `DB_URL` | JDBC database connection string | `jdbc:postgresql://db.internal:5432/event_booking_db` |
 | `DB_USERNAME` | Database role identifier | `event_app_user` |
 | `DB_PASSWORD` | Database role password | `[Managed Secret]` |
-| `JWT_SECRET` | 256-bit Base64-encoded HMAC signing key | `[Managed 256-bit Base64 Key]` |
+| `JWT_SECRET` | 256-bit Base64-encoded HMAC signing key (Strictly required; no fallback) | `[Managed 256-bit Base64 Key]` |
 | `CORS_ALLOWED_ORIGINS` | Permitted cross-origin browser domains | `https://events.example.com` |
+
+> [!CAUTION]
+> In production (`SPRING_PROFILES_ACTIVE=prod`), `JWT_SECRET` has no default fallback. If `JWT_SECRET` is unset, blank, matches the historical development default, or is shorter than 256 bits, the application fails startup with an `IllegalStateException`.
 
 ### Optional Operational Parameters
 
@@ -67,11 +70,15 @@ Configure the following environment variables in production. Default fallback cr
 | `SEAT_LOCK_TIMEOUT` | `10` | Seat lock hold window in minutes |
 
 ### Secret Key Generation
-Generate a secure 256-bit cryptographic secret for `JWT_SECRET`:
+Generate a cryptographically secure 256-bit (32-byte) secret for `JWT_SECRET`:
 
 ```bash
 openssl rand -base64 32
 ```
+
+### JWT Secret Rotation & Token Compatibility
+- **Session Invalidation**: Rotating `JWT_SECRET` immediately invalidates all active access tokens in circulation. Users with active sessions will encounter `HTTP 401 Unauthorized` on their next authenticated API call and must re-authenticate.
+- **Maintenance Planning**: Plan secret rotation during low-traffic maintenance windows. No database migrations are required when rotating `JWT_SECRET`.
 
 ---
 
@@ -136,7 +143,7 @@ EventHub utilizes two decoupled, path-filtered GitHub Actions workflows ensuring
 - **Trigger Filters**: Runs on pushes and pull requests targeting `main` with modifications to `src/**`, `pom.xml`, `mvnw*`, `.mvn/**`, or `.github/workflows/backend.yml`. Supports manual execution via `workflow_dispatch`.
 - **Environment**: Ubuntu Latest with Eclipse Temurin OpenJDK 17.
 - **Dependency Caching**: Maven dependencies cached automatically (`cache: 'maven'`).
-- **Test Execution**: Executes all 24 backend test suites under the `test` profile using an in-memory H2 database with injected test credentials (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DRIVER`, `JWT_SECRET`).
+- **Test Execution**: Executes all 25 backend test suites under the `test` profile using an in-memory H2 database with injected test credentials (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DRIVER`, `JWT_SECRET`).
 - **Binary Packaging**: Assembles the Spring Boot production executable archive (`./mvnw -B package -DskipTests`).
 - **Artifact Publishing**: Archives `target/*.jar` as `eventhub-backend-jar` (7-day retention).
 

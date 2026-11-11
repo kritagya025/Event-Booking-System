@@ -84,6 +84,23 @@ User authentication is entirely stateless:
 - **Token Claims**: `sub` (user email), `role` (assigned authority), `iat` (issued timestamp), `exp` (expiration timestamp)
 - **Access Token TTL**: 24 hours (`86,400,000` ms, configurable via `JWT_EXPIRATION`)
 - **Transport**: `Authorization: Bearer <token>` HTTP header or secure HttpOnly cookie
+- **Client Credential Inclusion**: Browser-based requests (including binary ticket downloads and protected endpoints) use `credentials: 'include'` to pass authenticated session cookies without exposing access tokens in client-side storage.
+
+### JWT Signing Secret & Startup Security Validation
+To prevent signature forgery attacks and eliminate insecure development keys in production, the application enforces strict secret validation during startup:
+
+1. **Mandatory Production Key**: In production (`SPRING_PROFILES_ACTIVE=prod`), `application-prod.properties` strictly binds `jwt.secret=${JWT_SECRET}` with no fallback. The application will immediately fail to start if the environment variable is omitted.
+2. **Fail-Fast Startup Validation (`JwtUtil.@PostConstruct`)**:
+   - **Missing or Blank Key**: Fails initialization with `IllegalStateException` if the key is null, empty, or whitespace-only.
+   - **Compromised Default Rejection**: Explicitly rejects the publicly known audit default (`dGhpcyBpcyBhIHZlcnkgc2VjcmV0IGtleSBmb3Igand0IGV2ZW50IGJvb2tpbmc=`) or any key that decodes to the default byte sequence.
+   - **Base64 Encoding**: Fails initialization if the secret is not a valid Base64-encoded string.
+   - **Cryptographic Strength**: Validates that the decoded key meets HMAC-SHA256 requirements (minimum 256 bits / 32 bytes). Undersized keys throw `IllegalStateException`.
+3. **Information Disclosure Prevention**: Secret strings are never printed or referenced in exception messages, logs, or Actuator health outputs.
+4. **Environment Profile Separation**:
+   - **Base (`application.properties`)**: Fallback removed; requires `JWT_SECRET`.
+   - **Production (`application-prod.properties`)**: Explicitly requires `jwt.secret=${JWT_SECRET}`.
+   - **Development (`application-dev.properties`)**: Uses a dedicated, safe local development fallback key (`ZGV2LXNlY3JldC1rZXktZm9yLWxvY2FsLWRldmVsb3BtZW50LW9ubHktMjU2Yml0cw==`), strictly prevented from being used in production.
+   - **Test (`application-test.properties`)**: Uses an isolated, dedicated test secret (`dGhpcyBpcyBhIHRlc3Qgc2VjcmV0IGtleSBmb3IgdGVzdGluZyBwdXJwb3Nlcw==`).
 
 ### Refresh Token Rotation
 To mitigate the risk of long-lived credential compromise, the system enforces single-use refresh token rotation:
@@ -266,9 +283,9 @@ If you identify a security defect, follow responsible disclosure practices:
 
 Prior to production deployment, verify the following configuration controls:
 
-- [ ] Cryptographically random 256-bit key supplied to `JWT_SECRET`.
+- [ ] Cryptographically random 256-bit key supplied to `JWT_SECRET` (e.g. `openssl rand -base64 32`). Must not match development defaults.
 - [ ] Database credentials updated to dedicated unprivileged accounts.
-- [ ] Profile active set to `production` (`spring.jpa.hibernate.ddl-auto=validate`).
+- [ ] Profile active set to `prod` (`spring.jpa.hibernate.ddl-auto=validate`, `app.seed-data=false`).
 - [ ] SQL echo logging disabled (`spring.jpa.show-sql=false`).
 - [ ] Reverse proxy enforces TLS termination with valid certificates.
 - [ ] CORS origins strictly limited to production frontend domain.

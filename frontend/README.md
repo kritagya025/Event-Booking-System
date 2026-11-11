@@ -82,24 +82,24 @@ frontend/
 The frontend architecture comprises 27 modular components:
 
 ### Primary Views & Modals
-1. **`Navbar.jsx`**: Global brutalist navigation bar with logo stamp, multi-currency switcher, quick links, and authentication state.
-2. **`BackstageAuthTerminal.jsx`**: Creative split-screen holographic VIP backstage pass accreditation terminal with real-time reactive pass rendering, audio VU password meter, and 1-click demo fills.
-3. **`SeatMapModal.jsx`**: Interactive multi-tier arena and cinema seating engine with real-time seat lock countdowns, pricing tiers, and checkout integration.
-3. **`AdminDashboard.jsx`**: Operational metrics, revenue analytics, event capacity monitoring, and system diagnostic gauges for administrators.
-4. **`MyBookings.jsx`**: Customer portal displaying ticket history, QR code admission passes, and PDF invoice downloads.
-5. **`ProfileDashboard.jsx`**: User profile management, password updates, and account security controls.
-6. **`Wishlist.jsx`**: Customer saved events collection with instant booking shortcuts.
-7. **`AuthModal.jsx`**: Unified login, registration, and password recovery modal with tab switching.
-8. **`CreateEventModal.jsx`**: Event creation and editing modal for organizers with category, venue, and pricing configuration.
-9. **`CheckInModal.jsx`**: Optical QR camera scanner and manual ticket serial validator for venue gate staff.
-10. **`DatabaseConsoleModal.jsx`**: In-browser diagnostic SQL/table viewer for administrators.
-11. **`SystemStatusModal.jsx`**: Live system health telemetry dialog exposing JVM, memory, and database status.
-12. **`ApiDocsModal.jsx`**: Embedded OpenAPI 3.0 documentation explorer.
-13. **`CookiesModal.jsx`**: Cookie preferences and session persistence disclosure.
-14. **`PrivacyModal.jsx`**: Data privacy statement and GDPR/compliance policy.
-15. **`TermsModal.jsx`**: Ticketing service terms, refund regulations, and venue admission rules.
-16. **`LoginPage.jsx`**: Standalone customer/organizer authentication page.
-17. **`RegisterPage.jsx`**: Standalone customer account onboarding page.
+1. **`Navbar.jsx`**: Global brutalist navigation bar with logo stamp, multi-currency switcher, quick links, theme toggle, authentication state, and high-contrast mobile navigation drawer.
+2. **`BackstageAuthTerminal.jsx`**: Creative split-screen holographic VIP backstage pass accreditation terminal with real-time reactive pass rendering, audio VU password meter, mobile-first column reordering, and 1-click demo fills.
+3. **`SeatMapModal.jsx`**: Interactive multi-tier arena and cinema seating engine with real-time seat lock countdowns, pricing tiers, adjacent seat pairing, touch momentum scrolling, and sticky checkout dock.
+4. **`AdminDashboard.jsx`**: Operational metrics, revenue analytics, event capacity monitoring, and responsive system diagnostic gauges for administrators.
+5. **`MyBookings.jsx`**: Customer portal displaying ticket history, QR code admission passes, PDF invoice downloads, and offline booking cancellation reconciliation.
+6. **`ProfileDashboard.jsx`**: User profile management, password updates, account security controls, and session-authenticated ticket PDF downloads (`credentials: 'include'`).
+7. **`Wishlist.jsx`**: Customer saved events collection with instant booking shortcuts and responsive grid layouts.
+8. **`AuthModal.jsx`**: Unified login, registration, and password recovery modal with tab switching.
+9. **`CreateEventModal.jsx`**: Event creation and editing modal for organizers with category, venue, and pricing configuration.
+10. **`CheckInModal.jsx`**: Optical QR camera scanner and manual ticket serial validator for venue gate staff.
+11. **`DatabaseConsoleModal.jsx`**: In-browser diagnostic SQL/table viewer for administrators.
+12. **`SystemStatusModal.jsx`**: Live system health telemetry dialog exposing JVM, memory, and database status.
+13. **`ApiDocsModal.jsx`**: Embedded OpenAPI 3.0 documentation explorer.
+14. **`CookiesModal.jsx`**: Cookie preferences and session persistence disclosure.
+15. **`PrivacyModal.jsx`**: Data privacy statement and GDPR/compliance policy.
+16. **`TermsModal.jsx`**: Ticketing service terms, refund regulations, and venue admission rules.
+17. **`LoginPage.jsx`**: Standalone customer/organizer authentication page with responsive form geometry.
+18. **`RegisterPage.jsx`**: Standalone customer account onboarding page with mobile touch accessibility.
 
 ### Graphic Engines & Safety Components
 18. **`Background3D.jsx`**: Bespoke acoustic resonance harmonic waveform canvas engine with interactive mouse impulse physics and wireframe concert ticket pass models.
