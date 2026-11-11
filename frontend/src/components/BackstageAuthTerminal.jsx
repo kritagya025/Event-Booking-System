@@ -215,7 +215,7 @@ export default function BackstageAuthTerminal({
             {/* Realistic Lanyard Strap & Industrial Swivel Hook Hardware */}
             <div className="w-full flex flex-col items-center select-none pointer-events-none">
               {/* Heavy-duty woven ribbon strap with branded micro-typography */}
-              <div className="w-20 sm:w-24 h-10 bg-neutral-900 border-x-2 border-acid-yellow/60 relative overflow-hidden flex items-center justify-center border-b-2 border-asphalt-black shadow-[2px_2px_0px_#0e0e11]">
+              <div className="w-20 sm:w-24 h-10 bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 border-x-2 border-acid-yellow/60 relative overflow-hidden flex items-center justify-center shadow-lg">
                 <div className="absolute inset-0 opacity-15 bg-[repeating-linear-gradient(45deg,#000_0px,#000_2px,transparent_2px,transparent_6px)]"></div>
                 <span className="font-ticker text-[8px] text-acid-yellow font-bold uppercase tracking-widest rotate-90 scale-90 whitespace-nowrap">
                   EVENTHUB VIP
@@ -225,13 +225,13 @@ export default function BackstageAuthTerminal({
               {/* Metal Swivel Ring & Carabiner Clasp */}
               <div className="flex flex-col items-center mb-[-16px] z-30">
                 {/* Brushed steel swivel ring */}
-                <div className="w-7 h-7 rounded-full border-[3px] border-stone-400 bg-stone-700 shadow-[2px_2px_0px_#0e0e11] flex items-center justify-center -mb-2">
+                <div className="w-7 h-7 rounded-full border-[3px] border-stone-400 bg-gradient-to-b from-stone-600 via-stone-400 to-stone-700 shadow-md flex items-center justify-center -mb-2">
                   <div className="w-2.5 h-2.5 bg-stone-900 rounded-full border border-stone-500"></div>
                 </div>
                 {/* Swivel mechanical pivot block */}
-                <div className="w-4 h-2.5 bg-stone-400 border border-stone-600 shadow-[1px_1px_0px_#0e0e11] z-20"></div>
+                <div className="w-4 h-2.5 bg-stone-400 border border-stone-600 shadow-sm z-20"></div>
                 {/* Lobster claw / spring carabiner latch */}
-                <div className="w-6 h-6 border-2 border-stone-300 bg-stone-600 rounded-t-sm rounded-b-md shadow-[2px_2px_0px_#0e0e11] flex items-center justify-center relative z-20">
+                <div className="w-6 h-6 border-2 border-stone-300 bg-gradient-to-b from-stone-500 to-stone-700 rounded-t-sm rounded-b-md shadow-lg flex items-center justify-center relative z-20">
                   <div className="w-1.5 h-3 bg-stone-300 rounded-full"></div>
                 </div>
               </div>
@@ -524,8 +524,8 @@ export default function BackstageAuthTerminal({
           <div className="lg:col-span-7 order-1 lg:order-2 w-full">
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_#F43F5E] sm:shadow-[8px_8px_0px_#F43F5E] relative">
               
-              {/* 2D Neo-Brutalist Stamp Badge */}
-              <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 border-2 border-asphalt-black text-[10px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-20 max-w-[210px] sm:max-w-none truncate">
+              {/* Slanted Tape Stamp Badge */}
+              <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[10px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-20 max-w-[210px] sm:max-w-none truncate">
                 {mode === 'register' ? 'NEW ACCREDITATION DISPATCH' : 'AUTHENTICATED GATE ACCESS'}
               </div>
 

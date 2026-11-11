@@ -559,8 +559,8 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
         className="w-full h-full sm:h-auto max-h-[100dvh] sm:max-h-[90vh] max-w-4xl bg-asphalt-surface border-0 sm:border-4 border-grit-white text-grit-white shadow-none sm:shadow-[12px_12px_0px_#eefc54] relative select-none flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top 2D Neo-Brutalist Sticker (Shown on sm+ to prevent mobile clipping) */}
-        <div className="hidden sm:inline-block absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
+        {/* Top Slanted Sticker (Shown on sm+ to prevent mobile clipping) */}
+        <div className="hidden sm:inline-block absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
           EVENTHUB // RESERVATION ENGINE
         </div>
 
@@ -682,19 +682,22 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                           <div className="w-28 sm:w-40 h-2 sm:h-3 bg-gradient-to-b from-sky-400/20 via-sky-400/5 to-transparent"></div>
                         </div>
 
-                        {/* 2D Neo-Brutalist IMAX Screen */}
-                        <div className="text-center py-2.5 sm:py-4 px-2 sm:px-4 bg-asphalt-card border-2 sm:border-3 border-acid-yellow shadow-[4px_4px_0px_#eefc54] relative overflow-hidden">
+                        {/* Curved Screen Curve */}
+                        <div className="text-center py-2.5 sm:py-4 px-2 sm:px-4 bg-gradient-to-b from-asphalt-card via-asphalt-black to-asphalt-black border-2 border-acid-yellow shadow-[0_0_30px_rgba(226,241,60,0.18)] relative rounded-b-[24px] sm:rounded-b-[48px] overflow-hidden">
+                          {/* Prismatic reflection sheen */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-400/10 to-transparent pointer-events-none"></div>
+
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1 relative z-10">
-                            <Film size={14} className="text-acid-yellow shrink-0" />
+                            <Film size={14} className="text-acid-yellow animate-pulse shrink-0" />
                             <span className="font-impact text-xs sm:text-lg tracking-widest text-grit-white uppercase truncate">
-                              ▲ IMAX CINEMA SCREEN // ALL EYES FORWARD ▲
+                              ▲ CURVED IMAX CINEMA SCREEN // ALL EYES FORWARD ▲
                             </span>
-                            <Film size={14} className="text-neon-magenta shrink-0" />
+                            <Film size={14} className="text-neon-magenta animate-pulse shrink-0" />
                           </div>
                           <p className="font-mono-zine text-[8px] sm:text-[10px] text-grit-dim uppercase tracking-wider relative z-10">
-                            128-CH DOLBY ATMOS 2D AUDIO • ACOUSTIC SWEET-SPOT: ROWS B-C
+                            128-CH DOLBY ATMOS 3D AUDIO • ACOUSTIC SWEET-SPOT: ROWS B-C
                           </p>
-                          <div className="w-36 sm:w-56 h-0.5 bg-acid-yellow mx-auto mt-1 sm:mt-2 opacity-80"></div>
+                          <div className="w-36 sm:w-56 h-1 bg-gradient-to-r from-transparent via-acid-yellow to-transparent mx-auto mt-1 sm:mt-2 opacity-80"></div>
                         </div>
 
                         {/* Sweet-spot reference guide */}
@@ -734,8 +737,11 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             <span className="font-ticker text-[7px] text-grit-dim uppercase">40kW LINE-ARRAY</span>
                           </div>
 
-                          {/* Center Main Stage Floor Rig (2D Neo-Brutalist) */}
-                          <div className="flex-1 text-center py-2 sm:py-3 px-2 sm:px-4 bg-asphalt-card border-2 sm:border-3 border-acid-yellow shadow-[4px_4px_0px_#eefc54] relative">
+                          {/* Center Main Stage Floor Rig */}
+                          <div className="flex-1 text-center py-2 sm:py-3 px-2 sm:px-4 bg-gradient-to-b from-asphalt-card to-asphalt-black border-2 border-acid-yellow shadow-[0_0_24px_rgba(238,252,84,0.15)] relative rounded-b-[18px] sm:rounded-b-[24px]">
+                            {/* Overhead spotlight cone glow */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-acid-yellow/5 to-transparent pointer-events-none"></div>
+
                             <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
                               <Zap size={14} className="text-acid-yellow shrink-0" />
                               <span className="font-impact text-xs sm:text-base tracking-widest text-grit-white uppercase truncate">
@@ -746,7 +752,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             <p className="font-mono-zine text-[8px] sm:text-[10px] text-grit-dim uppercase tracking-wider">
                               DIRECT STAGE SIGHTLINE • 10-MINUTE SEAT LOCK ACTIVE
                             </p>
-                            <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 bg-asphalt-black border border-asphalt-border font-ticker text-[7.5px] sm:text-[8px] text-acid-yellow uppercase shadow-[1px_1px_0px_#0e0e11]">
+                            <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 bg-asphalt-black border border-asphalt-border font-ticker text-[7.5px] sm:text-[8px] text-acid-yellow uppercase">
                               <span>CENTER PERFORMER APEX</span>
                               <span>•</span>
                               <span>STAGE FRONT BARRIER</span>

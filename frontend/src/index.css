@@ -267,9 +267,9 @@ html.light .border-grit-white {
   background-size: 8px 8px;
 }
 
-.stamp-slant-1 { transform: none; }
-.stamp-slant-2 { transform: none; }
-.stamp-slant-3 { transform: none; }
+.stamp-slant-1 { transform: rotate(-3.5deg); }
+.stamp-slant-2 { transform: rotate(2.8deg); }
+.stamp-slant-3 { transform: rotate(-1.8deg); }
 
 /* ─── Marquee Ticker ─── */
 @keyframes marqueeTicker {
@@ -439,102 +439,27 @@ h1, h2, h3, h4, .font-display {
 }
 
 .pulse-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 0px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
   background: var(--acid-yellow);
   display: inline-block;
-  border: 1px solid #0e0e11;
-  box-shadow: 1px 1px 0px #0e0e11;
+  box-shadow: 0 0 8px #eefc54;
 }
 
 .pulse-dot.pulse-magenta {
   background: var(--neon-magenta);
-  border: 1px solid #0e0e11;
-  box-shadow: 1px 1px 0px #0e0e11;
+  box-shadow: 0 0 8px #ff1f6d;
 }
 
-/* ─── 2D Neobrutalism System Primitives ─── */
-.neo-card {
-  background: var(--bg-card);
-  border: 3px solid var(--grit-white);
-  box-shadow: 5px 5px 0px #0e0e11;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-}
-
-.dark .neo-card,
-:root:not(.light) .neo-card {
-  border-color: var(--grit-white);
-  box-shadow: 5px 5px 0px var(--acid-yellow);
-}
-
-.neo-card:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 6px 6px 0px var(--neon-magenta);
-}
-
-.neo-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-weight: 800;
-  border: 2px solid #0e0e11;
-  box-shadow: 4px 4px 0px #0e0e11;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-  user-select: none;
-  cursor: pointer;
-}
-
-.neo-btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 5px 5px 0px #0e0e11;
-}
-
-.neo-btn:active {
-  transform: translate(2px, 2px) !important;
-  box-shadow: 1px 1px 0px #0e0e11 !important;
-}
-
-.neo-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: 2px solid #0e0e11;
-  box-shadow: 2px 2px 0px #0e0e11;
-}
-
-.neo-input {
-  background: var(--bg-input);
-  border: 2px solid var(--asphalt-border);
-  color: var(--grit-white);
-  font-family: 'Courier Prime', monospace;
-  outline: none;
-  transition: border-color 0.12s ease, box-shadow 0.12s ease;
-}
-
-.neo-input:focus {
-  border-color: var(--acid-yellow);
-  box-shadow: 3px 3px 0px var(--neon-magenta);
-}
-
-/* ─── Modal Architecture (Pure 2D Bouncer Terminal) ─── */
+/* ─── Modal Architecture (Bouncer Terminal) ─── */
 .modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(14, 14, 17, 0.94);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  background: rgba(14, 14, 17, 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;

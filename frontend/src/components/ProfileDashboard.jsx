@@ -177,7 +177,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
                 <h2 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none break-words">
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2.5 py-0.5 border border-asphalt-black shadow-[2px_2px_0px_#0e0e11] uppercase shrink-0">
+                <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-1 shrink-0">
                   {profile.role}
                 </span>
               </div>
