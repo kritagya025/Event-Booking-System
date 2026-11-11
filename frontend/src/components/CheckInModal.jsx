@@ -105,8 +105,8 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
         className="w-full max-w-lg bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#F43F5E] my-auto relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Slanted Sticker */}
-        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-3 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
+        {/* 2D Neo-Brutalist Sticker */}
+        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-3 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
           EVENT GATE CHECK-IN
         </div>
 

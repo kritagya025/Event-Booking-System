@@ -662,8 +662,8 @@ export default function MyBookings({ currentUser, showToast }) {
               key={b.id} 
               className="bg-asphalt-surface border-2 border-grit-white shadow-[3px_3px_0px_#E2F13C] flex flex-col justify-between relative overflow-hidden"
             >
-              {/* Slanted Tape Badge */}
-              <div className={`absolute top-3 right-3 text-xs font-impact tracking-wider px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-2 ${
+              {/* 2D Neo-Brutalist Badge */}
+              <div className={`absolute top-3 right-3 text-xs font-impact tracking-wider px-2.5 py-0.5 border border-asphalt-black shadow-[2px_2px_0px_#0e0e11] uppercase ${
                 b.bookingStatus === 'CONFIRMED'
                   ? (isCinema ? 'bg-acid-yellow text-asphalt-black' : 'bg-acid-yellow text-asphalt-black')
                   : 'bg-neon-magenta text-grit-white'

@@ -15,7 +15,8 @@ import SystemStatusModal from './components/SystemStatusModal';
 import DatabaseConsoleModal from './components/DatabaseConsoleModal';
 import CookiesModal from './components/CookiesModal';
 import ApiDocsModal from './components/ApiDocsModal';
-import Background3D from './components/Background3D';
+import Background2D from './components/Background2D';
+import IntroSplashScreen from './components/IntroSplashScreen';
 
 import EventCardSkeleton from './components/EventCardSkeleton';
 import { 
@@ -76,6 +77,18 @@ export default function App() {
   const [isDatabaseConsoleOpen, setIsDatabaseConsoleOpen] = useState(false);
   const [isCookiesOpen, setIsCookiesOpen] = useState(false);
   const [isApiDocsOpen, setIsApiDocsOpen] = useState(false);
+  
+  // First-time visitor check for 2D Neobrutalist Entry Animation (supports ?intro=true for testing)
+  const [showIntro, setShowIntro] = useState(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('intro') === 'true') return true;
+      const hasVisited = localStorage.getItem('eventhub_visited');
+      return !hasVisited;
+    } catch {
+      return false;
+    }
+  });
 
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -492,8 +505,13 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-asphalt-black text-grit-white selection:bg-acid-yellow selection:text-asphalt-black">
-      {/* 3D Atmospheric Background Layer */}
-      <Background3D />
+      {/* First-Time Visitor 2D Neobrutalist Entry Animation & Transition */}
+      {showIntro && (
+        <IntroSplashScreen onComplete={() => setShowIntro(false)} />
+      )}
+
+      {/* 2D Neobrutalist Architectural Background Layer */}
+      <Background2D />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar 
@@ -514,7 +532,7 @@ export default function App() {
       <div className="hidden sm:block w-full bg-asphalt-surface border-b border-asphalt-border py-2 px-4">
         <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between text-xs font-ticker gap-2">
           <div className="flex items-center gap-2 text-grit-dim">
-            <span className="bg-neon-magenta text-grit-white font-bold px-1.5 py-0.2 -rotate-2">BOX OFFICE</span>
+            <span className="bg-neon-magenta text-grit-white font-bold px-1.5 py-0.5 border border-asphalt-black">BOX OFFICE</span>
             <span className="text-grit-white font-mono-zine">OFFICIAL PASSES & TICKETS FOR LIVE CONCERTS, CINEMA & THEATER</span>
           </div>
           <div className="flex items-center gap-3 text-grit-dim">
@@ -548,17 +566,17 @@ export default function App() {
             
             {/* 2. BRUTALIST HERO SECTION */}
             <section className="relative mb-8 sm:mb-12 border-2 sm:border-4 border-grit-white bg-asphalt-surface p-3.5 sm:p-6 md:p-10 shadow-[3px_3px_0px_#eefc54] sm:shadow-[8px_8px_0px_#eefc54] overflow-hidden">
-              {/* Slanted Badges (Shown on sm+ to prevent mobile viewport clipping) */}
-              <div className="hidden sm:inline-block absolute -top-3 sm:-top-5 right-2 sm:-right-4 bg-neon-magenta text-grit-white font-display text-sm sm:text-xl lg:text-2xl px-2.5 sm:px-4 py-1 sm:py-1.5 rotate-2 sm:rotate-3 border-2 border-asphalt-black shadow-[3px_3px_0px_#0e0e11] z-20">
+              {/* Corner Badges (Pure Flat 2D) */}
+              <div className="hidden sm:inline-block absolute -top-3 sm:-top-5 right-2 sm:-right-4 bg-neon-magenta text-grit-white font-display text-sm sm:text-xl lg:text-2xl px-2.5 sm:px-4 py-1 sm:py-1.5 border-2 border-asphalt-black shadow-[3px_3px_0px_#0e0e11] z-20">
                 [ 100% VERIFIED TICKETS & PASSES ]
               </div>
-              <div className="hidden sm:inline-block absolute -bottom-3 sm:-bottom-4 left-2 sm:-left-3 bg-electric-cobalt text-acid-yellow font-ticker text-[10px] sm:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-1 -rotate-2 sm:-rotate-3 border-2 border-grit-white z-20">
+              <div className="hidden sm:inline-block absolute -bottom-3 sm:-bottom-4 left-2 sm:-left-3 bg-electric-cobalt text-acid-yellow font-ticker text-[10px] sm:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-1 border-2 border-grit-white shadow-[2px_2px_0px_#0e0e11] z-20">
                 ZERO SECONDARY SCALPING // 100% VERIFIED
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center relative z-10">
                 <div className="lg:col-span-7 space-y-3 sm:space-y-4">
-                  <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-2 sm:px-3 py-1 stamp-slant-1">
+                  <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-2 sm:px-3 py-1 shadow-[2px_2px_0px_#eefc54]">
                     <ShieldCheck size={13} className="text-acid-yellow" />
                     <span className="font-ticker text-[9px] sm:text-xs font-bold uppercase text-acid-yellow tracking-widest">
                       OFFICIAL LIVE EVENT & CINEMA BOX OFFICE
@@ -730,8 +748,8 @@ export default function App() {
                   </h2>
                 </div>
                 <div className="flex items-center gap-2 font-ticker text-xs">
-                  <span className="bg-acid-yellow text-asphalt-black font-bold px-2 py-1 -rotate-2">BOX OFFICE LIVE</span>
-                  <span className="bg-electric-cobalt text-grit-white font-bold px-2 py-1 rotate-1">{events.length} EVENTS AVAILABLE</span>
+                  <span className="bg-acid-yellow text-asphalt-black font-bold px-2 py-1 border border-asphalt-black shadow-[2px_2px_0px_#0e0e11]">BOX OFFICE LIVE</span>
+                  <span className="bg-electric-cobalt text-grit-white font-bold px-2 py-1 border border-asphalt-black shadow-[2px_2px_0px_#0e0e11]">{events.length} EVENTS AVAILABLE</span>
                 </div>
               </div>
 
@@ -846,7 +864,7 @@ export default function App() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
                 {/* Seating Experience Manifesto */}
                 <div className="lg:col-span-5 space-y-3 sm:space-y-4">
-                  <div className="inline-block bg-neon-magenta text-grit-white font-display text-xs sm:text-sm tracking-widest px-2 py-0.5 -rotate-2">
+                  <div className="inline-block bg-neon-magenta text-grit-white font-display text-xs sm:text-sm tracking-widest px-2 py-0.5 border border-asphalt-black shadow-[2px_2px_0px_#0e0e11]">
                     RESERVED SEATING // AUDITORIUM & ARENA
                   </div>
                   <h2 className="font-display text-2xl xs:text-3xl sm:text-5xl uppercase tracking-tight text-grit-white leading-none">
@@ -894,8 +912,8 @@ export default function App() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {/* Rule 1 */}
-                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[3px_3px_0px_#eefc54] sm:shadow-[4px_4px_0px_#eefc54] -rotate-1 hover:rotate-0 transition-transform">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-acid-yellow text-asphalt-black flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black">
+                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[4px_4px_0px_#eefc54] transition-all hover:-translate-y-1">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-acid-yellow text-asphalt-black flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black shadow-[2px_2px_0px_#0e0e11]">
                     01
                   </div>
                   <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wide text-grit-white mb-1">100% VERIFIED PASSES</h3>
@@ -908,8 +926,8 @@ export default function App() {
                 </div>
 
                 {/* Rule 2 */}
-                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[3px_3px_0px_#ff1f6d] sm:shadow-[4px_4px_0px_#ff1f6d] rotate-1 hover:rotate-0 transition-transform">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-neon-magenta text-grit-white flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black">
+                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[4px_4px_0px_#ff1f6d] transition-all hover:-translate-y-1">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-neon-magenta text-grit-white flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black shadow-[2px_2px_0px_#0e0e11]">
                     02
                   </div>
                   <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wide text-grit-white mb-1">REAL-TIME SEAT HOLD</h3>
@@ -922,8 +940,8 @@ export default function App() {
                 </div>
 
                 {/* Rule 3 */}
-                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[3px_3px_0px_#1d4ed8] sm:shadow-[4px_4px_0px_#1d4ed8] -rotate-1 hover:rotate-0 transition-transform">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-electric-cobalt text-grit-white flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black">
+                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[4px_4px_0px_#1d4ed8] transition-all hover:-translate-y-1">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-electric-cobalt text-grit-white flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black shadow-[2px_2px_0px_#0e0e11]">
                     03
                   </div>
                   <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wide text-grit-white mb-1">INSTANT DIGITAL PASSES</h3>
@@ -936,8 +954,8 @@ export default function App() {
                 </div>
 
                 {/* Rule 4 */}
-                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[3px_3px_0px_#ffffff] sm:shadow-[4px_4px_0px_#ffffff] rotate-2 hover:rotate-0 transition-transform">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-grit-white text-asphalt-black flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black">
+                <div className="bg-asphalt-surface border-2 sm:border-3 border-grit-white p-4 sm:p-5 relative shadow-[4px_4px_0px_#ffffff] transition-all hover:-translate-y-1">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-grit-white text-asphalt-black flex items-center justify-center font-display text-xl sm:text-2xl font-black mb-2.5 sm:mb-3 border-2 border-asphalt-black shadow-[2px_2px_0px_#0e0e11]">
                     04
                   </div>
                   <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wide text-grit-white mb-1">RAPID GATE SCANNER</h3>
@@ -955,7 +973,7 @@ export default function App() {
             <section className="bg-asphalt-black border-2 border-acid-yellow p-4 sm:p-6 md:p-8 relative shadow-[3px_3px_0px_rgba(255,255,255,0.7)] sm:shadow-[4px_4px_0px_rgba(255,255,255,0.7)] mb-10 sm:mb-12" id="gatekeeper">
               <div className="flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
                 <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-acid-yellow text-asphalt-black flex items-center justify-center -rotate-3 border-2 border-asphalt-black shadow-[2px_2px_0px_#ff1f6d] shrink-0">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-acid-yellow text-asphalt-black flex items-center justify-center border-2 border-asphalt-black shadow-[3px_3px_0px_#ff1f6d] shrink-0">
                     <Radio size={24} className="stroke-[2.5]" />
                   </div>
                   <div>
@@ -996,7 +1014,7 @@ export default function App() {
             <div className="max-w-[1360px] mx-auto px-4 md:px-6 py-10">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div>
-                  <div className="bg-acid-yellow text-asphalt-black px-2.5 py-0.5 font-display text-2xl tracking-wider -rotate-2 border-2 border-grit-white inline-block mb-3">
+                  <div className="bg-acid-yellow text-asphalt-black px-2.5 py-0.5 font-display text-2xl tracking-wider border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] inline-block mb-3">
                     EVENTHUB
                   </div>
                   <p className="font-mono-zine text-xs text-grit-dim leading-relaxed">
@@ -1012,6 +1030,7 @@ export default function App() {
                     <li onClick={() => handleNavigate('create-event')} className="hover:text-grit-white transition-colors cursor-pointer">• CREATE & PUBLISH EVENT</li>
                     <li onClick={() => handleNavigate('checkin')} className="hover:text-grit-white transition-colors cursor-pointer">• GATE QR SCANNER</li>
                     <li onClick={() => setIsApiDocsOpen(true)} className="hover:text-grit-white transition-colors cursor-pointer">• HELP & SUPPORT DESK</li>
+                    <li onClick={() => setShowIntro(true)} className="hover:text-acid-yellow text-grit-dim transition-colors cursor-pointer flex items-center gap-1">• REPLAY INTRO ANIMATION ⚡</li>
                   </ul>
                 </div>
                 <div>
@@ -1380,51 +1399,51 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
     }
   };
 
-  // Stack styling definitions for 4 visual layers
+  // Stack styling definitions for 4 visual layers (Strict 2D Stepped Offset)
   const getStackStyle = (pos) => {
     if (pos === 0) {
       if (slidingOut) {
         return {
           transform: slideDir === 'left' 
-            ? 'translateX(-125%) translateY(-15px) rotate(-16deg)' 
-            : 'translateX(125%) translateY(-15px) rotate(16deg)',
+            ? 'translateX(-125%) translateY(0px)' 
+            : 'translateX(125%) translateY(0px)',
           opacity: 0,
           zIndex: 40,
-          transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 300ms cubic-bezier(0.2, 0, 0, 1)',
           pointerEvents: 'none',
         };
       }
       return {
-        transform: 'translateY(0px) scale(1) rotate(0deg)',
+        transform: 'translateY(0px)',
         opacity: 1,
         zIndex: 30,
-        transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'all 300ms cubic-bezier(0.2, 0, 0, 1)',
         cursor: 'pointer',
       };
     }
     if (pos === 1) {
       return {
-        transform: 'translateY(-16px) scale(0.95) rotate(1.5deg)',
-        opacity: 0.88,
+        transform: 'translateY(-12px) scale(0.97)',
+        opacity: 0.9,
         zIndex: 20,
-        transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'all 300ms cubic-bezier(0.2, 0, 0, 1)',
         pointerEvents: 'none',
       };
     }
     if (pos === 2) {
       return {
-        transform: 'translateY(-30px) scale(0.90) rotate(-1.5deg)',
-        opacity: 0.72,
+        transform: 'translateY(-24px) scale(0.94)',
+        opacity: 0.75,
         zIndex: 10,
-        transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'all 300ms cubic-bezier(0.2, 0, 0, 1)',
         pointerEvents: 'none',
       };
     }
     return {
-      transform: 'translateY(-42px) scale(0.85) rotate(0.8deg)',
-      opacity: 0.55,
+      transform: 'translateY(-36px) scale(0.91)',
+      opacity: 0.6,
       zIndex: 5,
-      transition: 'all 320ms cubic-bezier(0.4, 0, 0.2, 1)',
+      transition: 'all 300ms cubic-bezier(0.2, 0, 0, 1)',
       pointerEvents: 'none',
     };
   };
@@ -1491,10 +1510,10 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-asphalt-black via-black/25 to-transparent" />
 
-              {/* Diagonal SOLD OUT Stamp */}
+              {/* 2D Neo-Brutalist SOLD OUT Banner */}
               {isSoldOut && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-                  <div className="bg-asphalt-black/95 text-grit-white border-2 border-grit-white px-3 py-1 font-display text-2xl tracking-widest uppercase -rotate-12 shadow-[3px_3px_0px_#000000]">
+                  <div className="bg-asphalt-black text-grit-white border-2 border-grit-white px-4 py-1 font-display text-2xl tracking-widest uppercase shadow-[3px_3px_0px_#000000]">
                     SOLD OUT
                   </div>
                 </div>
@@ -1648,10 +1667,10 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
         {/* Subtle bottom gradient to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-asphalt-card via-black/20 to-transparent" />
 
-        {/* Diagonal Neo-Brutalist SOLD OUT Watermark Stamp */}
+        {/* 2D Neo-Brutalist SOLD OUT Watermark Banner */}
         {isSoldOut && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-            <div className="bg-asphalt-black/95 text-grit-white border-2 sm:border-3 border-grit-white px-4 py-1.5 font-display text-3xl sm:text-4xl tracking-widest uppercase -rotate-12 shadow-[4px_4px_0px_#000000] flex items-center gap-2">
+            <div className="bg-asphalt-black text-grit-white border-2 sm:border-3 border-grit-white px-4 py-1.5 font-display text-3xl sm:text-4xl tracking-widest uppercase shadow-[4px_4px_0px_#000000] flex items-center gap-2">
               <span>SOLD OUT</span>
             </div>
           </div>

@@ -95,7 +95,7 @@ export default function Navbar({
               onClick={() => handleNavClick('home')} 
               className="flex items-center gap-2 group cursor-pointer"
             >
-              <div className="bg-acid-yellow text-asphalt-black px-1.5 sm:px-2.5 py-0.5 font-display text-lg sm:text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] sm:shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
+              <div className="bg-acid-yellow text-asphalt-black px-1.5 sm:px-2.5 py-0.5 font-display text-lg sm:text-2xl tracking-wider border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] sm:shadow-[3px_3px_0px_#ff1f6d] transition-transform">
                 EVENTHUB
               </div>
               <div className="hidden sm:flex flex-col font-ticker leading-none">
@@ -103,7 +103,7 @@ export default function Navbar({
                 <span className="text-[10px] text-neon-magenta tracking-tight">REAL-TIME SEAT RESERVATION & PASSES</span>
               </div>
             </div>
-            <span className="hidden lg:inline-block font-ticker text-[10px] bg-electric-cobalt text-grit-white px-2 py-0.5 uppercase font-bold border border-grit-white/40 stamp-slant-2">
+            <span className="hidden lg:inline-block font-ticker text-[10px] bg-electric-cobalt text-grit-white px-2 py-0.5 uppercase font-bold border border-grit-white/40 shadow-[2px_2px_0px_#0e0e11]">
               VERIFIED TICKETS
             </span>
           </div>
@@ -112,14 +112,14 @@ export default function Navbar({
           <nav className="hidden md:flex items-center gap-2 font-display text-lg tracking-wider">
             <button 
               onClick={() => handleNavClick('home')}
-              className={`px-3 py-1 font-bold border-2 transition-all -rotate-1 ${activeTab === 'home' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[2px_2px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+              className={`px-3 py-1 font-bold border-2 transition-all ${activeTab === 'home' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow shadow-[2px_2px_0px_#0e0e11]'}`}
             >
               EXPLORE EVENTS
             </button>
 
             <button 
               onClick={() => handleNavClick('events')}
-              className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'events' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[2px_2px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+              className={`px-3 py-1 border-2 transition-all ${activeTab === 'events' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[3px_3px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow shadow-[2px_2px_0px_#0e0e11]'}`}
             >
               ALL CATALOG
             </button>
@@ -129,14 +129,14 @@ export default function Navbar({
               <>
                 <button 
                   onClick={() => handleNavClick('wishlist')}
-                  className={`px-3 py-1 border transition-all -rotate-1 ${activeTab === 'wishlist' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta'}`}
+                  className={`px-3 py-1 border-2 transition-all ${activeTab === 'wishlist' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold shadow-[3px_3px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta shadow-[2px_2px_0px_#0e0e11]'}`}
                 >
                   WISHLIST
                 </button>
 
                 <button 
                   onClick={() => handleNavClick('my-bookings')}
-                  className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'my-bookings' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+                  className={`px-3 py-1 border-2 transition-all ${activeTab === 'my-bookings' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[3px_3px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow shadow-[2px_2px_0px_#0e0e11]'}`}
                 >
                   MY TICKETS
                 </button>
@@ -148,14 +148,14 @@ export default function Navbar({
               <>
                 <button 
                   onClick={() => handleNavClick('create-event')}
-                  className={`px-3 py-1 border transition-all -rotate-1 ${activeTab === 'create-event' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+                  className={`px-3 py-1 border-2 transition-all ${activeTab === 'create-event' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[3px_3px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow shadow-[2px_2px_0px_#0e0e11]'}`}
                 >
                   CREATE EVENT
                 </button>
 
                 <button 
                   onClick={() => handleNavClick('checkin')}
-                  className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'checkin' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta'}`}
+                  className={`px-3 py-1 border-2 transition-all ${activeTab === 'checkin' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold shadow-[3px_3px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta shadow-[2px_2px_0px_#0e0e11]'}`}
                 >
                   GATE SCANNER
                 </button>
@@ -166,7 +166,7 @@ export default function Navbar({
             {currentUser && currentUser.role === 'ADMIN' && (
               <button 
                 onClick={() => handleNavClick('admin')}
-                className={`px-3 py-1 border transition-all ${activeTab === 'admin' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+                className={`px-3 py-1 border-2 transition-all ${activeTab === 'admin' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[3px_3px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow shadow-[2px_2px_0px_#0e0e11]'}`}
               >
                 ADMIN DASHBOARD
               </button>
