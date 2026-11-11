@@ -76,7 +76,7 @@ export default function AdminDashboard({ showToast }) {
       {/* Header */}
       <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
             <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
               EVENTHUB://ADMIN_CONSOLE
             </span>
@@ -85,10 +85,10 @@ export default function AdminDashboard({ showToast }) {
               LIVE PLATFORM METRICS
             </span>
           </div>
-          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
+          <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none break-words">
             SYSTEM TELEMETRY & REVENUE AUDIT
           </h1>
-          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
+          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5 break-words">
             DATABASE TRANSACTIONS, TICKET RESERVATIONS, AND SEAT LOCK CONCURRENCY
           </p>
         </div>
@@ -107,9 +107,9 @@ export default function AdminDashboard({ showToast }) {
         <>
           {/* 4 Brutalist Metric Stamps */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-5 shadow-[3px_3px_0px_#E2F13C] relative">
+        <div className="min-w-0 bg-asphalt-surface border-2 border-grit-white p-2.5 sm:p-5 shadow-[3px_3px_0px_#E2F13C] relative">
           <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">PLATFORM REVENUE</span>
-          <span className="font-display text-xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block truncate">
+          <span className="font-display text-lg xs:text-xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block truncate">
             {formatPrice(displayTotalRevenue)}
           </span>
           <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
@@ -117,9 +117,9 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-5 shadow-[3px_3px_0px_#F43F5E] relative">
+        <div className="min-w-0 bg-asphalt-surface border-2 border-grit-white p-2.5 sm:p-5 shadow-[3px_3px_0px_#F43F5E] relative">
           <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">TICKETS ISSUED</span>
-          <span className="font-display text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
+          <span className="font-display text-lg xs:text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
             {dbBookingsCount.toLocaleString()}
           </span>
           <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
@@ -127,9 +127,9 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-5 shadow-[3px_3px_0px_#1d4ed8] relative">
+        <div className="min-w-0 bg-asphalt-surface border-2 border-grit-white p-2.5 sm:p-5 shadow-[3px_3px_0px_#1d4ed8] relative">
           <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">REGISTERED USERS</span>
-          <span className="font-display text-xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block truncate">
+          <span className="font-display text-lg xs:text-xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block truncate">
             {dbUsersCount.toLocaleString()}
           </span>
           <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
@@ -137,9 +137,9 @@ export default function AdminDashboard({ showToast }) {
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-5 shadow-[3px_3px_0px_#ffffff] relative">
+        <div className="min-w-0 bg-asphalt-surface border-2 border-grit-white p-2.5 sm:p-5 shadow-[3px_3px_0px_#ffffff] relative">
           <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">PUBLISHED SHOWS</span>
-          <span className="font-display text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
+          <span className="font-display text-lg xs:text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
             {dbEventsCount}
           </span>
           <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
@@ -152,9 +152,9 @@ export default function AdminDashboard({ showToast }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         
         {/* Top Performing Events */}
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-6 shadow-[3px_3px_0px_#E2F13C]">
-          <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-acid-yellow"></span> TOP POPULAR EVENTS
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-6 shadow-[3px_3px_0px_#E2F13C] min-w-0">
+          <h3 className="font-display text-xl sm:text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-acid-yellow shrink-0"></span> TOP POPULAR EVENTS
           </h3>
           <div className="space-y-3">
             {metrics.popularEvents?.map((event, idx) => {
@@ -162,36 +162,36 @@ export default function AdminDashboard({ showToast }) {
               return (
               <div 
                 key={event.id || idx} 
-                className={`p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-2 transition-all ${
+                className={`p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-2 transition-all min-w-0 ${
                   isSoldOut
                     ? 'sold-out-monochrome bg-asphalt-black border-grit-dim/60 opacity-80'
                     : 'bg-asphalt-card border-asphalt-border'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`w-7 h-7 font-impact text-sm flex items-center justify-center font-bold ${
+                <div className="flex items-center gap-2.5 sm:gap-3 w-full min-w-0">
+                  <div className={`w-7 h-7 font-impact text-sm flex items-center justify-center font-bold shrink-0 ${
                     isSoldOut ? 'bg-asphalt-card text-grit-white border border-grit-dim' : 'bg-acid-yellow text-asphalt-black'
                   }`}>
                     0{idx + 1}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-impact text-base uppercase tracking-wider text-grit-white leading-none">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                      <h4 className="font-impact text-sm sm:text-base uppercase tracking-wider text-grit-white leading-tight break-words">
                         {event.name}
                       </h4>
                       {isSoldOut && (
-                        <span className="bg-grit-white text-asphalt-black font-impact text-[9px] px-1 py-0.2 uppercase font-bold">
+                        <span className="bg-grit-white text-asphalt-black font-impact text-[9px] px-1 py-0.2 uppercase font-bold shrink-0">
                           SOLD OUT
                         </span>
                       )}
                     </div>
-                    <span className="font-ticker text-[10px] text-grit-dim uppercase">
+                    <span className="font-ticker text-[9px] sm:text-[10px] text-grit-dim uppercase block truncate mt-0.5">
                       {event.category} · {isSoldOut ? 'CAPACITY REACHED' : `${event.availableSeats || 50} REMAINING`}
                     </span>
                   </div>
                 </div>
 
-                <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-asphalt-border">
+                <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-asphalt-border shrink-0">
                   <span className={`font-display text-lg sm:text-xl font-bold ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
                     {formatPrice(event.ticketPrice, event.currency)}
                   </span>
@@ -210,32 +210,32 @@ export default function AdminDashboard({ showToast }) {
         </div>
 
         {/* System Infrastructure */}
-        <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 shadow-[3px_3px_0px_#F43F5E]">
-          <h3 className="font-display text-xl sm:text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-neon-magenta"></span> SYSTEM PROTOCOL & INFRASTRUCTURE STATE
+        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-6 shadow-[3px_3px_0px_#F43F5E] min-w-0">
+          <h3 className="font-display text-lg sm:text-2xl uppercase tracking-tight text-grit-white leading-tight mb-4 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-neon-magenta shrink-0"></span> SYSTEM PROTOCOL & INFRASTRUCTURE STATE
           </h3>
-          <div className="space-y-2.5 font-mono-zine text-xs uppercase">
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
-              <span className="text-grit-dim">DATABASE ENCRYPTION</span>
-              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs self-start sm:self-auto">
+          <div className="space-y-2 sm:space-y-2.5 font-mono-zine text-xs uppercase">
+            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 min-w-0">
+              <span className="text-grit-dim text-[11px] sm:text-xs">DATABASE ENCRYPTION</span>
+              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-[10px] sm:text-xs self-start sm:self-auto max-w-full truncate">
                 ENCRYPTED STORAGE // SECURE
               </span>
             </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
-              <span className="text-grit-dim">SEAT HOLD CONCURRENCY</span>
-              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-xs self-start sm:self-auto">
+            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 min-w-0">
+              <span className="text-grit-dim text-[11px] sm:text-xs">SEAT HOLD CONCURRENCY</span>
+              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-[10px] sm:text-xs self-start sm:self-auto max-w-full truncate">
                 REAL-TIME SEAT HOLD // ACTIVE
               </span>
             </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
-              <span className="text-grit-dim">AUTH SECURITY PIPELINE</span>
-              <span className="bg-neon-magenta text-grit-white font-impact px-2 py-0.5 text-xs self-start sm:self-auto">
+            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 min-w-0">
+              <span className="text-grit-dim text-[11px] sm:text-xs">AUTH SECURITY PIPELINE</span>
+              <span className="bg-neon-magenta text-grit-white font-impact px-2 py-0.5 text-[10px] sm:text-xs self-start sm:self-auto max-w-full truncate">
                 HTTPONLY JWT COOKIE
               </span>
             </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
-              <span className="text-grit-dim">WEBSOCKET CONCURRENCY</span>
-              <span className="text-acid-yellow font-bold self-start sm:self-auto">
+            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 min-w-0">
+              <span className="text-grit-dim text-[11px] sm:text-xs">WEBSOCKET CONCURRENCY</span>
+              <span className="text-acid-yellow font-bold text-[10px] sm:text-xs self-start sm:self-auto max-w-full truncate">
                 100% OPERATIONAL (10 REQ/MIN)
               </span>
             </div>

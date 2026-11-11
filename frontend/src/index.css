@@ -142,7 +142,6 @@ aside,
 }
 
 html, body {
-  overflow-x: hidden;
   width: 100%;
   min-width: 320px;
   -webkit-tap-highlight-color: transparent;

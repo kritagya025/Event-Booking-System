@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ArrowRight, 
   Lock, 
@@ -29,6 +29,10 @@ export default function BackstageAuthTerminal({
   const [mode, setMode] = useState(initialMode); // 'login' | 'register' | 'forgot'
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -522,7 +526,7 @@ export default function BackstageAuthTerminal({
             <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_#F43F5E] sm:shadow-[8px_8px_0px_#F43F5E] relative">
               
               {/* Slanted Tape Stamp Badge */}
-              <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-20">
+              <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[10px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-20 max-w-[210px] sm:max-w-none truncate">
                 {mode === 'register' ? 'NEW ACCREDITATION DISPATCH' : 'AUTHENTICATED GATE ACCESS'}
               </div>
 
@@ -531,33 +535,33 @@ export default function BackstageAuthTerminal({
                 <button
                   type="button"
                   onClick={() => setMode('login')}
-                  className={`py-2.5 px-4 font-impact text-base tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer border-2 ${
+                  className={`py-2 sm:py-2.5 px-2 sm:px-4 font-impact text-xs sm:text-base tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer border-2 ${
                     mode === 'login'
                       ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[4px_4px_0px_#ffffff]'
                       : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:text-grit-white hover:border-grit-dim'
                   }`}
                 >
-                  <Key size={16} />
-                  <span>01 // SIGN IN</span>
+                  <Key size={14} className="shrink-0 sm:w-4 sm:h-4" />
+                  <span className="truncate">01 // SIGN IN</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setMode('register')}
-                  className={`py-2.5 px-4 font-impact text-base tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer border-2 ${
+                  className={`py-2 sm:py-2.5 px-2 sm:px-4 font-impact text-xs sm:text-base tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer border-2 ${
                     mode === 'register'
                       ? 'bg-neon-magenta text-grit-white border-asphalt-black shadow-[4px_4px_0px_#ffffff]'
                       : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:text-grit-white hover:border-grit-dim'
                   }`}
                 >
-                  <Ticket size={16} />
-                  <span>02 // CREATE ACCOUNT</span>
+                  <Ticket size={14} className="shrink-0 sm:w-4 sm:h-4" />
+                  <span className="truncate">02 // CREATE ACCOUNT</span>
                 </button>
               </div>
 
               {/* Form Title & Subtitle */}
               <div className="mb-5 text-left">
-                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-none">
+                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none break-words">
                   {mode === 'login' && 'ACCESS YOUR PASSES'}
                   {mode === 'register' && 'ISSUE VIP ACCREDITATION'}
                   {mode === 'forgot' && 'CREDENTIAL RECOVERY'}
@@ -762,18 +766,18 @@ export default function BackstageAuthTerminal({
                       <button
                         type="button"
                         onClick={() => handleDemoFill('customer')}
-                        className="py-2 px-2 min-h-[36px] bg-asphalt-card border border-asphalt-border hover:border-acid-yellow font-ticker text-[10px] text-grit-dim hover:text-acid-yellow uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
+                        className="py-2 px-1.5 sm:px-2 min-h-[36px] bg-asphalt-card border border-asphalt-border hover:border-acid-yellow font-ticker text-[9px] sm:text-[10px] text-grit-dim hover:text-acid-yellow uppercase transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
                       >
-                        <Ticket size={12} className="text-acid-yellow" />
-                        DEMO ATTENDEE
+                        <Ticket size={12} className="text-acid-yellow shrink-0" />
+                        <span className="truncate">DEMO ATTENDEE</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => handleDemoFill('admin')}
-                        className="py-2 px-2 min-h-[36px] bg-asphalt-card border border-asphalt-border hover:border-neon-magenta font-ticker text-[10px] text-grit-dim hover:text-neon-magenta uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
+                        className="py-2 px-1.5 sm:px-2 min-h-[36px] bg-asphalt-card border border-asphalt-border hover:border-neon-magenta font-ticker text-[9px] sm:text-[10px] text-grit-dim hover:text-neon-magenta uppercase transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
                       >
-                        <ShieldCheck size={12} className="text-neon-magenta" />
-                        DEMO ADMIN
+                        <ShieldCheck size={12} className="text-neon-magenta shrink-0" />
+                        <span className="truncate">DEMO ADMIN</span>
                       </button>
                     </div>
                   </div>
@@ -783,7 +787,7 @@ export default function BackstageAuthTerminal({
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full mt-4 font-impact tracking-wider text-xl uppercase py-3.5 border-2 border-asphalt-black transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 ${
+                  className={`w-full mt-4 font-impact tracking-wider text-base sm:text-xl uppercase py-3 sm:py-3.5 min-h-[44px] border-2 border-asphalt-black transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 ${
                     mode === 'register'
                       ? 'bg-neon-magenta text-grit-white hover:bg-acid-yellow hover:text-asphalt-black shadow-[4px_4px_0px_#E2F13C]'
                       : 'bg-acid-yellow text-asphalt-black hover:bg-neon-magenta hover:text-grit-white shadow-[4px_4px_0px_#ffffff]'

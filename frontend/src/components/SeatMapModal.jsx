@@ -1135,7 +1135,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                         </div>
                       </>
                     ) : (
-                      <div className="w-full flex items-center justify-between text-grit-dim text-[11px]">
+                      <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2 text-grit-dim text-[10px] sm:text-[11px]">
                         <span className="flex items-center gap-1.5 uppercase font-mono-zine">
                           <Eye size={13} className="text-acid-yellow" />
                           HOVER OVER ANY SEAT TO PREVIEW SIGHTLINE, DISTANCE & RATE

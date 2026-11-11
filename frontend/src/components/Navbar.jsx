@@ -47,9 +47,30 @@ export default function Navbar({
         setProfileDropdownOpen(false);
       }
     };
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setProfileDropdownOpen(false);
+        setMobileMenuOpen(false);
+      }
+    };
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -91,8 +112,8 @@ export default function Navbar({
       </div>
 
       {/* ─── 1. BRUTALIST DIY CLUB FLYER NAVIGATION BAR ─── */}
-      <header className="sticky top-0 z-50 bg-asphalt-black/95 backdrop-blur-md border-b-2 border-asphalt-border px-3 sm:px-4 py-2.5 sm:py-3">
-        <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-2 sm:gap-4">
+      <header className="sticky top-0 z-50 bg-asphalt-black/95 backdrop-blur-md border-b-2 border-asphalt-border px-2 sm:px-4 py-2 sm:py-3">
+        <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-1.5 sm:gap-4">
           
           {/* Brand Stamp Logo */}
           <div className="flex items-center gap-2 sm:gap-3">
@@ -100,7 +121,7 @@ export default function Navbar({
               onClick={() => handleNavClick('home')} 
               className="flex items-center gap-2 group cursor-pointer"
             >
-              <div className="bg-acid-yellow text-asphalt-black px-2 sm:px-2.5 py-0.5 font-display text-xl sm:text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] sm:shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
+              <div className="bg-acid-yellow text-asphalt-black px-1.5 sm:px-2.5 py-0.5 font-display text-lg sm:text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] sm:shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
                 EVENTHUB
               </div>
               <div className="hidden sm:flex flex-col font-ticker leading-none">
@@ -179,13 +200,13 @@ export default function Navbar({
           </nav>
 
           {/* Header Actions & Live Counter */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             {/* Currency Selector */}
             <div className="relative flex items-center">
               <select 
                 value={currency} 
                 onChange={(e) => setActiveCurrency(e.target.value)}
-                className="bg-asphalt-card text-acid-yellow font-ticker text-[11px] sm:text-xs font-bold border-2 border-acid-yellow px-1.5 sm:px-2 py-0.5 sm:py-1 focus:outline-none appearance-none cursor-pointer pr-5 sm:pr-6 shadow-[2px_2px_0px_#ff1f6d]"
+                className="bg-asphalt-card text-acid-yellow font-ticker text-[10px] sm:text-xs font-bold border-2 border-acid-yellow px-1 sm:px-2 py-0.5 sm:py-1 focus:outline-none appearance-none cursor-pointer pr-4 sm:pr-6 shadow-[2px_2px_0px_#ff1f6d]"
               >
                 {getAvailableCurrencies().map((c) => (
                   <option key={c.code} value={c.code}>
@@ -207,7 +228,7 @@ export default function Navbar({
             <button 
               onClick={toggleTheme} 
               type="button" 
-              className="w-9 h-9 sm:w-8 sm:h-8 min-w-[36px] min-h-[36px] bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer overflow-hidden touch-manipulation"
+              className="w-8 h-8 sm:w-8 sm:h-8 min-w-[32px] sm:min-w-[32px] min-h-[32px] sm:min-h-[32px] bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer overflow-hidden touch-manipulation"
               title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
               aria-label="Toggle Theme"
             >
@@ -222,7 +243,7 @@ export default function Navbar({
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="w-9 h-9 sm:w-9 sm:h-9 min-w-[36px] min-h-[36px] bg-acid-yellow text-asphalt-black font-ticker font-extrabold text-sm border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] flex items-center justify-center cursor-pointer touch-manipulation"
+                  className="w-8 h-8 sm:w-9 sm:h-9 min-w-[32px] sm:min-w-[36px] min-h-[32px] sm:min-h-[36px] bg-acid-yellow text-asphalt-black font-ticker font-extrabold text-xs sm:text-sm border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] flex items-center justify-center cursor-pointer touch-manipulation"
                   title={`${currentUser.firstName || ''} ${currentUser.lastName || ''}`}
                 >
                   {currentUser.avatarUrl ? (
@@ -325,7 +346,7 @@ export default function Navbar({
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="md:hidden w-10 h-10 min-w-[40px] min-h-[40px] bg-asphalt-card hover:bg-asphalt-surface border-2 border-grit-white text-grit-white hover:text-acid-yellow flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#ff1f6d] active:scale-95 transition-all touch-manipulation"
+              className="md:hidden w-8 h-8 sm:w-10 sm:h-10 min-w-[32px] sm:min-w-[40px] min-h-[32px] sm:min-h-[40px] bg-asphalt-card hover:bg-asphalt-surface border-2 border-grit-white text-grit-white hover:text-acid-yellow flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#ff1f6d] active:scale-95 transition-all touch-manipulation"
               aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             >
               {mobileMenuOpen ? <X size={20} className="text-neon-magenta" /> : <Menu size={20} />}
@@ -503,7 +524,7 @@ export default function Navbar({
             </nav>
 
             {/* Quick Currency & Theme Control */}
-            <div className="bg-asphalt-card border border-asphalt-border p-3 flex items-center justify-between text-xs font-ticker">
+            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-2 text-xs font-ticker">
               <div className="flex items-center gap-2">
                 <span className="text-grit-dim uppercase">CURRENCY:</span>
                 <select

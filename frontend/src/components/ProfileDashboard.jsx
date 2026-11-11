@@ -103,20 +103,31 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       return;
     }
     try {
+      const token = localStorage.getItem('access_token');
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${BASE_URL}/tickets/booking/${booking.id}/pdf`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-      });
-      if (!response.ok) throw new Error('PDF download failed');
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `EVENTHUB-Pass-${booking.id}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      showToast('TICKET ADMISSION PASS DOWNLOADED', 'success');
+        headers,
+        credentials: 'include'
+      }).catch(() => null);
+
+      if (response && response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `EVENTHUB-Pass-${booking.id}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast('TICKET ADMISSION PASS DOWNLOADED', 'success');
+      } else {
+        throw new Error('PDF download failed');
+      }
     } catch (err) {
       showToast(err.message || 'FAILED TO DOWNLOAD PASS', 'error');
     }
@@ -155,30 +166,32 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       <div className="bg-asphalt-surface border-2 border-grit-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_#E2F13C] mb-8 relative">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 min-w-0 max-w-full">
             {/* Stamp Avatar */}
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-acid-yellow text-asphalt-black border-2 border-asphalt-black flex items-center justify-center font-display text-3xl sm:text-4xl font-bold shadow-[4px_4px_0px_#0e0e11] shrink-0">
               {(profile.firstName || 'U')[0].toUpperCase()}
             </div>
 
-            <div>
+            <div className="min-w-0 flex-1 max-w-full">
               <div className="flex items-center gap-2.5 sm:gap-3 mb-1 flex-wrap">
-                <h2 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-none">
+                <h2 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none break-words">
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-1">
+                <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-1 shrink-0">
                   {profile.role}
                 </span>
               </div>
 
-              <div className="flex flex-wrap gap-3 sm:gap-4 text-xs font-mono-zine text-grit-dim uppercase">
-                <span className="flex items-center gap-1.5 truncate">
-                  <Mail size={13} className="text-acid-yellow shrink-0" /> {profile.email}
-                </span>
+              <div className="flex flex-wrap gap-2.5 sm:gap-4 text-xs font-mono-zine text-grit-dim uppercase min-w-0 max-w-full">
+                <div className="flex items-center gap-1.5 min-w-0 max-w-full">
+                  <Mail size={13} className="text-acid-yellow shrink-0" />
+                  <span className="truncate">{profile.email}</span>
+                </div>
                 {profile.phone && (
-                  <span className="flex items-center gap-1.5">
-                    <Phone size={13} className="text-acid-yellow shrink-0" /> {profile.phone}
-                  </span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <Phone size={13} className="text-acid-yellow shrink-0" />
+                    <span>{profile.phone}</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -252,7 +265,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
       <div className="flex gap-2 border-b-2 border-asphalt-border pb-3 sm:pb-4 mb-6 overflow-x-auto touch-scroll scrollbar-none">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${
+          className={`px-3 sm:px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
             activeTab === 'overview'
               ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]'
               : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
@@ -265,7 +278,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
           <>
             <button
               onClick={() => setActiveTab('bookings')}
-              className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${
+              className={`px-3 sm:px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'bookings'
                   ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]'
                   : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
@@ -275,7 +288,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
             </button>
             <button
               onClick={() => setActiveTab('wishlist')}
-              className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${
+              className={`px-3 sm:px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'wishlist'
                   ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]'
                   : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
@@ -287,7 +300,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
         ) : (
           <button
             onClick={() => setActiveTab('events')}
-            className={`px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer ${
+            className={`px-3 sm:px-4 py-2 font-impact tracking-wider text-xs uppercase border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === 'events'
                 ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff]'
                 : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
@@ -306,21 +319,21 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
               ACCOUNT PROFILE DETAILS
             </h3>
             <div className="space-y-3 font-mono-zine text-xs uppercase">
-              <div className="flex justify-between border-b border-asphalt-border pb-2">
-                <span className="text-grit-dim">FULL NAME:</span>
-                <span className="text-grit-white font-bold">{profile.firstName} {profile.lastName}</span>
+              <div className="flex justify-between border-b border-asphalt-border pb-2 gap-2">
+                <span className="text-grit-dim shrink-0">FULL NAME:</span>
+                <span className="text-grit-white font-bold text-right break-words">{profile.firstName} {profile.lastName}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-asphalt-border pb-2 gap-2">
+              <div className="flex justify-between items-center border-b border-asphalt-border pb-2 gap-2 min-w-0">
                 <span className="text-grit-dim shrink-0">EMAIL ADDRESS:</span>
-                <span className="text-grit-white font-bold truncate text-right">{profile.email}</span>
+                <span className="text-grit-white font-bold truncate text-right min-w-0 flex-1">{profile.email}</span>
               </div>
-              <div className="flex justify-between border-b border-asphalt-border pb-2">
-                <span className="text-grit-dim">PHONE NUMBER:</span>
-                <span className="text-grit-white font-bold">{profile.phone || 'NONE SPECIFIED'}</span>
+              <div className="flex justify-between border-b border-asphalt-border pb-2 gap-2">
+                <span className="text-grit-dim shrink-0">PHONE NUMBER:</span>
+                <span className="text-grit-white font-bold text-right">{profile.phone || 'NONE SPECIFIED'}</span>
               </div>
-              <div className="flex justify-between border-b border-asphalt-border pb-2">
-                <span className="text-grit-dim">ACCOUNT ROLE:</span>
-                <span className="text-acid-yellow font-bold">{profile.role}</span>
+              <div className="flex justify-between border-b border-asphalt-border pb-2 gap-2">
+                <span className="text-grit-dim shrink-0">ACCOUNT ROLE:</span>
+                <span className="text-acid-yellow font-bold text-right">{profile.role}</span>
               </div>
             </div>
           </div>

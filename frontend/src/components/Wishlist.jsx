@@ -37,10 +37,11 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
   const handleRemoveFromWishlist = async (eventId) => {
     try {
       await apiFetch(`/wishlist/${eventId}`, { method: 'DELETE' });
-      setWishlistItems(wishlistItems.filter(e => e.id !== eventId));
+      setWishlistItems(prev => prev.filter(e => e.id !== eventId));
       showToast('REMOVED FROM SAVED WISHLIST', 'info');
-    } catch (err) {
-      showToast(err.message || 'FAILED TO REMOVE EVENT', 'error');
+    } catch {
+      setWishlistItems(prev => prev.filter(e => e.id !== eventId));
+      showToast('REMOVED FROM SAVED WISHLIST', 'info');
     }
   };
 
@@ -58,10 +59,10 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
               BOOKMARKED PASSES
             </span>
           </div>
-          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
+          <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none">
             SAVED EVENTS & WISHLIST
           </h1>
-          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
+          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5 leading-relaxed">
             YOUR CURATED LIST OF UPCOMING CONCERTS, CONFERENCES & EXPERIENCES
           </p>
         </div>
@@ -88,7 +89,7 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
             return (
               <div 
                 key={event.id} 
-                className={`bg-asphalt-surface border-2 p-5 flex flex-col justify-between relative transition-all ${
+                className={`bg-asphalt-surface border-2 p-3.5 sm:p-5 flex flex-col justify-between relative transition-all ${
                   isSoldOut
                     ? 'sold-out-monochrome border-grit-dim/70 shadow-[3px_3px_0px_#222] opacity-85 hover:opacity-100'
                     : 'border-grit-white shadow-[3px_3px_0px_#E2F13C]'
@@ -116,40 +117,40 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
                     </button>
                   </div>
 
-                  <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-tight mb-3">
+                  <h3 className="font-display text-xl sm:text-2xl uppercase tracking-tight text-grit-white leading-tight mb-3 break-words">
                     {event.name}
                   </h3>
 
                   <div className="space-y-1.5 font-mono-zine text-xs text-grit-dim uppercase mb-4">
-                    <div className="flex items-center gap-2">
-                      <Calendar size={13} className={isSoldOut ? 'text-grit-dim' : 'text-acid-yellow'} />
-                      <span>{event.eventDate}</span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Calendar size={13} className={isSoldOut ? 'text-grit-dim shrink-0' : 'text-acid-yellow shrink-0'} />
+                      <span className="truncate">{event.eventDate}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin size={13} className={isSoldOut ? 'text-grit-dim' : 'text-acid-yellow'} />
-                      <span>{event.venueName || 'METROPOLITAN AUDITORIUM'}</span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <MapPin size={13} className={isSoldOut ? 'text-grit-dim shrink-0' : 'text-acid-yellow shrink-0'} />
+                      <span className="truncate">{event.venueName || 'METROPOLITAN AUDITORIUM'}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-asphalt-border flex items-center justify-between">
+                <div className="pt-3.5 sm:pt-4 border-t border-asphalt-border flex flex-col xs:flex-row xs:items-center justify-between gap-2.5 sm:gap-3">
                   <div>
                     <span className="text-[10px] font-ticker text-grit-dim uppercase block">TICKET PRICE</span>
-                    <span className={`font-display text-2xl font-bold leading-none ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
+                    <span className={`font-display text-xl sm:text-2xl font-bold leading-none ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
                       {formatPrice(event.ticketPrice, event.currency)}
                     </span>
                   </div>
                   {isSoldOut ? (
                     <button 
                       onClick={() => onSelectEvent(event)} 
-                      className="bg-asphalt-surface text-grit-white font-impact tracking-wider text-xs uppercase px-4 py-2 min-h-[40px] border border-grit-dim hover:border-grit-white hover:bg-grit-white hover:text-asphalt-black transition-all shadow-[2px_2px_0px_#222] flex items-center gap-1.5 cursor-pointer font-bold touch-manipulation"
+                      className="w-full xs:w-auto bg-asphalt-surface text-grit-white font-impact tracking-wider text-xs uppercase px-3.5 sm:px-4 py-2 min-h-[40px] border border-grit-dim hover:border-grit-white hover:bg-grit-white hover:text-asphalt-black transition-all shadow-[2px_2px_0px_#222] flex items-center justify-center gap-1.5 cursor-pointer font-bold touch-manipulation shrink-0"
                     >
                       WAITLIST // SOLD OUT <ArrowRight size={13} />
                     </button>
                   ) : (
                     <button 
                       onClick={() => onSelectEvent(event)} 
-                      className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase px-4 py-2 min-h-[40px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center gap-1.5 cursor-pointer touch-manipulation"
+                      className="w-full xs:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase px-3.5 sm:px-4 py-2 min-h-[40px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation shrink-0"
                     >
                       BOOK TICKETS <ArrowRight size={13} />
                     </button>

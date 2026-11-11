@@ -452,7 +452,7 @@ export default function App() {
   }
 
   return (
-    <div className="relative min-h-screen bg-asphalt-black text-grit-white overflow-x-hidden selection:bg-acid-yellow selection:text-asphalt-black">
+    <div className="relative min-h-screen bg-asphalt-black text-grit-white selection:bg-acid-yellow selection:text-asphalt-black">
       {/* 3D Atmospheric Background Layer */}
       <Background3D />
 
@@ -602,8 +602,9 @@ export default function App() {
                 <form onSubmit={(e) => { e.preventDefault(); handleSearchAndFilter(); }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-asphalt-black">
                   {/* Keyword */}
                   <div className="bg-grit-white border-2 border-asphalt-black p-2.5 flex flex-col justify-between">
-                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT / ARTIST / MOVIE</label>
+                    <label htmlFor="search-keyword" className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT / ARTIST / MOVIE</label>
                     <input 
+                      id="search-keyword"
                       type="text" 
                       placeholder="e.g. Cyberpunk, Neon Horizon, Opera..." 
                       value={filters.keyword}
@@ -618,8 +619,9 @@ export default function App() {
 
                   {/* Category */}
                   <div className="bg-grit-white border-2 border-asphalt-black p-2.5 flex flex-col justify-between">
-                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT CATEGORY</label>
+                    <label htmlFor="search-category" className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">EVENT CATEGORY</label>
                     <select 
+                      id="search-category"
                       value={filters.category}
                       onChange={(e) => {
                         const cat = e.target.value;
@@ -641,8 +643,9 @@ export default function App() {
 
                   {/* City / Location */}
                   <div className="bg-grit-white border-2 border-asphalt-black p-2.5 flex flex-col justify-between">
-                    <label className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">CITY / VENUE LOCATION</label>
+                    <label htmlFor="search-city" className="font-ticker text-[10px] uppercase font-bold text-asphalt-black/80">CITY / VENUE LOCATION</label>
                     <input 
+                      id="search-city"
                       type="text" 
                       placeholder="e.g. Los Angeles, San Francisco..." 
                       value={filters.city}
@@ -1675,15 +1678,22 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
           )}
 
           {/* Event Title */}
-          <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white group-hover:text-acid-yellow transition-colors leading-tight mb-2 line-clamp-2">
+          <h3 className="font-display text-2xl uppercase tracking-wide text-grit-white group-hover:text-acid-yellow transition-colors leading-tight mb-2 line-clamp-2 break-words">
             {event.name}
           </h3>
 
           {/* Venue & City */}
-          <div className="flex items-center gap-1.5 text-xs font-mono-zine text-grit-dim mb-4">
+          <div className="flex items-center gap-1.5 text-xs font-mono-zine text-grit-dim mb-2">
             <MapPin size={13} className={isSoldOut ? 'text-grit-dim' : 'text-acid-yellow shrink-0'} />
             <span className="truncate">{event.venueName || 'Main Arena'} • {event.city || event.venueAddress || 'Los Angeles, CA'}</span>
           </div>
+
+          {/* Event Description */}
+          {event.description && (
+            <p className="font-mono-zine text-xs text-grit-dim line-clamp-2 leading-relaxed mb-3 break-words">
+              {event.description}
+            </p>
+          )}
         </div>
 
         <div>

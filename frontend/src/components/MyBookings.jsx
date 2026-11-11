@@ -56,12 +56,54 @@ export default function MyBookings({ currentUser, showToast }) {
   const handleCancelBooking = async (bookingId) => {
     if (!window.confirm('CANCEL THIS BOOKING? ALLOCATED SEATS WILL RETURN TO LIVE INVENTORY.')) return;
 
+    let localBookings = [];
+    try {
+      localBookings = JSON.parse(localStorage.getItem('my_local_bookings') || '[]');
+    } catch {
+      localBookings = [];
+    }
+    const isLocalBooking = localBookings.some(b => String(b.id) === String(bookingId));
+
     try {
       await apiFetch(`/bookings/${bookingId}/cancel`, { method: 'PATCH' });
+      // Server confirmed cancellation: reconcile local storage if record exists locally
+      if (isLocalBooking) {
+        const updatedLocal = localBookings.map(b => 
+          String(b.id) === String(bookingId) ? { ...b, bookingStatus: 'CANCELLED' } : b
+        );
+        localStorage.setItem('my_local_bookings', JSON.stringify(updatedLocal));
+      }
       showToast('BOOKING CANCELLED AND SEATS RELEASED', 'info');
       fetchUserBookings();
     } catch (err) {
-      showToast(err.message || 'FAILED TO CANCEL BOOKING', 'error');
+      const isNotFound = err.message && (err.message.includes('404') || err.message.toLowerCase().includes('not found'));
+      const isNetworkOffline = err.name === 'AbortError' || (err.message && (
+        err.message.toLowerCase().includes('failed to fetch') ||
+        err.message.toLowerCase().includes('network') ||
+        err.message.toLowerCase().includes('not accessible') ||
+        err.message.toLowerCase().includes('timeout')
+      ));
+
+      if (isLocalBooking && (isNotFound || isNetworkOffline)) {
+        // Reconcile ONLY confirmed local/demo booking in local storage and state
+        const updatedLocal = localBookings.map(b => 
+          String(b.id) === String(bookingId) ? { ...b, bookingStatus: 'CANCELLED' } : b
+        );
+        localStorage.setItem('my_local_bookings', JSON.stringify(updatedLocal));
+
+        setBookings(prev => prev.map(b => 
+          String(b.id) === String(bookingId) ? { ...b, bookingStatus: 'CANCELLED' } : b
+        ));
+
+        if (isNotFound) {
+          showToast('LOCAL DEMO BOOKING CANCELLED (RECONCILED)', 'info');
+        } else {
+          showToast('BOOKING CANCELLED LOCALLY (OFFLINE MODE)', 'info');
+        }
+      } else {
+        // Do not silently mark real backend booking as cancelled when server has not confirmed
+        showToast(err.message || 'FAILED TO CANCEL BOOKING: SERVER DID NOT CONFIRM CANCELLATION', 'error');
+      }
     }
   };
 
@@ -507,27 +549,27 @@ export default function MyBookings({ currentUser, showToast }) {
     <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
       
       {/* Header */}
-      <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-6 sm:mb-8 border-b-2 border-asphalt-border pb-5 sm:pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5 shrink-0">
               OFFICIAL TICKET VAULT
             </span>
-            <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
+            <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest truncate max-w-[200px] sm:max-w-none">
               ACCOUNT: {currentUser?.email || 'ATTENDEE'}
             </span>
           </div>
-          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-none">
+          <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none">
             MY BOOKINGS & DIGITAL TICKETS
           </h1>
-          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5">
+          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5 leading-relaxed">
             VERIFIED EVENT PASSES, REAL-TIME SEAT RESERVATIONS & QR ADMISSION TICKETS
           </p>
         </div>
 
         <button 
           onClick={fetchUserBookings} 
-          className="self-start md:self-auto bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer touch-manipulation"
+          className="w-full sm:w-auto self-start md:self-auto bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer touch-manipulation text-center flex items-center justify-center"
         >
           REFRESH BOOKINGS
         </button>
@@ -630,46 +672,46 @@ export default function MyBookings({ currentUser, showToast }) {
               </div>
 
               {/* Pass Content */}
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[10px] font-ticker text-grit-dim uppercase tracking-wider">
+              <div className="p-3.5 sm:p-5">
+                <div className="flex items-center gap-2 mb-2 pr-28 sm:pr-24">
+                  <span className="text-[10px] font-ticker text-grit-dim uppercase tracking-wider truncate">
                     TICKET #{b.id} // VERIFIED PASS
                   </span>
                   {isCinema && (
-                    <span className="text-[9px] font-impact bg-asphalt-card border border-asphalt-border px-1.5 py-0.2 text-acid-yellow">
+                    <span className="text-[9px] font-impact bg-asphalt-card border border-asphalt-border px-1.5 py-0.2 text-acid-yellow shrink-0">
                       SCREEN 01 // LASER
                     </span>
                   )}
                 </div>
 
-                <h3 className="font-display text-2xl uppercase tracking-tight text-grit-white leading-tight mb-4 pr-16">
+                <h3 className="font-display text-xl sm:text-2xl uppercase tracking-tight text-grit-white leading-tight mb-4 pr-24 sm:pr-28 break-words">
                   {b.event?.name || 'LIVE EVENT'}
                 </h3>
 
                 <div className="space-y-1.5 font-mono-zine text-xs text-grit-dim uppercase mb-4">
-                  <div className="flex items-center gap-2">
-                    <Calendar size={13} className="text-acid-yellow" />
-                    <span>{b.event?.eventDate} @ {b.showtime || b.event?.startTime || '19:00'}</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Calendar size={13} className="text-acid-yellow shrink-0" />
+                    <span className="truncate">{b.event?.eventDate} @ {b.showtime || b.event?.startTime || '19:00'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin size={13} className="text-acid-yellow" />
-                    <span>{b.screenName || b.event?.venue?.name || 'CONCERT ARENA'}</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <MapPin size={13} className="text-acid-yellow shrink-0" />
+                    <span className="truncate">{b.screenName || b.event?.venue?.name || 'CONCERT ARENA'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Ticket size={13} className="text-acid-yellow" />
-                    <span>
+                  <div className="flex items-start gap-2 min-w-0">
+                    <Ticket size={13} className="text-acid-yellow shrink-0 mt-0.5" />
+                    <span className="break-words">
                       {b.quantity} PASS(ES) · {b.selectedSeats ? `SEATS: ${b.selectedSeats}` : 'GENERAL ADMISSION'}
                     </span>
                   </div>
                   {b.snacks && Object.keys(b.snacks).length > 0 && (
-                    <div className="flex items-start gap-2 text-acid-yellow pt-1 border-t border-asphalt-border/60">
+                    <div className="flex items-start gap-2 text-acid-yellow pt-1 border-t border-asphalt-border/60 min-w-0">
                       <span className="shrink-0 font-impact text-[9px] bg-asphalt-card px-1 border border-asphalt-border">SNACKS:</span>
                       <span className="text-[11px] truncate">
                         {Object.entries(b.snacks).map(([k, q]) => `${q}x ${k.replace(/_/g, ' ').toUpperCase()}`).join(', ')}
                       </span>
                     </div>
                   )}
-                  <div className="pt-2 border-t border-asphalt-border font-impact text-lg text-grit-white">
+                  <div className="pt-2 border-t border-asphalt-border font-impact text-base sm:text-lg text-grit-white">
                     TOTAL AMOUNT: {formatPrice(b.totalAmount, b.event?.currency)}
                   </div>
                 </div>
@@ -677,7 +719,7 @@ export default function MyBookings({ currentUser, showToast }) {
                 {/* Perforated Barcode Line */}
                 <div className="pt-3 border-t-2 border-dashed border-asphalt-border flex items-center justify-between opacity-50 select-none gap-2">
                   <span className="font-ticker text-[8px] text-grit-dim uppercase truncate">PASS_BARCODE_VERIFIED</span>
-                  <svg className="h-4 w-28 max-w-[112px] shrink-0" viewBox="0 0 112 16" fill="currentColor">
+                  <svg className="h-4 w-24 sm:w-28 max-w-[112px] shrink-0" viewBox="0 0 112 16" fill="currentColor">
                     <rect x="0" y="0" width="3" height="16"/>
                     <rect x="5" y="0" width="2" height="16"/>
                     <rect x="9" y="0" width="4" height="16"/>
@@ -704,41 +746,43 @@ export default function MyBookings({ currentUser, showToast }) {
               </div>
 
               {/* Action Buttons */}
-              <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-wrap gap-2">
+              <div className="p-3 sm:p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-wrap gap-2">
                 {b.bookingStatus !== 'CANCELLED' && (
                   <button 
                     onClick={() => handleDownloadPdf(b)} 
-                    className="flex-1 min-w-[140px] bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase py-2.5 px-3 min-h-[38px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
+                    className="w-full sm:flex-1 sm:min-w-[140px] bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase py-2.5 px-3 min-h-[40px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
                   >
                     <Download size={13} /> PRINT TICKET PASS
                   </button>
                 )}
 
-                <button 
-                  onClick={() => handleDownloadCalendar(b.event?.id || 1)} 
-                  className="bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer flex items-center justify-center gap-1 touch-manipulation"
-                  title="Download .ics file"
-                >
-                  <Calendar size={13} /> .ICS
-                </button>
-
-                <button 
-                  onClick={() => handleOpenGoogleCalendar(b.event?.id || 1, b.event)} 
-                  className="bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer flex items-center justify-center gap-1 touch-manipulation"
-                  title="Add to Google Calendar"
-                >
-                  <ExternalLink size={13} /> GCAL
-                </button>
-
-                {b.bookingStatus === 'CONFIRMED' && (
+                <div className="flex items-center gap-2 w-full sm:w-auto sm:flex-initial flex-1">
                   <button 
-                    onClick={() => handleCancelBooking(b.id)} 
-                    className="bg-asphalt-surface border border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer transition-colors flex items-center justify-center gap-1 touch-manipulation"
-                    title="Cancel booking"
+                    onClick={() => handleDownloadCalendar(b.event?.id || 1)} 
+                    className="flex-1 sm:flex-initial bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer flex items-center justify-center gap-1 touch-manipulation"
+                    title="Download .ics file"
                   >
-                    <XCircle size={13} /> CANCEL
+                    <Calendar size={13} /> .ICS
                   </button>
-                )}
+
+                  <button 
+                    onClick={() => handleOpenGoogleCalendar(b.event?.id || 1, b.event)} 
+                    className="flex-1 sm:flex-initial bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer flex items-center justify-center gap-1 touch-manipulation"
+                    title="Add to Google Calendar"
+                  >
+                    <ExternalLink size={13} /> GCAL
+                  </button>
+
+                  {b.bookingStatus === 'CONFIRMED' && (
+                    <button 
+                      onClick={() => handleCancelBooking(b.id)} 
+                      className="flex-1 sm:flex-initial bg-asphalt-surface border border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer transition-colors flex items-center justify-center gap-1 touch-manipulation"
+                      title="Cancel booking"
+                    >
+                      <XCircle size={13} /> CANCEL
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           );
