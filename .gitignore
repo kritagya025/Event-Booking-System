@@ -4,6 +4,53 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Environment & Confidential Secrets (Never commit to Git)
+.env
+.env.*
+*.env
+*.env.local
+*.env.*.local
+*.secret
+*.secrets
+*.credential
+*.credentials
+
+# Certificates, Keystores & Private Keys
+*.pem
+*.key
+*.pkcs12
+*.pfx
+*.p12
+*.jks
+*.keystore
+*.crt
+*.cer
+*.der
+id_rsa*
+id_ecdsa*
+id_ed25519*
+
+# Logs, Dumps & Test Diagnostics
+*.log
+logs/
+*.dump
+*.dumpstream
+auth-*.txt
+auth-*.log
+*-dump.txt
+*-thread-dump.txt
+diagnostic_*.log
+diagnostic_*.txt
+
+# OS & Temporary Metadata
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
 ### STS ###
 .apt_generated
 .classpath
