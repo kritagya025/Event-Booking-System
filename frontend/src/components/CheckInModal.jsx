@@ -100,7 +100,7 @@ export default function CheckInModal({ isOpen, onClose, showToast }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto safe-pb touch-scroll select-none" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/85 flex items-center justify-center p-2 sm:p-4 overflow-y-auto safe-pb touch-scroll select-none" onClick={onClose}>
       <div 
         className="w-full max-w-lg bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#F43F5E] my-auto relative"
         onClick={(e) => e.stopPropagation()}

@@ -357,7 +357,7 @@ export default function ProfileDashboard({ currentUser, onNavigate, showToast, o
 
       {/* Edit Profile Modal */}
       {isEditOpen && (
-        <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto safe-pb touch-scroll" onClick={() => setIsEditOpen(false)}>
+        <div className="fixed inset-0 z-50 bg-asphalt-black/85 flex items-center justify-center p-3 sm:p-4 overflow-y-auto safe-pb touch-scroll" onClick={() => setIsEditOpen(false)}>
           <div 
             className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#E2F13C] p-4 sm:p-6 relative font-mono-zine my-auto"
             onClick={(e) => e.stopPropagation()}

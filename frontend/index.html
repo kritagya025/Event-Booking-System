@@ -17,17 +17,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     
-    <!-- Theme Initializer (prevents flash) -->
+    <!-- Theme Initializer (adapts automatically to device / system color scheme, prevents flash) -->
     <script>
       (function() {
         try {
-          var saved = localStorage.getItem('sb-theme') || 'dark';
-          if (saved === 'light') {
-            document.documentElement.classList.add('light');
-            document.documentElement.classList.remove('dark');
-          } else {
+          localStorage.removeItem('sb-theme');
+          var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (isDark) {
             document.documentElement.classList.add('dark');
             document.documentElement.classList.remove('light');
+          } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
           }
         } catch (e) {}
       })();

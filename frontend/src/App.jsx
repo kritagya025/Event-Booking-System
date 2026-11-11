@@ -20,8 +20,8 @@ import Background3D from './components/Background3D';
 import EventCardSkeleton from './components/EventCardSkeleton';
 import { 
   Heart, Bell, AlertCircle, Check, Zap, Radio, Calendar, MapPin, 
-  ArrowRight, Search, RotateCcw, Film, Ticket, Sparkles, 
-  SlidersHorizontal, Music, Theater, Laptop, Trophy 
+  ArrowRight, Search, RotateCcw, Film, Ticket, Layers, 
+  SlidersHorizontal, Music, Theater, Laptop, Trophy, ShieldCheck 
 } from 'lucide-react';
 import { apiFetch, getStoredUser, clearAuthSession } from './services/api';
 import { formatPrice, subscribeCurrencyChange } from './services/currency';
@@ -117,7 +117,7 @@ export default function App() {
   }, [allMasterEvents]);
 
   const categories = useMemo(() => [
-    { id: '', key: 'ALL', label: 'ALL SHOWS', icon: Sparkles },
+    { id: '', key: 'ALL', label: 'ALL SHOWS', icon: Layers },
     { id: 'CINEMA', key: 'CINEMA', label: 'CINEMA & IMAX', icon: Film },
     { id: 'MUSIC', key: 'MUSIC', label: 'CONCERTS', icon: Music },
     { id: 'THEATER', key: 'THEATER', label: 'THEATER & ARTS', icon: Theater },
@@ -139,6 +139,45 @@ export default function App() {
   useEffect(() => {
     filtersRef.current = filters;
   }, [filters]);
+
+  // Adaptive Device Theme: Automatically follow system/device preferred color scheme
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+
+    try {
+      localStorage.removeItem('sb-theme');
+    } catch {}
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const applyTheme = (isDark) => {
+      const root = document.documentElement;
+      const body = document.body;
+      if (isDark) {
+        root.classList.remove('light');
+        root.classList.add('dark');
+        body.classList.remove('light');
+        body.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+        root.classList.add('light');
+        body.classList.remove('dark');
+        body.classList.add('light');
+      }
+    };
+
+    // Apply current system preference
+    applyTheme(mediaQuery.matches);
+
+    // Reactively adapt when the OS/device theme switches
+    const handleChange = (e) => applyTheme(e.matches);
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else if (mediaQuery.addListener) {
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
+    }
+  }, []);
 
   const [toasts, setToasts] = useState([]);
 
@@ -511,7 +550,7 @@ export default function App() {
             <section className="relative mb-8 sm:mb-12 border-2 sm:border-4 border-grit-white bg-asphalt-surface p-3.5 sm:p-6 md:p-10 shadow-[3px_3px_0px_#eefc54] sm:shadow-[8px_8px_0px_#eefc54] overflow-hidden">
               {/* Slanted Badges (Shown on sm+ to prevent mobile viewport clipping) */}
               <div className="hidden sm:inline-block absolute -top-3 sm:-top-5 right-2 sm:-right-4 bg-neon-magenta text-grit-white font-display text-sm sm:text-xl lg:text-2xl px-2.5 sm:px-4 py-1 sm:py-1.5 rotate-2 sm:rotate-3 border-2 border-asphalt-black shadow-[3px_3px_0px_#0e0e11] z-20">
-                ★ 100% VERIFIED TICKETS & PASSES ★
+                [ 100% VERIFIED TICKETS & PASSES ]
               </div>
               <div className="hidden sm:inline-block absolute -bottom-3 sm:-bottom-4 left-2 sm:-left-3 bg-electric-cobalt text-acid-yellow font-ticker text-[10px] sm:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-1 -rotate-2 sm:-rotate-3 border-2 border-grit-white z-20">
                 ZERO SECONDARY SCALPING // 100% VERIFIED
@@ -520,7 +559,7 @@ export default function App() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center relative z-10">
                 <div className="lg:col-span-7 space-y-3 sm:space-y-4">
                   <div className="inline-flex items-center gap-2 bg-asphalt-black border-2 border-acid-yellow px-2 sm:px-3 py-1 stamp-slant-1">
-                    <Sparkles size={13} className="text-acid-yellow" />
+                    <ShieldCheck size={13} className="text-acid-yellow" />
                     <span className="font-ticker text-[9px] sm:text-xs font-bold uppercase text-acid-yellow tracking-widest">
                       OFFICIAL LIVE EVENT & CINEMA BOX OFFICE
                     </span>
@@ -632,12 +671,12 @@ export default function App() {
                       className="bg-transparent font-impact text-lg text-asphalt-black focus:outline-none w-full cursor-pointer appearance-none border-none p-0"
                     >
                       <option value="">ALL CATEGORIES (ALL EVENTS)</option>
-                      <option value="CINEMA">🎬 CINEMA & MOVIE PREMIERES</option>
-                      <option value="MUSIC">🎵 MUSIC CONCERTS & FESTIVALS</option>
-                      <option value="TECH">💻 TECH & AI CONFERENCES</option>
-                      <option value="THEATER">🎭 THEATER & PERFORMING ARTS</option>
-                      <option value="SPORTS">⚽ SPORTS & TOURNAMENTS</option>
-                      <option value="WORKSHOP">🛠️ HANDS-ON WORKSHOPS</option>
+                      <option value="CINEMA">CINEMA & MOVIE PREMIERES</option>
+                      <option value="MUSIC">MUSIC CONCERTS & FESTIVALS</option>
+                      <option value="TECH">TECH & CONFERENCES</option>
+                      <option value="THEATER">THEATER & PERFORMING ARTS</option>
+                      <option value="SPORTS">SPORTS & TOURNAMENTS</option>
+                      <option value="WORKSHOP">WORKSHOPS & MASTERCLASSES</option>
                     </select>
                   </div>
 
@@ -755,7 +794,7 @@ export default function App() {
                             : 'bg-asphalt-card text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-grit-white shadow-[2px_2px_0px_rgba(255,255,255,0.1)]'
                         }`}
                       >
-                        <Icon size={16} className={isActive ? 'text-asphalt-black' : 'text-acid-yellow group-hover:scale-110 transition-transform'} />
+                        <Icon size={16} className={isActive ? 'text-asphalt-black' : 'text-acid-yellow'} />
                         <span className="font-display text-sm tracking-wider uppercase">{tab.label}</span>
                         <span
                           className={`text-[10px] font-mono-zine px-1.5 py-0.5 leading-none ${
@@ -814,7 +853,7 @@ export default function App() {
                     CHOOSE YOUR EXACT SEATS IN REAL TIME
                   </h2>
                   <p className="font-mono-zine text-xs sm:text-sm text-grit-dim leading-relaxed">
-                    Select your preferred viewpoint across auditoriums, IMAX halls, and arenas. Your chosen seats are locked exclusively for 10 minutes while you complete checkout—guaranteeing zero double-bookings or surprise sold-outs.
+                    Select your preferred viewpoint across auditoriums, IMAX halls, and arenas. Your chosen seats are locked exclusively for 10 minutes while you complete checkout (guaranteeing zero double-bookings or surprise sold-outs).
                   </p>
                   <div className="space-y-2 font-ticker text-xs">
                     <div className="bg-asphalt-black border-2 border-asphalt-border p-2 sm:p-2.5 flex items-center justify-between">
@@ -1239,7 +1278,7 @@ function HeroProductDemo({ onOpenBooking }) {
       <div className="mt-4 pt-3 bg-asphalt-card p-3 border-2 border-grit-white flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         <div>
           <span className="block text-[10px] font-ticker text-grit-dim uppercase">TICKET SUBTOTAL</span>
-          <span className="font-display text-2xl sm:text-3xl text-acid-yellow">${tariff}.00 USD</span>
+          <span className="font-display text-2xl sm:text-3xl text-acid-yellow tabular-nums">${tariff}.00 USD</span>
         </div>
         <button 
           type="button"
@@ -1432,7 +1471,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
               </div>
               <div className="flex items-center gap-1.5">
                 {isTop && (
-                  <span className="font-ticker text-[9px] uppercase font-bold text-asphalt-black flex items-center gap-1 bg-white/70 px-1.5 py-0.5 border border-asphalt-black/40">
+                  <span className="font-ticker text-[9px] uppercase font-bold text-asphalt-black flex items-center gap-1 bg-acid-yellow px-1.5 py-0.5 border border-asphalt-black">
                     CLICK TO SLIDE ↗
                   </span>
                 )}
@@ -1447,7 +1486,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
               <img 
                 src={getImage(current)} 
                 alt={current.name} 
-                className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${isSoldOut ? 'grayscale contrast-125' : ''}`} 
+                className={`w-full h-full object-cover ${isSoldOut ? 'grayscale contrast-125' : ''}`} 
                 draggable={false}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-asphalt-black via-black/25 to-transparent" />
@@ -1464,9 +1503,9 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
               {/* Badges */}
               <div className="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none">
                 <span className={`font-impact text-[10px] tracking-wider uppercase px-2 py-0.5 ${isSoldOut ? 'bg-asphalt-black text-grit-white border border-grit-white' : 'bg-neon-magenta text-grit-white'} border border-asphalt-black shadow-sm`}>
-                  {isCinema ? '🎬 CINEMA & IMAX' : `★ ${current.category || 'EVENT'}`}
+                  {isCinema ? 'CINEMA & IMAX' : (current.category || 'EVENT')}
                 </span>
-                <span className="font-mono-zine text-[10px] font-bold px-2 py-0.5 bg-asphalt-black/85 text-acid-yellow border border-acid-yellow/40 backdrop-blur-sm">
+                <span className="font-mono-zine text-[10px] font-bold px-2 py-0.5 bg-asphalt-black text-acid-yellow border border-acid-yellow/40">
                   {current.availableSeats > 0 ? `${current.availableSeats} SEATS LEFT` : 'SOLD OUT'}
                 </span>
               </div>
@@ -1494,7 +1533,7 @@ function HeroTrendingSlideshow({ events = [], onBook }) {
               <div>
                 <div className="flex items-center justify-between pb-2 mb-2 border-t border-asphalt-border pt-1.5 text-xs font-ticker">
                   <span className="text-grit-dim">ADMISSION FROM:</span>
-                  <span className={`font-display text-xl sm:text-2xl font-bold ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
+                  <span className={`font-display text-xl sm:text-2xl font-bold tabular-nums ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
                     {formatPrice(current.ticketPrice, current.currency)}
                   </span>
                 </div>
@@ -1592,10 +1631,10 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
   };
 
   return (
-    <div className={`bg-asphalt-card border-2 relative group hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden ${
+    <div className={`bg-asphalt-card border-2 relative group flex flex-col justify-between overflow-hidden transition-all duration-150 ${
       isSoldOut
         ? 'sold-out-monochrome border-grit-dim/70 shadow-[4px_4px_0px_#222226] opacity-90 hover:opacity-100'
-        : 'border-grit-white shadow-[4px_4px_0px_#E2F13C]'
+        : 'border-grit-white shadow-[4px_4px_0px_#E2F13C] hover:shadow-[6px_6px_0px_#ff1f6d] hover:-translate-y-0.5'
     }`}>
       
       {/* 1. Artwork & Image Overlay */}
@@ -1603,7 +1642,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
         <img 
           src={getImageForEvent(event)} 
           alt={event.name} 
-          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${isSoldOut ? 'grayscale contrast-125' : ''}`}
+          className={`w-full h-full object-cover ${isSoldOut ? 'grayscale contrast-125' : ''}`}
           loading="lazy"
         />
         {/* Subtle bottom gradient to ensure text readability */}
@@ -1647,7 +1686,7 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
         </div>
 
         {/* Date & Time pill on bottom of image */}
-        <div className="absolute bottom-2.5 left-2.5 bg-asphalt-black/90 backdrop-blur-sm text-grit-white font-mono-zine text-xs px-2.5 py-1 border border-grit-white/30 flex items-center gap-1.5">
+        <div className="absolute bottom-2.5 left-2.5 bg-asphalt-black text-grit-white font-mono-zine text-xs px-2.5 py-1 border border-asphalt-border flex items-center gap-1.5">
           <Calendar size={13} className={isSoldOut ? 'text-grit-dim' : 'text-acid-yellow'} />
           <span>{formatEventDate(event.eventDate)}</span>
         </div>
@@ -1731,13 +1770,13 @@ function EventCard({ event, _index = 0, currentUser, onBook, onWishlist, onWaitl
           <div className="bg-asphalt-surface p-2.5 border border-asphalt-border mb-3 flex items-center justify-between">
             <div>
               <span className="block text-[9px] font-ticker text-grit-dim uppercase">TICKET PRICE</span>
-              <span className={`font-display text-2xl font-bold leading-none ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
+              <span className={`font-display text-2xl font-bold leading-none tabular-nums ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
                 {formatPrice(event.ticketPrice, event.currency)}
               </span>
             </div>
             <div className="text-right">
               <span className="block text-[9px] font-ticker text-grit-dim uppercase">SEATS</span>
-              <span className={`font-mono-zine text-xs font-bold ${isSoldOut ? 'text-grit-white bg-asphalt-black px-2 py-0.5 border border-grit-dim uppercase' : 'text-grit-white'}`}>
+              <span className={`font-mono-zine text-xs font-bold tabular-nums ${isSoldOut ? 'text-grit-white bg-asphalt-black px-2 py-0.5 border border-grit-dim uppercase' : 'text-grit-white'}`}>
                 {isSoldOut ? 'SOLD OUT' : (
                   <span className="flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" />
@@ -1789,7 +1828,7 @@ const mockEvents = [
   },
   {
     id: 2,
-    name: 'Cyberpunk 2099: Neo-Tokyo — Midnight IMAX 3D Premiere',
+    name: 'Cyberpunk 2099: Neo-Tokyo // Midnight IMAX 3D Premiere',
     description: 'Worldwide midnight cinema premiere featuring live synthesized original score and laser 3D projection.',
     category: 'CINEMA',
     movieFormat: 'IMAX 3D',

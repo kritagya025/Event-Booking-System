@@ -3,7 +3,7 @@ import {
   X, Check, ArrowRight, ArrowLeft,
   Smartphone, CreditCard, Landmark, Gift, Wallet, AlertCircle,
   Volume2, Zap, Filter, RotateCcw, Trash2, Eye, Ticket,
-  Film, Clapperboard, Sparkles, Users, Compass
+  Film, Clapperboard, Award, Users, Compass
 } from 'lucide-react';
 import { wsService } from '../services/websocket';
 import { apiFetch } from '../services/api';
@@ -18,40 +18,35 @@ const CINEMA_CONCESSIONS = [
     name: 'Buttered Mega Tub Popcorn',
     tag: 'CINEMA CLASSIC',
     description: 'Freshly popped warm golden kernels with real melted butter or caramel glaze',
-    price: 8.50,
-    icon: '🍿'
+    price: 8.50
   },
   {
     id: 'nachos_supreme',
     name: 'Loaded Stadium Nachos',
     tag: 'CHEF SELECTION',
     description: 'Crisp tortilla corn chips served with hot jalapeño cheddar cheese dip & zesty salsa',
-    price: 9.00,
-    icon: '🧀'
+    price: 9.00
   },
   {
     id: 'soda_duo',
     name: 'Fountain Soda Duo (2x 32oz)',
     tag: 'CHILLED REFRESH',
     description: 'Choice of Ice-Cold Cola, Lemon-Lime, Ginger Ale or Zero Sugar chilled with crushed ice',
-    price: 6.50,
-    icon: '🥤'
+    price: 6.50
   },
   {
     id: 'sweet_box',
     name: 'Confectionery Sweet Box',
     tag: 'GOURMET CANDY',
     description: 'Classic cinema candy box: Chocolate M&M\'s, Red Twizzlers & sour gummy ribbons',
-    price: 5.50,
-    icon: '🍫'
+    price: 5.50
   },
   {
     id: 'directors_pack',
     name: "Director's Cut VIP Combo",
     tag: 'BEST VALUE // SAVE 20%',
     description: 'Mega Popcorn Tub + 2 Large Fountain Sodas + Loaded Nachos + Choice of Candy Box',
-    price: 22.00,
-    icon: '🎟️'
+    price: 22.00
   }
 ];
 
@@ -559,7 +554,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
   const rowsList = Array.from(new Set(seatMap.map(s => s.rowNumber || 'A'))).sort();
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-hidden safe-pb" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/85 flex items-center justify-center p-0 sm:p-4 overflow-hidden safe-pb" onClick={onClose}>
       <div 
         className="w-full h-full sm:h-auto max-h-[100dvh] sm:max-h-[90vh] max-w-4xl bg-asphalt-surface border-0 sm:border-4 border-grit-white text-grit-white shadow-none sm:shadow-[12px_12px_0px_#eefc54] relative select-none flex flex-col"
         onClick={(e) => e.stopPropagation()}
@@ -748,11 +743,11 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             <div className="absolute inset-0 bg-gradient-to-b from-acid-yellow/5 to-transparent pointer-events-none"></div>
 
                             <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                              <Zap size={14} className="text-acid-yellow animate-bounce shrink-0" />
+                              <Zap size={14} className="text-acid-yellow shrink-0" />
                               <span className="font-impact text-xs sm:text-base tracking-widest text-grit-white uppercase truncate">
                                 ▲ MAIN CONCERT STAGE & LIVE SOUND RIG ▲
                               </span>
-                              <Zap size={14} className="text-neon-magenta animate-bounce shrink-0" />
+                              <Zap size={14} className="text-neon-magenta shrink-0" />
                             </div>
                             <p className="font-mono-zine text-[8px] sm:text-[10px] text-grit-dim uppercase tracking-wider">
                               DIRECT STAGE SIGHTLINE • 10-MINUTE SEAT LOCK ACTIVE
@@ -820,7 +815,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                         className="px-2.5 py-1 bg-asphalt-surface border border-asphalt-border hover:border-acid-yellow text-grit-white font-mono-zine text-[10px] uppercase transition-colors cursor-pointer flex items-center gap-1"
                         title="Auto-pick 1 best available seat"
                       >
-                        <Sparkles size={10} className="text-acid-yellow" />
+                        <Award size={10} className="text-acid-yellow" />
                         +1 BEST
                       </button>
                       <button
@@ -971,7 +966,6 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
                             headrest += "bg-acid-yellow border-asphalt-black ";
                             cushion += "bg-acid-yellow text-asphalt-black border-grit-white shadow-[0_0_14px_rgba(226,241,60,0.7),2px_2px_0px_#ffffff] font-black ";
                           } else if (seat.status === 'AVAILABLE') {
-                            container += "hover:-translate-y-0.5 ";
                             if (seat.seatType === 'ORCHESTRA' || seat.seatType === 'VIP') {
                               headrest += "bg-neon-magenta border-asphalt-black ";
                               cushion += "bg-neon-magenta/15 text-neon-magenta border-neon-magenta hover:bg-neon-magenta hover:text-asphalt-black hover:shadow-[0_0_10px_#ff1f6d] ";
@@ -1222,7 +1216,7 @@ export default function SeatMapModal({ isOpen, onClose, event, currentUser, show
               )}
 
               {/* ─── G. Sticky Bottom Actions Bar ─── */}
-              <div className="sticky bottom-0 -mx-3.5 sm:-mx-5 md:-mx-6 -mb-3.5 sm:-mb-5 md:-mb-6 mt-6 p-3 sm:p-4 bg-asphalt-black/95 backdrop-blur-md border-t-2 border-asphalt-border flex flex-row items-center justify-between gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.6)] z-30">
+              <div className="sticky bottom-0 -mx-3.5 sm:-mx-5 md:-mx-6 -mb-3.5 sm:-mb-5 md:-mb-6 mt-6 p-3 sm:p-4 bg-asphalt-black border-t-2 border-asphalt-border flex flex-row items-center justify-between gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.6)] z-30">
                 <div className="min-w-0">
                   <span className="font-mono-zine text-[10px] sm:text-xs text-grit-dim uppercase tracking-wider block truncate">
                     {selectedSeats.length > 0 ? (

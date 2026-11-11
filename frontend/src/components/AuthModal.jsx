@@ -106,7 +106,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, showToast })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-asphalt-black/85 backdrop-blur-md overflow-y-auto safe-pb touch-scroll" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-asphalt-black/85 overflow-y-auto safe-pb touch-scroll" onClick={onClose}>
       <div 
         className="w-full max-w-md max-h-[92vh] flex flex-col bg-asphalt-surface border-2 border-grit-white shadow-[6px_6px_0px_#E2F13C] sm:shadow-[8px_8px_0px_#E2F13C] relative overflow-hidden select-none my-auto"
         onClick={(e) => e.stopPropagation()}

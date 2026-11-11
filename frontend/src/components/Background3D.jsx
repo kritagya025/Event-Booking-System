@@ -31,29 +31,16 @@ export default function Background3D() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none" aria-hidden="true">
-      {/* ─── 1. Physical Cutting Mat & Soundboard Registration Grid ─── */}
-      <div 
-        className="absolute inset-0 opacity-[0.035] dark:opacity-[0.045]"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, currentColor 1px, transparent 1px),
-            linear-gradient(to bottom, currentColor 1px, transparent 1px)
-          `,
-          backgroundSize: '48px 48px'
-        }}
-      />
-
-      {/* ─── 2. Fine Acoustic Architecture Matrix & Stage Grid ─── */}
-      <div 
-        className="absolute inset-0 opacity-[0.02] dark:opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, currentColor 1px, transparent 1px),
-            linear-gradient(to bottom, currentColor 1px, transparent 1px)
-          `,
-          backgroundSize: '192px 192px'
-        }}
-      />
+      {/* ─── 1. Swiss 12-Column Typographic Crosshair Grid (Clean & Zero Graph Paper) ─── */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.045] dark:opacity-[0.065]" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="swiss-crosshairs" width="128" height="128" patternUnits="userSpaceOnUse">
+            <line x1="64" y1="58" x2="64" y2="70" stroke="currentColor" strokeWidth="1.2" />
+            <line x1="58" y1="64" x2="70" y2="64" stroke="currentColor" strokeWidth="1.2" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#swiss-crosshairs)" />
+      </svg>
 
       {/* ─── 3. Interactive Stage Flashlight / Phosphor Spotlight Beam ─── */}
       <div 

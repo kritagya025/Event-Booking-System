@@ -45,7 +45,7 @@ export default function ApiDocsModal({ isOpen, onClose }) {
     : faqs.filter(f => f.category === activeCategory);
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/90 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 font-mono-zine safe-pb touch-scroll select-none" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-asphalt-black/85 flex items-center justify-center p-2 sm:p-4 font-mono-zine safe-pb touch-scroll select-none" onClick={onClose}>
       <div 
         className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[6px_6px_0px_#E2F13C] flex flex-col relative"
         onClick={(e) => e.stopPropagation()}

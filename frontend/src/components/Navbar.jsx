@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Ticket, PlusCircle, User, LogOut, ShieldCheck, QrCode, 
-  Sun, Moon, Menu, X, Sparkles, Heart
+  Menu, X, Compass, Heart
 } from 'lucide-react';
 import { getActiveCurrency, setActiveCurrency, getAvailableCurrencies, subscribeCurrencyChange } from '../services/currency';
 
@@ -12,30 +12,8 @@ export default function Navbar({
   onLogout 
 }) {
   const [currency, setCurrency] = useState(getActiveCurrency());
-  const [theme, setTheme] = useState(localStorage.getItem('sb-theme') || 'dark');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const body = document.body;
-
-    if (theme === 'light') {
-      root.classList.remove('dark');
-      root.classList.add('light');
-      body.classList.remove('dark');
-      body.classList.add('light');
-    } else {
-      root.classList.remove('light');
-      root.classList.add('dark');
-      body.classList.remove('light');
-      body.classList.add('dark');
-    }
-
-    try {
-      localStorage.setItem('sb-theme', theme);
-    } catch {}
-  }, [theme]);
 
   useEffect(() => {
     return subscribeCurrencyChange((newCurr) => setCurrency(newCurr));
@@ -72,10 +50,6 @@ export default function Navbar({
     };
   }, [mobileMenuOpen]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
   const getUserInitials = (user) => {
     if (!user) return 'U';
     const first = user.firstName ? user.firstName.charAt(0).toUpperCase() : '';
@@ -93,7 +67,7 @@ export default function Navbar({
       {/* ─── 0. HIGH VOLTAGE HAZARD WARNING HEADER MARQUEE ─── */}
       <div className="h-7 w-full hazard-tape overflow-hidden flex items-center border-b-2 border-asphalt-black select-none">
         <div className="animate-marquee items-center gap-6 text-asphalt-black font-ticker font-extrabold text-[12px] tracking-widest uppercase py-0.5">
-          <span>★ EVENTHUB OFFICIAL BOX OFFICE ★ LIVE CONCERTS, BLOCKBUSTER CINEMA & THEATER</span>
+          <span>[ EVENTHUB OFFICIAL BOX OFFICE ] LIVE CONCERTS, BLOCKBUSTER CINEMA & THEATER</span>
           <span>•</span>
           <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
           <span>•</span>
@@ -101,7 +75,7 @@ export default function Navbar({
           <span>•</span>
           <span>DIRECT ORGANIZER GATE SCANNER VALIDATION // 99.98% DISTRIBUTED UPTIME</span>
           <span>•</span>
-          <span>★ EVENTHUB OFFICIAL BOX OFFICE ★ LIVE CONCERTS, BLOCKBUSTER CINEMA & THEATER</span>
+          <span>[ EVENTHUB OFFICIAL BOX OFFICE ] LIVE CONCERTS, BLOCKBUSTER CINEMA & THEATER</span>
           <span>•</span>
           <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
           <span>•</span>
@@ -112,7 +86,7 @@ export default function Navbar({
       </div>
 
       {/* ─── 1. BRUTALIST DIY CLUB FLYER NAVIGATION BAR ─── */}
-      <header className="sticky top-0 z-50 bg-asphalt-black/95 backdrop-blur-md border-b-2 border-asphalt-border px-2 sm:px-4 py-2 sm:py-3">
+      <header className="sticky top-0 z-50 bg-asphalt-black border-b-2 border-asphalt-border px-2 sm:px-4 py-2 sm:py-3">
         <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-1.5 sm:gap-4">
           
           {/* Brand Stamp Logo */}
@@ -223,19 +197,6 @@ export default function Navbar({
               <span className="font-ticker text-[11px] text-grit-dim">AVAILABLE SEATS:</span>
               <span className="font-ticker text-[11px] font-bold text-acid-yellow">#992 / 1200</span>
             </div>
-
-            {/* Theme Toggle */}
-            <button 
-              onClick={toggleTheme} 
-              type="button" 
-              className="w-8 h-8 sm:w-8 sm:h-8 min-w-[32px] sm:min-w-[32px] min-h-[32px] sm:min-h-[32px] bg-asphalt-card border border-asphalt-border text-grit-dim hover:text-acid-yellow flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer overflow-hidden touch-manipulation"
-              title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-              aria-label="Toggle Theme"
-            >
-              <span className={`inline-flex items-center justify-center transition-transform duration-300 ${theme === 'dark' ? 'rotate-0' : 'rotate-180'}`}>
-                {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-              </span>
-            </button>
 
             {/* User Account / Profile Dropdown */}
             {currentUser ? (
@@ -360,7 +321,7 @@ export default function Navbar({
       {/* ─── 2. MOBILE NAVIGATION DRAWER OVERLAY ─── */}
       {mobileMenuOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-asphalt-black/85 backdrop-blur-md md:hidden flex flex-col justify-between pt-16 pb-6 px-4 overflow-y-auto touch-scroll safe-pb animate-modal-fade select-none"
+          className="fixed inset-0 z-40 bg-asphalt-black/95 md:hidden flex flex-col justify-between pt-16 pb-6 px-4 overflow-y-auto touch-scroll safe-pb animate-modal-fade select-none"
           onClick={() => setMobileMenuOpen(false)}
         >
           <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
@@ -428,7 +389,7 @@ export default function Navbar({
                 }`}
               >
                 <span>EXPLORE EVENTS</span>
-                <Sparkles size={16} />
+                <Compass size={16} />
               </button>
 
               <button
@@ -521,6 +482,20 @@ export default function Navbar({
                   <ShieldCheck size={16} />
                 </button>
               )}
+
+              {/* Background Design Lab Preview Link */}
+              <button
+                type="button"
+                onClick={() => handleNavClick('background-lab')}
+                className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
+                  activeTab === 'background-lab'
+                    ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
+                    : 'bg-asphalt-surface text-acid-yellow border-acid-yellow/60 hover:border-acid-yellow hover:bg-acid-yellow/10'
+                }`}
+              >
+                <span>🎨 BACKGROUND LAB (INSPECT)</span>
+                <span className="font-ticker text-[10px] bg-acid-yellow text-asphalt-black px-1.5 py-0.2 font-bold">PREVIEW</span>
+              </button>
             </nav>
 
             {/* Quick Currency & Theme Control */}
@@ -539,15 +514,6 @@ export default function Navbar({
                   ))}
                 </select>
               </div>
-
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="flex items-center gap-1.5 bg-asphalt-surface border border-asphalt-border px-2.5 py-1 text-grit-white hover:text-acid-yellow"
-              >
-                {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
-                <span>{theme === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}</span>
-              </button>
             </div>
 
             {/* Sign Out (Mobile) */}
@@ -563,7 +529,7 @@ export default function Navbar({
 
             {/* Guarantee Tag */}
             <div className="text-center font-ticker text-[10px] text-grit-dim tracking-wider uppercase pt-2">
-              ★ 100% VERIFIED PASSES • 10-MIN HOLD GUARANTEE ★
+              [ 100% VERIFIED PASSES // 10-MIN HOLD GUARANTEE ]
             </div>
 
           </div>

@@ -10,7 +10,6 @@ import {
   ShieldCheck, 
   Ticket, 
   Radio, 
-  Sparkles, 
   CheckCircle2, 
   Zap,
   Key,
@@ -321,7 +320,7 @@ export default function BackstageAuthTerminal({
                       ACCREDITED HOLDER:
                     </span>
                     <span className="text-acid-yellow flex items-center gap-1 font-bold">
-                      <Sparkles size={10} /> LIVE SYNCED
+                      <Activity size={10} /> LIVE SYNCED
                     </span>
                   </div>
 
@@ -372,7 +371,7 @@ export default function BackstageAuthTerminal({
                       </span>
                     ) : (
                       <span className="bg-acid-yellow text-asphalt-black font-impact text-[11px] tracking-wider px-2 py-0.5 uppercase border border-asphalt-black flex items-center gap-1 shadow-sm">
-                        <Sparkles size={11} /> LEVEL 01 // VIP PIT + LOUNGE
+                        <ShieldCheck size={11} /> LEVEL 01 // VIP PIT + LOUNGE
                       </span>
                     )}
                   </div>

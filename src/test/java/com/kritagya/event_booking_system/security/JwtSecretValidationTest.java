@@ -21,15 +21,17 @@ class JwtSecretValidationTest {
     private static final String VALID_TEST_KEY = "dGhpcyBpcyBhIHRlc3Qgc2VjcmV0IGtleSBmb3IgdGVzdGluZyBwdXJwb3Nlcw==";
 
     @Test
-    @DisplayName("1. Production startup fails when JWT_SECRET is missing")
+    @DisplayName("1. Production startup fails when JWT_SECRET is missing or empty")
     void testStartupFailsWhenSecretIsMissing() {
-        contextRunner.run(context -> {
-            assertThat(context).hasFailed();
-            assertThat(context.getStartupFailure())
-                    .hasRootCauseInstanceOf(IllegalStateException.class)
-                    .rootCause()
-                    .hasMessageContaining("JWT secret is not configured or is empty");
-        });
+        contextRunner
+                .withPropertyValues("jwt.secret=")
+                .run(context -> {
+                    assertThat(context).hasFailed();
+                    assertThat(context.getStartupFailure())
+                            .hasRootCauseInstanceOf(IllegalStateException.class)
+                            .rootCause()
+                            .hasMessageContaining("JWT secret is not configured or is empty");
+                });
     }
 
     @Test
