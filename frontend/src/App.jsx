@@ -518,7 +518,6 @@ export default function App() {
         currentUser={currentUser}
         onNavigate={handleNavigate}
         activeTab={activeTab}
-        onOpenAuthModal={() => handleNavigate('login')}
         onLogout={handleLogout}
         searchKeyword={filters.keyword}
         onSearchChange={(kw) => {

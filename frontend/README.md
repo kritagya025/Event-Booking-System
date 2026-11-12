@@ -79,7 +79,7 @@ frontend/
 
 ## Component Inventory
 
-The frontend architecture comprises 27 modular components:
+The frontend architecture comprises 26 modular components:
 
 ### Primary Views & Modals
 1. **`Navbar.jsx`**: Global brutalist navigation bar with logo stamp, multi-currency switcher, quick links, theme toggle, authentication state, and high-contrast mobile navigation drawer.
@@ -89,17 +89,16 @@ The frontend architecture comprises 27 modular components:
 5. **`MyBookings.jsx`**: Customer portal displaying ticket history, QR code admission passes, PDF invoice downloads, and offline booking cancellation reconciliation.
 6. **`ProfileDashboard.jsx`**: User profile management, password updates, account security controls, and session-authenticated ticket PDF downloads (`credentials: 'include'`).
 7. **`Wishlist.jsx`**: Customer saved events collection with instant booking shortcuts and responsive grid layouts.
-8. **`AuthModal.jsx`**: Unified login, registration, and password recovery modal with tab switching.
-9. **`CreateEventModal.jsx`**: Event creation and editing modal for organizers with category, venue, and pricing configuration.
-10. **`CheckInModal.jsx`**: Optical QR camera scanner and manual ticket serial validator for venue gate staff.
-11. **`DatabaseConsoleModal.jsx`**: In-browser diagnostic SQL/table viewer for administrators.
-12. **`SystemStatusModal.jsx`**: Live system health telemetry dialog exposing JVM, memory, and database status.
-13. **`ApiDocsModal.jsx`**: Embedded OpenAPI 3.0 documentation explorer.
-14. **`CookiesModal.jsx`**: Cookie preferences and session persistence disclosure.
-15. **`PrivacyModal.jsx`**: Data privacy statement and GDPR/compliance policy.
-16. **`TermsModal.jsx`**: Ticketing service terms, refund regulations, and venue admission rules.
-17. **`LoginPage.jsx`**: Standalone customer/organizer authentication page with responsive form geometry.
-18. **`RegisterPage.jsx`**: Standalone customer account onboarding page with mobile touch accessibility.
+8. **`CreateEventModal.jsx`**: Event creation and editing modal for organizers with category, venue, and pricing configuration.
+9. **`CheckInModal.jsx`**: Optical QR camera scanner and manual ticket serial validator for venue gate staff.
+10. **`DatabaseConsoleModal.jsx`**: In-browser diagnostic SQL/table viewer for administrators.
+11. **`SystemStatusModal.jsx`**: Live system health telemetry dialog exposing JVM, memory, and database status.
+12. **`ApiDocsModal.jsx`**: Embedded OpenAPI 3.0 documentation explorer.
+13. **`CookiesModal.jsx`**: Cookie preferences and session persistence disclosure.
+14. **`PrivacyModal.jsx`**: Data privacy statement and GDPR/compliance policy.
+15. **`TermsModal.jsx`**: Ticketing service terms, refund regulations, and venue admission rules.
+16. **`LoginPage.jsx`**: Standalone customer/organizer authentication page with responsive form geometry.
+17. **`RegisterPage.jsx`**: Standalone customer account onboarding page with mobile touch accessibility.
 
 ### Graphic Engines & Safety Components
 18. **`Background3D.jsx`**: Bespoke acoustic resonance harmonic waveform canvas engine with interactive mouse impulse physics and wireframe concert ticket pass models.
