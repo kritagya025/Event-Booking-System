@@ -21,6 +21,12 @@ export const clearAuthSession = () => {
   localStorage.removeItem('user');
 };
 
+export const getCsrfToken = () => {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
+};
+
 export async function apiFetch(endpoint, options = {}) {
   // If running on a remote HTTPS site and backend is pointing to localhost, fail immediately
   // rather than hanging the browser network stack with 10-30s connection timeouts
@@ -33,8 +39,10 @@ export async function apiFetch(endpoint, options = {}) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
+  const csrfToken = getCsrfToken();
   const headers = {
     'Content-Type': 'application/json',
+    ...(csrfToken ? { 'X-XSRF-TOKEN': csrfToken } : {}),
     ...(options.headers || {}),
   };
 
@@ -93,12 +101,16 @@ async function tryRefreshToken() {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 1200);
 
+  const csrfToken = getCsrfToken();
   try {
     const res = await fetch(`${BASE_URL}/auth/refresh`, {
       method: 'POST',
       signal: controller.signal,
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(csrfToken ? { 'X-XSRF-TOKEN': csrfToken } : {}),
+      },
       body: JSON.stringify({}),
     });
     clearTimeout(timeoutId);

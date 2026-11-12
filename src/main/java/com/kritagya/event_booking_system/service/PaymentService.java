@@ -31,13 +31,15 @@ public class PaymentService {
     private final BookingRepository bookingRepository;
     private final AuditLogger auditLogger;
     private final TicketService ticketService;
+    private final BookingService bookingService;
 
     public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, AuditLogger auditLogger,
-                          TicketService ticketService) {
+                          TicketService ticketService, BookingService bookingService) {
         this.paymentRepository = paymentRepository;
         this.bookingRepository = bookingRepository;
         this.auditLogger = auditLogger;
         this.ticketService = ticketService;
+        this.bookingService = bookingService;
     }
 
     @Transactional
@@ -143,8 +145,13 @@ public class PaymentService {
 
         payment.setPaymentStatus(PaymentStatus.REFUNDED);
         Booking booking = payment.getBooking();
-        booking.setBookingStatus(BookingStatus.CANCELLED);
-        bookingRepository.save(booking);
+
+        // Ensure full cancellation lifecycle: seat release, ticket invalidation, availableSeats restoration, waitlist
+        if (booking.getBookingStatus() != BookingStatus.CANCELLED) {
+            bookingService.cancelBooking(booking.getId(), currentUser);
+        } else {
+            bookingRepository.save(booking);
+        }
 
         Payment savedPayment = paymentRepository.save(payment);
         auditLogger.logPaymentProcessed(savedPayment.getId(), booking.getId(),

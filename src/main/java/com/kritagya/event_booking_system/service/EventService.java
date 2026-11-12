@@ -185,10 +185,10 @@ public class EventService {
 
     @Transactional
     public void incrementViewCount(Long eventId) {
-        Event event = eventRepository.findByIdAndDeletedFalse(eventId)
-                .orElseThrow(() -> new EventNotFoundException(eventId));
-        event.setViewCount(event.getViewCount() != null ? event.getViewCount() + 1 : 1L);
-        eventRepository.save(event);
+        int updated = eventRepository.incrementViewCount(eventId);
+        if (updated == 0) {
+            throw new EventNotFoundException(eventId);
+        }
     }
 
     public EventAnalyticsDTO getEventAnalytics(Long eventId) {

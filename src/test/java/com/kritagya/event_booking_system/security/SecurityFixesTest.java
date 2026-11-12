@@ -11,6 +11,7 @@ import com.kritagya.event_booking_system.enums.Role;
 import com.kritagya.event_booking_system.repository.BookingRepository;
 import com.kritagya.event_booking_system.repository.EventRepository;
 import com.kritagya.event_booking_system.repository.UserRepository;
+import com.kritagya.event_booking_system.controller.ImageController;
 import com.kritagya.event_booking_system.service.BookingService;
 import com.kritagya.event_booking_system.service.ImageStorageService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
@@ -57,6 +62,9 @@ public class SecurityFixesTest {
 
     @Autowired
     private ImageStorageService imageStorageService;
+
+    @Autowired
+    private ImageController imageController;
 
     private User customer1;
     private User customer2;
@@ -151,5 +159,44 @@ public class SecurityFixesTest {
         executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
 
         assertEquals(1, successCount.get(), "Only 1 concurrent booking request should succeed for an event with 1 available seat");
+    }
+
+    @Test
+    @DisplayName("7. RateLimitingFilter covers coupon validation endpoint")
+    public void testRateLimitingOnCouponsEndpoint() throws Exception {
+        RateLimitingFilter filter = new RateLimitingFilter(true, 2, 2);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/api/coupons/validate");
+        request.setRemoteAddr("198.51.100.1");
+
+        MockHttpServletResponse response1 = new MockHttpServletResponse();
+        filter.doFilter(request, response1, new MockFilterChain());
+        assertEquals(200, response1.getStatus());
+
+        MockHttpServletResponse response2 = new MockHttpServletResponse();
+        filter.doFilter(request, response2, new MockFilterChain());
+        assertEquals(200, response2.getStatus());
+
+        MockHttpServletResponse response3 = new MockHttpServletResponse();
+        filter.doFilter(request, response3, new MockFilterChain());
+        assertEquals(429, response3.getStatus(), "Exceeding rate limit on /api/coupons must return HTTP 429 Too Many Requests");
+    }
+
+    @Test
+    @DisplayName("8. PDF downloads include protective security headers")
+    public void testPdfDownloadSecurityHeaders() {
+        MockMultipartFile pdfFile = new MockMultipartFile("file", "test-ticket.pdf", "application/pdf", "%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF".getBytes());
+        String storedUrl = imageStorageService.storeImage(pdfFile);
+        String filename = storedUrl.substring(storedUrl.lastIndexOf('/') + 1);
+
+        try {
+            ResponseEntity<Resource> response = imageController.getImage(filename);
+            assertEquals(200, response.getStatusCode().value());
+            assertTrue(response.getHeaders().getFirst("Content-Disposition").contains("attachment"), "PDF must have Content-Disposition: attachment");
+            assertEquals("nosniff", response.getHeaders().getFirst("X-Content-Type-Options"), "PDF must have X-Content-Type-Options: nosniff");
+            assertEquals("default-src 'none'", response.getHeaders().getFirst("Content-Security-Policy"), "PDF must have Content-Security-Policy: default-src 'none'");
+        } finally {
+            imageStorageService.deleteImage(filename);
+        }
     }
 }

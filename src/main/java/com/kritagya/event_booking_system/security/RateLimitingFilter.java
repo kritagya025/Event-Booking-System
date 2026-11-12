@@ -16,15 +16,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 @Component
 public class RateLimitingFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(RateLimitingFilter.class);
 
-    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+    // Bounded cache with TTL eviction to prevent memory leaks while maintaining rate limits per IP
+    private final Cache<String, Bucket> buckets = Caffeine.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(15))
+            .maximumSize(50_000)
+            .build();
 
     @Value("${app.rate-limiting.enabled:true}")
     private boolean enabled;
@@ -37,6 +41,16 @@ public class RateLimitingFilter extends OncePerRequestFilter {
 
     @Value("${app.rate-limiting.trusted-proxies:127.0.0.1,0:0:0:0:0:0:0:1}")
     private String trustedProxies;
+
+    public RateLimitingFilter() {
+    }
+
+    public RateLimitingFilter(boolean enabled, int capacity, int tokensPerMinute) {
+        this.enabled = enabled;
+        this.capacity = capacity;
+        this.tokensPerMinute = tokensPerMinute;
+        this.trustedProxies = "127.0.0.1,0:0:0:0:0:0:0:1";
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -52,7 +66,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         // Target: /api/auth/**, /api/bookings/**, /api/payments/**
         if (isRateLimitedPath(path)) {
             String clientIp = getClientIp(request);
-            Bucket bucket = buckets.computeIfAbsent(clientIp, k -> createNewBucket());
+            Bucket bucket = buckets.get(clientIp, k -> createNewBucket());
 
             if (!bucket.tryConsume(1)) {
                 log.warn("Rate limit exceeded for IP: {} on endpoint: {}", clientIp, path);
@@ -70,7 +84,8 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private boolean isRateLimitedPath(String path) {
         return path.startsWith("/api/auth/") ||
                 path.startsWith("/api/bookings") ||
-                path.startsWith("/api/payments");
+                path.startsWith("/api/payments") ||
+                path.startsWith("/api/coupons");
     }
 
     private Bucket createNewBucket() {

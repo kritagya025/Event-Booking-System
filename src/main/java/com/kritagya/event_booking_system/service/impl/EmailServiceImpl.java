@@ -182,7 +182,7 @@ public class EmailServiceImpl implements EmailService {
         } catch (MessagingException e) {
             log.error("Failed to send email to {} | Subject: {} | Error: {}", to, subject, e.getMessage());
         } catch (Exception e) {
-            log.warn("SMTP mail server unreachable. Logged email for {}: {} | Content: {}", to, subject, htmlContent);
+            log.warn("SMTP mail server unreachable. Could not dispatch email to: {} | Subject: {}", to, subject);
         }
     }
 }

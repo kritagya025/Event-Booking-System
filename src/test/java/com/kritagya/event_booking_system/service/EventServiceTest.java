@@ -167,4 +167,14 @@ class EventServiceTest {
         assertThat(result).isNotNull();
         assertThat(event.getStatus()).isEqualTo(EventStatus.DRAFT);
     }
+
+    @Test
+    @DisplayName("Should increment view count using atomic query without saving entity")
+    void incrementViewCount_UsesAtomicQuery() {
+        when(eventRepository.incrementViewCount(1L)).thenReturn(1);
+        eventService.incrementViewCount(1L);
+
+        verify(eventRepository).incrementViewCount(1L);
+        verify(eventRepository, never()).save(any());
+    }
 }

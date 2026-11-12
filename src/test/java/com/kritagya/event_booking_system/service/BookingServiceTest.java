@@ -4,12 +4,16 @@ import com.kritagya.event_booking_system.dto.BookingRequestDTO;
 import com.kritagya.event_booking_system.dto.BookingResponseDTO;
 import com.kritagya.event_booking_system.entity.Booking;
 import com.kritagya.event_booking_system.entity.Event;
+import com.kritagya.event_booking_system.entity.Seat;
 import com.kritagya.event_booking_system.entity.User;
 import com.kritagya.event_booking_system.entity.Venue;
 import com.kritagya.event_booking_system.enums.BookingStatus;
 import com.kritagya.event_booking_system.enums.EventStatus;
 import com.kritagya.event_booking_system.enums.Role;
+import com.kritagya.event_booking_system.enums.SeatStatus;
+import com.kritagya.event_booking_system.enums.SeatType;
 import com.kritagya.event_booking_system.exception.BookingNotFoundException;
+import com.kritagya.event_booking_system.exception.SeatNotFoundException;
 import com.kritagya.event_booking_system.repository.BookingRepository;
 import com.kritagya.event_booking_system.repository.EventRepository;
 import com.kritagya.event_booking_system.repository.SeatRepository;
@@ -21,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -190,5 +195,40 @@ class BookingServiceTest {
         assertThatThrownBy(() -> bookingService.createBooking(requestDTO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("must match the booking quantity");
+    }
+
+    @Test
+    @DisplayName("Should reject booking when seat ID does not exist")
+    void createBooking_SeatNotFound() {
+        requestDTO.setQuantity(1);
+        requestDTO.setSeatIds(List.of(999L));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(eventRepository.findByIdAndDeletedFalseWithLock(1L)).thenReturn(Optional.of(event));
+        when(seatRepository.findByIdWithLock(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> bookingService.createBooking(requestDTO))
+                .isInstanceOf(SeatNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Should reject booking when seat belongs to a different venue")
+    void createBooking_SeatBelongsToDifferentVenue() {
+        ReflectionTestUtils.setField(venue, "id", 10L);
+
+        Venue wrongVenue = new Venue("Other Venue", "Other Address", 200, "Wrong");
+        ReflectionTestUtils.setField(wrongVenue, "id", 20L);
+
+        Seat foreignSeat = new Seat("A1", "A", SeatType.REGULAR, SeatStatus.AVAILABLE, wrongVenue);
+        ReflectionTestUtils.setField(foreignSeat, "id", 101L);
+
+        requestDTO.setQuantity(1);
+        requestDTO.setSeatIds(List.of(101L));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(eventRepository.findByIdAndDeletedFalseWithLock(1L)).thenReturn(Optional.of(event));
+        when(seatRepository.findByIdWithLock(101L)).thenReturn(Optional.of(foreignSeat));
+
+        assertThatThrownBy(() -> bookingService.createBooking(requestDTO))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("does not belong to the venue");
     }
 }

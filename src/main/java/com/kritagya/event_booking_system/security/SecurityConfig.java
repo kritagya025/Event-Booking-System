@@ -15,9 +15,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +44,9 @@ public class SecurityConfig {
     @Value("${app.cors.allowed-origins:http://localhost:3000}")
     private String allowedOrigins;
 
+    @Value("${app.security.csrf.enabled:true}")
+    private boolean csrfEnabled;
+
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
             CustomUserDetailsService userDetailsService,
@@ -48,8 +60,30 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        if (csrfEnabled) {
+            http.csrf(csrf -> csrf
+                    .csrfTokenRepository(org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers(
+                            "/api/auth/**",
+                            "/ws/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/api-docs/**",
+                            "/v3/api-docs/**",
+                            "/actuator/**"
+                    )
+                    .ignoringRequestMatchers(request -> {
+                        String auth = request.getHeader("Authorization");
+                        return auth != null && auth.startsWith("Bearer ");
+                    })
+            );
+        } else {
+            http.csrf(csrf -> csrf.disable());
+        }
+
+        http
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -57,7 +91,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/images/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/images/upload").hasAnyRole("ADMIN", "ORGANIZER", "CUSTOMER")
+                        .requestMatchers(HttpMethod.POST, "/api/images/upload").hasAnyRole("ADMIN", "ORGANIZER")
                         .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/venues", "/api/venues/**").permitAll()
 
@@ -111,6 +145,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/tickets/**").hasAnyRole("ADMIN", "CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/tickets/*/pdf", "/api/tickets/booking/*/pdf").hasAnyRole("ADMIN", "CUSTOMER")
 
+                        // User profile access by ID (checked by UserController logic)
+                        .requestMatchers(HttpMethod.GET, "/api/users/*").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/users/*").authenticated()
+
                         // User management — ADMIN only
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
 
@@ -121,7 +159,26 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(rateLimitingFilter, JwtAuthenticationFilter.class);
 
+        if (csrfEnabled) {
+            http.addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class);
+        }
+
         return http.build();
+    }
+
+    private static final class CsrfCookieFilter extends OncePerRequestFilter {
+        @Override
+        protected void doFilterInternal(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        FilterChain filterChain)
+                throws ServletException, IOException {
+            CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+            if (csrfToken != null) {
+                // Force evaluation of deferred CsrfToken so the XSRF-TOKEN cookie is rendered
+                csrfToken.getToken();
+            }
+            filterChain.doFilter(request, response);
+        }
     }
 
     @Bean

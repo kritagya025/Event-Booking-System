@@ -22,6 +22,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,6 +82,10 @@ class AdminServiceTest {
         when(userRepository.count()).thenReturn(1L);
         when(eventRepository.count()).thenReturn(2L);
         when(bookingRepository.count()).thenReturn(2L);
+        when(bookingRepository.sumTotalRevenueByStatus(BookingStatus.CONFIRMED)).thenReturn(new BigDecimal("150.00"));
+        when(bookingRepository.sumRevenueByStatusSince(org.mockito.ArgumentMatchers.eq(BookingStatus.CONFIRMED), org.mockito.ArgumentMatchers.any())).thenReturn(new BigDecimal("100.00"));
+        when(eventRepository.countByDeletedFalseAndEventDateAfter(org.mockito.ArgumentMatchers.any())).thenReturn(1L);
+        when(eventRepository.countByDeletedFalseAndStatus(EventStatus.CANCELLED)).thenReturn(0L);
         when(bookingRepository.findAll()).thenReturn(List.of(confirmedBooking, nullDateBooking));
         when(eventRepository.findAll()).thenReturn(List.of(eventWithDate, eventNullDate));
 
@@ -96,7 +101,12 @@ class AdminServiceTest {
     @Test
     @DisplayName("getRevenueAnalytics handles null booking dates and null event categories")
     void testGetRevenueAnalytics_NullSafe() {
-        when(bookingRepository.findAll()).thenReturn(List.of(confirmedBooking, nullDateBooking));
+        when(bookingRepository.sumTotalRevenueByStatus(BookingStatus.CONFIRMED)).thenReturn(new BigDecimal("150.00"));
+        when(bookingRepository.sumRevenueByStatusSince(org.mockito.ArgumentMatchers.eq(BookingStatus.CONFIRMED), org.mockito.ArgumentMatchers.any())).thenReturn(new BigDecimal("100.00"));
+        when(bookingRepository.sumRevenueByCategoryAndStatus(BookingStatus.CONFIRMED))
+                .thenReturn(List.of(new Object[]{"MUSIC", new BigDecimal("100.00")}, new Object[]{"Uncategorized", new BigDecimal("50.00")}));
+        when(bookingRepository.findBookingDatesAndAmountsByStatus(BookingStatus.CONFIRMED))
+                .thenReturn(Collections.singletonList(new Object[]{LocalDateTime.now(), new BigDecimal("100.00")}));
 
         RevenueAnalyticsDTO analytics = adminService.getRevenueAnalytics();
 
@@ -109,7 +119,13 @@ class AdminServiceTest {
     @Test
     @DisplayName("getEventStatistics categorizes events and handles null category")
     void testGetEventStatistics_NullSafe() {
-        when(eventRepository.findAll()).thenReturn(List.of(eventWithDate, eventNullDate));
+        when(eventRepository.countByDeletedFalse()).thenReturn(2L);
+        when(eventRepository.countByDeletedFalseAndStatus(EventStatus.PUBLISHED)).thenReturn(1L);
+        when(eventRepository.countByDeletedFalseAndStatus(EventStatus.DRAFT)).thenReturn(1L);
+        when(eventRepository.countByDeletedFalseAndEventDateAfter(org.mockito.ArgumentMatchers.any())).thenReturn(1L);
+        when(eventRepository.countByDeletedFalseAndStatus(EventStatus.CANCELLED)).thenReturn(0L);
+        when(eventRepository.countEventsByCategory())
+                .thenReturn(List.of(new Object[]{"MUSIC", 1L}, new Object[]{"Uncategorized", 1L}));
 
         EventStatisticsDTO stats = adminService.getEventStatistics();
 
@@ -125,8 +141,10 @@ class AdminServiceTest {
     @Test
     @DisplayName("getBookingAnalytics computes correct cancellation rate")
     void testGetBookingAnalytics() {
-        Booking cancelledBooking = new Booking(LocalDateTime.now(), BookingStatus.CANCELLED, 1, new BigDecimal("50.00"), user, eventWithDate);
-        when(bookingRepository.findAll()).thenReturn(List.of(confirmedBooking, cancelledBooking));
+        when(bookingRepository.count()).thenReturn(2L);
+        when(bookingRepository.countByBookingStatus(BookingStatus.CONFIRMED)).thenReturn(1L);
+        when(bookingRepository.countByBookingStatus(BookingStatus.CANCELLED)).thenReturn(1L);
+        when(bookingRepository.countByBookingStatus(BookingStatus.PENDING)).thenReturn(0L);
 
         BookingAnalyticsDTO analytics = adminService.getBookingAnalytics();
 

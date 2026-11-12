@@ -65,10 +65,21 @@ public class ImageController {
         } else if (filename.toLowerCase().endsWith(".pdf")) {
             mediaType = MediaType.APPLICATION_PDF;
         }
-        return ResponseEntity.ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+
+        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
+                .contentType(mediaType);
+
+        if (mediaType == MediaType.APPLICATION_PDF) {
+            responseBuilder
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .header("X-Content-Type-Options", "nosniff")
+                    .header("Content-Security-Policy", "default-src 'none'");
+        } else {
+            responseBuilder
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"");
+        }
+
+        return responseBuilder.body(resource);
     }
 
     @DeleteMapping("/{filename:.+}")

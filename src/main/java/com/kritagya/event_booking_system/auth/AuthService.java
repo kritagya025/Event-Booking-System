@@ -179,8 +179,7 @@ public class AuthService {
         // Send password reset email
         emailService.sendPasswordResetEmail(user, resetToken);
 
-        String resetLink = baseUrl + "/api/auth/reset-password?token=" + resetToken;
-        log.info("Password reset link for {}: {}", user.getEmail(), resetLink);
+        log.info("Password reset dispatched for user: {}", user.getEmail());
     }
 
     @Transactional

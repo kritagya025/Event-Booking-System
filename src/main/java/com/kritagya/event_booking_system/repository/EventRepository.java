@@ -29,4 +29,19 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     @EntityGraph(attributePaths = {"venue", "organizer"})
     List<Event> findByEventDateAndDeletedFalse(LocalDate eventDate);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE Event e SET e.viewCount = COALESCE(e.viewCount, 0) + 1 WHERE e.id = :eventId AND e.deleted = false")
+    int incrementViewCount(@org.springframework.data.repository.query.Param("eventId") Long eventId);
+
+    long countByDeletedFalse();
+
+    long countByDeletedFalseAndStatus(com.kritagya.event_booking_system.enums.EventStatus status);
+
+    long countByStatus(com.kritagya.event_booking_system.enums.EventStatus status);
+
+    long countByDeletedFalseAndEventDateAfter(LocalDate date);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COALESCE(e.category, 'Uncategorized'), COUNT(e) FROM Event e WHERE e.deleted = false GROUP BY e.category")
+    List<Object[]> countEventsByCategory();
 }

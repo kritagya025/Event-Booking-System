@@ -7,6 +7,7 @@ import com.kritagya.event_booking_system.entity.Event;
 import com.kritagya.event_booking_system.entity.User;
 import com.kritagya.event_booking_system.enums.BookingStatus;
 import com.kritagya.event_booking_system.enums.EventStatus;
+import com.kritagya.event_booking_system.enums.Role;
 import com.kritagya.event_booking_system.mapper.EventMapper;
 import com.kritagya.event_booking_system.repository.BookingRepository;
 import com.kritagya.event_booking_system.repository.EventRepository;
@@ -46,31 +47,23 @@ public class AdminService {
         long totalEvents = eventRepository.count();
         long totalBookings = bookingRepository.count();
 
-        List<Booking> allBookings = bookingRepository.findAll();
-        BigDecimal totalRevenue = allBookings.stream()
-                .filter(b -> b.getBookingStatus() == BookingStatus.CONFIRMED)
-                .map(Booking::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalRevenue = bookingRepository.sumTotalRevenueByStatus(BookingStatus.CONFIRMED);
+        if (totalRevenue == null) totalRevenue = BigDecimal.ZERO;
 
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
-        BigDecimal todayRevenue = allBookings.stream()
-                .filter(b -> b.getBookingStatus() == BookingStatus.CONFIRMED && b.getBookingDate() != null && b.getBookingDate().isAfter(startOfToday))
-                .map(Booking::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal todayRevenue = bookingRepository.sumRevenueByStatusSince(BookingStatus.CONFIRMED, startOfToday);
+        if (todayRevenue == null) todayRevenue = BigDecimal.ZERO;
 
-        List<Event> allEvents = eventRepository.findAll();
-        long upcomingEventsCount = allEvents.stream()
-                .filter(e -> !e.isDeleted() && e.getEventDate() != null && e.getEventDate().isAfter(LocalDate.now()))
-                .count();
-
-        long cancelledEventsCount = allEvents.stream()
-                .filter(e -> e.getStatus() == EventStatus.CANCELLED)
-                .count();
+        long upcomingEventsCount = eventRepository.countByDeletedFalseAndEventDateAfter(LocalDate.now());
+        long cancelledEventsCount = eventRepository.countByDeletedFalseAndStatus(EventStatus.CANCELLED);
 
         // Popular events: top 5 events sorted by total booked quantity
+        List<Booking> allBookings = bookingRepository.findAll();
+        List<Event> allEvents = eventRepository.findAll();
+
         Map<Long, Integer> eventBookingCounts = new HashMap<>();
         for (Booking b : allBookings) {
-            if (b.getBookingStatus() == BookingStatus.CONFIRMED) {
+            if (b.getBookingStatus() == BookingStatus.CONFIRMED && b.getEvent() != null) {
                 eventBookingCounts.put(b.getEvent().getId(),
                         eventBookingCounts.getOrDefault(b.getEvent().getId(), 0) + b.getQuantity());
             }
@@ -94,40 +87,37 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public RevenueAnalyticsDTO getRevenueAnalytics() {
-        List<Booking> confirmedBookings = bookingRepository.findAll().stream()
-                .filter(b -> b.getBookingStatus() == BookingStatus.CONFIRMED)
-                .collect(Collectors.toList());
-
-        BigDecimal totalRevenue = confirmedBookings.stream()
-                .map(Booking::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalRevenue = bookingRepository.sumTotalRevenueByStatus(BookingStatus.CONFIRMED);
+        if (totalRevenue == null) totalRevenue = BigDecimal.ZERO;
 
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
-        BigDecimal todayRevenue = confirmedBookings.stream()
-                .filter(b -> b.getBookingDate() != null && b.getBookingDate().isAfter(startOfToday))
-                .map(Booking::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal todayRevenue = bookingRepository.sumRevenueByStatusSince(BookingStatus.CONFIRMED, startOfToday);
+        if (todayRevenue == null) todayRevenue = BigDecimal.ZERO;
 
         LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
-        BigDecimal monthlyRevenue = confirmedBookings.stream()
-                .filter(b -> b.getBookingDate() != null && b.getBookingDate().isAfter(startOfMonth))
-                .map(Booking::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal monthlyRevenue = bookingRepository.sumRevenueByStatusSince(BookingStatus.CONFIRMED, startOfMonth);
+        if (monthlyRevenue == null) monthlyRevenue = BigDecimal.ZERO;
 
         Map<String, BigDecimal> revenueByCategory = new HashMap<>();
-        for (Booking b : confirmedBookings) {
-            String category = (b.getEvent() != null && b.getEvent().getCategory() != null)
-                    ? b.getEvent().getCategory() : "Uncategorized";
-            revenueByCategory.put(category,
-                    revenueByCategory.getOrDefault(category, BigDecimal.ZERO).add(b.getTotalAmount()));
+        List<Object[]> categoryRevenueList = bookingRepository.sumRevenueByCategoryAndStatus(BookingStatus.CONFIRMED);
+        if (categoryRevenueList != null) {
+            for (Object[] row : categoryRevenueList) {
+                String cat = (String) row[0];
+                BigDecimal sum = (BigDecimal) row[1];
+                revenueByCategory.put(cat != null ? cat : "Uncategorized", sum != null ? sum : BigDecimal.ZERO);
+            }
         }
 
         Map<String, BigDecimal> dailyRevenueTrend = new TreeMap<>();
-        for (Booking b : confirmedBookings) {
-            if (b.getBookingDate() != null) {
-                String dateStr = b.getBookingDate().toLocalDate().toString();
-                dailyRevenueTrend.put(dateStr,
-                        dailyRevenueTrend.getOrDefault(dateStr, BigDecimal.ZERO).add(b.getTotalAmount()));
+        List<Object[]> dateAmountList = bookingRepository.findBookingDatesAndAmountsByStatus(BookingStatus.CONFIRMED);
+        if (dateAmountList != null) {
+            for (Object[] row : dateAmountList) {
+                LocalDateTime date = (LocalDateTime) row[0];
+                BigDecimal amount = (BigDecimal) row[1];
+                if (date != null && amount != null) {
+                    String dateStr = date.toLocalDate().toString();
+                    dailyRevenueTrend.put(dateStr, dailyRevenueTrend.getOrDefault(dateStr, BigDecimal.ZERO).add(amount));
+                }
             }
         }
 
@@ -136,31 +126,36 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public BookingAnalyticsDTO getBookingAnalytics() {
-        List<Booking> allBookings = bookingRepository.findAll();
-        long totalBookings = allBookings.size();
-        long confirmed = allBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.CONFIRMED).count();
-        long cancelled = allBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.CANCELLED).count();
+        long totalBookings = bookingRepository.count();
+        long confirmed = bookingRepository.countByBookingStatus(BookingStatus.CONFIRMED);
+        long cancelled = bookingRepository.countByBookingStatus(BookingStatus.CANCELLED);
+        long pending = bookingRepository.countByBookingStatus(BookingStatus.PENDING);
         double cancellationRate = totalBookings > 0 ? ((double) cancelled / totalBookings) * 100.0 : 0.0;
 
         Map<String, Long> byStatus = new HashMap<>();
         byStatus.put("CONFIRMED", confirmed);
         byStatus.put("CANCELLED", cancelled);
-        byStatus.put("PENDING", allBookings.stream().filter(b -> b.getBookingStatus() == BookingStatus.PENDING).count());
+        byStatus.put("PENDING", pending);
 
         return new BookingAnalyticsDTO(totalBookings, confirmed, cancelled, cancellationRate, byStatus);
     }
 
     @Transactional(readOnly = true)
     public UserStatisticsDTO getUserStatistics() {
-        List<User> users = userRepository.findAll();
-        long totalUsers = users.size();
-        long verified = users.stream().filter(User::isEmailVerified).count();
-        long unverified = totalUsers - verified;
+        long totalUsers = userRepository.count();
+        long verified = userRepository.countByEmailVerifiedTrue();
+        long unverified = Math.max(0, totalUsers - verified);
 
         Map<String, Long> usersByRole = new HashMap<>();
-        for (User u : users) {
-            String role = u.getRole().name();
-            usersByRole.put(role, usersByRole.getOrDefault(role, 0L) + 1);
+        List<Object[]> roleCounts = userRepository.countUsersByRole();
+        if (roleCounts != null) {
+            for (Object[] row : roleCounts) {
+                Role role = (Role) row[0];
+                Long count = (Long) row[1];
+                if (role != null) {
+                    usersByRole.put(role.name(), count != null ? count : 0L);
+                }
+            }
         }
 
         return new UserStatisticsDTO(totalUsers, verified, unverified, usersByRole);
@@ -168,18 +163,19 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public EventStatisticsDTO getEventStatistics() {
-        List<Event> events = eventRepository.findAll();
-        long totalEvents = events.stream().filter(e -> !e.isDeleted()).count();
-        long published = events.stream().filter(e -> !e.isDeleted() && e.getStatus() == EventStatus.PUBLISHED).count();
-        long draft = events.stream().filter(e -> !e.isDeleted() && e.getStatus() == EventStatus.DRAFT).count();
-        long upcoming = events.stream().filter(e -> !e.isDeleted() && e.getEventDate() != null && e.getEventDate().isAfter(LocalDate.now())).count();
-        long cancelled = events.stream().filter(e -> e.getStatus() == EventStatus.CANCELLED).count();
+        long totalEvents = eventRepository.countByDeletedFalse();
+        long published = eventRepository.countByDeletedFalseAndStatus(EventStatus.PUBLISHED);
+        long draft = eventRepository.countByDeletedFalseAndStatus(EventStatus.DRAFT);
+        long upcoming = eventRepository.countByDeletedFalseAndEventDateAfter(LocalDate.now());
+        long cancelled = eventRepository.countByDeletedFalseAndStatus(EventStatus.CANCELLED);
 
         Map<String, Long> eventsByCategory = new HashMap<>();
-        for (Event e : events) {
-            if (!e.isDeleted()) {
-                String cat = e.getCategory() != null ? e.getCategory() : "Uncategorized";
-                eventsByCategory.put(cat, eventsByCategory.getOrDefault(cat, 0L) + 1);
+        List<Object[]> categoryCounts = eventRepository.countEventsByCategory();
+        if (categoryCounts != null) {
+            for (Object[] row : categoryCounts) {
+                String cat = (String) row[0];
+                Long count = (Long) row[1];
+                eventsByCategory.put(cat != null ? cat : "Uncategorized", count != null ? count : 0L);
             }
         }
 

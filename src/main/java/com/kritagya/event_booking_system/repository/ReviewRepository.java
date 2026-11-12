@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"user", "event"})
     Page<Review> findByEventId(Long eventId, Pageable pageable);
 
     boolean existsByUserIdAndEventId(Long userId, Long eventId);

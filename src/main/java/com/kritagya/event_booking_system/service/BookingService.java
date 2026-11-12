@@ -122,18 +122,15 @@ public class BookingService {
         if (request.getSeatIds() != null && !request.getSeatIds().isEmpty()) {
             List<Seat> seatsToBook = new ArrayList<>();
             for (Long seatId : request.getSeatIds()) {
-                Seat seat = seatRepository.findByIdWithLock(seatId).orElseGet(() -> {
-                    long idVal = seatId != null ? seatId : 1L;
-                    String row = String.valueOf((char) ('A' + (int) ((idVal - 1) / 8 % 26)));
-                    int num = (int) ((idVal - 1) % 8 + 1);
-                    Seat newSeat = new Seat();
-                    newSeat.setRowNumber(row);
-                    newSeat.setSeatNumber(row + num);
-                    newSeat.setSeatType(row.equals("A") ? SeatType.VIP : SeatType.REGULAR);
-                    newSeat.setStatus(SeatStatus.AVAILABLE);
-                    newSeat.setVenue(event.getVenue());
-                    return seatRepository.save(newSeat);
-                });
+                Seat seat = seatRepository.findByIdWithLock(seatId)
+                        .orElseThrow(() -> new com.kritagya.event_booking_system.exception.SeatNotFoundException(seatId));
+
+                if (seat.getVenue() == null || event.getVenue() == null
+                        || seat.getVenue().getId() == null
+                        || !java.util.Objects.equals(seat.getVenue().getId(), event.getVenue().getId())) {
+                    throw new IllegalArgumentException("Seat " + seat.getSeatNumber() + " (ID: " + seatId
+                            + ") does not belong to the venue for event: " + event.getName());
+                }
                 seatsToBook.add(seat);
             }
 

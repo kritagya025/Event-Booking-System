@@ -727,13 +727,13 @@ public class TicketService {
         Booking booking = ticket.getBooking();
         Event event = booking.getEvent();
 
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PdfWriter writer = new PdfWriter(baos);
-            PdfDocument pdf = new PdfDocument(writer);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PdfWriter writer = new PdfWriter(baos);
+             PdfDocument pdf = new PdfDocument(writer);
+             Document document = new Document(pdf)) {
+
             pdf.addEventHandler(com.itextpdf.kernel.events.PdfDocumentEvent.START_PAGE, new PageBackgroundHandler());
             pdf.setDefaultPageSize(PageSize.A4);
-            Document document = new Document(pdf);
             document.setMargins(20f, 20f, 20f, 20f);
 
             // Executive Pass Header
@@ -791,13 +791,13 @@ public class TicketService {
 
         Event event = booking.getEvent();
 
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PdfWriter writer = new PdfWriter(baos);
-            PdfDocument pdf = new PdfDocument(writer);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PdfWriter writer = new PdfWriter(baos);
+             PdfDocument pdf = new PdfDocument(writer);
+             Document document = new Document(pdf)) {
+
             pdf.addEventHandler(com.itextpdf.kernel.events.PdfDocumentEvent.START_PAGE, new PageBackgroundHandler());
             pdf.setDefaultPageSize(PageSize.A4);
-            Document document = new Document(pdf);
             document.setMargins(20f, 20f, 20f, 20f);
 
             int totalValidTickets = (int) tickets.stream().filter(t -> t.getTicketStatus() != TicketStatus.CANCELLED).count();

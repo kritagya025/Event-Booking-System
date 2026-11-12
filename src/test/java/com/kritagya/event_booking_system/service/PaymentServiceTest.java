@@ -49,6 +49,9 @@ class PaymentServiceTest {
     @Mock
     private TicketService ticketService;
 
+    @Mock
+    private BookingService bookingService;
+
     @InjectMocks
     private PaymentService paymentService;
 
@@ -245,9 +248,8 @@ class PaymentServiceTest {
 
         assertThat(response).isNotNull();
         assertThat(response.getPaymentStatus()).isEqualTo(PaymentStatus.REFUNDED.name());
-        assertThat(booking.getBookingStatus()).isEqualTo(BookingStatus.CANCELLED);
+        verify(bookingService).cancelBooking(100L, owner);
         verify(paymentRepository).save(payment);
-        verify(bookingRepository).save(booking);
         verify(auditLogger).logPaymentProcessed(eq(500L), eq(100L), eq("CREDIT_CARD"), eq("REFUNDED"), any());
     }
 

@@ -13,6 +13,9 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @org.springframework.beans.factory.annotation.Value("${app.cookie.secure:false}")
+    private boolean cookieSecure;
+
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
@@ -40,8 +43,26 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponseDTO> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
-        AuthResponseDTO response = authService.refreshToken(request);
+    public ResponseEntity<AuthResponseDTO> refreshToken(
+            @RequestBody(required = false) RefreshTokenRequestDTO request,
+            jakarta.servlet.http.HttpServletRequest httpRequest) {
+        String tokenValue = null;
+        if (request != null && request.getRefreshToken() != null && !request.getRefreshToken().isBlank()) {
+            tokenValue = request.getRefreshToken().trim();
+        } else if (httpRequest != null && httpRequest.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : httpRequest.getCookies()) {
+                if ("refreshToken".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isBlank()) {
+                    tokenValue = cookie.getValue().trim();
+                    break;
+                }
+            }
+        }
+
+        if (tokenValue == null || tokenValue.isBlank()) {
+            throw new IllegalArgumentException("Refresh token is required");
+        }
+
+        AuthResponseDTO response = authService.refreshToken(new RefreshTokenRequestDTO(tokenValue));
         org.springframework.http.ResponseCookie accessCookie = createCookie("accessToken", response.getToken(), 86400);
         org.springframework.http.ResponseCookie refreshCookie = createCookie("refreshToken", response.getRefreshToken(), 604800);
         return ResponseEntity.ok()
@@ -51,10 +72,24 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(@Valid @RequestBody(required = false) RefreshTokenRequestDTO request) {
-        if (request != null && request.getRefreshToken() != null) {
+    public ResponseEntity<Map<String, String>> logout(
+            @Valid @RequestBody(required = false) RefreshTokenRequestDTO request,
+            jakarta.servlet.http.HttpServletRequest httpRequest) {
+        String tokenValue = null;
+        if (request != null && request.getRefreshToken() != null && !request.getRefreshToken().isBlank()) {
+            tokenValue = request.getRefreshToken().trim();
+        } else if (httpRequest != null && httpRequest.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : httpRequest.getCookies()) {
+                if ("refreshToken".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isBlank()) {
+                    tokenValue = cookie.getValue().trim();
+                    break;
+                }
+            }
+        }
+
+        if (tokenValue != null && !tokenValue.isBlank()) {
             try {
-                authService.logout(request);
+                authService.logout(new RefreshTokenRequestDTO(tokenValue));
             } catch (Exception ignored) {}
         }
         org.springframework.http.ResponseCookie cleanAccess = createCookie("accessToken", "", 0);
@@ -68,7 +103,7 @@ public class AuthController {
     private org.springframework.http.ResponseCookie createCookie(String name, String value, long maxAge) {
         return org.springframework.http.ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(false)
+                .secure(cookieSecure)
                 .path("/")
                 .sameSite("Lax")
                 .maxAge(maxAge)
