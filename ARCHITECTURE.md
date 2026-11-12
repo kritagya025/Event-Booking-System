@@ -166,7 +166,7 @@ frontend/src/
 |   |-- MyBookings.jsx         # Customer booking history and QR ticket passes
 |   |-- ProfileDashboard.jsx   # Profile management and password updates
 |   |-- Wishlist.jsx           # Saved events collection
-|   |-- AuthModal.jsx          # Modal for login, registration, and password recovery
+|   |-- BackstageAuthTerminal.jsx # Split-screen authentication terminal & VIP pass accreditation
 |   |-- CreateEventModal.jsx   # Event creation form for organizers and administrators
 |   |-- CheckInModal.jsx       # Staff check-in interface with optical QR scanner
 |   |-- DatabaseConsoleModal.jsx # Administrative in-browser database telemetry viewer
