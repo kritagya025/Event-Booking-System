@@ -14,6 +14,12 @@
 
 | Date | Module/File | Change Summary |
 |------|-------------|----------------|
+| 2026-11-13 | `security/SecurityConfig.java` | Configured standard HTTP security response headers (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`). |
+| 2026-11-13 | `config/RedisConfig.java` | Implemented `CachingConfigurer` with custom `CacheErrorHandler` for graceful cache failure degradation. |
+| 2026-11-13 | `exception/GlobalExceptionHandler.java` | Added `@ExceptionHandler` for `ConstraintViolationException`, `MissingServletRequestParameterException`, and `MethodArgumentTypeMismatchException`. |
+| 2026-11-13 | `controller/AuthControllerTest.java` | Expanded test coverage to 9 test cases covering cookie fallback, logout revocation, and password recovery. |
+| 2026-11-13 | `resources/application*.properties` | Explicitly configured `spring.jpa.open-in-view=false` across configurations. |
+| 2026-11-13 | `frontend/src/components/IntroSplashScreen.jsx` | Fixed unused imports and stabilized hook effect dependencies with `useCallback` (0 lint warnings). |
 | 2026-11-11 | `security/JwtUtil.java` | Added `@PostConstruct` startup validation for `jwt.secret` (missing, blank, known insecure default, invalid Base64, < 256 bits); pre-computed signing key; sanitized error messages. |
 | 2026-11-11 | `resources/application*.properties` | Removed insecure default key fallback from `application.properties`; enforced mandatory `JWT_SECRET` in `application-prod.properties`; added dedicated safe dev key in `application-dev.properties`; consolidated test auto-configuration exclusions in `application-test.properties`. |
 | 2026-11-11 | `security/JwtSecretValidationTest.java` | Created comprehensive unit and context runner test suite covering 8 validation and token operations. |
@@ -34,5 +40,9 @@
 
 ## Last Successful Verification
 
-- `JwtSecretValidationTest`: 8/8 tests passed in 1.379s (`BUILD SUCCESS`).
-- Frontend production compilation: `vite build` succeeded in 1m 3s with 0 errors.
+- `GlobalExceptionHandlerTest`: 13/13 tests passed in 1.892s.
+- `AuthControllerTest`: 9/9 tests passed in 41.03s.
+- `SecurityFixesTest`: 9/9 tests passed in 35.26s.
+- `EventServiceTest`: 8/8 tests passed in 2.099s.
+- Frontend lint (`oxlint`): 0 warnings, 0 errors across 34 components.
+- Frontend production compilation: `vite build` succeeded with 0 errors.

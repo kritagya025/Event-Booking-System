@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.0] - 2026-11-13
+
+### Security & Hardening
+- **HTTP Security Response Headers (`SecurityConfig.java`)**:
+  - Configured `X-Frame-Options: DENY` across all API responses to prevent UI redressing and clickjacking.
+  - Enforced `X-Content-Type-Options: nosniff` to protect against MIME-type confusion attacks.
+  - Added `Referrer-Policy: strict-origin-when-cross-origin` and `Permissions-Policy: geolocation=(), microphone=(), camera=()`.
+- **Validation & Exception Handling Robustness (`GlobalExceptionHandler.java`)**:
+  - Added dedicated `@ExceptionHandler` for `ConstraintViolationException`, `MissingServletRequestParameterException`, and `MethodArgumentTypeMismatchException`.
+  - Maps query and path parameter violations cleanly to HTTP 400 Bad Request with field details instead of falling through to 500 Internal Server Errors.
+
+### Resilience & Performance
+- **Resilient Cache Error Handling (`RedisConfig.java`)**:
+  - Implemented `CachingConfigurer` with a custom `CacheErrorHandler` logging warnings and gracefully bypassing cache on connection drops or timeouts.
+- **JPA Open-in-View Deprecation**:
+  - Explicitly configured `spring.jpa.open-in-view=false` across main and test profiles, eliminating hidden session leaks and startup warnings.
+
+### Testing & Code Quality
+- **Expanded AuthControllerTest Suite**:
+  - Added full test coverage for HttpOnly cookie fallback on refresh, cookie clearing on logout, and password recovery / verification flows (9 tests passing).
+- **GlobalExceptionHandlerTest Suite**:
+  - Created 13 unit tests verifying error mapping across 400, 401, 403, 404, 409, and 500 HTTP status codes.
+- **Frontend Clean Linting (`IntroSplashScreen.jsx`)**:
+  - Cleaned up unused imports and stabilized `handleFinish` and hook dependencies with `useCallback` (0 warnings, 0 errors across 34 components).
+
+---
+
 ## [1.5.0] - 2026-11-11
 
 ### Security

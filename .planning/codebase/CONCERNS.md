@@ -20,10 +20,12 @@ This document tracks known technical debt, potential architectural bottlenecks, 
   - Convert web layer integration tests to `@WebMvcTest(AuthController.class)` with targeted `@MockBean` dependencies instead of bootstrapping the entire `@SpringBootTest` monolith.
   - Ensure `application-test.properties` explicitly disables Redis connection attempts (`spring.autoconfigure.exclude=...RedisAutoConfiguration`).
 
-### 1.2 Redis Availability in Local Development
+### 1.2 Redis Availability in Local Development [RESOLVED]
 - **Symptom:** Developers or automated CI runners without a running Redis server (`localhost:6379`) may encounter connection refused errors during catalog lookups.
-- **Remediation Plan:**
-  - Implement a graceful fallback in `RedisConfig.java` to `ConcurrentMapCacheManager` when the Redis connection factory fails to ping the server on startup.
+- **Status:** **Resolved via `CacheErrorHandler` in `RedisConfig.java`**.
+- **Remediation Implemented:**
+  - Configured custom `CacheErrorHandler` in `RedisConfig.java` implementing `handleCacheGetError`, `handleCachePutError`, `handleCacheEvictError`, and `handleCacheClearError`.
+  - When Redis drops connections or is offline, warnings are logged and requests degrade gracefully to direct database queries without failing with HTTP 500 errors.
 
 ---
 
@@ -51,9 +53,9 @@ This document tracks known technical debt, potential architectural bottlenecks, 
 
 ## 3. Fragile Areas & Developer Traps
 
-### 3.1 Lazy Loading / `LazyInitializationException`
+### 3.1 Lazy Loading / `LazyInitializationException` & Open-in-View
 - **Location:** Entities with `@ManyToOne` or `@ManyToMany` relations (`Booking` -> `tickets`, `Event` -> `venue`).
-- **Risk:** Accessing lazily loaded collections outside the `@Transactional` service boundary (e.g., inside mappers or controllers) triggers `LazyInitializationException`.
+- **Mitigation Implemented:** Explicitly configured `spring.jpa.open-in-view=false` across configurations to eliminate hidden session leaks outside transactional services and suppress startup warnings.
 - **Guideline:** Always fetch required child collections eagerly in repository queries using `JOIN FETCH` or Entity Graphs when preparing response DTOs.
 
 ### 3.2 Production Secret Key Hard-Stop
