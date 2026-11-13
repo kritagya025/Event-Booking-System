@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Zap, ShieldCheck, Ticket, ArrowRight, Radio } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { ShieldCheck, ArrowRight, Radio } from 'lucide-react';
 
 export default function IntroSplashScreen({ onComplete }) {
   const [progress, setProgress] = useState(0);
@@ -15,7 +15,7 @@ export default function IntroSplashScreen({ onComplete }) {
     'SYSTEM READY. ENJOY THE EXPERIENCE.'
   ];
 
-  const handleFinish = () => {
+  const handleFinish = useCallback(() => {
     if (completedRef.current) return;
     completedRef.current = true;
     setIsExiting(true);
@@ -29,7 +29,7 @@ export default function IntroSplashScreen({ onComplete }) {
     setTimeout(() => {
       if (onComplete) onComplete();
     }, 600);
-  };
+  }, [onComplete]);
 
   // Keyboard shortcut: Space or Enter to skip immediately
   useEffect(() => {
@@ -41,12 +41,13 @@ export default function IntroSplashScreen({ onComplete }) {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [handleFinish]);
 
   // Fast procedural boot counter: 0% -> 100% in ~1.9s
   useEffect(() => {
     const startTime = Date.now();
     const duration = 1900;
+    const totalLogs = logs.length;
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -56,7 +57,7 @@ export default function IntroSplashScreen({ onComplete }) {
       const stepped = Math.floor(ratio * 100);
       setProgress(stepped);
 
-      const nextLog = Math.min(Math.floor(ratio * logs.length), logs.length - 1);
+      const nextLog = Math.min(Math.floor(ratio * totalLogs), totalLogs - 1);
       setLogIndex(nextLog);
 
       if (ratio >= 1) {
@@ -66,7 +67,7 @@ export default function IntroSplashScreen({ onComplete }) {
     }, 45);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [handleFinish, logs.length]);
 
   return (
     <div 
