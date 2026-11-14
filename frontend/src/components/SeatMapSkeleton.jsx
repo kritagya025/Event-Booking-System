@@ -7,66 +7,63 @@ export default function SeatMapSkeleton({ isCinema = false }) {
 
   return (
     <div className="w-full select-none py-2 space-y-6">
-      {/* 1. Curved Screen / Proscenium Skeleton */}
-      <div className="relative bg-asphalt-black border-2 border-asphalt-border p-4 overflow-hidden">
-        <div className="hazard-tape h-2 w-full mb-3" />
-        <div className={`h-16 w-full skeleton-box border-2 border-asphalt-border ${isCinema ? 'rounded-b-[40px]' : 'rounded-b-[20px]'} flex flex-col items-center justify-center px-4`}>
-          <div className="h-4 w-64 skeleton-box mb-1.5" />
-          <div className="h-2.5 w-48 skeleton-box opacity-60" />
+      {/* 1. Curved Screen / Stage Skeleton */}
+      <div className="relative bg-[#f7f7f7] border border-[#e5e7eb] rounded-2xl p-6 flex flex-col items-center justify-center">
+        <div className={`h-12 w-full max-w-md skeleton-box ${isCinema ? 'rounded-full' : 'rounded-full'} flex flex-col items-center justify-center px-4`}>
+          <div className="h-3 w-48 rounded-full skeleton-box mb-1.5 opacity-60" />
         </div>
       </div>
 
       {/* 2. Filter Bar Skeleton */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-asphalt-border">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#e5e7eb]">
         <div className="flex items-center gap-2">
-          <div className="h-6 w-16 skeleton-box" />
-          <div className="h-6 w-24 skeleton-box" />
-          <div className="h-6 w-20 skeleton-box" />
-          <div className="h-6 w-20 skeleton-box" />
+          <div className="h-8 w-20 rounded-full skeleton-box" />
+          <div className="h-8 w-24 rounded-full skeleton-box" />
+          <div className="h-8 w-20 rounded-full skeleton-box" />
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-6 w-16 skeleton-box" />
-          <div className="h-6 w-16 skeleton-box" />
+          <div className="h-8 w-16 rounded-full skeleton-box" />
+          <div className="h-8 w-16 rounded-full skeleton-box" />
         </div>
       </div>
 
       {/* 3. Seat Grid Skeleton */}
       <div className="overflow-x-auto pb-4 touch-scroll scrollbar-none">
-        <div className="min-w-fit w-full flex flex-col gap-2 sm:gap-3 items-center">
+        <div className="min-w-fit w-full flex flex-col gap-2.5 items-center">
           {rows.map((row) => (
-            <div key={row} className="flex items-center gap-1 sm:gap-2">
+            <div key={row} className="flex items-center gap-2">
               {/* Row Label Left */}
-              <div className="w-5 sm:w-6 h-6 sm:h-7 skeleton-box font-ticker text-[10px] sm:text-xs font-bold flex items-center justify-center border border-asphalt-border text-grit-dim">
+              <div className="w-6 h-8 rounded-md skeleton-box font-sans text-xs font-bold flex items-center justify-center text-[#6b7280]">
                 {row}
               </div>
 
               {/* Left Wing (5 Seats) */}
-              <div className="flex items-center gap-0.5 sm:gap-1.5">
+              <div className="flex items-center gap-1.5">
                 {leftSeats.map((s) => (
                   <div
                     key={`l-${s}`}
-                    className="w-7 h-6 sm:w-8 sm:h-7 md:w-9 md:h-8 skeleton-box border border-asphalt-border rounded-[3px]"
+                    className="w-8 h-8 rounded-lg skeleton-box"
                   />
                 ))}
               </div>
 
               {/* Aisle */}
-              <div className="w-4 sm:w-8 text-center text-grit-dim font-ticker text-[7px] sm:text-[9px] tracking-widest opacity-40">
+              <div className="w-8 text-center text-[#9ca3af] text-[9px] tracking-widest font-semibold">
                 AISLE
               </div>
 
               {/* Right Wing (5 Seats) */}
-              <div className="flex items-center gap-0.5 sm:gap-1.5">
+              <div className="flex items-center gap-1.5">
                 {rightSeats.map((s) => (
                   <div
                     key={`r-${s}`}
-                    className="w-7 h-6 sm:w-8 sm:h-7 md:w-9 md:h-8 skeleton-box border border-asphalt-border rounded-[3px]"
+                    className="w-8 h-8 rounded-lg skeleton-box"
                   />
                 ))}
               </div>
 
               {/* Row Label Right */}
-              <div className="w-5 sm:w-6 h-6 sm:h-7 skeleton-box font-ticker text-[10px] sm:text-xs font-bold flex items-center justify-center border border-asphalt-border text-grit-dim">
+              <div className="w-6 h-8 rounded-md skeleton-box font-sans text-xs font-bold flex items-center justify-center text-[#6b7280]">
                 {row}
               </div>
             </div>
@@ -74,23 +71,8 @@ export default function SeatMapSkeleton({ isCinema = false }) {
         </div>
       </div>
 
-      {/* 4. Legend Skeleton */}
-      <div className="pt-4 border-t border-asphalt-border flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div className="w-4 h-4 skeleton-box border border-asphalt-border rounded-[2px]" />
-            <div className="h-3 w-16 skeleton-box" />
-          </div>
-        ))}
-      </div>
-
-      {/* 5. Calibrating Status Text */}
-      <div className="text-center pt-2">
-        <span className="font-mono-zine text-xs text-acid-yellow uppercase tracking-widest animate-pulse">
-          CALIBRATING VENUE ACOUSTICS & SEAT INVENTORY...
-        </span>
-      </div>
+      {/* 4. Telemetry Bar Skeleton */}
+      <div className="h-12 w-full rounded-2xl skeleton-box" />
     </div>
   );
 }
-

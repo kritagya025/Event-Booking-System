@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Cookie, ShieldCheck } from 'lucide-react';
 
 export default function CookiesModal({ isOpen, onClose, showToast }) {
   const [preferences, setPreferences] = useState({
@@ -11,104 +11,115 @@ export default function CookiesModal({ isOpen, onClose, showToast }) {
   if (!isOpen) return null;
 
   const handleSave = () => {
-    if (showToast) showToast('COOKIE PREFERENCES COMMITTED TO LOCAL MEMORY', 'success');
+    if (showToast) showToast('Cookie preferences saved successfully', 'success');
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/85 flex items-center justify-center p-2 sm:p-4 font-mono-zine touch-scroll safe-pb select-none" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-[#111111]/70 backdrop-blur-sm flex items-center justify-center p-4 font-sans select-none" onClick={onClose}>
       <div 
-        className="w-full max-w-xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#E2F13C] flex flex-col relative"
+        className="w-full max-w-lg bg-white rounded-[28px] border border-[#e5e7eb] text-[#111111] shadow-2xl flex flex-col relative overflow-hidden my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Slanted Tape Badge */}
-        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
-          EVENTHUB://COOKIE_PREFERENCES
-        </div>
-
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+        <div className="p-6 border-b border-[#e5e7eb] flex items-start justify-between bg-white">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-                STORAGE_PREFERENCES
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="bg-[#111111] text-white text-xs font-semibold px-3 py-0.5 rounded-full">
+                Privacy Settings
               </span>
-              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
-                LOCAL SESSION STORE
+              <span className="text-xs text-[#6b7280] font-medium">
+                Browser Storage
               </span>
             </div>
-            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight text-grit-white leading-none">
-              COOKIE & STORAGE SETTINGS
+            <h3 className="text-2xl font-extrabold tracking-tight text-[#111111]">
+              Cookie & Storage Settings
             </h3>
-            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              SPECIFY STORAGE CONFIGURATION FOR THIS BROWSER
+            <p className="text-sm text-[#6b7280] mt-1">
+              Choose your cookie and local storage preferences on eventhub.
             </p>
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
-            aria-label="Close cookies modal"
+            className="w-9 h-9 rounded-full bg-[#f7f7f7] hover:bg-[#ebebeb] flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* Body Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 touch-scroll">
-          <div className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4 flex items-center justify-between gap-3">
-            <div>
+        {/* Body */}
+        <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+          {/* Essential Cookies */}
+          <div className="p-4 rounded-2xl bg-[#f7f7f7] border border-[#e5e7eb]">
+            <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
-                <span className="font-impact text-sm sm:text-base text-grit-white tracking-wider">ESSENTIAL AUTHENTICATION</span>
-                <span className="bg-acid-yellow text-asphalt-black font-impact text-[10px] px-1.5 py-0.2">MANDATORY</span>
+                <ShieldCheck size={18} className="text-[#0000ee]" />
+                <span className="text-sm font-bold text-[#111111]">Strictly Essential Cookies</span>
               </div>
-              <p className="text-[11px] text-grit-dim uppercase mt-1">
-                REQUIRED FOR HTTPONLY JWT TOKENS AND STOMP PROTOCOL CONNECTION SEALS.
-              </p>
+              <span className="text-xs font-semibold text-[#0000ee] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                Required
+              </span>
             </div>
-            <input type="checkbox" checked disabled className="w-5 h-5 accent-acid-yellow shrink-0" />
+            <p className="text-xs text-[#6b7280] leading-relaxed">
+              Mandatory for authenticating sessions, keeping your 10-minute seat lock active, and preventing fraud.
+            </p>
           </div>
 
-          <div className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4 flex items-center justify-between gap-3">
-            <div>
-              <span className="font-impact text-sm sm:text-base text-grit-white tracking-wider block">LOCAL PASS CACHING</span>
-              <p className="text-[11px] text-grit-dim uppercase mt-1">
-                PRESERVES RECENT TICKET PASSES IN LOCALSTORAGE FOR FAST OFFLINE ACCESS.
-              </p>
+          {/* Functional Cookies */}
+          <div className="p-4 rounded-2xl bg-[#f7f7f7] border border-[#e5e7eb]">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <Cookie size={18} className="text-[#111111]" />
+                <span className="text-sm font-bold text-[#111111]">Functional Preferences</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.functional}
+                onChange={(e) => setPreferences({ ...preferences, functional: e.target.checked })}
+                className="w-5 h-5 accent-[#0000ee] rounded cursor-pointer"
+              />
             </div>
-            <input 
-              type="checkbox" 
-              checked={preferences.functional} 
-              onChange={(e) => setPreferences({ ...preferences, functional: e.target.checked })}
-              className="w-5 h-5 accent-acid-yellow cursor-pointer shrink-0" 
-            />
+            <p className="text-xs text-[#6b7280] leading-relaxed">
+              Remembers your selected currency, audio preview settings, and theater seating filters.
+            </p>
           </div>
 
-          <div className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4 flex items-center justify-between gap-3">
-            <div>
-              <span className="font-impact text-sm sm:text-base text-grit-white tracking-wider block">TELEMETRY DIAGNOSTICS</span>
-              <p className="text-[11px] text-grit-dim uppercase mt-1">
-                MEASURES REST API ROUND-TRIP LATENCY AND REAL-TIME SEAT LOCK CONCURRENCY.
-              </p>
+          {/* Analytics Cookies */}
+          <div className="p-4 rounded-2xl bg-[#f7f7f7] border border-[#e5e7eb]">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <Cookie size={18} className="text-[#111111]" />
+                <span className="text-sm font-bold text-[#111111]">Analytics & Performance</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.analytics}
+                onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}
+                className="w-5 h-5 accent-[#0000ee] rounded cursor-pointer"
+              />
             </div>
-            <input 
-              type="checkbox" 
-              checked={preferences.analytics} 
-              onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}
-              className="w-5 h-5 accent-acid-yellow cursor-pointer shrink-0" 
-            />
+            <p className="text-xs text-[#6b7280] leading-relaxed">
+              Helps us measure ticket demand latency, WebSocket connection speed, and peak event volume.
+            </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <span className="font-ticker text-[10px] text-grit-dim uppercase">
-            POLICY COMPLIANCE: ZERO AD TELEMETRY
-          </span>
+        <div className="p-5 border-t border-[#e5e7eb] bg-white flex items-center justify-between gap-3">
           <button 
-            onClick={handleSave} 
-            className="w-full sm:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation text-center"
+            type="button" 
+            onClick={onClose} 
+            className="h-[44px] px-5 rounded-full border border-[#e5e7eb] hover:bg-[#f7f7f7] text-xs font-semibold text-[#111111] cursor-pointer"
           >
-            COMMIT PREFERENCES
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            className="h-[44px] px-7 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-semibold transition-all shadow-md cursor-pointer"
+          >
+            Save Preferences
           </button>
         </div>
       </div>

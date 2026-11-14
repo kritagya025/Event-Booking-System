@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bookmark, Calendar, MapPin, Trash2, ArrowRight } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
+import { BalloonSticker } from './CustomStickers';
 import WishlistCardSkeleton from './WishlistCardSkeleton';
 
 export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
@@ -38,121 +39,123 @@ export default function Wishlist({ _currentUser, onSelectEvent, showToast }) {
     try {
       await apiFetch(`/wishlist/${eventId}`, { method: 'DELETE' });
       setWishlistItems(prev => prev.filter(e => e.id !== eventId));
-      showToast('REMOVED FROM SAVED WISHLIST', 'info');
+      showToast('Removed from saved wishlist', 'info');
     } catch {
       setWishlistItems(prev => prev.filter(e => e.id !== eventId));
-      showToast('REMOVED FROM SAVED WISHLIST', 'info');
+      showToast('Removed from saved wishlist', 'info');
     }
   };
 
   return (
-    <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
+    <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 text-toy-black font-body">
       
       {/* Header */}
-      <div className="mb-6 sm:mb-8 border-b-2 border-asphalt-border pb-4 sm:pb-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3">
+      <div className="mb-8 sm:mb-10 border-b-2 border-dashed border-toy-black/20 pb-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-              SAVED WATCHLIST
+            <span className="bg-sun-yellow text-toy-black text-xs font-display font-black px-3 py-1 rounded-full border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]">
+              Saved Parties
             </span>
-            <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
-              BOOKMARKED PASSES
+            <span className="text-xs text-toy-black/70 font-display font-bold">
+              Your Party Wishlist
             </span>
           </div>
-          <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none">
-            SAVED EVENTS & WISHLIST
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-toy-black leading-tight">
+            Saved Parties & Gatherings
           </h1>
-          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5 leading-relaxed">
-            YOUR CURATED LIST OF UPCOMING CONCERTS, CONFERENCES & EXPERIENCES
+          <p className="text-sm font-body font-semibold text-toy-black/70 mt-1.5 leading-relaxed">
+            Your curated collection of upcoming rooftop jams, supper clubs, and concerts.
           </p>
         </div>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <WishlistCardSkeleton key={i} />
           ))}
         </div>
       ) : wishlistItems.length === 0 ? (
-        <div className="bg-asphalt-surface border-4 border-dashed border-asphalt-border p-8 sm:p-12 text-center">
-          <Bookmark size={48} className="text-grit-dim mx-auto mb-3 opacity-40" />
-          <h3 className="font-impact text-2xl uppercase text-grit-white tracking-wider">NO SAVED EVENTS</h3>
-          <p className="font-mono-zine text-xs text-grit-dim uppercase mt-1">
-            CLICK THE BOOKMARK STAMP ON ANY EVENT TO SAVE IT HERE
+        <div className="bg-white rounded-[32px] border-[3px] border-toy-black p-12 text-center max-w-lg mx-auto shadow-toy-lg">
+          <div className="w-16 h-16 rounded-full bg-sun-yellow border-2 border-toy-black shadow-toy flex items-center justify-center mx-auto mb-4">
+            <BalloonSticker size={38} />
+          </div>
+          <h3 className="text-xl font-display font-black text-toy-black">No saved parties yet</h3>
+          <p className="text-sm font-body font-semibold text-toy-black/70 mt-1.5">
+            Click the heart icon on any party card to save it to your personal wishlist!
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {wishlistItems.map((event) => {
             const isSoldOut = event.availableSeats === 0;
             return (
               <div 
                 key={event.id} 
-                className={`bg-asphalt-surface border-2 p-3.5 sm:p-5 flex flex-col justify-between relative transition-all ${
-                  isSoldOut
-                    ? 'sold-out-monochrome border-grit-dim/70 shadow-[3px_3px_0px_#222] opacity-85 hover:opacity-100'
-                    : 'border-grit-white shadow-[3px_3px_0px_#E2F13C]'
+                className={`bg-white rounded-[28px] border-[3px] border-toy-black p-6 flex flex-col justify-between transition-all shadow-toy hover:shadow-pop-purple ${
+                  isSoldOut ? 'opacity-75' : ''
                 }`}
               >
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-2">
-                      <span className={`${isSoldOut ? 'bg-asphalt-black text-grit-white border border-grit-white' : 'bg-acid-yellow text-asphalt-black'} font-impact tracking-wider text-xs px-2 py-0.5 uppercase`}>
+                      <span className="bg-lilac-wash text-toy-black border-2 border-toy-black text-xs font-display font-black px-3 py-1 rounded-full uppercase tracking-wider">
                         {event.category}
                       </span>
                       {isSoldOut && (
-                        <span className="bg-grit-white text-asphalt-black font-impact text-[10px] px-1.5 py-0.5 uppercase font-bold">
-                          SOLD OUT
+                        <span className="bg-coral-peach text-white text-xs font-display font-black px-3 py-1 rounded-full border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]">
+                          Sold Out
                         </span>
                       )}
                     </div>
                     <button 
                       onClick={() => handleRemoveFromWishlist(event.id)}
-                      className="text-neon-magenta hover:text-grit-white bg-asphalt-card border border-asphalt-border hover:border-neon-magenta p-2 min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer transition-colors touch-manipulation"
+                      className="w-9 h-9 rounded-full bg-buttercream hover:bg-coral-peach/30 text-toy-black border-2 border-toy-black flex items-center justify-center transition-colors cursor-pointer shadow-[1.5px_1.5px_0px_#1E1B2E]"
                       title="Remove from saved"
                       aria-label="Remove from saved"
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={15} />
                     </button>
                   </div>
 
-                  <h3 className="font-display text-xl sm:text-2xl uppercase tracking-tight text-grit-white leading-tight mb-3 break-words">
+                  <h3 className="text-xl sm:text-2xl font-display font-black tracking-tight text-toy-black leading-snug mb-3">
                     {event.name}
                   </h3>
 
-                  <div className="space-y-1.5 font-mono-zine text-xs text-grit-dim uppercase mb-4">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Calendar size={13} className={isSoldOut ? 'text-grit-dim shrink-0' : 'text-acid-yellow shrink-0'} />
-                      <span className="truncate">{event.eventDate}</span>
+                  <div className="space-y-2 text-xs text-toy-black/70 mb-6 font-body font-semibold">
+                    <div className="flex items-center gap-2">
+                      <Calendar size={14} className="text-bubble-pink shrink-0" />
+                      <span>{event.eventDate}</span>
                     </div>
-                    <div className="flex items-center gap-2 min-w-0">
-                      <MapPin size={13} className={isSoldOut ? 'text-grit-dim shrink-0' : 'text-acid-yellow shrink-0'} />
-                      <span className="truncate">{event.venueName || 'METROPOLITAN AUDITORIUM'}</span>
+                    <div className="flex items-center gap-2">
+                      <MapPin size={14} className="text-candy-purple shrink-0" />
+                      <span className="truncate">{event.venueName || 'Metropolitan Auditorium'}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-3.5 sm:pt-4 border-t border-asphalt-border flex flex-col xs:flex-row xs:items-center justify-between gap-2.5 sm:gap-3">
+                <div className="pt-4 border-t-2 border-dashed border-toy-black/20 flex items-center justify-between gap-3">
                   <div>
-                    <span className="text-[10px] font-ticker text-grit-dim uppercase block">TICKET PRICE</span>
-                    <span className={`font-display text-xl sm:text-2xl font-bold leading-none ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
+                    <span className="text-[11px] uppercase text-toy-black/60 font-display font-black tracking-wider block">Ticket Price</span>
+                    <span className={`text-xl font-display font-black ${isSoldOut ? 'text-toy-black/40 line-through' : 'text-toy-black'}`}>
                       {formatPrice(event.ticketPrice, event.currency)}
                     </span>
                   </div>
                   {isSoldOut ? (
                     <button 
                       onClick={() => onSelectEvent(event)} 
-                      className="w-full xs:w-auto bg-asphalt-surface text-grit-white font-impact tracking-wider text-xs uppercase px-3.5 sm:px-4 py-2 min-h-[40px] border border-grit-dim hover:border-grit-white hover:bg-grit-white hover:text-asphalt-black transition-all shadow-[2px_2px_0px_#222] flex items-center justify-center gap-1.5 cursor-pointer font-bold touch-manipulation shrink-0"
+                      className="h-[46px] px-5 rounded-full bg-buttercream text-toy-black hover:bg-sun-yellow text-xs font-display font-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] transition-all flex items-center gap-2 cursor-pointer"
                     >
-                      WAITLIST // SOLD OUT <ArrowRight size={13} />
+                      <span>Waitlist</span>
+                      <ArrowRight size={14} />
                     </button>
                   ) : (
                     <button 
                       onClick={() => onSelectEvent(event)} 
-                      className="w-full xs:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase px-3.5 sm:px-4 py-2 min-h-[40px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation shrink-0"
+                      className="h-[46px] px-6 rounded-full bg-sun-yellow hover:bg-[#ffe142] text-toy-black text-xs font-display font-black border-2 border-toy-black shadow-toy hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
                     >
-                      BOOK TICKETS <ArrowRight size={13} />
+                      <span>RSVP Now</span>
+                      <ArrowRight size={14} />
                     </button>
                   )}
                 </div>

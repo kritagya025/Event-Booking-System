@@ -53,7 +53,6 @@ export default function IntroSplashScreen({ onComplete }) {
       const elapsed = Date.now() - startTime;
       const ratio = Math.min(elapsed / duration, 1);
       
-      // Snappy non-linear step curve
       const stepped = Math.floor(ratio * 100);
       setProgress(stepped);
 
@@ -64,92 +63,75 @@ export default function IntroSplashScreen({ onComplete }) {
         clearInterval(interval);
         setTimeout(handleFinish, 300);
       }
-    }, 45);
+    }, 35);
 
     return () => clearInterval(interval);
   }, [handleFinish, logs.length]);
 
   return (
-    <div 
-      className="fixed inset-0 z-[9999] pointer-events-auto select-none overflow-hidden" 
-      aria-label="Welcome to EventHub"
-      role="dialog"
-      aria-modal="true"
-    >
-      {/* ─── SPLIT MECHANICAL SHUTTERS (Slide Apart on Exit) ─── */}
-      
+    <div className="fixed inset-0 z-50 overflow-hidden select-none bg-[#111111]">
       {/* Upper Shutter Half */}
       <div 
-        className={`absolute inset-x-0 top-0 h-1/2 bg-asphalt-black border-b-4 border-grit-white z-20 flex flex-col justify-between transition-transform duration-500 ease-[cubic-bezier(0.85,0,0.15,1)] ${
+        className={`absolute inset-x-0 top-0 h-1/2 bg-[#111111] border-b border-neutral-800 z-20 flex flex-col justify-between transition-transform duration-500 ease-[cubic-bezier(0.85,0,0.15,1)] ${
           isExiting ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
-        {/* Top Hazard Warning Tape */}
-        <div className="h-7 w-full hazard-tape border-b-2 border-asphalt-black overflow-hidden flex items-center px-4">
-          <div className="animate-marquee font-ticker text-[11px] font-extrabold uppercase tracking-widest text-asphalt-black">
-            <span>[ SYSTEM://BOOT ] OFFICIAL BOX OFFICE PROTOCOL · REAL-TIME SEAT CONCURRENCY · TAMPER-PROOF QR TICKETS · </span>
-            <span>[ SYSTEM://BOOT ] OFFICIAL BOX OFFICE PROTOCOL · REAL-TIME SEAT CONCURRENCY · TAMPER-PROOF QR TICKETS · </span>
+        <div className="w-full bg-[#181818] py-2 px-4 border-b border-neutral-800">
+          <div className="flex items-center justify-between text-xs text-neutral-400">
+            <span className="font-semibold text-white">EVENTHUB PLATFORM</span>
+            <span>OFFICIAL BOX OFFICE DIRECT</span>
           </div>
         </div>
 
         {/* Top Registration Crosshairs */}
-        <div className="p-4 sm:p-6 flex items-center justify-between font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
+        <div className="p-4 sm:p-6 flex items-center justify-between text-xs text-neutral-400">
           <div className="flex items-center gap-2">
-            <span className="text-acid-yellow font-bold text-sm">⊕</span>
-            <span>REG://BOOT [2D.SYSTEM]</span>
+            <span className="w-2 h-2 rounded-full bg-[#0000ee]" />
+            <span className="font-medium text-white">INITIALIZING LIVE ENVIRONMENT</span>
           </div>
           <button 
             type="button"
             onClick={handleFinish}
-            className="bg-asphalt-surface hover:bg-acid-yellow hover:text-asphalt-black text-grit-white border-2 border-grit-white px-3 py-1 font-impact text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#0e0e11] cursor-pointer"
+            className="bg-[#242424] hover:bg-neutral-700 text-white border border-neutral-700 px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer"
           >
             SKIP [ESC / SPACE] ↗
           </button>
         </div>
 
         {/* Middle Seam Guide */}
-        <div className="px-4 sm:px-8 pb-1 flex justify-between font-ticker text-[8px] text-grit-dim uppercase opacity-60">
-          <span>PORTAL // ARCHIVE SPLIT-A</span>
-          <span>CH-01 FOH AUDIO</span>
+        <div className="px-4 sm:px-8 pb-2 flex justify-between text-[10px] text-neutral-500 uppercase">
+          <span>PORTAL // ARCHIVE A</span>
+          <span>FOH AUDIO LIVE</span>
         </div>
       </div>
 
       {/* Lower Shutter Half */}
       <div 
-        className={`absolute inset-x-0 bottom-0 h-1/2 bg-asphalt-black border-t-4 border-grit-white z-20 flex flex-col justify-between transition-transform duration-500 ease-[cubic-bezier(0.85,0,0.15,1)] ${
+        className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#111111] border-t border-neutral-800 z-20 flex flex-col justify-between transition-transform duration-500 ease-[cubic-bezier(0.85,0,0.15,1)] ${
           isExiting ? 'translate-y-full' : 'translate-y-0'
         }`}
       >
         {/* Lower Seam Guide */}
-        <div className="px-4 sm:px-8 pt-1 flex justify-between font-ticker text-[8px] text-grit-dim uppercase opacity-60">
-          <span>PORTAL // ARCHIVE SPLIT-B</span>
+        <div className="px-4 sm:px-8 pt-2 flex justify-between text-[10px] text-neutral-500 uppercase">
+          <span>PORTAL // ARCHIVE B</span>
           <span>100% VERIFIED PASSES</span>
         </div>
 
-        {/* Technical Terminal Readout at Bottom */}
-        <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-ticker text-[10px] text-grit-dim uppercase border-t border-asphalt-border bg-asphalt-surface/60">
+        {/* Technical Readout at Bottom */}
+        <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-neutral-400 border-t border-neutral-800 bg-[#161616]">
           <div className="flex items-center gap-2">
-            <Radio size={14} className="text-neon-magenta animate-pulse" />
-            <span className="text-grit-white font-mono-zine">
+            <Radio size={14} className="text-[#0000ee] animate-pulse" />
+            <span className="text-white">
               {logs[logIndex]}
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-acid-yellow font-bold">10-MIN HOLD ACTIVE</span>
-            <div className="flex items-center gap-1.5">
-              <span className="text-neon-magenta font-bold text-sm">⊕</span>
-              <span>BOX OFFICE DIRECT</span>
-            </div>
+          <div className="flex items-center gap-4 text-xs">
+            <span className="text-[#0000ee] font-medium">10-MIN HOLD ACTIVE</span>
+            <span>BOX OFFICE DIRECT</span>
           </div>
         </div>
 
-        {/* Bottom Hazard Warning Tape */}
-        <div className="h-7 w-full hazard-tape-magenta border-t-2 border-asphalt-black overflow-hidden flex items-center px-4">
-          <div className="animate-marquee font-ticker text-[11px] font-extrabold uppercase tracking-widest text-grit-white">
-            <span>LIVE CONCERTS · IMAX 3D CINEMA · ARENA TOURS · BROADWAY THEATER · ESPORTS CHAMPIONSHIPS · </span>
-            <span>LIVE CONCERTS · IMAX 3D CINEMA · ARENA TOURS · BROADWAY THEATER · ESPORTS CHAMPIONSHIPS · </span>
-          </div>
-        </div>
+        <div className="h-2 w-full bg-[#181818]" />
       </div>
 
       {/* ─── CENTER HERO EMBLEM (Float Above Both Shutters) ─── */}
@@ -158,52 +140,52 @@ export default function IntroSplashScreen({ onComplete }) {
           isExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
         }`}
       >
-        <div className="w-full max-w-lg bg-asphalt-card border-4 border-grit-white p-5 sm:p-8 shadow-[8px_8px_0px_#eefc54] text-grit-white relative pointer-events-auto">
-          {/* Top Tape Stamp */}
-          <div className="absolute -top-4 right-4 bg-neon-magenta text-grit-white font-impact text-xs sm:text-sm tracking-widest px-3 py-1 border-2 border-asphalt-black shadow-[3px_3px_0px_#0e0e11] uppercase font-bold">
-            BOX OFFICE DIRECT // 2026
+        <div className="w-full max-w-lg bg-[#1a1a1a] rounded-[28px] border border-neutral-700 p-6 sm:p-10 shadow-2xl text-white relative pointer-events-auto">
+          {/* Top Pill Badge */}
+          <div className="absolute -top-3.5 right-6 bg-[#0000ee] text-white text-xs font-semibold px-4 py-1 rounded-full uppercase">
+            BOX OFFICE // 2026
           </div>
 
           {/* Subtitle Protocol */}
-          <div className="flex items-center gap-2 mb-2 font-ticker text-[10px] sm:text-xs text-acid-yellow font-bold uppercase tracking-wider">
-            <ShieldCheck size={14} className="text-acid-yellow" />
-            <span>OFFICIAL LIVE EVENT & CINEMA ACCESS</span>
+          <div className="flex items-center gap-2 mb-2 text-xs text-[#0000ee] font-semibold uppercase tracking-wider">
+            <ShieldCheck size={14} />
+            <span>Official Live Event & Cinema Access</span>
           </div>
 
           {/* Brand Logo Title */}
-          <h1 className="font-display text-5xl sm:text-7xl md:text-8xl tracking-tight text-grit-white leading-none uppercase mb-2">
-            EVENT<span className="text-acid-yellow underline decoration-neon-magenta decoration-4">HUB</span>
+          <h1 className="font-display font-black text-5xl sm:text-7xl tracking-tight text-white leading-none uppercase mb-2 font-normal">
+            EVENT<span className="text-[#0000ee]">HUB</span>
           </h1>
 
-          <p className="font-mono-zine text-xs sm:text-sm text-grit-dim mb-5 leading-relaxed">
+          <p className="text-xs sm:text-sm text-neutral-400 mb-6 leading-relaxed">
             Reserved seating in real time with zero duplicate bookings. Cryptographic QR passes for arena concerts, IMAX laser screenings, and theater.
           </p>
 
           {/* Progress Bar Container */}
-          <div className="space-y-2 mb-5">
-            <div className="flex justify-between items-center font-ticker text-xs font-bold">
-              <span className="text-grit-dim uppercase tracking-wider">SYSTEM INITIALIZATION</span>
-              <span className="text-acid-yellow font-mono-zine text-base tabular-nums font-black">{progress}%</span>
+          <div className="space-y-2 mb-6">
+            <div className="flex justify-between items-center text-xs font-semibold">
+              <span className="text-neutral-400 uppercase tracking-wider">SYSTEM INITIALIZATION</span>
+              <span className="text-white text-base tabular-nums font-bold">{progress}%</span>
             </div>
 
-            {/* Flat 2D Neo-Brutalist Progress Track */}
-            <div className="w-full h-4 sm:h-5 bg-asphalt-black border-2 border-grit-white p-0.5 relative overflow-hidden">
+            {/* Rounded Full Progress Track */}
+            <div className="w-full h-3 bg-neutral-800 rounded-full overflow-hidden p-0.5">
               <div 
-                className="h-full bg-acid-yellow transition-all duration-75 ease-out"
+                className="h-full bg-white rounded-full transition-all duration-75 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
 
           {/* Action Row */}
-          <div className="flex items-center justify-between gap-3 pt-3 border-t-2 border-asphalt-border font-ticker text-xs">
-            <span className="text-[10px] text-grit-dim uppercase hidden xs:inline">
-              PRESS <kbd className="px-1.5 py-0.5 bg-asphalt-black border border-asphalt-border text-grit-white font-bold">SPACE</kbd> TO ENTER
+          <div className="flex items-center justify-between gap-3 pt-3 border-t border-neutral-800 text-xs">
+            <span className="text-[11px] text-neutral-400 uppercase hidden xs:inline">
+              PRESS <kbd className="px-2 py-0.5 bg-neutral-800 rounded-md border border-neutral-700 text-white font-medium">SPACE</kbd> TO ENTER
             </span>
             <button 
               type="button"
               onClick={handleFinish}
-              className="w-full xs:w-auto px-5 py-2.5 bg-acid-yellow hover:bg-neon-magenta text-asphalt-black hover:text-grit-white font-impact text-sm sm:text-base uppercase tracking-wider border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] transition-all flex items-center justify-center gap-2 font-bold cursor-pointer ml-auto"
+              className="w-full xs:w-auto h-[48px] px-7 bg-white hover:bg-neutral-200 text-[#111111] font-medium text-xs uppercase tracking-wider rounded-full transition-colors flex items-center justify-center gap-2 cursor-pointer ml-auto"
             >
               <span>ENTER EVENTHUB</span>
               <ArrowRight size={15} />

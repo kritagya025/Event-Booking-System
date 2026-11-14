@@ -1,25 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- Hard brutalist drop shadow offset (Neon Magenta) -->
-  <path d="M 12 8 h 40 a 4 4 0 0 1 4 4 v 14 a 6 6 0 0 0 0 12 v 14 a 4 4 0 0 1 -4 4 h -40 a 4 4 0 0 1 -4 -4 v -14 a 6 6 0 0 0 0 -12 v -14 a 4 4 0 0 1 4 -4 Z" 
-        fill="#FF1F6D" transform="translate(3.5, 3.5)" />
-  
-  <!-- Main Concert Ticket Body (Acid Yellow) -->
-  <path d="M 12 8 h 40 a 4 4 0 0 1 4 4 v 14 a 6 6 0 0 0 0 12 v 14 a 4 4 0 0 1 -4 4 h -40 a 4 4 0 0 1 -4 -4 v -14 a 6 6 0 0 0 0 -12 v -14 a 4 4 0 0 1 4 -4 Z" 
-        fill="#EEFC54" stroke="#0E0E11" stroke-width="3" stroke-linejoin="round" />
-  
-  <!-- Dashed Perforation Line on left -->
-  <line x1="22" y1="10" x2="22" y2="54" stroke="#0E0E11" stroke-width="2.2" stroke-dasharray="3,3" />
+  <!-- Hard 3D Offset Shadow in Toy Black -->
+  <path d="M 12 10 C 8.5 10 6 12.5 6 16 L 6 26 A 5.5 5.5 0 0 0 6 38 L 6 48 C 6 51.5 8.5 54 12 54 L 52 54 C 55.5 54 58 51.5 58 48 L 58 38 A 5.5 5.5 0 0 0 58 26 L 58 16 C 58 12.5 55.5 10 52 10 Z" 
+        fill="#1E1B2E" transform="translate(4, 4)" />
 
-  <!-- Left Stub Tech Punch Dots -->
-  <circle cx="15" cy="18" r="2.2" fill="#0E0E11" />
-  <circle cx="15" cy="32" r="2.2" fill="#0E0E11" />
-  <circle cx="15" cy="46" r="2.2" fill="#0E0E11" />
+  <!-- Main Ticket Body in Sun Yellow -->
+  <path d="M 12 10 C 8.5 10 6 12.5 6 16 L 6 26 A 5.5 5.5 0 0 0 6 38 L 6 48 C 6 51.5 8.5 54 12 54 L 52 54 C 55.5 54 58 51.5 58 48 L 58 38 A 5.5 5.5 0 0 0 58 26 L 58 16 C 58 12.5 55.5 10 52 10 Z" 
+        fill="#FFE142" stroke="#1E1B2E" stroke-width="3.5" stroke-linejoin="round" />
 
-  <!-- High-Voltage Stage Lightning Bolt -->
-  <path d="M 40 14 L 27 33 L 36 33 L 30 50 L 48 29 L 39 29 Z" 
-        fill="#0E0E11" stroke="#0E0E11" stroke-width="1.5" stroke-linejoin="round" />
+  <!-- Left Stub in High-Voltage Bubble Pink -->
+  <clipPath id="clipStub">
+    <path d="M 12 10 C 8.5 10 6 12.5 6 16 L 6 26 A 5.5 5.5 0 0 0 6 38 L 6 48 C 6 51.5 8.5 54 12 54 L 52 54 C 55.5 54 58 51.5 58 48 L 58 38 A 5.5 5.5 0 0 0 58 26 L 58 16 C 58 12.5 55.5 10 52 10 Z" />
+  </clipPath>
 
-  <!-- Inner Bolt Electric Accent -->
-  <path d="M 39 19 L 31 31 L 37 31 L 33 43 L 43 28 L 37 28 Z" 
-        fill="#EEFC54" opacity="0.9" />
+  <g clip-path="url(#clipStub)">
+    <rect x="0" y="0" width="23" height="64" fill="#FF4081" />
+    <line x1="23" y1="10" x2="23" y2="54" stroke="#1E1B2E" stroke-width="2.5" stroke-dasharray="3.5,3" />
+
+    <!-- Stub Punch Holes -->
+    <circle cx="14" cy="20" r="2.2" fill="#FFE142" stroke="#1E1B2E" stroke-width="1.2" />
+    <circle cx="14" cy="44" r="2.2" fill="#FFE142" stroke="#1E1B2E" stroke-width="1.2" />
+  </g>
+
+  <!-- Neo-Memphis 4-Point Sparkle Star in Candy Purple -->
+  <path d="M 41 19 C 41 25.5 41 26.5 47.5 26.5 C 41 26.5 41 27.5 41 34 C 41 27.5 41 26.5 34.5 26.5 C 41 26.5 41 25.5 41 19 Z" 
+        fill="#7B2CBF" stroke="#1E1B2E" stroke-width="2" stroke-linejoin="round" />
+  <circle cx="41" cy="26.5" r="1.8" fill="#FFFDF5" />
+
+  <!-- Neo-Memphis Sparkle in Sky Azure -->
+  <path d="M 49 41 L 50.5 43.5 L 53 45 L 50.5 46.5 L 49 49 L 47.5 46.5 L 45 45 L 47.5 43.5 Z" 
+        fill="#00E5FF" stroke="#1E1B2E" stroke-width="1.2" />
 </svg>

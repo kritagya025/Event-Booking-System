@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink } from 'lucide-react';
+import { Ticket, Calendar, MapPin, Download, XCircle, Search, ExternalLink, RefreshCw } from 'lucide-react';
 import { apiFetch, BASE_URL } from '../services/api';
 import { formatPrice } from '../services/currency';
 import BookingCardSkeleton from './BookingCardSkeleton';
+import { TicketSticker } from './CustomStickers';
 
 export default function MyBookings({ currentUser, showToast }) {
   const [bookings, setBookings] = useState([]);
@@ -54,67 +55,35 @@ export default function MyBookings({ currentUser, showToast }) {
   }, [currentUser, fetchUserBookings]);
 
   const handleCancelBooking = async (bookingId) => {
-    if (!window.confirm('CANCEL THIS BOOKING? ALLOCATED SEATS WILL RETURN TO LIVE INVENTORY.')) return;
+    if (!window.confirm('Cancel this booking? Allocated seats will return to live inventory.')) return;
 
     let localBookings = [];
     try {
       localBookings = JSON.parse(localStorage.getItem('my_local_bookings') || '[]');
-    } catch {
-      localBookings = [];
-    }
-    const isLocalBooking = localBookings.some(b => String(b.id) === String(bookingId));
+    } catch {}
 
-    try {
-      await apiFetch(`/bookings/${bookingId}/cancel`, { method: 'PATCH' });
-      // Server confirmed cancellation: reconcile local storage if record exists locally
-      if (isLocalBooking) {
-        const updatedLocal = localBookings.map(b => 
-          String(b.id) === String(bookingId) ? { ...b, bookingStatus: 'CANCELLED' } : b
-        );
-        localStorage.setItem('my_local_bookings', JSON.stringify(updatedLocal));
-      }
-      showToast('BOOKING CANCELLED AND SEATS RELEASED', 'info');
-      fetchUserBookings();
-    } catch (err) {
-      const isNotFound = err.message && (err.message.includes('404') || err.message.toLowerCase().includes('not found'));
-      const isNetworkOffline = err.name === 'AbortError' || (err.message && (
-        err.message.toLowerCase().includes('failed to fetch') ||
-        err.message.toLowerCase().includes('network') ||
-        err.message.toLowerCase().includes('not accessible') ||
-        err.message.toLowerCase().includes('timeout')
-      ));
+    const isLocal = localBookings.some((b) => b.id === bookingId);
 
-      if (isLocalBooking && (isNotFound || isNetworkOffline)) {
-        // Reconcile ONLY confirmed local/demo booking in local storage and state
-        const updatedLocal = localBookings.map(b => 
-          String(b.id) === String(bookingId) ? { ...b, bookingStatus: 'CANCELLED' } : b
-        );
-        localStorage.setItem('my_local_bookings', JSON.stringify(updatedLocal));
-
-        setBookings(prev => prev.map(b => 
-          String(b.id) === String(bookingId) ? { ...b, bookingStatus: 'CANCELLED' } : b
-        ));
-
-        if (isNotFound) {
-          showToast('LOCAL DEMO BOOKING CANCELLED (RECONCILED)', 'info');
-        } else {
-          showToast('BOOKING CANCELLED LOCALLY (OFFLINE MODE)', 'info');
-        }
-      } else {
-        // Do not silently mark real backend booking as cancelled when server has not confirmed
-        showToast(err.message || 'FAILED TO CANCEL BOOKING: SERVER DID NOT CONFIRM CANCELLATION', 'error');
-      }
-    }
-  };
-
-  const handleDownloadPdf = async (booking) => {
-    if (booking.bookingStatus === 'CANCELLED') {
-      showToast('CANNOT DOWNLOAD PASS FOR CANCELLED RESERVATION', 'error');
+    if (isLocal) {
+      const updated = localBookings.filter((b) => b.id !== bookingId);
+      localStorage.setItem('my_local_bookings', JSON.stringify(updated));
+      setBookings((prev) => prev.filter((b) => b.id !== bookingId));
+      showToast('Booking cancelled successfully', 'info');
       return;
     }
 
     try {
-      const token = localStorage.getItem('access_token');
+      await apiFetch(`/bookings/${bookingId}/cancel`, { method: 'POST' });
+      showToast('Booking cancelled successfully', 'info');
+      fetchUserBookings();
+    } catch (err) {
+      showToast(err.message || 'Unable to cancel booking', 'error');
+    }
+  };
+
+  const handleDownloadPdf = async (booking) => {
+    try {
+      const token = localStorage.getItem('token');
       const headers = {};
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -130,19 +99,19 @@ export default function MyBookings({ currentUser, showToast }) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `EVENTHUB-Ticket-${booking.id}.pdf`;
+        link.download = `eventhub-ticket-${booking.id}.pdf`;
         document.body.appendChild(link);
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
-        showToast('TICKET ADMISSION PASS DOWNLOADED', 'success');
+        showToast('Ticket pass downloaded', 'success');
         return;
       }
     } catch (e) {
       console.warn('PDF API notice:', e);
     }
 
-    // High-Fidelity EventHub Brutalist Printable Pass Stub Fallback
+    // Clean EventHub Printable Pass Stub Fallback
     try {
       const eventImg = booking.event?.bannerImageUrl || (booking.event?.category?.toUpperCase().includes('TECH') ? '/images/tech.jpg' : '/images/concert.jpg');
       const passWindow = window.open('', '_blank');
@@ -151,350 +120,66 @@ export default function MyBookings({ currentUser, showToast }) {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>EVENTHUB VIP PASS #${booking.id}</title>
+            <title>eventhub Ticket Pass #${booking.id}</title>
             <style>
-              * {
-                box-sizing: border-box;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-              }
-              html, body {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-              }
-              body { font-family: 'JetBrains Mono', 'Courier New', monospace; background: #0a0a0e; color: #f8fafc; padding: 32px 16px; text-align: center; margin: 0; }
-              .pass-container { max-width: 740px; margin: 0 auto; text-align: left; }
-              .doc-header { display: flex; justify-content: space-between; align-items: center; background: #121420; border: 2px solid #00f0ff; padding: 10px 16px; margin-bottom: 16px; }
-              .doc-title { font-size: 13px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
-              .doc-meta { font-size: 9px; color: #94a3b8; margin-top: 2px; }
-              .doc-status { text-align: right; font-size: 10px; font-weight: bold; color: #00f0ff; }
-              .pass-card { background: #121420; border: 3px solid #fef02a; padding: 0; box-shadow: 10px 10px 0px #00f0ff; overflow: hidden; position: relative; }
-              .hazard { height: 9px; background: repeating-linear-gradient(-45deg, #fef02a, #fef02a 12px, #0a0a0e 12px, #0a0a0e 24px, #ff006e 24px, #ff006e 36px, #0a0a0e 36px, #0a0a0e 48px); }
-              .pass-body { display: grid; grid-template-columns: 1fr 230px; position: relative; }
-              .left-pass { padding: 20px 24px; border-right: 2px dashed #00f0ff; position: relative; background: #121420; }
-              .right-stub { padding: 20px 16px; background: #f8fafc; color: #0a0a0e; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-              .event-banner-art { width: 100%; height: 135px; border: 2px solid #00f0ff; overflow: hidden; margin-bottom: 12px; position: relative; background: #0a0a0e; }
-              .event-banner-art img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.15) saturate(1.25); display: block; }
-              .art-overlay { position: absolute; bottom: 8px; left: 8px; display: flex; gap: 6px; }
-              .live-pill { background: #ff006e; color: #ffffff; font-size: 8px; font-weight: 900; padding: 2px 6px; text-transform: uppercase; border: 1px solid #0a0a0e; }
-              .season-pill { background: #fef02a; color: #0a0a0e; font-size: 8px; font-weight: 900; padding: 2px 6px; text-transform: uppercase; border: 1px solid #0a0a0e; }
-              .stub-art-thumb { width: 100%; height: 45px; overflow: hidden; border: 1.5px solid #0a0a0e; margin-bottom: 8px; }
-              .stub-art-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-              .notch-top { position: absolute; top: -10px; right: 220px; width: 20px; height: 20px; background: #0a0a0e; border-radius: 50%; border: 2px solid #fef02a; z-index: 10; }
-              .notch-bottom { position: absolute; bottom: -10px; right: 220px; width: 20px; height: 20px; background: #0a0a0e; border-radius: 50%; border: 2px solid #fef02a; z-index: 10; }
-              .top-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 12px; }
-              .logo { font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: -1px; }
-              .pass-badge { background: #fef02a; color: #0a0a0e; padding: 2px 6px; font-size: 9px; font-weight: 900; vertical-align: middle; margin-left: 6px; }
-              .season-badge { background: #ff006e; color: #ffffff; padding: 2px 6px; font-size: 8px; font-weight: 900; text-transform: uppercase; border: 1px solid #0a0a0e; margin-left: 4px; }
-              .serial { color: #fef02a; font-size: 9px; font-weight: bold; text-align: right; }
-              .event-title { font-size: 22px; font-weight: 900; margin: 0 0 4px 0; color: #ffffff; text-transform: uppercase; line-height: 1.1; }
-              .event-meta { font-size: 10px; color: #00f0ff; margin: 0 0 12px 0; font-weight: bold; text-transform: uppercase; }
-              .venue-box { background: #1a1e2e; border: 1px solid #334155; border-left: 4px solid #ff006e; padding: 10px; margin-bottom: 12px; }
-              .venue-label { font-size: 8px; color: #ff006e; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-              .venue-name { font-size: 13px; font-weight: bold; color: #ffffff; margin-top: 2px; }
-              .seat-banner { background: #fef02a; color: #0a0a0e; border: 2px solid #0a0a0e; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-              .seat-big { font-size: 16px; font-weight: 900; }
-              .seat-tier { font-size: 9px; font-weight: 900; text-transform: uppercase; background: #ff006e; color: #ffffff; padding: 3px 6px; }
-              .holder-box { background: #1a1e2e; border: 1px solid #334155; border-left: 4px solid #00f0ff; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; }
-              .holder-label { font-size: 8px; color: #00f0ff; text-transform: uppercase; font-weight: bold; }
-              .holder-name { font-size: 13px; font-weight: 900; color: #ffffff; margin: 2px 0; text-transform: uppercase; }
-              .holder-email { font-size: 9px; color: #00f0ff; }
-              .guarantees { display: flex; gap: 8px; font-size: 8px; text-transform: uppercase; font-weight: bold; }
-              .stub-head { font-size: 10px; font-weight: 900; color: #0a0a0e; margin-bottom: 2px; }
-              .stub-sub { font-size: 8px; color: #ff006e; font-weight: bold; margin-bottom: 8px; }
-              .stub-seat { background: #fef02a; border: 2px solid #0a0a0e; color: #0a0a0e; font-size: 12px; font-weight: 900; padding: 4px; margin-bottom: 8px; }
-              .qr-box { background: #ffffff; padding: 6px; border: 2px solid #0a0a0e; margin-bottom: 8px; }
-              .qr-box img { width: 105px; height: 105px; display: block; margin: 0 auto; }
-              .qr-label { font-size: 7px; font-weight: 900; color: #0a0a0e; margin-top: 3px; text-transform: uppercase; }
-              .barcode-box { background: #ffffff; padding: 4px; border: 2px solid #0a0a0e; margin-bottom: 6px; }
-              .barcode-box .bars { font-size: 12px; font-weight: 900; letter-spacing: -1px; color: #0a0a0e; margin: 0; line-height: 1; }
-              .barcode-box .serial { font-size: 7px; color: #0a0a0e; font-weight: bold; text-align: center; }
-              .tear-bar { border-top: 1px dashed #00f0ff; padding: 6px 0; text-align: center; font-size: 8px; color: #00f0ff; letter-spacing: 1px; font-weight: bold; }
-              .protocol-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; background: #121420; border: 1px solid #334155; padding: 14px; margin-top: 16px; }
-              .protocol-col { padding: 8px; background: #1a1e2e; }
-              .protocol-col:nth-child(1) { border-top: 3px solid #00f0ff; }
-              .protocol-col:nth-child(2) { border-top: 3px solid #ff006e; }
-              .protocol-col:nth-child(3) { border-top: 3px solid #10e68c; }
-              .protocol-col h4 { margin: 0 0 6px 0; font-size: 9px; text-transform: uppercase; font-weight: 900; }
-              .protocol-col:nth-child(1) h4 { color: #00f0ff; }
-              .protocol-col:nth-child(2) h4 { color: #ff006e; }
-              .protocol-col:nth-child(3) h4 { color: #10e68c; }
-              .protocol-col p { margin: 0; font-size: 8px; color: #94a3b8; line-height: 1.4; }
-              .print-tip { font-size: 10px; color: #fef02a; background: #1a1e2e; border: 1px dashed #fef02a; padding: 8px; margin-top: 16px; text-align: center; font-weight: bold; letter-spacing: 0.5px; }
-              .print-btn { display: block; width: 100%; background: #ff006e; color: #ffffff; border: 2px solid #ffffff; padding: 12px; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #fef02a; transition: all 0.2s; margin-top: 8px; }
-              .print-btn:hover { background: #fef02a; color: #0a0a0e; }
-              @media screen and (max-width: 640px) {
-                body { padding: 12px 8px; }
-                .pass-container { max-width: 100%; }
-                .pass-body { display: flex; flex-direction: column; }
-                .left-pass { border-right: none; border-bottom: 2px dashed #00f0ff; padding: 16px; }
-                .right-stub { padding: 16px; }
-                .event-banner-art { height: 110px; }
-                .notch-top, .notch-bottom { display: none; }
-                .protocol-grid { grid-template-columns: 1fr; gap: 8px; }
-                .qr-box img { width: 95px; height: 95px; }
-                .event-title { font-size: 18px; }
-                .seat-banner { flex-direction: column; gap: 6px; text-align: center; }
-                .holder-box { flex-direction: column; gap: 6px; }
-              }
-              @media print {
-                @page {
-                  size: A4 portrait;
-                  margin: 8mm 6mm;
-                }
-                html, body {
-                  background: #0a0a0e !important;
-                  color: #f8fafc !important;
-                  padding: 0 !important;
-                  margin: 0 !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                  color-adjust: exact !important;
-                }
-                .pass-container {
-                  max-width: 100% !important;
-                  margin: 0 auto !important;
-                  page-break-inside: avoid;
-                  break-inside: avoid;
-                }
-                .doc-header {
-                  background: #121420 !important;
-                  border: 2px solid #00f0ff !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .pass-card {
-                  background: #121420 !important;
-                  border: 3px solid #fef02a !important;
-                  box-shadow: none !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                  page-break-inside: avoid;
-                  break-inside: avoid;
-                }
-                .hazard {
-                  background: repeating-linear-gradient(-45deg, #fef02a, #fef02a 12px, #0a0a0e 12px, #0a0a0e 24px, #ff006e 24px, #ff006e 36px, #0a0a0e 36px, #0a0a0e 48px) !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .left-pass {
-                  background: #121420 !important;
-                  border-right: 2px dashed #00f0ff !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .right-stub {
-                  background: #f8fafc !important;
-                  color: #0a0a0e !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .event-banner-art {
-                  border: 2px solid #00f0ff !important;
-                  background: #0a0a0e !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .seat-banner {
-                  background: #fef02a !important;
-                  color: #0a0a0e !important;
-                  border: 2px solid #0a0a0e !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .seat-tier {
-                  background: #ff006e !important;
-                  color: #ffffff !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .live-pill {
-                  background: #ff006e !important;
-                  color: #ffffff !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .season-pill {
-                  background: #fef02a !important;
-                  color: #0a0a0e !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .pass-badge {
-                  background: #fef02a !important;
-                  color: #0a0a0e !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .season-badge {
-                  background: #ff006e !important;
-                  color: #ffffff !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .stub-seat {
-                  background: #fef02a !important;
-                  color: #0a0a0e !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .venue-box, .holder-box, .protocol-grid, .protocol-col {
-                  background: #1a1e2e !important;
-                  -webkit-print-color-adjust: exact !important;
-                  print-color-adjust: exact !important;
-                }
-                .print-tip, .print-btn {
-                  display: none !important;
-                }
-              }
+              * { box-sizing: border-box; }
+              body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f7f7f7; color: #111111; padding: 40px 20px; margin: 0; }
+              .pass-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 24px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+              .header { background: #111111; color: #ffffff; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; }
+              .header h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+              .header span { font-size: 11px; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 9999px; }
+              .body { padding: 32px; }
+              .event-title { font-size: 24px; font-weight: 800; margin: 0 0 16px 0; color: #111111; }
+              .meta-row { display: flex; gap: 24px; margin-bottom: 24px; color: #6b7280; font-size: 14px; }
+              .seats-pill { background: #f7f7f7; border: 1px solid #e5e7eb; border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+              .qr-section { text-align: center; padding: 24px 0 0 0; border-top: 1px dashed #e5e7eb; }
+              .qr-section img { width: 140px; height: 140px; margin-bottom: 8px; }
+              .serial { font-family: monospace; font-size: 12px; color: #6b7280; }
             </style>
           </head>
           <body>
             <div class="pass-container">
-              <div class="doc-header">
-                <div>
-                  <div class="doc-title">EVENTHUB OFFICIAL DIGITAL ADMISSION DOCUMENT</div>
-                  <div class="doc-meta">ORDER NO: #EHB-${booking.id} | ISSUED: ${new Date().toLocaleDateString()} | VALIDATED PASS</div>
-                </div>
-                <div class="doc-status">
-                  VERIFIED ADMISSION<br />
-                  <span style="font-size: 12px; color: #fef02a;">CONFIRMED</span>
-                </div>
+              <div class="header">
+                <h2>eventhub</h2>
+                <span>Verified Admission</span>
               </div>
-
-              <div class="pass-card">
-                <div class="hazard"></div>
-                <div class="notch-top"></div>
-                <div class="notch-bottom"></div>
-                <div class="pass-body">
-                  <div class="left-pass">
-                    <div class="top-row">
-                      <div>
-                        <span class="logo">EVENTHUB<span class="pass-badge">VIP PASS</span><span class="season-badge">SEASON 2026</span></span>
-                        <div style="font-size: 7px; color: #94a3b8; letter-spacing: 1px; margin-top: 3px; text-transform: uppercase;">
-                          AUTHENTICATED ADMISSION GATEWAY // REVENUE PASS
-                        </div>
-                      </div>
-                      <div class="serial">
-                        SERIAL: EHB-${booking.id}<br />
-                        <span style="color: #10e68c; font-size: 7px;">STATUS: ACTIVE // VERIFIED</span>
-                      </div>
-                    </div>
-
-                    <div class="event-banner-art">
-                      <img src="${eventImg}" alt="Event Artwork" />
-                      <div class="art-overlay">
-                        <span class="live-pill">LIVE STAGE PRODUCTION</span>
-                        <span class="season-pill">SEASON 2026</span>
-                      </div>
-                    </div>
-
-                    <h1 class="event-title">${booking.event?.name || 'LIVE ARENA CONCERT'}</h1>
-                    <div class="event-meta">
-                      SHOWTIME: ${booking.event?.eventDate || '2026-10-24'} @ ${booking.isCinema ? (booking.showtime || '06:15 PM') : (booking.event?.startTime || '07:30 PM')}
-                    </div>
-
-                    <div class="venue-box">
-                      <div class="venue-label">LOCATION & AUDITORIUM:</div>
-                      <div class="venue-name">${booking.screenName || booking.event?.venue?.name || 'MAIN CONCERT ARENA'}</div>
-                      <div style="font-size: 9px; color: #94a3b8; margin-top: 2px;">${booking.event?.venue?.address || 'MAIN EVENT GATE 01'} // NORTH ENTRY</div>
-                    </div>
-
-                    <div class="seat-banner">
-                      <div>
-                        <div style="font-size: 7px; font-weight: bold; text-transform: uppercase;">CONFIRMED SEATING ASSIGNMENT:</div>
-                        <div class="seat-big">SEAT: ${booking.selectedSeats || 'GENERAL ADMISSION'}</div>
-                      </div>
-                      <div class="seat-tier">VIP RESERVED</div>
-                    </div>
-
-                    <div class="holder-box">
-                      <div>
-                        <div class="holder-label">ACCREDITED ATTENDEE:</div>
-                        <div class="holder-name">${currentUser?.firstName || 'VIP'} ${currentUser?.lastName || 'ATTENDEE'}</div>
-                        <div class="holder-email">${currentUser?.email || 'AUTHENTICATED HOLDER'}</div>
-                      </div>
-                      <div style="text-align: right;">
-                        <div class="holder-label" style="color: #fef02a;">BOOKING REFERENCE:</div>
-                        <div style="font-size: 11px; font-weight: bold; color: #fef02a; margin-top: 2px;">#EHB-${booking.id}</div>
-                        <div style="font-size: 8px; color: #10e68c;">ADMIT ONE PERSON</div>
-                      </div>
-                    </div>
-
-                    <div class="guarantees">
-                      <span style="color: #fef02a;">[ 10-MIN CART LOCK ]</span>
-                      <span style="color: #10e68c;">[ ZERO OVERBOOKING ]</span>
-                      <span style="color: #00f0ff;">[ OFFLINE GATE AUDITED ]</span>
-                      <span style="color: #ff006e;">[ PHOTO ID REQ ]</span>
-                    </div>
+              <div class="body">
+                <div class="event-title">${booking.event?.name || 'Live Experience'}</div>
+                <div class="meta-row">
+                  <div><strong>Date:</strong> ${booking.event?.eventDate || '2026-09-15'}</div>
+                  <div><strong>Time:</strong> ${booking.showtime || booking.event?.startTime || '19:00'}</div>
+                  <div><strong>Venue:</strong> ${booking.screenName || booking.event?.venue?.name || 'Main Arena'}</div>
+                </div>
+                <div class="seats-pill">
+                  <div>
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase;">Seats Reserved</div>
+                    <div style="font-size: 18px; font-weight: 800; margin-top: 2px;">${booking.selectedSeats || 'General Admission'}</div>
                   </div>
-
-                  <div class="right-stub">
-                    <div>
-                      <div class="stub-head">GATE TURNSTILE STUB</div>
-                      <div class="stub-sub">ADMIT ONE // SCAN AT GATE</div>
-                      <div class="stub-art-thumb">
-                        <img src="${eventImg}" alt="Event Artwork" />
-                      </div>
-                      <div class="stub-seat">${booking.selectedSeats || 'GA-01'}</div>
-                    </div>
-
-                    <div class="qr-box">
-                      <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=EVENTHUB-PASS-${booking.id}`}" alt="Pass QR" />
-                      <div class="qr-label">OPTICAL GATE TOKEN</div>
-                    </div>
-
-                    <div class="barcode-box">
-                      <div class="bars">|| | ||| | || |||| | ||| | || | ||||</div>
-                      <div class="serial">* EHB-${booking.id} *</div>
-                    </div>
-
-                    <div style="font-size: 7px; color: #475569; font-weight: bold;">SINGLE USE // TURNSTILE SCAN</div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 11px; color: #6b7280; text-transform: uppercase;">Total</div>
+                    <div style="font-size: 18px; font-weight: 800; color: #111111; margin-top: 2px;">$${Number(booking.totalAmount || 0).toFixed(2)}</div>
                   </div>
                 </div>
-
-                <div class="tear-bar">
-                  --------------------- TEAR / SCAN AT GATE TURNSTILE ---------------------
-                </div>
-                <div class="hazard"></div>
-              </div>
-
-              <div class="protocol-grid">
-                <div class="protocol-col">
-                  <h4>01 // TURNSTILE ENTRY</h4>
-                  <p>[>] Present pass printed or on phone at 100% brightness.<br />[>] Align QR token with gate scanner.<br />[>] Pass through when light turns GREEN.</p>
-                </div>
-                <div class="protocol-col">
-                  <h4>02 // ADMISSION POLICY</h4>
-                  <p>[*] Government-issued photo ID required.<br />[*] Single-entry credential only.<br />[*] Duplicate scans trigger security alarms.</p>
-                </div>
-                <div class="protocol-col">
-                  <h4>03 // ZERO OVERBOOKING</h4>
-                  <p>[#] Real-time distributed seat lock.<br />[#] SHA-256 cryptographically verified.<br />[#] Support: support@eventhub.live</p>
+                <div class="qr-section">
+                  <img src="${booking.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=EVENTHUB-PASS-${booking.id}`}" alt="QR Pass" />
+                  <div class="serial">PASS #${booking.id} · SCAN AT GATE</div>
                 </div>
               </div>
-
-              <div class="print-tip">
-                [COLOR PRINTING NOTICE: In your browser print dialog, ensure "Background graphics" is enabled under More Settings to output complete vivid colors.]
-              </div>
-              <button class="print-btn" onclick="window.print()">PRINT / EXPORT PASS</button>
             </div>
+            <script>window.onload = function() { window.print(); };</script>
           </body>
           </html>
         `);
         passWindow.document.close();
-        showToast('ADMISSION TICKET OPENED FOR PRINTING', 'success');
       }
     } catch {
-      showToast('GENERATING TICKET PASS...', 'success');
+      showToast('Generating ticket pass...', 'success');
     }
   };
 
   const handleDownloadCalendar = (eventId) => {
     window.open(`${BASE_URL}/events/${eventId}/calendar.ics`, '_blank');
-    showToast('DOWNLOADING ICS CALENDAR FILE...', 'info');
+    showToast('Downloading calendar file (.ics)...', 'info');
   };
 
   const handleOpenGoogleCalendar = async (eventId, eventData) => {
@@ -502,20 +187,20 @@ export default function MyBookings({ currentUser, showToast }) {
       const response = await apiFetch(`/events/${eventId}/google-calendar-link`);
       if (response && response.googleCalendarUrl) {
         window.open(response.googleCalendarUrl, '_blank');
-        showToast('SYNCHRONIZING GOOGLE CALENDAR...', 'success');
+        showToast('Synchronizing with Google Calendar...', 'success');
         return;
       }
     } catch (err) {
       console.warn('Backend calendar link fallback:', err);
     }
 
-    const title = encodeURIComponent(eventData?.name || 'EventHub Live Event');
+    const title = encodeURIComponent(eventData?.name || 'eventhub Experience');
     const details = encodeURIComponent(`Admission Ticket for ${eventData?.name || 'Live Event'}`);
     const location = encodeURIComponent(eventData?.venue?.name || 'Main Arena');
     const dateFormatted = (eventData?.eventDate || '2026-09-15').replace(/-/g, '');
     const gUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dateFormatted}T230000Z/${dateFormatted}T060000Z`;
     window.open(gUrl, '_blank');
-    showToast('SYNCHRONIZING GOOGLE CALENDAR...', 'success');
+    showToast('Synchronizing with Google Calendar...', 'success');
   };
 
   const filteredBookings = useMemo(() => {
@@ -546,92 +231,95 @@ export default function MyBookings({ currentUser, showToast }) {
   }, [bookings]);
 
   return (
-    <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
+    <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 text-toy-black font-body">
       
       {/* Header */}
-      <div className="mb-6 sm:mb-8 border-b-2 border-asphalt-border pb-5 sm:pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-8 sm:mb-10 border-b-2 border-dashed border-toy-black/20 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5 shrink-0">
-              OFFICIAL TICKET VAULT
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-flex items-center gap-1.5 bg-sun-yellow text-toy-black text-xs font-display font-black px-3 py-1 rounded-full border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]">
+              <TicketSticker size={16} tilted={false} />
+              <span>Party Pass Wallet</span>
             </span>
-            <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest truncate max-w-[200px] sm:max-w-none">
-              ACCOUNT: {currentUser?.email || 'ATTENDEE'}
+            <span className="text-xs text-toy-black/70 font-display font-bold">
+              {currentUser?.email || 'Authenticated Attendee'}
             </span>
           </div>
-          <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none">
-            MY BOOKINGS & DIGITAL TICKETS
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-toy-black leading-tight">
+            My Parties & Booked Passes
           </h1>
-          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5 leading-relaxed">
-            VERIFIED EVENT PASSES, REAL-TIME SEAT RESERVATIONS & QR ADMISSION TICKETS
+          <p className="text-sm font-body font-semibold text-toy-black/70 mt-1.5 leading-relaxed">
+            Manage your verified party tickets, reserved seating, and print passes.
           </p>
         </div>
 
         <button 
           onClick={fetchUserBookings} 
-          className="w-full sm:w-auto self-start md:self-auto bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer touch-manipulation text-center flex items-center justify-center"
+          className="h-[44px] px-5 rounded-full border-2 border-toy-black bg-white hover:bg-buttercream text-sm font-display font-black text-toy-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-toy hover:-translate-y-0.5 active:translate-y-0.5 self-start md:self-auto"
         >
-          REFRESH BOOKINGS
+          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          <span>Refresh Passes</span>
         </button>
       </div>
 
-      {/* 4 Brutalist Metric Stamps */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-4 shadow-[3px_3px_0px_#eefc54] sm:shadow-[4px_4px_0px_#eefc54] relative">
-          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">TOTAL BOOKINGS</span>
-          <span className="font-display text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block">
+      {/* 4 Clean Metric Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-2xl border-2 border-toy-black p-5 shadow-toy">
+          <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider block">Total Bookings</span>
+          <span className="text-2xl sm:text-3xl font-display font-black text-toy-black leading-none mt-2 block">
             {stats.totalCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-4 shadow-[3px_3px_0px_#ff1f6d] sm:shadow-[4px_4px_0px_#ff1f6d] relative">
-          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">CONFIRMED PASSES</span>
-          <span className="font-display text-xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block">
+        <div className="bg-white rounded-2xl border-2 border-toy-black p-5 shadow-toy">
+          <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider block">Confirmed Passes</span>
+          <span className="text-2xl sm:text-3xl font-display font-black text-mint-pop leading-none mt-2 block">
             {stats.confirmedCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-4 shadow-[3px_3px_0px_#1d4ed8] sm:shadow-[4px_4px_0px_#1d4ed8] relative">
-          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">UPCOMING EVENTS</span>
-          <span className="font-display text-xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block">
+        <div className="bg-white rounded-2xl border-2 border-toy-black p-5 shadow-toy">
+          <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider block">Upcoming Events</span>
+          <span className="text-2xl sm:text-3xl font-display font-black text-candy-purple leading-none mt-2 block">
             {stats.upcomingCount}
           </span>
         </div>
 
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3 sm:p-4 shadow-[3px_3px_0px_#ffffff] sm:shadow-[4px_4px_0px_#ffffff] relative">
-          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">TOTAL AMOUNT SPENT</span>
-          <span className="font-display text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
+        <div className="bg-white rounded-2xl border-2 border-toy-black p-5 shadow-toy">
+          <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider block">Total Spent</span>
+          <span className="text-2xl sm:text-3xl font-display font-black text-bubble-pink leading-none mt-2 block truncate">
             {formatPrice(stats.totalSpent)}
           </span>
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="bg-asphalt-surface border-2 border-asphalt-border p-3 mb-8 flex flex-col md:flex-row items-center justify-between gap-3">
-        <div className="flex gap-2 w-full md:w-auto overflow-x-auto touch-scroll scrollbar-none pb-1 md:pb-0">
+      {/* Filter Capsule and Search Bar */}
+      <div className="bg-white rounded-2xl border-2 border-toy-black p-3 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 shadow-toy">
+        {/* Capsule Filter Pills */}
+        <div className="flex p-1 bg-lilac-wash rounded-full border-2 border-toy-black w-full md:w-auto">
           {['ALL', 'CONFIRMED', 'CANCELLED'].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 text-xs font-impact tracking-wider uppercase border transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-full text-xs font-display font-black transition-all cursor-pointer ${
                 statusFilter === st
-                  ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[2px_2px_0px_#ffffff]'
-                  : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
+                  ? 'bg-toy-black text-white shadow-[2px_2px_0px_#1E1B2E]'
+                  : 'text-toy-black/70 hover:text-toy-black'
               }`}
             >
-              {st}
+              {st === 'ALL' ? 'All Passes' : st === 'CONFIRMED' ? 'Confirmed' : 'Cancelled'}
             </button>
           ))}
         </div>
 
         <div className="relative w-full md:w-80">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-grit-dim" />
+          <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-toy-black/50" />
           <input
             type="text"
-            placeholder="FILTER EVENT / VENUE / PASS #ID..."
+            placeholder="Search party, venue, or pass ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-asphalt-card border border-asphalt-border focus:border-acid-yellow text-grit-white font-mono-zine pl-9 pr-3 py-1.5 text-xs uppercase outline-none"
+            className="w-full bg-buttercream border-2 border-toy-black focus:bg-white text-toy-black font-bold rounded-full pl-11 pr-4 h-[44px] text-xs outline-none transition-all placeholder:text-toy-black/40"
           />
         </div>
       </div>
@@ -644,149 +332,128 @@ export default function MyBookings({ currentUser, showToast }) {
           ))}
         </div>
       ) : filteredBookings.length === 0 ? (
-        <div className="bg-asphalt-surface border-4 border-dashed border-asphalt-border p-12 text-center">
-          <Ticket size={48} className="text-grit-dim mx-auto mb-3 opacity-40" />
-          <h3 className="font-impact text-2xl uppercase text-grit-white tracking-wider">NO PASSES DISCOVERED</h3>
-          <p className="font-mono-zine text-xs text-grit-dim uppercase mt-1">
+        <div className="bg-white rounded-[32px] border-[3px] border-toy-black p-12 text-center max-w-lg mx-auto shadow-toy-lg">
+          <div className="w-16 h-16 rounded-full bg-sun-yellow border-2 border-toy-black shadow-toy flex items-center justify-center mx-auto mb-4">
+            <TicketSticker size={38} />
+          </div>
+          <h3 className="text-xl font-display font-black text-toy-black">No party passes found</h3>
+          <p className="text-sm font-body font-semibold text-toy-black/70 mt-1.5">
             {searchQuery || statusFilter !== 'ALL'
-              ? 'NO TICKET RECORDS MATCH FILTER CRITERIA'
-              : 'EXPLORE EVENTS AND BOOK YOUR FIRST ADMITTANCE PASS'}
+              ? 'No passes match your search or filter criteria.'
+              : 'Explore trending gatherings and RSVP to your first party!'}
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBookings.map((b) => {
             const isCinema = b.isCinema || b.event?.category === 'CINEMA' || b.event?.category === 'MOVIE' || /imax|cinema|movie|film|screening|interstellar/i.test(b.event?.name || '');
+            const isCancelled = b.bookingStatus === 'CANCELLED';
+
             return (
-            <div 
-              key={b.id} 
-              className="bg-asphalt-surface border-2 border-grit-white shadow-[3px_3px_0px_#E2F13C] flex flex-col justify-between relative overflow-hidden"
-            >
-              {/* Slanted Tape Badge */}
-              <div className={`absolute top-3 right-3 text-xs font-impact tracking-wider px-2.5 py-0.5 border border-asphalt-black uppercase -rotate-2 ${
-                b.bookingStatus === 'CONFIRMED'
-                  ? (isCinema ? 'bg-acid-yellow text-asphalt-black' : 'bg-acid-yellow text-asphalt-black')
-                  : 'bg-neon-magenta text-grit-white'
-              }`}>
-                {isCinema && b.bookingStatus === 'CONFIRMED' ? 'CINEMA PASS' : b.bookingStatus}
-              </div>
-
-              {/* Pass Content */}
-              <div className="p-3.5 sm:p-5">
-                <div className="flex items-center gap-2 mb-2 pr-28 sm:pr-24">
-                  <span className="text-[10px] font-ticker text-grit-dim uppercase tracking-wider truncate">
-                    TICKET #{b.id} // VERIFIED PASS
-                  </span>
-                  {isCinema && (
-                    <span className="text-[9px] font-impact bg-asphalt-card border border-asphalt-border px-1.5 py-0.2 text-acid-yellow shrink-0">
-                      SCREEN 01 // LASER
+              <div 
+                key={b.id} 
+                className={`bg-white rounded-[28px] border-[3px] border-toy-black shadow-toy hover:shadow-pop-purple transition-all flex flex-col justify-between overflow-hidden ${
+                  isCancelled ? 'opacity-65' : ''
+                }`}
+              >
+                {/* Pass Content */}
+                <div className="p-6">
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-xs text-toy-black/60 font-mono font-bold">
+                      Pass #{b.id}
                     </span>
-                  )}
-                </div>
-
-                <h3 className="font-display text-xl sm:text-2xl uppercase tracking-tight text-grit-white leading-tight mb-4 pr-24 sm:pr-28 break-words">
-                  {b.event?.name || 'LIVE EVENT'}
-                </h3>
-
-                <div className="space-y-1.5 font-mono-zine text-xs text-grit-dim uppercase mb-4">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Calendar size={13} className="text-acid-yellow shrink-0" />
-                    <span className="truncate">{b.event?.eventDate} @ {b.showtime || b.event?.startTime || '19:00'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 min-w-0">
-                    <MapPin size={13} className="text-acid-yellow shrink-0" />
-                    <span className="truncate">{b.screenName || b.event?.venue?.name || 'CONCERT ARENA'}</span>
-                  </div>
-                  <div className="flex items-start gap-2 min-w-0">
-                    <Ticket size={13} className="text-acid-yellow shrink-0 mt-0.5" />
-                    <span className="break-words">
-                      {b.quantity} PASS(ES) · {b.selectedSeats ? `SEATS: ${b.selectedSeats}` : 'GENERAL ADMISSION'}
+                    <span className={`text-xs font-display font-black px-3 py-1 rounded-full border-2 border-toy-black ${
+                      isCancelled 
+                        ? 'bg-coral-peach text-white shadow-[1.5px_1.5px_0px_#1E1B2E]' 
+                        : 'bg-mint-pop text-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]'
+                    }`}>
+                      {isCancelled ? 'Cancelled' : isCinema ? 'Cinema Pass' : 'Confirmed'}
                     </span>
                   </div>
-                  {b.snacks && Object.keys(b.snacks).length > 0 && (
-                    <div className="flex items-start gap-2 text-acid-yellow pt-1 border-t border-asphalt-border/60 min-w-0">
-                      <span className="shrink-0 font-impact text-[9px] bg-asphalt-card px-1 border border-asphalt-border">SNACKS:</span>
-                      <span className="text-[11px] truncate">
-                        {Object.entries(b.snacks).map(([k, q]) => `${q}x ${k.replace(/_/g, ' ').toUpperCase()}`).join(', ')}
+
+                  <h3 className="text-xl font-display font-black text-toy-black leading-snug mb-4">
+                    {b.event?.name || 'Live Event'}
+                  </h3>
+
+                  <div className="space-y-2 text-xs text-toy-black/70 mb-5 font-body font-semibold">
+                    <div className="flex items-center gap-2">
+                      <Calendar size={14} className="text-bubble-pink shrink-0" />
+                      <span>{b.event?.eventDate} @ {b.showtime || b.event?.startTime || '19:00'}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin size={14} className="text-candy-purple shrink-0" />
+                      <span className="truncate">{b.screenName || b.event?.venue?.name || 'Concert Arena'}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Ticket size={14} className="text-sun-yellow shrink-0 mt-0.5" />
+                      <span>
+                        {b.quantity} Pass(es) · {b.selectedSeats ? `Seats: ${b.selectedSeats}` : 'General Admission'}
                       </span>
                     </div>
-                  )}
-                  <div className="pt-2 border-t border-asphalt-border font-impact text-base sm:text-lg text-grit-white">
-                    TOTAL AMOUNT: {formatPrice(b.totalAmount, b.event?.currency)}
+                    {b.snacks && Object.keys(b.snacks).length > 0 && (
+                      <div className="pt-2 border-t border-toy-black/20 text-xs text-toy-black font-semibold">
+                        <span className="text-toy-black/70">Snacks: </span>
+                        <span>
+                          {Object.entries(b.snacks).map(([k, q]) => `${q}x ${k.replace(/_/g, ' ')}`).join(', ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-3 border-t-2 border-dashed border-toy-black/20 flex items-center justify-between">
+                    <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider">Total</span>
+                    <span className="text-xl font-display font-black text-toy-black">
+                      {formatPrice(b.totalAmount, b.event?.currency)}
+                    </span>
                   </div>
                 </div>
 
-                {/* Perforated Barcode Line */}
-                <div className="pt-3 border-t-2 border-dashed border-asphalt-border flex items-center justify-between opacity-50 select-none gap-2">
-                  <span className="font-ticker text-[8px] text-grit-dim uppercase truncate">PASS_BARCODE_VERIFIED</span>
-                  <svg className="h-4 w-24 sm:w-28 max-w-[112px] shrink-0" viewBox="0 0 112 16" fill="currentColor">
-                    <rect x="0" y="0" width="3" height="16"/>
-                    <rect x="5" y="0" width="2" height="16"/>
-                    <rect x="9" y="0" width="4" height="16"/>
-                    <rect x="15" y="0" width="2" height="16"/>
-                    <rect x="19" y="0" width="5" height="16"/>
-                    <rect x="26" y="0" width="1" height="16"/>
-                    <rect x="29" y="0" width="4" height="16"/>
-                    <rect x="35" y="0" width="3" height="16"/>
-                    <rect x="40" y="0" width="5" height="16"/>
-                    <rect x="47" y="0" width="2" height="16"/>
-                    <rect x="51" y="0" width="4" height="16"/>
-                    <rect x="57" y="0" width="2" height="16"/>
-                    <rect x="61" y="0" width="5" height="16"/>
-                    <rect x="68" y="0" width="3" height="16"/>
-                    <rect x="73" y="0" width="4" height="16"/>
-                    <rect x="79" y="0" width="2" height="16"/>
-                    <rect x="83" y="0" width="5" height="16"/>
-                    <rect x="90" y="0" width="2" height="16"/>
-                    <rect x="94" y="0" width="4" height="16"/>
-                    <rect x="100" y="0" width="2" height="16"/>
-                    <rect x="104" y="0" width="5" height="16"/>
-                  </svg>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="p-3 sm:p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-wrap gap-2">
-                {b.bookingStatus !== 'CANCELLED' && (
-                  <button 
-                    onClick={() => handleDownloadPdf(b)} 
-                    className="w-full sm:flex-1 sm:min-w-[140px] bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs uppercase py-2.5 px-3 min-h-[40px] border border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
-                  >
-                    <Download size={13} /> PRINT TICKET PASS
-                  </button>
-                )}
-
-                <div className="flex items-center gap-2 w-full sm:w-auto sm:flex-initial flex-1">
-                  <button 
-                    onClick={() => handleDownloadCalendar(b.event?.id || 1)} 
-                    className="flex-1 sm:flex-initial bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer flex items-center justify-center gap-1 touch-manipulation"
-                    title="Download .ics file"
-                  >
-                    <Calendar size={13} /> .ICS
-                  </button>
-
-                  <button 
-                    onClick={() => handleOpenGoogleCalendar(b.event?.id || 1, b.event)} 
-                    className="flex-1 sm:flex-initial bg-asphalt-surface border border-asphalt-border hover:border-grit-white text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer flex items-center justify-center gap-1 touch-manipulation"
-                    title="Add to Google Calendar"
-                  >
-                    <ExternalLink size={13} /> GCAL
-                  </button>
-
-                  {b.bookingStatus === 'CONFIRMED' && (
+                {/* Action Buttons Row */}
+                <div className="p-4 bg-buttercream border-t-2 border-toy-black flex flex-wrap gap-2 items-center">
+                  {!isCancelled && (
                     <button 
-                      onClick={() => handleCancelBooking(b.id)} 
-                      className="flex-1 sm:flex-initial bg-asphalt-surface border border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-grit-white font-mono-zine text-xs px-2.5 py-2 min-h-[38px] uppercase cursor-pointer transition-colors flex items-center justify-center gap-1 touch-manipulation"
-                      title="Cancel booking"
+                      onClick={() => handleDownloadPdf(b)} 
+                      className="flex-1 min-w-[140px] h-[44px] rounded-full bg-sun-yellow hover:bg-[#ffe142] text-toy-black text-xs font-display font-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <XCircle size={13} /> CANCEL
+                      <Download size={14} />
+                      <span>Print Pass</span>
                     </button>
                   )}
+
+                  <div className="flex items-center gap-1.5">
+                    <button 
+                      onClick={() => handleDownloadCalendar(b.event?.id || 1)} 
+                      className="h-[44px] px-3.5 rounded-full border-2 border-toy-black bg-white hover:bg-lilac-wash text-toy-black text-xs font-display font-black transition-colors flex items-center gap-1 cursor-pointer shadow-[1.5px_1.5px_0px_#1E1B2E]"
+                      title="Download .ics file"
+                    >
+                      <Calendar size={13} />
+                      <span>.ICS</span>
+                    </button>
+
+                    <button 
+                      onClick={() => handleOpenGoogleCalendar(b.event?.id || 1, b.event)} 
+                      className="h-[44px] px-3.5 rounded-full border-2 border-toy-black bg-white hover:bg-lilac-wash text-toy-black text-xs font-display font-black transition-colors flex items-center gap-1 cursor-pointer shadow-[1.5px_1.5px_0px_#1E1B2E]"
+                      title="Add to Google Calendar"
+                    >
+                      <ExternalLink size={13} />
+                      <span>GCal</span>
+                    </button>
+
+                    {!isCancelled && (
+                      <button 
+                        onClick={() => handleCancelBooking(b.id)} 
+                        className="h-[44px] px-3.5 rounded-full border-2 border-toy-black bg-coral-peach text-white text-xs font-display font-black transition-colors flex items-center gap-1 cursor-pointer shadow-[1.5px_1.5px_0px_#1E1B2E]"
+                        title="Cancel booking"
+                      >
+                        <XCircle size={13} />
+                        <span>Cancel</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
         </div>
       )}
     </div>

@@ -10,32 +10,32 @@ export default function ApiDocsModal({ isOpen, onClose }) {
     {
       category: 'Ticket Passes',
       icon: Ticket,
-      title: 'HOW DO I RECEIVE & ACCESS MY TICKETS?',
-      answer: 'Upon completing your reservation, your admission pass is generated immediately with a verified cryptographic QR code. You can view, save to your wallet, or download a printable PDF invoice stub anytime from your "MY PASSES" dashboard.'
+      title: 'How do I access and download my passes?',
+      answer: 'Upon completing your booking, your digital pass is created immediately with a verified QR code. You can view, save to your device, or print an admission pass anytime from your "My Wallet" dashboard.'
     },
     {
       category: 'Seat Holds',
       icon: ShieldCheck,
-      title: 'WHAT IS THE 10-MINUTE SEAT HOLD GUARANTEE?',
-      answer: 'When you select seats on an arena, concert amphitheater, or cinema layout, those seats are instantly held exclusively for you for 10 minutes. During this window, no other customer can book those seats, guaranteeing zero double-bookings.'
+      title: 'What is the 10-minute temporary seat hold?',
+      answer: 'When you select seats on a venue or cinema layout, those seats are locked exclusively for you for 10 minutes. During this window, no other guest can select those seats, preventing double-bookings.'
     },
     {
       category: 'Gate Admission',
       icon: QrCode,
-      title: 'HOW DOES GATE ADMISSION & QR CHECK-IN WORK?',
-      answer: 'Simply present your QR code ticket on your mobile phone screen or a printed ticket stub at the venue entrance. Venue door staff scan the code using the EventHub Gate Scanner for sub-second admission.'
+      title: 'How does optical gate admission work?',
+      answer: 'Simply present your QR code pass on your phone screen or printed ticket at the venue door. Gate staff scan the pass using the eventhub gate scanner for instant check-in.'
     },
     {
       category: 'Refunds & Help',
       icon: RotateCcw,
-      title: 'WHAT IS THE CANCELLATION & REFUND POLICY?',
-      answer: 'If an event is rescheduled or cancelled by the promoter, 100% full refunds are automatically credited back to your original payment method. Self-service ticket cancellations are available from your profile before the event deadline.'
+      title: 'What is the cancellation and refund policy?',
+      answer: 'If an event is rescheduled or cancelled by the host, 100% full refunds are automatically credited back to your original payment method. Self-service cancellations are accessible from your dashboard.'
     },
     {
       category: 'API & Developers',
       icon: Code,
-      title: 'DEVELOPER & BOX OFFICE API INTEGRATION',
-      answer: 'EventHub provides standardized RESTful JSON endpoints for third-party ticket validation, external box office feeds, and promoter analytics. Accessible via /api/events, /api/bookings, /api/tickets, and /api/checkin.'
+      title: 'Developer REST API documentation',
+      answer: 'eventhub provides RESTful JSON endpoints for third-party ticket validation, external box office feeds, and promoter analytics via /api/events, /api/bookings, /api/tickets, and /api/checkin.'
     }
   ];
 
@@ -45,73 +45,81 @@ export default function ApiDocsModal({ isOpen, onClose }) {
     : faqs.filter(f => f.category === activeCategory);
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/85 flex items-center justify-center p-2 sm:p-4 font-mono-zine safe-pb touch-scroll select-none" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-[#111111]/70 backdrop-blur-sm flex items-center justify-center p-4 font-sans select-none" onClick={onClose}>
       <div 
-        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[6px_6px_0px_#E2F13C] flex flex-col relative"
+        className="w-full max-w-2xl max-h-[85vh] bg-white rounded-[28px] border border-[#e5e7eb] text-[#111111] shadow-2xl flex flex-col relative overflow-hidden my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Slanted Tape Badge */}
-        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
-          EVENTHUB://HELP_CENTER
-        </div>
-
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+        <div className="p-6 border-b border-[#e5e7eb] flex items-start justify-between bg-white">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
-                SUPPORT_DESK
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="bg-[#111111] text-white text-xs font-semibold px-3 py-0.5 rounded-full">
+                Help & Docs
               </span>
-              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
-                OFFICIAL BOX OFFICE KNOWLEDGE BASE
+              <span className="text-xs text-[#6b7280] font-medium flex items-center gap-1.5">
+                <HelpCircle size={13} className="text-[#0000ee]" />
+                Knowledge Base & API Reference
               </span>
             </div>
-            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight text-grit-white leading-none">
-              HELP CENTER & TICKET POLICIES
+            <h3 className="text-2xl font-extrabold tracking-tight text-[#111111]">
+              Help Center & API Docs
             </h3>
-            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              TICKETING GUIDES, SEAT HOLD GUARANTEES, ADMISSION RULES & FAQS
+            <p className="text-sm text-[#6b7280] mt-1">
+              Frequently asked questions, ticketing protocols, and developer API reference.
             </p>
           </div>
           <button 
-            type="button"
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
-            aria-label="Close help modal"
+            className="w-9 h-9 rounded-full bg-[#f7f7f7] hover:bg-[#ebebeb] flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* Categories Bar */}
-        <div className="bg-asphalt-black border-b border-asphalt-border px-3 sm:px-4 py-2 sm:py-2.5 flex gap-2 overflow-x-auto touch-scroll scrollbar-none">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 min-h-[36px] flex items-center text-xs font-impact tracking-wider uppercase border transition-all cursor-pointer whitespace-nowrap touch-manipulation ${
-                activeCategory === cat
-                  ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[2px_2px_0px_#ffffff]'
-                  : 'bg-asphalt-card text-grit-dim border-asphalt-border hover:border-grit-white hover:text-grit-white'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Category Filter Capsule Pills */}
+        <div className="px-6 pt-5 pb-2">
+          <div className="flex gap-1.5 overflow-x-auto pb-2 scrollbar-none">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  activeCategory === cat
+                    ? 'bg-[#111111] text-white shadow-sm'
+                    : 'bg-[#f7f7f7] text-[#6b7280] hover:text-[#111111] border border-[#e5e7eb]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Body Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 touch-scroll">
-          {filteredFaqs.map((faq) => {
-            const Icon = faq.icon || HelpCircle;
+        {/* Body FAQs List */}
+        <div className="p-6 overflow-y-auto space-y-3.5 flex-1">
+          {filteredFaqs.map((faq, idx) => {
+            const IconComp = faq.icon;
             return (
-              <div key={faq.title} className="bg-asphalt-card border-2 border-asphalt-border p-3.5 sm:p-4 space-y-2">
-                <div className="flex items-center gap-2 text-acid-yellow font-impact text-sm tracking-wider uppercase">
-                  <Icon size={16} className="text-neon-magenta flex-shrink-0" />
-                  <span>{faq.title}</span>
+              <div 
+                key={idx} 
+                className="p-5 rounded-2xl bg-[#f7f7f7] border border-[#e5e7eb] space-y-2 transition-all hover:border-[#0000ee]"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#0000ee] border border-[#e5e7eb] shadow-sm shrink-0">
+                      <IconComp size={16} />
+                    </div>
+                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white border border-[#e5e7eb] text-[#6b7280]">
+                      {faq.category}
+                    </span>
+                  </div>
                 </div>
-                <p className="text-xs text-grit-white/90 uppercase leading-relaxed font-mono-zine pl-6">
+                <h4 className="font-bold text-base text-[#111111] leading-snug">
+                  {faq.title}
+                </h4>
+                <p className="text-sm text-[#6b7280] leading-relaxed">
                   {faq.answer}
                 </p>
               </div>
@@ -120,16 +128,15 @@ export default function ApiDocsModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <span className="font-ticker text-[10px] text-grit-dim uppercase">
-            24/7 CUSTOMER CONCIERGE: SUPPORT@EVENTHUB.COM
+        <div className="p-5 border-t border-[#e5e7eb] bg-white flex items-center justify-between">
+          <span className="text-xs text-[#6b7280]">
+            Need developer credentials? Email developers@eventhub.com
           </span>
           <button 
-            type="button"
             onClick={onClose} 
-            className="w-full sm:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation text-center"
+            className="h-[44px] px-8 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-semibold transition-all shadow-md cursor-pointer"
           >
-            CLOSE HELP CENTER
+            Close
           </button>
         </div>
       </div>

@@ -22,25 +22,24 @@ export default class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-asphalt-black text-grit-white flex flex-col items-center justify-center p-6 text-center select-none">
-          <div className="max-w-lg w-full bg-asphalt-card border-2 border-neon-magenta p-6 shadow-[4px_4px_0px_#E2F13C]">
-            <div className="hazard-tape-magenta h-3 w-full mb-4"></div>
-            <span className="font-ticker text-xs text-neon-magenta uppercase tracking-widest font-black block mb-2">
-              CRITICAL SYSTEM EXCEPTION INTERCEPTED
+        <div className="min-h-screen bg-[#111111] text-[#111111] flex flex-col items-center justify-center p-6 text-center select-none font-sans">
+          <div className="max-w-md w-full bg-white rounded-[28px] border border-[#e5e7eb] p-8 shadow-2xl">
+            <span className="inline-block bg-red-50 text-red-600 border border-red-200 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-4">
+              System Notice
             </span>
-            <h2 className="font-display text-3xl uppercase tracking-tight text-grit-white mb-2">
-              RUNTIME FAULT DETECTED
+            <h2 className="text-2xl font-extrabold tracking-tight text-[#111111] mb-2">
+              Something went wrong
             </h2>
-            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mb-4">
-              {this.state.error?.message || 'AN UNEXPECTED RENDERING EXCEPTION OCCURRED.'}
+            <p className="text-xs text-[#6b7280] mb-6 leading-relaxed">
+              {this.state.error?.message || 'An unexpected rendering error occurred. Please reload to resume.'}
             </p>
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center">
               <button
                 type="button"
                 onClick={this.handleReset}
-                className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-base uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[4px_4px_0px_#ffffff] cursor-pointer"
+                className="h-[51px] px-8 rounded-full bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm active:scale-[0.98]"
               >
-                RELOAD INTERFACE
+                Reload Interface
               </button>
             </div>
           </div>

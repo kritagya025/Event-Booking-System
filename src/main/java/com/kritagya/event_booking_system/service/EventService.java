@@ -263,4 +263,14 @@ public class EventService {
                 .map(EventMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getTicketsBookedStats() {
+        Long liveBooked = bookingRepository.sumTotalTicketsBooked();
+        long count = liveBooked != null ? liveBooked : 0L;
+        return Map.of(
+                "totalTicketsBooked", count,
+                "timestamp", System.currentTimeMillis()
+        );
+    }
 }

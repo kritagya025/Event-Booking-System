@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Ticket, PlusCircle, User, LogOut, ShieldCheck, QrCode, 
-  Menu, X, Compass, Heart
+  Ticket, User, LogOut, ShieldCheck, QrCode, 
+  Menu, X, Heart, Film, Plus, Sparkles
 } from 'lucide-react';
-import { getActiveCurrency, setActiveCurrency, getAvailableCurrencies, subscribeCurrencyChange } from '../services/currency';
+import { BalloonSticker, DiscoBallSticker, SparklesSticker, TicketSticker, PopcornBucketSticker } from './CustomStickers';
 
 export default function Navbar({ 
   currentUser, 
@@ -11,13 +11,8 @@ export default function Navbar({
   activeTab, 
   onLogout 
 }) {
-  const [currency, setCurrency] = useState(getActiveCurrency());
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    return subscribeCurrencyChange((newCurr) => setCurrency(newCurr));
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -64,147 +59,137 @@ export default function Navbar({
 
   return (
     <>
-      {/* ─── 0. HIGH VOLTAGE HAZARD WARNING HEADER MARQUEE ─── */}
-      <div className="h-7 w-full hazard-tape overflow-hidden flex items-center border-b-2 border-asphalt-black select-none">
-        <div className="animate-marquee items-center gap-6 text-asphalt-black font-ticker font-extrabold text-[12px] tracking-widest uppercase py-0.5">
-          <span>[ EVENTHUB OFFICIAL BOX OFFICE ] LIVE CONCERTS, BLOCKBUSTER CINEMA & THEATER</span>
-          <span>•</span>
-          <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
-          <span>•</span>
-          <span>CONCERTS, TECH CONFERENCES, THEATER PRODUCTIONS & INDUSTRIAL WORKSHOPS</span>
-          <span>•</span>
-          <span>DIRECT ORGANIZER GATE SCANNER VALIDATION // 99.98% DISTRIBUTED UPTIME</span>
-          <span>•</span>
-          <span>[ EVENTHUB OFFICIAL BOX OFFICE ] LIVE CONCERTS, BLOCKBUSTER CINEMA & THEATER</span>
-          <span>•</span>
-          <span>INSTANT CRYPTOGRAPHIC QR CODE TICKETS // MULTI-CURRENCY SETTLEMENTS // ZERO DUPLICATE BOOKINGS</span>
-          <span>•</span>
-          <span>CONCERTS, TECH CONFERENCES, THEATER PRODUCTIONS & INDUSTRIAL WORKSHOPS</span>
-          <span>•</span>
-          <span>DIRECT ORGANIZER GATE SCANNER VALIDATION // 99.98% DISTRIBUTED UPTIME</span>
-        </div>
+      {/* Floating Confetti Decorative Custom Stickers */}
+      <div className="fixed top-36 left-6 lg:left-12 z-0 pointer-events-none float-slow hidden md:block select-none">
+        <BalloonSticker size={64} />
+      </div>
+      <div className="fixed top-48 right-6 lg:right-12 z-0 pointer-events-none float-slow hidden md:block select-none" style={{ animationDelay: '1.2s' }}>
+        <SparklesSticker size={66} />
+      </div>
+      <div className="fixed bottom-24 left-6 lg:left-12 z-0 pointer-events-none float-slow hidden md:block select-none" style={{ animationDelay: '0.7s' }}>
+        <DiscoBallSticker size={62} />
       </div>
 
-      {/* ─── 1. BRUTALIST DIY CLUB FLYER NAVIGATION BAR ─── */}
-      <header className="sticky top-0 z-50 bg-asphalt-black border-b-2 border-asphalt-border px-2 sm:px-4 py-2 sm:py-3">
-        <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-1.5 sm:gap-4">
+      {/* NAVIGATION HEADER: Chunky Neo-Memphis Floating Pill */}
+      <header className="sticky top-4 w-full z-50 px-4 sm:px-8">
+        <div className="max-w-6xl mx-auto bg-white/95 backdrop-blur-md border-[3px] border-toy-black rounded-full px-4 sm:px-5 py-2.5 sm:py-3 shadow-toy flex items-center justify-between transition-transform duration-200">
           
-          {/* Brand Stamp Logo */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div 
-              onClick={() => handleNavClick('home')} 
-              className="flex items-center gap-2 group cursor-pointer"
-            >
-              <div className="bg-acid-yellow text-asphalt-black px-1.5 sm:px-2.5 py-0.5 font-display text-lg sm:text-2xl tracking-wider -rotate-2 border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] sm:shadow-[3px_3px_0px_#ff1f6d] group-hover:rotate-0 transition-transform">
-                EVENTHUB
-              </div>
-              <div className="hidden sm:flex flex-col font-ticker leading-none">
-                <span className="text-xs font-bold text-grit-white tracking-widest uppercase">LIVE EVENTS & CINEMA</span>
-                <span className="text-[10px] text-neon-magenta tracking-tight">REAL-TIME SEAT RESERVATION & PASSES</span>
-              </div>
+          {/* Brand Logo */}
+          <div 
+            onClick={() => handleNavClick('home')} 
+            className="flex items-center gap-2 group cursor-pointer select-none"
+          >
+            <div className="w-10 h-10 rounded-full bg-sun-yellow border-[2.5px] border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center justify-center group-hover:rotate-12 transition-transform">
+              <TicketSticker size={25} />
             </div>
-            <span className="hidden lg:inline-block font-ticker text-[10px] bg-electric-cobalt text-grit-white px-2 py-0.5 uppercase font-bold border border-grit-white/40 stamp-slant-2">
-              VERIFIED TICKETS
+            <span className="font-display font-black text-2xl tracking-tight text-toy-black group-hover:text-bubble-pink transition-colors">
+              EventHub
+            </span>
+            <span className="bg-bubble-pink text-white text-[10px] font-display font-extrabold uppercase px-2 py-0.5 rounded-full border border-toy-black rotate-[-4deg]">
+              BOX OFFICE
             </span>
           </div>
 
-          {/* Navigation Tabs */}
-          <nav className="hidden md:flex items-center gap-2 font-display text-lg tracking-wider">
+          {/* Center Nav Pills */}
+          <nav className="hidden md:flex items-center gap-1.5 lg:gap-2 bg-lilac-wash px-2 py-1.5 rounded-full border-2 border-toy-black select-none">
             <button 
+              type="button"
               onClick={() => handleNavClick('home')}
-              className={`px-3 py-1 font-bold border-2 transition-all -rotate-1 ${activeTab === 'home' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[2px_2px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+              className={`px-4 py-1.5 rounded-full font-display font-bold text-sm transition-all ${
+                activeTab === 'home' || activeTab === 'explore'
+                  ? 'bg-white text-toy-black shadow-[2px_2px_0px_#1E1B2E] border-2 border-toy-black -translate-y-0.5'
+                  : 'text-toy-black/80 hover:text-candy-purple'
+              }`}
             >
-              EXPLORE EVENTS
+              Explore Events
             </button>
 
             <button 
-              onClick={() => handleNavClick('events')}
-              className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'events' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold shadow-[2px_2px_0px_#ffffff]' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+              type="button"
+              onClick={() => handleNavClick('home', { keyword: 'Cinema' })}
+              className="px-3.5 py-1.5 rounded-full text-toy-black/80 hover:text-candy-purple font-display font-bold text-sm transition-colors"
             >
-              ALL CATALOG
+              Cinema & IMAX
             </button>
 
-            {/* CUSTOMER ROLE LINKS */}
             {currentUser && currentUser.role === 'CUSTOMER' && (
               <>
                 <button 
-                  onClick={() => handleNavClick('wishlist')}
-                  className={`px-3 py-1 border transition-all -rotate-1 ${activeTab === 'wishlist' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta'}`}
-                >
-                  WISHLIST
-                </button>
-
-                <button 
+                  type="button"
                   onClick={() => handleNavClick('my-bookings')}
-                  className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'my-bookings' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+                  className={`px-3.5 py-1.5 rounded-full font-display font-bold text-sm transition-colors ${
+                    activeTab === 'my-bookings'
+                      ? 'bg-white text-toy-black shadow-[2px_2px_0px_#1E1B2E] border-2 border-toy-black'
+                      : 'text-toy-black/80 hover:text-bubble-pink'
+                  }`}
                 >
-                  MY TICKETS
+                  My Passes
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => handleNavClick('wishlist')}
+                  className={`px-3.5 py-1.5 rounded-full font-display font-bold text-sm transition-colors ${
+                    activeTab === 'wishlist'
+                      ? 'bg-white text-toy-black shadow-[2px_2px_0px_#1E1B2E] border-2 border-toy-black'
+                      : 'text-toy-black/80 hover:text-bubble-pink'
+                  }`}
+                >
+                  Saved
                 </button>
               </>
             )}
 
-            {/* ORGANIZER ROLE LINKS */}
             {currentUser && currentUser.role === 'ORGANIZER' && (
               <>
                 <button 
+                  type="button"
                   onClick={() => handleNavClick('create-event')}
-                  className={`px-3 py-1 border transition-all -rotate-1 ${activeTab === 'create-event' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+                  className={`px-3.5 py-1.5 rounded-full font-display font-bold text-sm transition-colors ${
+                    activeTab === 'create-event'
+                      ? 'bg-white text-toy-black shadow-[2px_2px_0px_#1E1B2E] border-2 border-toy-black'
+                      : 'text-toy-black/80 hover:text-candy-purple'
+                  }`}
                 >
-                  CREATE EVENT
+                  Create Event
                 </button>
-
                 <button 
+                  type="button"
                   onClick={() => handleNavClick('checkin')}
-                  className={`px-3 py-1 border transition-all rotate-1 ${activeTab === 'checkin' ? 'bg-neon-magenta text-grit-white border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-neon-magenta border-asphalt-border hover:border-neon-magenta'}`}
+                  className={`px-3.5 py-1.5 rounded-full font-display font-bold text-sm transition-colors ${
+                    activeTab === 'checkin'
+                      ? 'bg-white text-toy-black shadow-[2px_2px_0px_#1E1B2E] border-2 border-toy-black'
+                      : 'text-toy-black/80 hover:text-candy-purple'
+                  }`}
                 >
-                  GATE SCANNER
+                  Gate Scanner
                 </button>
               </>
             )}
 
-            {/* ADMIN ROLE LINK */}
             {currentUser && currentUser.role === 'ADMIN' && (
               <button 
+                type="button"
                 onClick={() => handleNavClick('admin')}
-                className={`px-3 py-1 border transition-all ${activeTab === 'admin' ? 'bg-acid-yellow text-asphalt-black border-asphalt-black font-bold' : 'bg-asphalt-surface text-grit-white hover:text-acid-yellow border-asphalt-border hover:border-acid-yellow'}`}
+                className={`px-3.5 py-1.5 rounded-full font-display font-bold text-sm transition-colors ${
+                  activeTab === 'admin'
+                    ? 'bg-white text-toy-black shadow-[2px_2px_0px_#1E1B2E] border-2 border-toy-black'
+                    : 'text-toy-black/80 hover:text-candy-purple'
+                }`}
               >
-                ADMIN DASHBOARD
+                Admin Panel
               </button>
             )}
           </nav>
 
-          {/* Header Actions & Live Counter */}
-          <div className="flex items-center gap-1.5 sm:gap-3">
-            {/* Currency Selector */}
-            <div className="relative flex items-center">
-              <select 
-                value={currency} 
-                onChange={(e) => setActiveCurrency(e.target.value)}
-                className="bg-asphalt-card text-acid-yellow font-ticker text-[10px] sm:text-xs font-bold border-2 border-acid-yellow px-1 sm:px-2 py-0.5 sm:py-1 focus:outline-none appearance-none cursor-pointer pr-4 sm:pr-6 shadow-[2px_2px_0px_#ff1f6d]"
-              >
-                {getAvailableCurrencies().map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.code} ({c.symbol})
-                  </option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined text-acid-yellow pointer-events-none absolute right-0.5 sm:right-1 text-xs font-bold">arrow_drop_down</span>
-            </div>
-
-            {/* Live Inventory Counter */}
-            <div className="hidden sm:flex items-center gap-1.5 bg-asphalt-card border border-asphalt-border px-2.5 py-1">
-              <span className="w-2 h-2 rounded-full bg-neon-magenta animate-ping" />
-              <span className="font-ticker text-[11px] text-grit-dim">AVAILABLE SEATS:</span>
-              <span className="font-ticker text-[11px] font-bold text-acid-yellow">#992 / 1200</span>
-            </div>
-
-            {/* User Account / Profile Dropdown */}
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* User Profile or Sign In */}
             {currentUser ? (
               <div id="user-profile-menu-container" className="relative">
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="w-8 h-8 sm:w-9 sm:h-9 min-w-[32px] sm:min-w-[36px] min-h-[32px] sm:min-h-[36px] bg-acid-yellow text-asphalt-black font-ticker font-extrabold text-xs sm:text-sm border-2 border-grit-white shadow-[2px_2px_0px_#ff1f6d] flex items-center justify-center cursor-pointer touch-manipulation"
+                  className="w-10 h-10 rounded-full bg-sun-yellow text-toy-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] font-display font-black text-sm flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all overflow-hidden"
                   title={`${currentUser.firstName || ''} ${currentUser.lastName || ''}`}
                 >
                   {currentUser.avatarUrl ? (
@@ -215,50 +200,48 @@ export default function Navbar({
                 </button>
 
                 {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-asphalt-surface border-3 border-grit-white shadow-[6px_6px_0px_#ff1f6d] p-3 z-50">
-                    <div className="pb-2 mb-2 border-b border-asphalt-border">
-                      <span className="block font-ticker text-xs font-bold text-acid-yellow uppercase">
-                        {currentUser.firstName} {currentUser.lastName}
-                      </span>
-                      <span className="block font-ticker text-[10px] text-grit-dim">
-                        {currentUser.email} • {currentUser.role}
+                  <div className="absolute right-0 mt-3 w-64 max-w-[calc(100vw-2rem)] bg-white text-toy-black rounded-2xl border-[3px] border-toy-black shadow-toy-lg p-3.5 z-50 animate-modal-pop">
+                    <div className="pb-2.5 mb-2.5 border-b-2 border-toy-black/20">
+                      <div className="flex items-center justify-between">
+                        <span className="font-display font-black text-sm text-toy-black">
+                          {currentUser.firstName} {currentUser.lastName}
+                        </span>
+                        <span className="bg-bubble-pink text-white text-[9px] font-display font-black uppercase px-2 py-0.5 rounded-full border border-toy-black">
+                          {currentUser.role}
+                        </span>
+                      </div>
+                      <span className="font-body font-semibold text-xs text-toy-black/60 truncate block mt-0.5">
+                        {currentUser.email}
                       </span>
                     </div>
 
-                    <div className="flex flex-col gap-1 font-ticker text-xs">
+                    <div className="flex flex-col gap-1.5 font-display font-bold text-xs">
                       <button
                         type="button"
                         onClick={() => { handleNavClick('profile'); setProfileDropdownOpen(false); }}
-                        className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-buttercream/60 hover:bg-buttercream border border-toy-black/30 text-toy-black text-left cursor-pointer transition-colors"
                       >
-                        <User size={13} /> Account Profile
+                        <User size={14} className="text-candy-purple" />
+                        <span>Account Profile</span>
                       </button>
 
                       {currentUser.role === 'CUSTOMER' && (
-                        <button
-                          type="button"
-                          onClick={() => { handleNavClick('my-bookings'); setProfileDropdownOpen(false); }}
-                          className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
-                        >
-                          <Ticket size={13} /> My Tickets
-                        </button>
-                      )}
-
-                      {currentUser.role === 'ORGANIZER' && (
                         <>
                           <button
                             type="button"
-                            onClick={() => { handleNavClick('create-event'); setProfileDropdownOpen(false); }}
-                            className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
+                            onClick={() => { handleNavClick('my-bookings'); setProfileDropdownOpen(false); }}
+                            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-buttercream/60 hover:bg-buttercream border border-toy-black/30 text-toy-black text-left cursor-pointer transition-colors"
                           >
-                            <PlusCircle size={13} /> Create New Event
+                            <Ticket size={14} className="text-mint-pop" />
+                            <span>My Event Passes</span>
                           </button>
                           <button
                             type="button"
-                            onClick={() => { handleNavClick('checkin'); setProfileDropdownOpen(false); }}
-                            className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
+                            onClick={() => { handleNavClick('wishlist'); setProfileDropdownOpen(false); }}
+                            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-buttercream/60 hover:bg-buttercream border border-toy-black/30 text-toy-black text-left cursor-pointer transition-colors"
                           >
-                            <QrCode size={13} /> Gate Scanner
+                            <Heart size={14} className="text-bubble-pink" />
+                            <span>Saved Events</span>
                           </button>
                         </>
                       )}
@@ -267,274 +250,196 @@ export default function Navbar({
                         <button
                           type="button"
                           onClick={() => { handleNavClick('admin'); setProfileDropdownOpen(false); }}
-                          className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-grit-white hover:text-acid-yellow text-left cursor-pointer"
+                          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-sun-yellow/40 hover:bg-sun-yellow border border-toy-black/30 text-toy-black text-left cursor-pointer transition-colors"
                         >
-                          <ShieldCheck size={13} /> Admin Panel
+                          <ShieldCheck size={14} className="text-toy-black" />
+                          <span>Admin Control Center</span>
                         </button>
                       )}
 
-                      <div className="h-px bg-asphalt-border my-1" />
+                      {currentUser.role === 'ORGANIZER' && (
+                        <button
+                          type="button"
+                          onClick={() => { handleNavClick('checkin'); setProfileDropdownOpen(false); }}
+                          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-mint-pop/30 hover:bg-mint-pop border border-toy-black/30 text-toy-black text-left cursor-pointer transition-colors"
+                        >
+                          <QrCode size={14} className="text-toy-black" />
+                          <span>Gate Admission Scanner</span>
+                        </button>
+                      )}
 
-                      <button
-                        type="button"
-                        onClick={() => { onLogout(); setProfileDropdownOpen(false); }}
-                        className="flex items-center gap-2 p-2 min-h-[36px] hover:bg-asphalt-card text-danger-red text-left font-bold cursor-pointer"
-                      >
-                        <LogOut size={13} /> Sign Out
-                      </button>
+                      <div className="pt-2 border-t border-dashed border-toy-black/20 mt-1">
+                        <button
+                          type="button"
+                          onClick={() => { onLogout(); setProfileDropdownOpen(false); }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-coral-peach/20 hover:bg-coral-peach/40 border border-toy-black/30 text-toy-black text-left cursor-pointer transition-colors"
+                        >
+                          <span className="flex items-center gap-2 text-red-600 font-black">
+                            <LogOut size={14} />
+                            <span>Sign Out</span>
+                          </span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-2">
-                <button 
-                  onClick={() => handleNavClick('login')} 
-                  className="bg-asphalt-card hover:bg-asphalt-surface text-grit-white px-3 py-1.5 min-h-[38px] flex items-center justify-center font-display text-base tracking-wider uppercase border border-asphalt-border hover:border-acid-yellow cursor-pointer touch-manipulation"
-                >
-                  SIGN IN
-                </button>
-                <button 
-                  onClick={() => handleNavClick('register')} 
-                  className="bg-neon-magenta hover:bg-neon-magenta-dark text-grit-white px-3 sm:px-4 py-1.5 min-h-[38px] flex items-center justify-center font-display text-base tracking-wider uppercase border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer touch-manipulation"
-                >
-                  REGISTER
-                </button>
-              </div>
+              <button 
+                type="button"
+                onClick={() => handleNavClick('login')}
+                className="hidden sm:inline-flex px-3.5 py-1.5 rounded-full text-toy-black font-display font-bold text-sm hover:text-bubble-pink transition-colors cursor-pointer"
+              >
+                Sign In
+              </button>
             )}
 
-            {/* Mobile Hamburger Drawer Toggle */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="md:hidden w-8 h-8 sm:w-10 sm:h-10 min-w-[32px] sm:min-w-[40px] min-h-[32px] sm:min-h-[40px] bg-asphalt-card hover:bg-asphalt-surface border-2 border-grit-white text-grit-white hover:text-acid-yellow flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#ff1f6d] active:scale-95 transition-all touch-manipulation"
-              aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-            >
-              {mobileMenuOpen ? <X size={20} className="text-neon-magenta" /> : <Menu size={20} />}
-            </button>
-
-          </div>
-
-        </div>
-      </header>
-
-      {/* ─── 2. MOBILE NAVIGATION DRAWER OVERLAY ─── */}
-      {mobileMenuOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-asphalt-black/95 md:hidden flex flex-col justify-between pt-16 pb-6 px-4 overflow-y-auto touch-scroll safe-pb animate-modal-fade select-none"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
-            
-            {/* Top Warning Strip */}
-            <div className="hazard-tape h-2 w-full border border-asphalt-black" />
-
-            {/* User Profile Card (Mobile) */}
-            {currentUser ? (
-              <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 shadow-[4px_4px_0px_#eefc54]">
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-asphalt-border">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 bg-acid-yellow text-asphalt-black font-ticker font-extrabold text-sm border-2 border-grit-white flex items-center justify-center">
-                      {getUserInitials(currentUser)}
-                    </div>
-                    <div>
-                      <span className="block font-ticker text-xs font-bold text-acid-yellow uppercase leading-none">
-                        {currentUser.firstName} {currentUser.lastName}
-                      </span>
-                      <span className="block font-ticker text-[10px] text-grit-dim uppercase mt-0.5">
-                        {currentUser.role}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => { handleNavClick('profile'); }}
-                    className="bg-asphalt-card border border-asphalt-border hover:border-acid-yellow text-grit-white font-mono-zine text-[10px] uppercase px-2 py-1 flex items-center gap-1"
-                  >
-                    <User size={12} /> PROFILE
-                  </button>
-                </div>
-                <div className="font-ticker text-[10px] text-grit-dim truncate">
-                  {currentUser.email}
-                </div>
-              </div>
+            {/* Quick Action Button: Find Tickets or Create Event */}
+            {currentUser && currentUser.role === 'ORGANIZER' ? (
+              <button 
+                type="button"
+                onClick={() => handleNavClick('create-event')}
+                className="px-4 sm:px-5 py-2 rounded-full bg-mint-pop text-toy-black font-display font-black text-xs sm:text-sm tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#34f5aa] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#1E1B2E] transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              >
+                <span>Create Event</span>
+              </button>
             ) : (
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleNavClick('login')}
-                  className="w-full py-2.5 bg-acid-yellow text-asphalt-black font-display text-lg uppercase tracking-wider font-bold border-2 border-asphalt-black shadow-[3px_3px_0px_#ffffff] text-center"
-                >
-                  SIGN IN
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavClick('register')}
-                  className="w-full py-2.5 bg-neon-magenta text-grit-white font-display text-lg uppercase tracking-wider font-bold border-2 border-grit-white shadow-[3px_3px_0px_#eefc54] text-center"
-                >
-                  REGISTER
-                </button>
-              </div>
+              <button 
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('explore');
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    handleNavClick('home');
+                  }
+                }}
+                className="px-4 sm:px-5 py-2 rounded-full bg-mint-pop text-toy-black font-display font-black text-xs sm:text-sm tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#34f5aa] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#1E1B2E] transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              >
+                <span>Find Tickets</span>
+              </button>
             )}
 
-            {/* Navigation Tabs (Mobile Stacking) */}
-            <nav className="flex flex-col gap-2 font-display text-xl tracking-wider">
+            {/* Mobile Menu Hamburger */}
+            <button 
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden w-10 h-10 rounded-full bg-lilac-wash text-toy-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center justify-center cursor-pointer ml-1"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-3 max-w-6xl mx-auto bg-white border-[3px] border-toy-black rounded-3xl p-5 shadow-toy-lg z-50">
+            <div className="flex flex-col gap-2 font-display font-bold text-sm">
               <button
                 type="button"
                 onClick={() => handleNavClick('home')}
-                className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
-                  activeTab === 'home'
-                    ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ff1f6d] font-bold'
-                    : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
-                }`}
+                className="flex items-center gap-2.5 p-3 rounded-2xl bg-buttercream border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left"
               >
-                <span>EXPLORE EVENTS</span>
-                <Compass size={16} />
+                <Sparkles size={18} className="text-toy-black" />
+                <span>Explore Events & Screenings</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => handleNavClick('events')}
-                className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
-                  activeTab === 'events'
-                    ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ff1f6d] font-bold'
-                    : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
-                }`}
+                onClick={() => handleNavClick('home', { keyword: 'Cinema' })}
+                className="flex items-center gap-2.5 p-3 rounded-2xl bg-lilac-wash border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left"
               >
-                <span>ALL CATALOG</span>
-                <Ticket size={16} />
+                <Film size={18} className="text-toy-black" />
+                <span>Cinema & IMAX Screenings</span>
               </button>
 
-              {/* Customer Links */}
               {currentUser && currentUser.role === 'CUSTOMER' && (
                 <>
                   <button
                     type="button"
-                    onClick={() => handleNavClick('wishlist')}
-                    className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
-                      activeTab === 'wishlist'
-                        ? 'bg-neon-magenta text-grit-white border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
-                        : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-neon-magenta hover:text-neon-magenta'
-                    }`}
+                    onClick={() => handleNavClick('my-bookings')}
+                    className="flex items-center gap-2.5 p-3 rounded-2xl bg-mint-pop/30 border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left"
                   >
-                    <span>MY WISHLIST</span>
-                    <Heart size={16} />
+                    <TicketSticker size={20} tilted={false} />
+                    <span>My Reserved Passes</span>
                   </button>
-
                   <button
                     type="button"
-                    onClick={() => handleNavClick('my-bookings')}
-                    className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
-                      activeTab === 'my-bookings'
-                        ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
-                        : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
-                    }`}
+                    onClick={() => handleNavClick('wishlist')}
+                    className="flex items-center gap-2.5 p-3 rounded-2xl bg-bubble-pink/20 border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left"
                   >
-                    <span>MY TICKETS & PASSES</span>
-                    <Ticket size={16} />
+                    <Heart size={18} className="text-bubble-pink" />
+                    <span>Saved Wishlist</span>
                   </button>
                 </>
               )}
 
-              {/* Organizer Links */}
               {currentUser && currentUser.role === 'ORGANIZER' && (
                 <>
                   <button
                     type="button"
                     onClick={() => handleNavClick('create-event')}
-                    className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
-                      activeTab === 'create-event'
-                        ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
-                        : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
-                    }`}
+                    className="flex items-center gap-2.5 p-3 rounded-2xl bg-mint-pop/30 border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left"
                   >
-                    <span>CREATE NEW EVENT</span>
-                    <PlusCircle size={16} />
+                    <Plus size={18} className="text-toy-black" />
+                    <span>Create New Event</span>
                   </button>
-
                   <button
                     type="button"
                     onClick={() => handleNavClick('checkin')}
-                    className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
-                      activeTab === 'checkin'
-                        ? 'bg-neon-magenta text-grit-white border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
-                        : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-neon-magenta hover:text-neon-magenta'
-                    }`}
+                    className="flex items-center gap-2.5 p-3 rounded-2xl bg-sun-yellow/40 border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left"
                   >
-                    <span>GATE SCANNER</span>
-                    <QrCode size={16} />
+                    <QrCode size={18} className="text-toy-black" />
+                    <span>Gate Scanner</span>
                   </button>
                 </>
               )}
 
-              {/* Admin Link */}
               {currentUser && currentUser.role === 'ADMIN' && (
                 <button
                   type="button"
                   onClick={() => handleNavClick('admin')}
-                  className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
-                    activeTab === 'admin'
-                      ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
-                      : 'bg-asphalt-card text-grit-white border-asphalt-border hover:border-acid-yellow hover:text-acid-yellow'
-                  }`}
+                  className="flex items-center gap-2.5 p-3 rounded-2xl bg-sun-yellow border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left"
                 >
-                  <span>ADMIN DASHBOARD</span>
-                  <ShieldCheck size={16} />
+                  <ShieldCheck size={18} className="text-toy-black" />
+                  <span>Admin Dashboard</span>
                 </button>
               )}
 
-              {/* Background Design Lab Preview Link */}
-              <button
-                type="button"
-                onClick={() => handleNavClick('background-lab')}
-                className={`w-full text-left px-4 py-2.5 border-2 transition-all flex items-center justify-between ${
-                  activeTab === 'background-lab'
-                    ? 'bg-acid-yellow text-asphalt-black border-asphalt-black shadow-[3px_3px_0px_#ffffff] font-bold'
-                    : 'bg-asphalt-surface text-acid-yellow border-acid-yellow/60 hover:border-acid-yellow hover:bg-acid-yellow/10'
-                }`}
-              >
-                <span>🎨 BACKGROUND LAB (INSPECT)</span>
-                <span className="font-ticker text-[10px] bg-acid-yellow text-asphalt-black px-1.5 py-0.2 font-bold">PREVIEW</span>
-              </button>
-            </nav>
-
-            {/* Quick Currency & Theme Control */}
-            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-2 text-xs font-ticker">
-              <div className="flex items-center gap-2">
-                <span className="text-grit-dim uppercase">CURRENCY:</span>
-                <select
-                  value={currency}
-                  onChange={(e) => setActiveCurrency(e.target.value)}
-                  className="bg-asphalt-surface text-acid-yellow font-bold border border-acid-yellow px-2 py-1 outline-none cursor-pointer"
+              {currentUser ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('profile')}
+                    className="flex items-center gap-2.5 p-3 rounded-2xl bg-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left"
+                  >
+                    <User size={18} className="text-toy-black" />
+                    <span>My Profile ({currentUser.firstName})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setMobileMenuOpen(false); onLogout(); }}
+                    className="flex items-center gap-2.5 p-3 rounded-2xl bg-coral-peach/20 border-2 border-toy-black text-red-600 font-black text-left"
+                  >
+                    <LogOut size={18} className="text-red-600" />
+                    <span>Sign Out</span>
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('login')}
+                  className="flex items-center gap-2.5 p-3 rounded-2xl bg-sun-yellow border-2 border-toy-black shadow-toy text-toy-black font-black text-left"
                 >
-                  {getAvailableCurrencies().map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.code} ({c.symbol})
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  <User size={18} className="text-toy-black" />
+                  <span>Sign In / Create Account</span>
+                </button>
+              )}
             </div>
-
-            {/* Sign Out (Mobile) */}
-            {currentUser && (
-              <button
-                type="button"
-                onClick={() => { onLogout(); setMobileMenuOpen(false); }}
-                className="w-full py-2.5 bg-asphalt-card hover:bg-danger-red/20 border-2 border-danger-red text-danger-red font-impact text-base uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-colors"
-              >
-                <LogOut size={16} /> SIGN OUT OF SESSION
-              </button>
-            )}
-
-            {/* Guarantee Tag */}
-            <div className="text-center font-ticker text-[10px] text-grit-dim tracking-wider uppercase pt-2">
-              [ 100% VERIFIED PASSES // 10-MIN HOLD GUARANTEE ]
-            </div>
-
           </div>
-        </div>
-      )}
+        )}
+      </header>
     </>
   );
 }

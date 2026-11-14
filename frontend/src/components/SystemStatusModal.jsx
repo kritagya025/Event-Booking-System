@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, RefreshCw } from 'lucide-react';
+import { X, RefreshCw, CheckCircle, Activity, ShieldCheck, Zap } from 'lucide-react';
 import { apiFetch } from '../services/api';
 
 export default function SystemStatusModal({ isOpen, onClose }) {
@@ -35,133 +35,131 @@ export default function SystemStatusModal({ isOpen, onClose }) {
 
   const services = [
     {
-      name: 'TICKETING API GATEWAY',
-      description: 'HIGH-AVAILABILITY CLOUD RESERVATION & CATALOG ENGINE',
-      status: apiStatus === 'operational' ? 'ONLINE // 200 OK' : 'SIMULATED / STANDBY',
-      latency: apiLatency ? `${apiLatency} MS` : 'N/A'
+      name: 'Event Booking Engine',
+      description: 'High-availability seat allocation & catalog retrieval',
+      status: apiStatus === 'operational' ? 'Operational' : 'Simulated Standby',
+      latency: apiLatency ? `${apiLatency} ms` : 'N/A'
     },
     {
-      name: 'SECURE INVENTORY DATABASE',
-      description: 'ENTERPRISE ENCRYPTED CLUSTER & AUDIT TRAIL',
-      status: 'ONLINE // 256-BIT ENCRYPTION',
-      latency: '2 MS'
+      name: 'Secure Vault Database',
+      description: 'PostgreSQL encrypted storage & audit log',
+      status: 'Operational',
+      latency: '2 ms'
     },
     {
-      name: 'SEAT CONCURRENCY ENGINE',
-      description: 'REAL-TIME 10-MINUTE SEAT HOLD & RESERVATION CONTROLLER',
-      status: 'ONLINE // ZERO OVERBOOKING',
-      latency: '1 MS'
+      name: 'Concurrency Controller',
+      description: '10-minute temporary seat lock & cart synchronization',
+      status: 'Operational',
+      latency: '1 ms'
     },
     {
-      name: 'LIVE SEAT MAP BROADCAST',
-      description: 'AMPHITHEATER & CINEMA REAL-TIME SEAT SYNCHRONIZATION',
-      status: 'ACTIVE // LIVE CONNECTED',
-      latency: '3 MS'
+      name: 'Live WebSocket Stream',
+      description: 'Real-time seat reservation broadcast & telemetry',
+      status: 'Connected',
+      latency: '3 ms'
     }
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/85 flex items-center justify-center p-2 sm:p-4 font-mono-zine safe-pb touch-scroll select-none" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-[#111111]/70 backdrop-blur-sm flex items-center justify-center p-4 font-sans select-none" onClick={onClose}>
       <div 
-        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#E2F13C] flex flex-col relative"
+        className="w-full max-w-2xl max-h-[85vh] bg-white rounded-[28px] border border-[#e5e7eb] text-[#111111] shadow-2xl flex flex-col relative overflow-hidden my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Slanted Tape Badge */}
-        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-neon-magenta text-grit-white font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
-          EVENTHUB://BUYER_PROTECTION_SAFETY
-        </div>
-
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+        <div className="p-6 border-b border-[#e5e7eb] flex items-start justify-between bg-white">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-acid-yellow text-asphalt-black font-impact tracking-wider text-xs px-2 py-0.5">
-                SAFETY_GUARANTEES
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="bg-[#111111] text-white text-xs font-semibold px-3 py-0.5 rounded-full">
+                System Health
               </span>
-              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
-                AUDITED: {lastChecked}
+              <span className="text-xs text-[#6b7280] font-medium flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Audited {lastChecked}
               </span>
             </div>
-            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight text-grit-white leading-none">
-              BUYER PROTECTION & PLATFORM STATUS
+            <h3 className="text-2xl font-extrabold tracking-tight text-[#111111]">
+              Platform Status & Telemetry
             </h3>
-            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              REAL-TIME RELIABILITY, VERIFIED SEAT HOLDS & FRAUD PREVENTION
+            <p className="text-sm text-[#6b7280] mt-1">
+              Real-time system availability, latency metrics, and infrastructure health.
             </p>
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
-            aria-label="Close platform status"
+            className="w-9 h-9 rounded-full bg-[#f7f7f7] hover:bg-[#ebebeb] flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Body Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 touch-scroll">
+        <div className="p-6 overflow-y-auto space-y-4">
           
-          {/* Main Status Banner */}
-          <div className="bg-asphalt-card border-2 border-acid-yellow p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-3.5 h-3.5 bg-acid-yellow animate-pulse shrink-0"></div>
+          {/* Main Status Card */}
+          <div className="bg-[#f7f7f7] border border-[#e5e7eb] rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+                <CheckCircle size={22} />
+              </div>
               <div>
-                <div className="font-impact text-sm sm:text-base uppercase text-grit-white tracking-wider">
-                  {apiStatus === 'operational' ? 'ALL PLATFORM SERVICES OPERATIONAL' : 'BACKEND SERVICES STANDBY / TESTING'}
+                <div className="text-base font-bold text-[#111111]">
+                  {apiStatus === 'operational' ? 'All Systems Fully Operational' : 'Backend Services Standby'}
                 </div>
-                <div className="font-mono-zine text-[10px] sm:text-[11px] text-grit-dim uppercase">
-                  ZERO DUPLICATE BOOKINGS // 100% VERIFIED AUTHENTIC TICKETS
+                <div className="text-xs text-[#6b7280]">
+                  Zero duplicate bookings · 100% verified ticket stubs
                 </div>
               </div>
             </div>
             <button 
               onClick={checkStatus} 
               disabled={loading}
-              className="bg-asphalt-surface border border-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-3 py-2 min-h-[36px] font-impact text-xs uppercase flex items-center justify-center gap-1.5 cursor-pointer transition-colors touch-manipulation w-full sm:w-auto"
+              className="h-[40px] px-5 rounded-full border border-[#e5e7eb] bg-white hover:bg-[#ebebeb] text-xs font-semibold text-[#111111] flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-sm w-full sm:w-auto"
             >
-              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> RE-PROBE
+              <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+              <span>Re-check</span>
             </button>
           </div>
 
           {/* Platform Trust Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-asphalt-black border border-asphalt-border p-3 text-xs uppercase">
-            <div>
-              <span className="text-[10px] text-grit-dim block font-ticker">PLATFORM UPTIME</span>
-              <span className="text-acid-yellow font-bold text-sm">99.98%</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="bg-white rounded-2xl border border-[#e5e7eb] p-3.5 text-center">
+              <span className="text-[11px] text-[#6b7280] font-medium block">Platform Uptime</span>
+              <span className="text-lg font-extrabold text-[#111111] mt-0.5 block">99.98%</span>
             </div>
-            <div>
-              <span className="text-[10px] text-grit-dim block font-ticker">TICKET STATUS</span>
-              <span className="text-grit-white font-bold text-sm">100% VERIFIED</span>
+            <div className="bg-white rounded-2xl border border-[#e5e7eb] p-3.5 text-center">
+              <span className="text-[11px] text-[#6b7280] font-medium block">Ticket Validity</span>
+              <span className="text-lg font-extrabold text-[#0000ee] mt-0.5 block">100%</span>
             </div>
-            <div>
-              <span className="text-[10px] text-grit-dim block font-ticker">SEAT CONCURRENCY</span>
-              <span className="text-grit-white font-bold text-sm">ACTIVE HOLD</span>
+            <div className="bg-white rounded-2xl border border-[#e5e7eb] p-3.5 text-center">
+              <span className="text-[11px] text-[#6b7280] font-medium block">Concurrency</span>
+              <span className="text-lg font-extrabold text-emerald-600 mt-0.5 block">Active Hold</span>
             </div>
-            <div>
-              <span className="text-[10px] text-grit-dim block font-ticker">CHECKOUT SECURITY</span>
-              <span className="text-grit-white font-bold text-sm">256-BIT SSL</span>
+            <div className="bg-white rounded-2xl border border-[#e5e7eb] p-3.5 text-center">
+              <span className="text-[11px] text-[#6b7280] font-medium block">Checkout SSL</span>
+              <span className="text-lg font-extrabold text-[#111111] mt-0.5 block">256-bit</span>
             </div>
           </div>
 
           {/* Service items */}
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {services.map((srv) => (
-              <div key={srv.name} className="bg-asphalt-card border border-asphalt-border p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div key={srv.name} className="bg-[#f7f7f7] border border-[#e5e7eb] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
-                  <h4 className="font-impact text-sm uppercase text-grit-white tracking-wider leading-none mb-1">
+                  <h4 className="font-bold text-sm text-[#111111] mb-0.5">
                     {srv.name}
                   </h4>
-                  <p className="font-mono-zine text-[10px] text-grit-dim uppercase">
+                  <p className="text-xs text-[#6b7280]">
                     {srv.description}
                   </p>
                 </div>
-                <div className="text-right self-start sm:self-auto">
-                  <span className="bg-acid-yellow/20 text-acid-yellow border border-acid-yellow font-ticker text-[10px] px-2 py-0.5 uppercase block mb-1">
+                <div className="text-right self-start sm:self-auto flex items-center gap-3">
+                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                     {srv.status}
                   </span>
-                  <span className="font-ticker text-[9px] text-grit-dim">
-                    LATENCY: {srv.latency}
+                  <span className="font-mono text-xs text-[#6b7280]">
+                    {srv.latency}
                   </span>
                 </div>
               </div>
@@ -171,15 +169,15 @@ export default function SystemStatusModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <span className="font-ticker text-[10px] text-grit-dim uppercase">
-            UPTIME PROTOCOL: 99.98% VERIFIED
+        <div className="p-5 border-t border-[#e5e7eb] bg-white flex items-center justify-between">
+          <span className="text-xs text-[#6b7280]">
+            Uptime SLA: 99.98% Guarantee
           </span>
           <button 
             onClick={onClose} 
-            className="w-full sm:w-auto bg-acid-yellow text-asphalt-black font-impact tracking-wider text-sm uppercase px-6 py-2 border-2 border-asphalt-black hover:bg-neon-magenta hover:text-grit-white transition-all shadow-[2px_2px_0px_#ffffff] cursor-pointer touch-manipulation text-center"
+            className="h-[44px] px-8 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-semibold transition-all shadow-md cursor-pointer"
           >
-            CLOSE STATUS
+            Close
           </button>
         </div>
       </div>

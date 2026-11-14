@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/events")
@@ -103,7 +104,14 @@ public class EventController {
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/tickets-booked-count")
+    @Operation(summary = "Get total tickets booked across platform in real time", description = "Returns real-time count of total tickets booked through EventHub")
+    @ApiResponse(responseCode = "200", description = "Ticket booking counter returned")
+    public ResponseEntity<Map<String, Object>> getTicketsBookedCount() {
+        return ResponseEntity.ok(eventService.getTicketsBookedStats());
+    }
+
+    @GetMapping("/{id:[0-9]+}")
     @Operation(summary = "Get event by ID", description = "Retrieves event details and increments view count counter")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Event details found"),

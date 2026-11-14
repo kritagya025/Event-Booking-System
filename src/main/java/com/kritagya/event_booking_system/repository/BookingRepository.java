@@ -43,6 +43,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     long countByBookingStatus(BookingStatus status);
 
+    @Query("SELECT COALESCE(SUM(b.quantity), 0) FROM Booking b WHERE b.bookingStatus <> com.kritagya.event_booking_system.enums.BookingStatus.CANCELLED")
+    Long sumTotalTicketsBooked();
+
     @org.springframework.data.jpa.repository.Modifying
     @Query("DELETE FROM Booking b WHERE b.event.id = :eventId")
     void deleteByEventId(@Param("eventId") Long eventId);

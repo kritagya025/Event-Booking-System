@@ -99,12 +99,12 @@ public class DataInitializerRunner implements CommandLineRunner {
             }
         }
 
-        // 2. Ensure venues exist across India, USA, UK, Europe, Australia, and Asia
-        Venue venue1 = getOrCreateVenue("Metro Arena Center", "450 Innovation Way, San Francisco, CA, USA", 15000, "Premier multi-purpose entertainment arena");
-        Venue venue2 = getOrCreateVenue("Silicon Valley Convention Center", "100 Tech Blvd, San Jose, CA, USA", 8000, "State-of-the-art tech conference center");
-        Venue venue3 = getOrCreateVenue("Royal Opera House", "12 Broadway Ave, New York, NY, USA", 3000, "Historic theater for arts & music");
-        Venue venue4 = getOrCreateVenue("Apex eSports Dome", "88 Cyber Way, Austin, TX, USA", 5000, "High-tech gaming arena");
-        Venue venueCinema = getOrCreateVenue("Omniplex IMAX Laser Dome", "100 Cine Drive, Los Angeles, CA, USA", 90, "Dual 4K laser projection theater with 128-channel Dolby Atmos sound and luxury recliners");
+        // 2. Primary Venues across Top Indian Hubs (Mumbai, Bengaluru, Hyderabad, Delhi NCR)
+        Venue venue1 = getOrCreateVenue("Jio World Garden", "Bandra Kurla Complex, Mumbai, Maharashtra, India", 15000, "Premier multi-purpose outdoor & concert arena in Mumbai");
+        Venue venue2 = getOrCreateVenue("Bangalore International Exhibition Centre (BIEC)", "10th Mile, Tumkur Road, Bengaluru, Karnataka, India", 8000, "State-of-the-art tech conference center in Bengaluru");
+        Venue venue3 = getOrCreateVenue("Nita Mukesh Ambani Cultural Centre (NMACC)", "Jio World Centre, BKC, Mumbai, Maharashtra, India", 3000, "Historic world-class performing arts theater");
+        Venue venue4 = getOrCreateVenue("Hyderabad International Convention Centre (HICC)", "Hitec City, Hyderabad, Telangana, India", 5000, "High-tech gaming & convention arena");
+        Venue venueCinema = getOrCreateVenue("PVR INOX Laser IMAX Dome", "Phoenix Palladium, Lower Parel, Mumbai, Maharashtra, India", 90, "Dual 4K laser projection theater with 128-channel Dolby Atmos sound and luxury recliners");
         
         // India Venues
         getOrCreateVenue("Jio World Centre", "BKC, Mumbai, Maharashtra, India", 16000, "World-class convention & exhibition centre");
@@ -236,6 +236,23 @@ public class DataInitializerRunner implements CommandLineRunner {
             );
             e6.setBannerImageUrl("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80");
             eventRepository.save(e6);
+        }
+
+        // 4. Ensure all active events are configured for India (INR currency)
+        for (Event e : eventRepository.findAll()) {
+            boolean modified = false;
+            if (!"INR".equalsIgnoreCase(e.getCurrency())) {
+                e.setCurrency("INR");
+                modified = true;
+            }
+            if (e.getTicketPrice() != null && e.getTicketPrice().compareTo(new BigDecimal("100")) < 0) {
+                // Convert legacy USD base prices to rounded INR
+                e.setTicketPrice(e.getTicketPrice().multiply(new BigDecimal("84.5")).setScale(0, java.math.RoundingMode.HALF_UP));
+                modified = true;
+            }
+            if (modified) {
+                eventRepository.save(e);
+            }
         }
 
         log.info("[DataInitializer] Database reset finished. Total events active in database: {}", eventRepository.count());

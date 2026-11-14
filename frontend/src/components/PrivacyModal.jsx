@@ -1,87 +1,81 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, Shield } from 'lucide-react';
 
 export default function PrivacyModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-asphalt-black/85 flex items-center justify-center p-2 sm:p-4 touch-scroll safe-pb select-none" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-[#111111]/70 backdrop-blur-sm flex items-center justify-center p-4 font-sans select-none" onClick={onClose}>
       <div 
-        className="w-full max-w-2xl max-h-[85vh] bg-asphalt-surface border-2 border-grit-white text-grit-white shadow-[4px_4px_0px_#F43F5E] flex flex-col font-mono-zine relative"
+        className="w-full max-w-2xl max-h-[85vh] bg-white rounded-[28px] border border-[#e5e7eb] text-[#111111] shadow-2xl flex flex-col relative overflow-hidden my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Slanted Tape Badge */}
-        <div className="absolute -top-3.5 sm:-top-4 right-2 sm:-right-2 bg-acid-yellow text-asphalt-black font-impact tracking-wider px-2.5 sm:px-3 py-0.5 sm:py-1 rotate-2 border-2 border-asphalt-black text-[11px] sm:text-xs uppercase shadow-[3px_3px_0px_#0e0e11] sm:shadow-[4px_4px_0px_#0e0e11] z-10">
-          EVENTHUB://PRIVACY_POLICY
-        </div>
-
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b-2 border-asphalt-border flex items-start justify-between bg-asphalt-card">
+        <div className="p-6 border-b border-[#e5e7eb] flex items-start justify-between bg-white">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
-                PRIVACY_POLICY
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="bg-[#111111] text-white text-xs font-semibold px-3 py-0.5 rounded-full">
+                Security & Data
               </span>
-              <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest">
-                ENCRYPTED DATA PROTECTION
+              <span className="text-xs text-[#6b7280] font-medium flex items-center gap-1.5">
+                <Shield size={13} className="text-[#0000ee]" />
+                GDPR & CCPA Compliant
               </span>
             </div>
-            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight text-grit-white leading-none">
-              DATA PRIVACY & PROTECTION POLICY
+            <h3 className="text-2xl font-extrabold tracking-tight text-[#111111]">
+              Privacy & Data Policy
             </h3>
-            <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1">
-              HOW WE PROTECT ATTENDEE IDENTITIES, PAYMENT INFORMATION & DIGITAL TICKETS
+            <p className="text-sm text-[#6b7280] mt-1">
+              How we protect attendee identities, payment data, and digital ticket credentials.
             </p>
           </div>
           <button 
             onClick={onClose} 
-            className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-neon-magenta hover:text-grit-white p-2 min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer touch-manipulation"
-            aria-label="Close privacy modal"
+            className="w-9 h-9 rounded-full bg-[#f7f7f7] hover:bg-[#ebebeb] flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Body Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs text-grit-dim uppercase leading-relaxed font-mono-zine touch-scroll">
-          <section className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4">
-            <h4 className="font-impact text-base text-neon-magenta tracking-wider mb-1">
-              01. ZERO THIRD-PARTY TRACKERS OR AD NETWORKS
+        <div className="p-6 overflow-y-auto space-y-4 text-sm text-[#6b7280] leading-relaxed">
+          <section className="bg-[#f7f7f7] rounded-2xl border border-[#e5e7eb] p-5">
+            <h4 className="font-bold text-base text-[#111111] mb-1.5">
+              01. Zero Third-Party Advertising Trackers
             </h4>
             <p>
-              EVENTHUB ENFORCES STRICT ZERO THIRD-PARTY AD TRACKING. ALL DATA EXCHANGES OPERATE OVER ENCRYPTED TLS 1.3 CONNECTIONS DIRECTLY TO SECURE VAULT SERVERS.
+              eventhub enforces strict zero third-party ad tracking. All transactions and reservations operate over encrypted TLS 1.3 connections directly with our security cluster.
             </p>
           </section>
 
-          <section className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4">
-            <h4 className="font-impact text-base text-neon-magenta tracking-wider mb-1">
-              02. SECURE TICKET CRYPTOGRAPHY
+          <section className="bg-[#f7f7f7] rounded-2xl border border-[#e5e7eb] p-5">
+            <h4 className="font-bold text-base text-[#111111] mb-1.5">
+              02. Cryptographic Ticket Validation
             </h4>
             <p>
-              ALL ADMISSION PASSES ARE GENERATED WITH CRYPTOGRAPHIC DIGITAL SIGNATURES. PASS DATA AND QR CODES ARE STORED SECURELY IN ENCRYPTED DATABASE VAULTS AND CAN ONLY BE VALIDATED AT AUTHORIZED EVENT ENTRANCES.
+              Each admission QR token is dynamically generated and cryptographically signed. Offline turnstiles verify public signatures without transmitting your private identity across public networks.
             </p>
           </section>
 
-          <section className="bg-asphalt-card border border-asphalt-border p-3.5 sm:p-4">
-            <h4 className="font-impact text-base text-neon-magenta tracking-wider mb-1">
-              03. RIGHT TO DATA PURGE & ACCESS
+          <section className="bg-[#f7f7f7] rounded-2xl border border-[#e5e7eb] p-5">
+            <h4 className="font-bold text-base text-[#111111] mb-1.5">
+              03. Data Retention & Right to Erasure
             </h4>
             <p>
-              ANY REGISTERED USER MAY EXERCISE THEIR RIGHT TO DATA PRIVACY UNDER GDPR AND CCPA TO REVIEW, EXPORT, OR REQUEST COMPLETE DELETION OF THEIR ACCOUNT PROFILE AND BOOKING HISTORY.
+              Attendee profile details are retained only while your account remains active. You may request immediate erasure of your credentials and transaction logs at any time.
             </p>
           </section>
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-asphalt-card border-t-2 border-asphalt-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <span className="font-ticker text-[10px] text-grit-dim uppercase">
-            PRIVACY STATUS: GDPR & CCPA COMPLIANT
-          </span>
-          <button 
-            onClick={onClose} 
-            className="w-full sm:w-auto bg-neon-magenta text-grit-white font-impact tracking-wider text-sm uppercase px-6 py-2.5 border-2 border-asphalt-black hover:bg-acid-yellow hover:text-asphalt-black transition-all shadow-[4px_4px_0px_#eefc54] cursor-pointer touch-manipulation text-center"
+        <div className="p-5 border-t border-[#e5e7eb] bg-white flex justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-[44px] px-8 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-semibold transition-all shadow-md cursor-pointer"
           >
-            ACCEPT PRIVACY POLICY
+            Got It
           </button>
         </div>
       </div>

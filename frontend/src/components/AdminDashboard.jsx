@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Trash2 } from 'lucide-react';
+import { Activity, Trash2, Shield, Users, Ticket, TrendingUp, CheckCircle } from 'lucide-react';
 import { apiFetch } from '../services/api';
 import { formatPrice } from '../services/currency';
 import AdminDashboardSkeleton from './AdminDashboardSkeleton';
@@ -30,13 +30,13 @@ export default function AdminDashboard({ showToast }) {
   };
 
   const handleDeleteEvent = async (eventId, eventName) => {
-    if (!window.confirm(`ARE YOU SURE YOU WANT TO REMOVE EVENT "${eventName || 'THIS EVENT'}" FROM THE CATALOG?`)) return;
+    if (!window.confirm(`Are you sure you want to remove event "${eventName || 'this event'}" from the catalog?`)) return;
     try {
       await apiFetch(`/events/${eventId}`, { method: 'DELETE' });
-      showToast('EVENT REMOVED FROM EVENT CATALOG', 'success');
+      showToast('Event removed from catalog', 'success');
       fetchAdminData();
     } catch (err) {
-      showToast(err.message || 'FAILED TO REMOVE EVENT', 'error');
+      showToast(err.message || 'Failed to remove event', 'error');
     }
   };
 
@@ -71,33 +71,34 @@ export default function AdminDashboard({ showToast }) {
   const displayTodayRevenue = rawTodayRev > 0 ? rawTodayRev : 359125.00;
 
   return (
-    <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 text-grit-white font-mono-zine">
+    <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 text-toy-black font-body">
       
       {/* Header */}
-      <div className="mb-8 border-b-2 border-asphalt-border pb-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+      <div className="mb-8 sm:mb-10 border-b-2 border-dashed border-toy-black/20 pb-6 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-2">
-            <span className="bg-neon-magenta text-grit-white font-impact tracking-wider text-xs px-2 py-0.5">
-              EVENTHUB://ADMIN_CONSOLE
+            <span className="bg-sun-yellow text-toy-black text-xs font-display font-black px-3 py-1 rounded-full border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]">
+              Admin Arcade Console
             </span>
-            <span className="font-ticker text-[10px] text-grit-dim uppercase tracking-widest flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-acid-yellow animate-ping"></span>
-              LIVE PLATFORM METRICS
+            <span className="text-xs text-toy-black/70 font-display font-bold flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-mint-pop animate-pulse border border-toy-black"></span>
+              Live Platform Telemetry
             </span>
           </div>
-          <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl uppercase tracking-tight text-grit-white leading-tight sm:leading-none break-words">
-            SYSTEM TELEMETRY & REVENUE AUDIT
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-toy-black leading-tight">
+            System Telemetry & Revenue
           </h1>
-          <p className="font-mono-zine text-xs text-grit-dim uppercase tracking-wider mt-1.5 break-words">
-            DATABASE TRANSACTIONS, TICKET RESERVATIONS, AND SEAT LOCK CONCURRENCY
+          <p className="text-sm font-body font-semibold text-toy-black/70 mt-1.5">
+            Platform-wide transaction volume, seat hold telemetry, and party catalog control.
           </p>
         </div>
 
         <button 
           onClick={fetchAdminData} 
-          className="bg-asphalt-surface border-2 border-grit-white text-grit-white hover:bg-acid-yellow hover:text-asphalt-black px-4 py-2 text-xs font-impact tracking-wider uppercase transition-all shadow-[4px_4px_0px_#0e0e11] cursor-pointer flex items-center gap-1.5 self-start sm:self-auto touch-manipulation"
+          className="h-[44px] px-5 rounded-full border-2 border-toy-black bg-white hover:bg-buttercream text-sm font-display font-black text-toy-black transition-all flex items-center gap-2 cursor-pointer shadow-toy hover:-translate-y-0.5 active:translate-y-0.5 self-start sm:self-auto"
         >
-          <Activity size={14} /> REFRESH TELEMETRY
+          <Activity size={14} className={loading ? 'animate-spin' : ''} />
+          <span>Refresh Telemetry</span>
         </button>
       </div>
 
@@ -105,144 +106,155 @@ export default function AdminDashboard({ showToast }) {
         <AdminDashboardSkeleton />
       ) : (
         <>
-          {/* 4 Brutalist Metric Stamps */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
-        <div className="min-w-0 bg-asphalt-surface border-2 border-grit-white p-2.5 sm:p-5 shadow-[3px_3px_0px_#E2F13C] relative">
-          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">PLATFORM REVENUE</span>
-          <span className="font-display text-lg xs:text-xl sm:text-3xl md:text-4xl text-acid-yellow font-bold leading-none mt-1 block truncate">
-            {formatPrice(displayTotalRevenue)}
-          </span>
-          <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
-            +{formatPrice(displayTodayRevenue)} TODAY
-          </span>
-        </div>
+          {/* 4 Clean Metric Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white rounded-2xl border-2 border-toy-black p-5 shadow-toy">
+              <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider block">Platform Revenue</span>
+              <span className="text-2xl sm:text-3xl font-display font-black text-bubble-pink leading-none mt-2 block truncate">
+                {formatPrice(displayTotalRevenue)}
+              </span>
+              <span className="text-xs text-mint-pop font-display font-bold mt-2 block">
+                +{formatPrice(displayTodayRevenue)} today
+              </span>
+            </div>
 
-        <div className="min-w-0 bg-asphalt-surface border-2 border-grit-white p-2.5 sm:p-5 shadow-[3px_3px_0px_#F43F5E] relative">
-          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">TICKETS ISSUED</span>
-          <span className="font-display text-lg xs:text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
-            {dbBookingsCount.toLocaleString()}
-          </span>
-          <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
-            VERIFIED PASSES
-          </span>
-        </div>
+            <div className="bg-white rounded-2xl border-2 border-toy-black p-5 shadow-toy">
+              <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider block">Tickets Issued</span>
+              <span className="text-2xl sm:text-3xl font-display font-black text-candy-purple leading-none mt-2 block truncate">
+                {dbBookingsCount.toLocaleString()}
+              </span>
+              <span className="text-xs text-toy-black/70 font-semibold mt-2 block">
+                Verified passes
+              </span>
+            </div>
 
-        <div className="min-w-0 bg-asphalt-surface border-2 border-grit-white p-2.5 sm:p-5 shadow-[3px_3px_0px_#1d4ed8] relative">
-          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">REGISTERED USERS</span>
-          <span className="font-display text-lg xs:text-xl sm:text-3xl md:text-4xl text-blue-400 font-bold leading-none mt-1 block truncate">
-            {dbUsersCount.toLocaleString()}
-          </span>
-          <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
-            ACTIVE ACCOUNTS
-          </span>
-        </div>
+            <div className="bg-white rounded-2xl border-2 border-toy-black p-5 shadow-toy">
+              <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider block">Registered Users</span>
+              <span className="text-2xl sm:text-3xl font-display font-black text-sun-yellow leading-none mt-2 block truncate">
+                {dbUsersCount.toLocaleString()}
+              </span>
+              <span className="text-xs text-toy-black/70 font-semibold mt-2 block">
+                Party accounts
+              </span>
+            </div>
 
-        <div className="min-w-0 bg-asphalt-surface border-2 border-grit-white p-2.5 sm:p-5 shadow-[3px_3px_0px_#ffffff] relative">
-          <span className="font-impact text-[10px] sm:text-xs tracking-wider text-grit-dim uppercase block truncate">PUBLISHED SHOWS</span>
-          <span className="font-display text-lg xs:text-xl sm:text-3xl md:text-4xl text-grit-white font-bold leading-none mt-1 block truncate">
-            {dbEventsCount}
-          </span>
-          <span className="text-[9px] sm:text-[10px] font-ticker text-grit-dim uppercase mt-1 sm:mt-2 block truncate">
-            ACTIVE INVENTORY
-          </span>
-        </div>
-      </div>
+            <div className="bg-white rounded-2xl border-2 border-toy-black p-5 shadow-toy">
+              <span className="text-xs font-display font-black text-toy-black/70 uppercase tracking-wider block">Published Events</span>
+              <span className="text-2xl sm:text-3xl font-display font-black text-sky-azure leading-none mt-2 block truncate">
+                {dbEventsCount}
+              </span>
+              <span className="text-xs text-toy-black/70 font-semibold mt-2 block">
+                Active catalog inventory
+              </span>
+            </div>
+          </div>
 
-      {/* Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        
-        {/* Top Performing Events */}
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-6 shadow-[3px_3px_0px_#E2F13C] min-w-0">
-          <h3 className="font-display text-xl sm:text-2xl uppercase tracking-tight text-grit-white leading-none mb-4 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-acid-yellow shrink-0"></span> TOP POPULAR EVENTS
-          </h3>
-          <div className="space-y-3">
-            {metrics.popularEvents?.map((event, idx) => {
-              const isSoldOut = event.availableSeats === 0;
-              return (
-              <div 
-                key={event.id || idx} 
-                className={`p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-2 transition-all min-w-0 ${
-                  isSoldOut
-                    ? 'sold-out-monochrome bg-asphalt-black border-grit-dim/60 opacity-80'
-                    : 'bg-asphalt-card border-asphalt-border'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 sm:gap-3 w-full min-w-0">
-                  <div className={`w-7 h-7 font-impact text-sm flex items-center justify-center font-bold shrink-0 ${
-                    isSoldOut ? 'bg-asphalt-card text-grit-white border border-grit-dim' : 'bg-acid-yellow text-asphalt-black'
-                  }`}>
-                    0{idx + 1}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                      <h4 className="font-impact text-sm sm:text-base uppercase tracking-wider text-grit-white leading-tight break-words">
-                        {event.name}
-                      </h4>
-                      {isSoldOut && (
-                        <span className="bg-grit-white text-asphalt-black font-impact text-[9px] px-1 py-0.2 uppercase font-bold shrink-0">
-                          SOLD OUT
+          {/* Panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* Top Performing Events */}
+            <div className="bg-white rounded-[28px] border-[3px] border-toy-black p-6 shadow-toy">
+              <h3 className="text-xl font-display font-black tracking-tight text-toy-black mb-5 flex items-center gap-2">
+                <TrendingUp size={20} className="text-bubble-pink" />
+                <span>Top Performing Parties</span>
+              </h3>
+              <div className="space-y-3">
+                {metrics.popularEvents?.map((event, idx) => {
+                  const isSoldOut = event.availableSeats === 0;
+                  return (
+                    <div 
+                      key={event.id || idx} 
+                      className="p-4 rounded-2xl bg-buttercream border-2 border-toy-black flex items-center justify-between gap-3 transition-colors shadow-sm"
+                    >
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-sun-yellow border border-toy-black text-toy-black text-xs font-display font-black flex items-center justify-center shrink-0">
+                          {idx + 1}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-display font-black text-sm text-toy-black truncate">
+                              {event.name}
+                            </h4>
+                            {isSoldOut && (
+                              <span className="bg-coral-peach text-white text-[10px] font-display font-black px-2 py-0.5 rounded-full border border-toy-black shrink-0">
+                                Sold Out
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs font-body font-semibold text-toy-black/70 block mt-0.5">
+                            {event.category} · {isSoldOut ? 'Full Capacity' : `${event.availableSeats || 50} remaining`}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className={`text-base font-display font-black ${isSoldOut ? 'text-toy-black/40 line-through' : 'text-toy-black'}`}>
+                          {formatPrice(event.ticketPrice, event.currency)}
                         </span>
-                      )}
+                        <button 
+                          onClick={() => handleDeleteEvent(event.id, event.name)} 
+                          className="w-8 h-8 rounded-full bg-white hover:bg-coral-peach/30 text-toy-black flex items-center justify-center transition-colors cursor-pointer border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]"
+                          title="Remove from Catalog"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </div>
-                    <span className="font-ticker text-[9px] sm:text-[10px] text-grit-dim uppercase block truncate mt-0.5">
-                      {event.category} · {isSoldOut ? 'CAPACITY REACHED' : `${event.availableSeats || 50} REMAINING`}
-                    </span>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* System Infrastructure */}
+            <div className="bg-white rounded-[24px] border border-[#e5e7eb] p-6 shadow-sm">
+              <h3 className="text-xl font-bold tracking-tight text-[#111111] mb-5 flex items-center gap-2">
+                <Shield size={20} className="text-[#0000ee]" />
+                <span>Security & Infrastructure</span>
+              </h3>
+              <div className="space-y-3">
+                <div className="p-3.5 rounded-2xl bg-[#f7f7f7] border border-[#e5e7eb] flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-semibold text-[#111111] block">Database Encryption</span>
+                    <span className="text-xs text-[#6b7280]">AES-256 at rest & in transit</span>
                   </div>
+                  <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <CheckCircle size={12} /> Secure
+                  </span>
                 </div>
 
-                <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-asphalt-border shrink-0">
-                  <span className={`font-display text-lg sm:text-xl font-bold ${isSoldOut ? 'text-grit-white line-through opacity-70' : 'text-acid-yellow'}`}>
-                    {formatPrice(event.ticketPrice, event.currency)}
+                <div className="p-3.5 rounded-2xl bg-[#f7f7f7] border border-[#e5e7eb] flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-semibold text-[#111111] block">Seat Hold Concurrency</span>
+                    <span className="text-xs text-[#6b7280]">10-minute pessimistic row lock</span>
+                  </div>
+                  <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <CheckCircle size={12} /> Active
                   </span>
-                  <button 
-                    onClick={() => handleDeleteEvent(event.id, event.name)} 
-                    className="text-neon-magenta hover:text-grit-white bg-asphalt-surface border border-asphalt-border hover:border-neon-magenta p-2 min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer transition-colors touch-manipulation"
-                    title="Remove from Catalog"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-[#f7f7f7] border border-[#e5e7eb] flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-semibold text-[#111111] block">Auth Security Pipeline</span>
+                    <span className="text-xs text-[#6b7280]">HttpOnly JWT & BCrypt Salt</span>
+                  </div>
+                  <span className="bg-blue-50 text-[#0000ee] border border-blue-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <CheckCircle size={12} /> Enforced
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-[#f7f7f7] border border-[#e5e7eb] flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-semibold text-[#111111] block">WebSocket Telemetry</span>
+                    <span className="text-xs text-[#6b7280]">Live STOMP socket cluster</span>
+                  </div>
+                  <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <CheckCircle size={12} /> Operational
+                  </span>
                 </div>
               </div>
-              );
-            })}
-          </div>
-        </div>
+            </div>
 
-        {/* System Infrastructure */}
-        <div className="bg-asphalt-surface border-2 border-grit-white p-3.5 sm:p-6 shadow-[3px_3px_0px_#F43F5E] min-w-0">
-          <h3 className="font-display text-lg sm:text-2xl uppercase tracking-tight text-grit-white leading-tight mb-4 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-neon-magenta shrink-0"></span> SYSTEM PROTOCOL & INFRASTRUCTURE STATE
-          </h3>
-          <div className="space-y-2 sm:space-y-2.5 font-mono-zine text-xs uppercase">
-            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 min-w-0">
-              <span className="text-grit-dim text-[11px] sm:text-xs">DATABASE ENCRYPTION</span>
-              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-[10px] sm:text-xs self-start sm:self-auto max-w-full truncate">
-                ENCRYPTED STORAGE // SECURE
-              </span>
-            </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 min-w-0">
-              <span className="text-grit-dim text-[11px] sm:text-xs">SEAT HOLD CONCURRENCY</span>
-              <span className="bg-acid-yellow text-asphalt-black font-impact px-2 py-0.5 text-[10px] sm:text-xs self-start sm:self-auto max-w-full truncate">
-                REAL-TIME SEAT HOLD // ACTIVE
-              </span>
-            </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 min-w-0">
-              <span className="text-grit-dim text-[11px] sm:text-xs">AUTH SECURITY PIPELINE</span>
-              <span className="bg-neon-magenta text-grit-white font-impact px-2 py-0.5 text-[10px] sm:text-xs self-start sm:self-auto max-w-full truncate">
-                HTTPONLY JWT COOKIE
-              </span>
-            </div>
-            <div className="bg-asphalt-card border border-asphalt-border p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 min-w-0">
-              <span className="text-grit-dim text-[11px] sm:text-xs">WEBSOCKET CONCURRENCY</span>
-              <span className="text-acid-yellow font-bold text-[10px] sm:text-xs self-start sm:self-auto max-w-full truncate">
-                100% OPERATIONAL (10 REQ/MIN)
-              </span>
-            </div>
           </div>
-        </div>
-
-      </div>
         </>
       )}
 
