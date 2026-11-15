@@ -1327,6 +1327,138 @@ export function ThermometerVibeSticker({ size = 38, className = '', style = {} }
   );
 }
 
+// 15. Neo-Memphis Live City Geolocation & Radar Pin Sticker (Bespoke Venue Hub Asset)
+export function CityLocationSticker({ size = 48, className = '', style = {} }) {
+  const pinPath = "M 50 82 C 37 67 22 51 22 35 C 22 19.5 34.5 8 50 8 C 65.5 8 78 19.5 78 35 C 78 51 63 67 50 82 Z";
+
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 100 100" 
+      width={size} 
+      height={size} 
+      className={`inline-block select-none ${className}`}
+      style={style}
+    >
+      <defs>
+        {/* Vibrant Multi-Stop Pin Gradient */}
+        <linearGradient id="locPinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FF4081" />
+          <stop offset="55%" stopColor="#FF1475" />
+          <stop offset="100%" stopColor="#D80056" />
+        </linearGradient>
+
+        {/* Golden Beacon Core Gradient */}
+        <linearGradient id="locCoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FFE142" />
+          <stop offset="100%" stopColor="#FFA000" />
+        </linearGradient>
+
+        {/* Cyber Cyan Ground Radar Gradient */}
+        <linearGradient id="locGroundGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#00E5FF" />
+          <stop offset="100%" stopColor="#00F5D4" />
+        </linearGradient>
+      </defs>
+
+      {/* ─── 1. HARD 3D OFFSET SHADOWS (Toy-Black) ─── */}
+      <g transform="translate(4, 4)">
+        {/* Ground radar ripple shadow */}
+        <ellipse cx="50" cy="85" rx="34" ry="10" fill="#1E1B2E" />
+        {/* Teardrop pin shadow */}
+        <path d={pinPath} fill="#1E1B2E" />
+      </g>
+
+      {/* ─── 2. WHITE DIE-CUT VINYL STICKER BORDER ─── */}
+      <ellipse cx="50" cy="85" rx="35" ry="11" fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="5" />
+      <path 
+        d={pinPath} 
+        fill="#FFFFFF" 
+        stroke="#FFFFFF" 
+        strokeWidth="6" 
+        strokeLinejoin="round" 
+      />
+
+      {/* ─── 3. GROUND GEOLOCATION RADAR WAVES ─── */}
+      {/* Outer Ground Pulse Ring with Radar Nodes */}
+      <ellipse cx="50" cy="85" rx="33" ry="9.5" fill="#E8F9FF" stroke="#1E1B2E" strokeWidth="3" />
+      <ellipse cx="50" cy="85" rx="22" ry="6.2" fill="url(#locGroundGrad)" stroke="#1E1B2E" strokeWidth="2.5" />
+      
+      {/* Ground Target Pulse Dots */}
+      <circle cx="21" cy="85" r="2.8" fill="#FFE142" stroke="#1E1B2E" strokeWidth="1.8" />
+      <circle cx="79" cy="85" r="2.8" fill="#FFE142" stroke="#1E1B2E" strokeWidth="1.8" />
+      <circle cx="50" cy="85" r="3.2" fill="#1E1B2E" />
+
+      {/* ─── 4. CHUNKY 3D TEARDROP LOCATION PIN ─── */}
+      <path 
+        d={pinPath} 
+        fill="url(#locPinGrad)" 
+        stroke="#1E1B2E" 
+        strokeWidth="3.6" 
+        strokeLinejoin="round" 
+      />
+
+      {/* Outer Live Spotlight Aperture */}
+      <circle cx="50" cy="35" r="17" fill="#FFFFFF" stroke="#1E1B2E" strokeWidth="3.2" />
+
+      {/* Inner Glowing Beacon Lens */}
+      <circle cx="50" cy="35" r="11.5" fill="url(#locCoreGrad)" stroke="#1E1B2E" strokeWidth="2.4" />
+
+      {/* Live Stage Compass Star Core */}
+      <polygon 
+        points="50,26 52.6,32.4 59,35 52.6,37.6 50,44 47.4,37.6 41,35 47.4,32.4" 
+        fill="#1E1B2E" 
+      />
+      {/* Mini Center Specular Glint */}
+      <circle cx="50" cy="35" r="1.6" fill="#FFFFFF" />
+
+      {/* ─── 5. 3D RETRO COMIC SPECULAR HIGHLIGHTS ─── */}
+      <path 
+        d="M 28 32 C 28 21 36.5 13 47 12" 
+        stroke="#FFFFFF" 
+        strokeWidth="3.2" 
+        strokeLinecap="round" 
+        fill="none" 
+        opacity="0.95" 
+      />
+      <circle cx="34" cy="40" r="2" fill="#FFFFFF" opacity="0.9" />
+
+      {/* ─── 6. FLOATING LIVE SOUND & SPARKLE ACCENTS ─── */}
+      {/* Cyber Cyan 4-Point Sparkle (Top Right) */}
+      <polygon 
+        points="84,12 86,17 91,18 86,19 84,24 82,19 77,18 82,17" 
+        fill="#00E5FF" 
+        stroke="#1E1B2E" 
+        strokeWidth="1.6" 
+      />
+      
+      {/* Golden Mini Star (Bottom Left) */}
+      <polygon 
+        points="14,64 16,67.5 20,68.5 16,69.5 14,73 12,69.5 8,68.5 12,67.5" 
+        fill="#FFE142" 
+        stroke="#1E1B2E" 
+        strokeWidth="1.2" 
+      />
+
+      {/* Live Stage Broadcast Radio Wave Arcs (Right Side) */}
+      <path 
+        d="M 82 32 C 86 35 86 42 82 45" 
+        stroke="#1E1B2E" 
+        strokeWidth="2.4" 
+        strokeLinecap="round" 
+        fill="none" 
+      />
+      <path 
+        d="M 87 28 C 93 33 93 45 87 50" 
+        stroke="#1E1B2E" 
+        strokeWidth="2.4" 
+        strokeLinecap="round" 
+        fill="none" 
+      />
+    </svg>
+  );
+}
+
 const CustomStickers = { 
   BalloonSticker, 
   DiscoBallSticker, 
@@ -1341,6 +1473,7 @@ const CustomStickers = {
   SecurityShieldSticker,
   PaymentCardSticker,
   HourglassWaitlistSticker,
-  ThermometerVibeSticker
+  ThermometerVibeSticker,
+  CityLocationSticker
 };
 export default CustomStickers;

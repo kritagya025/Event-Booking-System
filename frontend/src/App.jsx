@@ -27,7 +27,8 @@ import {
   SecurityShieldSticker,
   PaymentCardSticker,
   HourglassWaitlistSticker,
-  ThermometerVibeSticker
+  ThermometerVibeSticker,
+  CityLocationSticker
 } from './components/CustomStickers';
 import { 
   Heart, Bell, AlertCircle, Check, 
@@ -1116,31 +1117,112 @@ export default function App() {
               </div>
             )}
 
-            {/* Neighborhood Map Banner */}
-            <div className="mt-10 bg-lilac-wash rounded-3xl border-[3px] border-toy-black p-6 sm:p-8 shadow-toy flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-white border-2 border-toy-black shadow-toy flex items-center justify-center shrink-0">
-                  <MapPin size={24} className="text-toy-black" />
+            {/* ══════════════════════════════════════════════════════════════
+                NEO-MEMPHIS LIVE CITY RADAR & LOCATION HUB
+                ══════════════════════════════════════════════════════════════ */}
+            <div className="mt-10 bg-lilac-wash rounded-3xl border-[3px] border-toy-black p-6 sm:p-8 shadow-toy flex flex-col gap-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                {/* Left: Custom Design Asset & Context Heading */}
+                <div className="flex items-start sm:items-center gap-4">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-white border-[3px] border-toy-black shadow-toy flex items-center justify-center shrink-0 p-2 hover:rotate-3 transition-transform">
+                    <CityLocationSticker size={64} className="w-full h-full" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-mint-pop border-2 border-toy-black text-[10px] font-display font-black uppercase text-toy-black shadow-[2px_2px_0px_#1E1B2E]">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse border border-toy-black"></span>
+                        PAN-INDIA RADAR ACTIVE
+                      </span>
+                      {filters.city && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sun-yellow border-2 border-toy-black text-[10px] font-display font-black uppercase text-toy-black shadow-[2px_2px_0px_#1E1B2E]">
+                          FILTER: {filters.city}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const nextFilters = { ...filters, city: '' };
+                              setFilters(nextFilters);
+                              handleSearchAndFilter(nextFilters);
+                              showToast('Cleared city filter — showing all cities!', 'info');
+                            }}
+                            className="ml-1 hover:text-bubble-pink cursor-pointer font-black"
+                            title="Clear city"
+                          >
+                            ✕
+                          </button>
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="font-display font-black text-xl sm:text-2xl text-toy-black tracking-tight">
+                      Looking for live shows in your city?
+                    </h4>
+                    <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/75 mt-0.5 max-w-2xl">
+                      From intimate indie concerts to IMAX midnight premieres across India (Mumbai, Bengaluru, Delhi NCR, Hyderabad, Goa & more). Tap your hub to filter instantly:
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-display font-black text-xl text-toy-black">Looking for live shows in your city?</h4>
-                  <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/70">
-                    From intimate indie concerts to IMAX midnight premieres across India (Mumbai, Bengaluru, Delhi NCR, Hyderabad, Goa & more).
-                  </p>
+
+                {/* Right: Browse All Cities Action */}
+                <div className="shrink-0 self-start md:self-center">
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      const nextFilters = { ...filters, city: '' };
+                      setFilters(nextFilters);
+                      handleSearchAndFilter(nextFilters);
+                      showToast('Showing events across all Indian cities!', 'info');
+                    }}
+                    className={`px-5 py-2.5 rounded-full font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black shadow-toy transition-all whitespace-nowrap cursor-pointer ${
+                      !filters.city 
+                        ? 'bg-toy-black text-white hover:bg-toy-black/80' 
+                        : 'bg-white hover:bg-buttercream text-toy-black hover:-translate-y-0.5 active:translate-y-0.5'
+                    }`}
+                  >
+                    View All Shows ➔
+                  </button>
                 </div>
               </div>
-              <button 
-                type="button"
-                onClick={() => {
-                  const nextFilters = { ...filters, city: '' };
-                  setFilters(nextFilters);
-                  handleSearchAndFilter(nextFilters);
-                  showToast('Showing events across all Indian cities!', 'info');
-                }}
-                className="px-6 py-2.5 rounded-full bg-toy-black text-white font-display font-black text-xs uppercase tracking-wide border-2 border-toy-black shadow-toy hover:bg-bubble-pink hover:-translate-y-0.5 active:translate-y-0.5 transition-all whitespace-nowrap cursor-pointer"
-              >
-                Browse All Cities ➔
-              </button>
+
+              {/* Quick City Hub Selector Pills */}
+              <div className="pt-2 border-t-2 border-toy-black/15 flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-display font-black uppercase text-toy-black/60 mr-1 tracking-wide">
+                  SELECT CITY:
+                </span>
+                {[
+                  { name: 'All India', value: '' },
+                  { name: 'Mumbai', value: 'Mumbai' },
+                  { name: 'Bengaluru', value: 'Bengaluru' },
+                  { name: 'Delhi NCR', value: 'Delhi' },
+                  { name: 'Hyderabad', value: 'Hyderabad' },
+                  { name: 'Goa', value: 'Goa' },
+                  { name: 'Pune', value: 'Pune' },
+                ].map((cityItem) => {
+                  const isSelected = (!filters.city && cityItem.value === '') || 
+                    (filters.city && cityItem.value && filters.city.toLowerCase().includes(cityItem.value.toLowerCase()));
+
+                  return (
+                    <button
+                      key={cityItem.name}
+                      type="button"
+                      onClick={() => {
+                        const nextFilters = { ...filters, city: cityItem.value };
+                        setFilters(nextFilters);
+                        handleSearchAndFilter(nextFilters);
+                        showToast(
+                          cityItem.value ? `Exploring live events in ${cityItem.name}!` : 'Showing events across all Indian cities!', 
+                          'info'
+                        );
+                      }}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-display font-black uppercase tracking-wide border-2 border-toy-black transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-sun-yellow text-toy-black shadow-toy scale-105'
+                          : 'bg-white text-toy-black hover:bg-buttercream hover:-translate-y-0.5 active:translate-y-0.5 shadow-[2px_2px_0px_#1E1B2E]'
+                      }`}
+                    >
+                      {cityItem.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
           </section>
