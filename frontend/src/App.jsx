@@ -1,3 +1,4 @@
+// Build version: 20261116.3-cachebust-favicon-and-radar
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
