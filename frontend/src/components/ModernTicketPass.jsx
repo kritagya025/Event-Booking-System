@@ -103,7 +103,7 @@ export function ModernLandscapeTicketPass({
     <div className={`group relative bg-white rounded-3xl border-[3px] border-toy-black shadow-toy ${theme.popShadow} hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row min-w-0 overflow-hidden`}>
       
       {/* ─── LEFT: ARTWORK ANCHOR ─── */}
-      <div className="relative w-full md:w-56 lg:w-64 h-48 md:h-auto shrink-0 bg-toy-black overflow-hidden border-b-[3px] md:border-b-0 md:border-r-[3px] border-toy-black">
+      <div className="relative w-full md:w-44 lg:w-48 h-48 md:h-auto shrink-0 bg-toy-black overflow-hidden border-b-[3px] md:border-b-0 md:border-r-[3px] border-toy-black">
         <img
           src={getImageForEvent(event, isCinema)}
           alt={event.name}
@@ -144,7 +144,7 @@ export function ModernLandscapeTicketPass({
 
         {/* Bottom Format & Seats Badges */}
         <div className="absolute bottom-2.5 inset-x-2.5 flex items-center justify-between gap-1 z-10">
-          <span className="px-2 py-0.5 rounded-md bg-toy-black/85 text-white font-display font-black text-[10px] uppercase border border-white/30 truncate max-w-[130px]" title={event.movieFormat || event.category}>
+          <span className="px-2 py-0.5 rounded-md bg-toy-black/85 text-white font-display font-black text-[10px] uppercase border border-white/30 truncate max-w-[110px]" title={event.movieFormat || event.category}>
             {event.movieFormat || event.category || 'LIVE'}
           </span>
           <span className="px-2 py-0.5 rounded-full bg-mint-pop text-toy-black font-display font-black text-[10px] border border-toy-black flex items-center gap-1 shadow-sm shrink-0">
@@ -155,12 +155,12 @@ export function ModernLandscapeTicketPass({
       </div>
 
       {/* ─── CENTER: RICH DETAILS & SHOWTIMES ─── */}
-      <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0 bg-white">
-        <div className="flex flex-col gap-2">
+      <div className="flex-1 p-3.5 sm:p-4 md:p-4 flex flex-col justify-between min-w-0 bg-white">
+        <div className="flex flex-col gap-1.5">
           {/* Date & Time Header Bar */}
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-buttercream border border-toy-black font-display font-black text-xs text-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]">
-              <Calendar size={13} className="text-bubble-pink shrink-0" />
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-buttercream border border-toy-black font-display font-black text-[11px] text-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]">
+              <Calendar size={12} className="text-bubble-pink shrink-0" />
               <span>{dateObj.full}</span>
             </span>
             {isCinema && (
@@ -172,12 +172,12 @@ export function ModernLandscapeTicketPass({
           </div>
 
           {/* Event Title */}
-          <h3 className="font-display font-black text-lg sm:text-xl text-toy-black leading-tight tracking-tight group-hover:text-bubble-pink transition-colors line-clamp-2">
+          <h3 className="font-display font-black text-base sm:text-lg text-toy-black leading-snug tracking-tight group-hover:text-bubble-pink transition-colors line-clamp-2">
             {event.name}
           </h3>
 
           {/* Venue & Location */}
-          <div className="flex items-center gap-1.5 text-toy-black/75 text-xs font-body font-semibold">
+          <div className="flex items-center gap-1 text-toy-black/75 text-xs font-body font-semibold">
             <MapPin size={13} className="text-candy-purple shrink-0" />
             <span className="truncate" title={event.venueAddress || event.venueName}>
               {event.venueAddress || event.venueName || 'Main Arena'}
@@ -196,7 +196,7 @@ export function ModernLandscapeTicketPass({
                     key={st}
                     type="button"
                     onClick={() => onBook(st)}
-                    className="px-2.5 py-1 rounded-lg bg-buttercream hover:bg-sun-yellow text-toy-black border border-toy-black text-[11px] font-display font-black shadow-[1.5px_1.5px_0px_#1E1B2E] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                    className="px-2 py-1 rounded-lg bg-buttercream hover:bg-sun-yellow text-toy-black border border-toy-black text-[10px] font-display font-black shadow-[1px_1px_0px_#1E1B2E] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
                   >
                     {st}
                   </button>
@@ -207,7 +207,7 @@ export function ModernLandscapeTicketPass({
         </div>
 
         {/* Bottom Trust & Feature Indicators */}
-        <div className="mt-3 pt-2 flex items-center gap-2 text-[11px] font-display font-extrabold text-toy-black/60 border-t border-toy-black/10">
+        <div className="mt-2.5 pt-2 flex items-center gap-2 text-[10px] font-display font-extrabold text-toy-black/60 border-t border-toy-black/10">
           <span className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
             Instant QR Pass
@@ -230,9 +230,9 @@ export function ModernLandscapeTicketPass({
       </div>
 
       {/* ─── RIGHT: TEAR-OFF BOOKING STUB ─── */}
-      <div className={`w-full md:w-44 lg:w-48 p-4 sm:p-5 ${theme.stubBg} flex flex-row md:flex-col items-center justify-between md:justify-center gap-3 shrink-0 text-center border-t-[2.5px] md:border-t-0 border-toy-black/10`}>
+      <div className={`w-full md:w-36 lg:w-40 p-3 sm:p-4 ${theme.stubBg} flex flex-row md:flex-col items-center justify-between md:justify-center gap-2.5 shrink-0 text-center border-t-[2.5px] md:border-t-0 border-toy-black/10`}>
         {/* Stub Decorative Barcode */}
-        <div className="hidden md:block w-full text-toy-black/35 mb-1">
+        <div className="hidden md:block w-full text-toy-black/35 mb-0.5">
           <TicketBarcodeSVG className="w-full h-5" />
           <span className="block text-[8px] font-mono tracking-widest text-toy-black/50 mt-0.5">
             TKT-{(event.id * 8921).toString().slice(0, 8)}
@@ -241,10 +241,10 @@ export function ModernLandscapeTicketPass({
 
         {/* Price Box */}
         <div className="text-left md:text-center">
-          <span className="block text-[10px] font-display font-black uppercase text-toy-black/60 tracking-wider">
+          <span className="block text-[9px] font-display font-black uppercase text-toy-black/60 tracking-wider">
             {isSoldOut ? 'STATUS' : 'FROM'}
           </span>
-          <span className="font-display font-black text-xl sm:text-2xl text-toy-black leading-none tracking-tight">
+          <span className="font-display font-black text-lg sm:text-xl text-toy-black leading-none tracking-tight">
             {isSoldOut ? 'SOLD OUT' : formatPrice(event.ticketPrice, event.currency)}
           </span>
         </div>
@@ -254,7 +254,7 @@ export function ModernLandscapeTicketPass({
           <button
             type="button"
             onClick={onWaitlist}
-            className="px-5 py-2.5 rounded-full bg-sun-yellow text-toy-black font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black shadow-toy hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+            className="px-3.5 py-2 rounded-full bg-sun-yellow text-toy-black font-display font-black text-[11px] sm:text-xs uppercase tracking-wider border-2 border-toy-black shadow-toy hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
           >
             Waitlist
           </button>
@@ -262,7 +262,7 @@ export function ModernLandscapeTicketPass({
           <button
             type="button"
             onClick={() => onBook()}
-            className={`px-5 py-2.5 rounded-full font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black shadow-toy hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap ${theme.rsvpBg}`}
+            className={`px-3.5 py-2 rounded-full font-display font-black text-[11px] sm:text-xs uppercase tracking-wider border-2 border-toy-black shadow-toy hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap ${theme.rsvpBg}`}
           >
             {isCinema ? 'Book Seats ➔' : 'Select Seats ➔'}
           </button>

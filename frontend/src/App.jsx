@@ -951,7 +951,7 @@ export default function App() {
           {/* ══════════════════════════════════════════════════════════════
               EXPLORE SECTION: Candy Filter Chips & Trending Event Cards
               ══════════════════════════════════════════════════════════════ */}
-          <section className="max-w-6xl mx-auto px-4 sm:px-8 py-12" id="explore" ref={catalogRef}>
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="explore" ref={catalogRef}>
             
             {/* Section Top Nav */}
             <div className="mb-6">
