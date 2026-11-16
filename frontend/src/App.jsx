@@ -20,6 +20,12 @@ import EventHubArcadeRunner from './components/EventHubArcadeRunner';
 
 import EventCardSkeleton from './components/EventCardSkeleton';
 import { 
+  ModernLandscapeTicketPass, 
+  BentoSpotlightPass, 
+  BoardingPassStrip, 
+  LayoutSwitcherBar 
+} from './components/ModernTicketPass';
+import { 
   DiscoBallSticker, 
   TicketSticker, 
   PopcornBucketSticker, 
@@ -118,6 +124,32 @@ export default function App() {
     maxPrice: '',
     sort: ''
   });
+
+  // 4-Mode Modern Layout Switcher state (bento, feed, reels, grid)
+  const [layoutMode, setLayoutModeState] = useState(() => {
+    return localStorage.getItem('eventhub_layout_mode') || 'bento';
+  });
+
+  const setLayoutMode = (mode) => {
+    setLayoutModeState(mode);
+    localStorage.setItem('eventhub_layout_mode', mode);
+  };
+
+  const cinemaEvents = useMemo(() => {
+    return events.filter(e => 
+      e.category === 'CINEMA' || 
+      e.category === 'MOVIE' || 
+      /imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(e.name || '')
+    );
+  }, [events]);
+
+  const liveEvents = useMemo(() => {
+    return events.filter(e => 
+      e.category !== 'CINEMA' && 
+      e.category !== 'MOVIE' && 
+      !/imax|cinema|movie|film|screening|interstellar|blade runner|oppenheimer/i.test(e.name || '')
+    );
+  }, [events]);
 
   const filtersRef = useRef(filters);
   const allMasterEventsRef = useRef([]);
@@ -1049,9 +1081,19 @@ export default function App() {
               </form>
             </div>
 
-            {/* Event Cards in Playful Neo-Memphis Style */}
+            {/* ══════════════════════════════════════════════════════════════
+                INTERACTIVE 4-MODE LAYOUT EXPERIMENT SWITCHER BAR
+                ══════════════════════════════════════════════════════════════ */}
+            {!loading && events.length > 0 && (
+              <LayoutSwitcherBar 
+                activeLayout={layoutMode} 
+                onSelectLayout={setLayoutMode} 
+              />
+            )}
+
+            {/* Event Cards & Passes Container */}
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
                 {[1, 2, 3, 4].map((i) => (
                   <EventCardSkeleton key={i} />
                 ))}
@@ -1073,10 +1115,138 @@ export default function App() {
                   Reset Filters
                 </button>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6" id="parties-container">
+            ) : layoutMode === 'bento' ? (
+              /* ─── LAYOUT 1: EDITORIAL BENTO SHOWCASE ─── */
+              <div className="flex flex-col gap-6" id="parties-container">
+                {/* 1. Hero Headliner Spotlight Card */}
+                {events[0] && (
+                  <BentoSpotlightPass 
+                    event={events[0]}
+                    currentUser={currentUser}
+                    onBook={(st) => openBookingModal(events[0], st)}
+                    onWishlist={(e) => handleToggleWishlist(events[0].id, e)}
+                    onWaitlist={(e) => handleJoinWaitlist(events[0].id, e)}
+                  />
+                )}
+
+                {/* 2. Paired Modern Landscape Ticket Passes */}
+                {events.length > 1 && (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+                    {events.slice(1).map((event, idx) => (
+                      <ModernLandscapeTicketPass 
+                        key={event.id}
+                        event={event}
+                        index={idx + 1}
+                        currentUser={currentUser}
+                        onBook={(st) => openBookingModal(event, st)}
+                        onWishlist={(e) => handleToggleWishlist(event.id, e)}
+                        onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
+                        onDelete={(e) => handleDeleteEvent(event.id, event.name, e)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : layoutMode === 'feed' ? (
+              /* ─── LAYOUT 2: HORIZONTAL BOARDING PASS STREAM (Dice.fm Style) ─── */
+              <div className="flex flex-col gap-3.5 sm:gap-4" id="parties-container">
                 {events.map((event, idx) => (
-                  <NeoMemphisPartyCard 
+                  <BoardingPassStrip 
+                    key={event.id}
+                    event={event}
+                    currentUser={currentUser}
+                    onBook={(st) => openBookingModal(event, st)}
+                    onWishlist={(e) => handleToggleWishlist(event.id, e)}
+                    onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
+                  />
+                ))}
+              </div>
+            ) : layoutMode === 'reels' ? (
+              /* ─── LAYOUT 3: CURATED CATEGORY SPLIT REELS ─── */
+              <div className="flex flex-col gap-8 sm:gap-10" id="parties-container">
+                {/* Cinema & 70mm IMAX Screenings Reel */}
+                {cinemaEvents.length > 0 && (
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-toy-black/15 pb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-sun-yellow border-2 border-toy-black shadow-toy flex items-center justify-center shrink-0">
+                          <Film size={20} className="text-toy-black" />
+                        </div>
+                        <div>
+                          <h3 className="font-display font-black text-xl sm:text-2xl text-toy-black">
+                            Blockbuster Cinema & 70mm IMAX Screenings
+                          </h3>
+                          <p className="text-xs font-body font-semibold text-toy-black/60">
+                            Laser IMAX, midnight premieres & fast showtime booking across India
+                          </p>
+                        </div>
+                      </div>
+                      <span className="self-start sm:self-center px-3 py-1 rounded-full bg-buttercream border border-toy-black text-xs font-display font-black">
+                        {cinemaEvents.length} SCREENINGS
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+                      {cinemaEvents.map((event, idx) => (
+                        <ModernLandscapeTicketPass 
+                          key={event.id}
+                          event={event}
+                          index={idx}
+                          currentUser={currentUser}
+                          onBook={(st) => openBookingModal(event, st)}
+                          onWishlist={(e) => handleToggleWishlist(event.id, e)}
+                          onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
+                          onDelete={(e) => handleDeleteEvent(event.id, event.name, e)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Live Music, Concerts & Festivals */}
+                {liveEvents.length > 0 && (
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-toy-black/15 pb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-bubble-pink text-white border-2 border-toy-black shadow-toy flex items-center justify-center shrink-0">
+                          <Music size={20} />
+                        </div>
+                        <div>
+                          <h3 className="font-display font-black text-xl sm:text-2xl text-toy-black">
+                            Live Concerts, Music Festivals & Tech Summits
+                          </h3>
+                          <p className="text-xs font-body font-semibold text-toy-black/60">
+                            Stadium tours, electronic rave nights & keynotes with instant cryptographic QR passes
+                          </p>
+                        </div>
+                      </div>
+                      <span className="self-start sm:self-center px-3 py-1 rounded-full bg-buttercream border border-toy-black text-xs font-display font-black">
+                        {liveEvents.length} LIVE PASSES
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+                      {liveEvents.map((event, idx) => (
+                        <ModernLandscapeTicketPass 
+                          key={event.id}
+                          event={event}
+                          index={idx + 2}
+                          currentUser={currentUser}
+                          onBook={(st) => openBookingModal(event, st)}
+                          onWishlist={(e) => handleToggleWishlist(event.id, e)}
+                          onWaitlist={(e) => handleJoinWaitlist(event.id, e)}
+                          onDelete={(e) => handleDeleteEvent(event.id, event.name, e)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* ─── LAYOUT 4: MODERN LANDSCAPE PASS GRID ─── */
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6" id="parties-container">
+                {events.map((event, idx) => (
+                  <ModernLandscapeTicketPass 
                     key={event.id}
                     event={event}
                     index={idx}
