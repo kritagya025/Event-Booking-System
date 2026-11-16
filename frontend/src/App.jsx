@@ -593,7 +593,7 @@ export default function App() {
               
               {/* Hero Text & Quick Action */}
               <div className="lg:col-span-7 flex flex-col items-start text-left">
-                <h1 className="font-display font-black text-4xl sm:text-6xl md:text-7xl leading-[1.05] tracking-tight text-toy-black mb-5">
+                <h1 className="font-display font-black text-3xl xs:text-4xl sm:text-6xl md:text-7xl leading-[1.05] tracking-tight text-toy-black mb-5">
                   YOUR LIVE EVENT <br className="hidden sm:inline"/>
                   <span className="inline-block relative">
                     <span className="relative z-10 text-white drop-shadow-[4px_4px_0px_#1E1B2E] px-2 py-0.5 bg-candy-purple rounded-2xl border-[3px] border-toy-black rotate-[-2deg] inline-block mr-2">PASS JUST</span>
@@ -601,7 +601,7 @@ export default function App() {
                   <span className="text-bubble-pink underline decoration-wavy decoration-sun-yellow decoration-[6px]">LEVELED UP!</span>
                 </h1>
 
-                <p className="font-body font-semibold text-lg sm:text-xl text-toy-black/80 max-w-xl mb-7 leading-relaxed bg-white/70 backdrop-blur-sm p-4 rounded-2xl border-2 border-toy-black/20 shadow-sm">
+                <p className="font-body font-semibold text-base sm:text-xl text-toy-black/80 max-w-xl mb-7 leading-relaxed bg-white/70 backdrop-blur-sm p-4 rounded-2xl border-2 border-toy-black/20 shadow-sm">
                   The joyful real-time live event & cinema ticketing playground! Reserve favorite seats on interactive auditorium maps, claim instant cryptographic QR passes, and enjoy seamless instant UPI & Rupee checkout.
                 </p>
 
@@ -638,14 +638,14 @@ export default function App() {
                 </form>
 
                 {/* Micro Counters */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white border-2 border-toy-black text-xs font-display font-extrabold shadow-toy">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <div className="inline-flex items-center px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white border-2 border-toy-black text-[11px] sm:text-xs font-display font-extrabold shadow-toy">
                     <span>50,000+ Verified Passes</span>
                   </div>
-                  <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-sky-azure/30 border-2 border-toy-black text-xs font-display font-extrabold shadow-toy">
+                  <div className="inline-flex items-center px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-sky-azure/30 border-2 border-toy-black text-[11px] sm:text-xs font-display font-extrabold shadow-toy">
                     <span>10-Min Live Seat Hold</span>
                   </div>
-                  <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-mint-pop/40 border-2 border-toy-black text-xs font-display font-extrabold shadow-toy">
+                  <div className="inline-flex items-center px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-mint-pop/40 border-2 border-toy-black text-[11px] sm:text-xs font-display font-extrabold shadow-toy">
                     <span>Zero Duplicate Bookings</span>
                   </div>
                 </div>
@@ -657,7 +657,7 @@ export default function App() {
                 <div className="absolute inset-0 bg-sky-azure rounded-[36px] border-[3.5px] border-toy-black transform rotate-3 translate-x-2 translate-y-3 pointer-events-none"></div>
                 
                 {/* Main Card Container */}
-                <div className="relative w-full max-w-md bg-white rounded-[32px] border-[3.5px] border-toy-black p-5 shadow-toy-xl flex flex-col gap-4">
+                <div className="relative w-full max-w-sm sm:max-w-md bg-white rounded-[32px] border-[3.5px] border-toy-black p-4 sm:p-5 shadow-toy-xl flex flex-col gap-4">
                   
                   {/* Event Visual Container with Sticker Pins */}
                   <div className="relative w-full h-56 rounded-2xl border-[2.5px] border-toy-black overflow-hidden bg-candy-purple/10">
@@ -716,7 +716,7 @@ export default function App() {
                       <span>SELECT SHOWTIME</span>
                       <span className="text-bubble-pink">90 Seats Available</span>
                     </div>
-                    <div className="grid grid-cols-4 gap-1.5">
+                    <div className="grid grid-cols-2 xs:grid-cols-4 gap-1.5">
                       {['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM'].map((st) => (
                         <button 
                           key={st}
@@ -765,19 +765,19 @@ export default function App() {
                 {/* Decorative Background Shape */}
                 <div className="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-sun-yellow/40 border-2 border-toy-black -z-0 pointer-events-none"></div>
                 
-                <div className="flex items-center gap-4 relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-bubble-pink text-white border-[2.5px] border-toy-black shadow-toy flex items-center justify-center shrink-0 rotate-[-4deg] p-1">
-                    <CircusTentSticker size={44} />
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 relative z-10">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-bubble-pink text-white border-[2.5px] border-toy-black shadow-toy flex items-center justify-center shrink-0 rotate-[-4deg] p-1">
+                    <CircusTentSticker size={40} />
                   </div>
                   <div>
                     <div className="inline-flex items-center gap-1.5 text-xs font-display font-black uppercase text-candy-purple tracking-wider">
                       <span>Fast Box Office Launch</span>
                       <span className="bg-sun-yellow px-2 py-0.5 rounded-full border border-toy-black text-toy-black">60 SECONDS</span>
                     </div>
-                    <h3 className="font-display font-black text-2xl sm:text-3xl text-toy-black">
+                    <h3 className="font-display font-black text-xl sm:text-3xl text-toy-black">
                       Launch Your Event Box Office in Seconds!
                     </h3>
-                    <p className="font-body font-semibold text-sm text-toy-black/70">
+                    <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/70">
                       Concert promoters, theater hosts, cinema curators — set up real-time seating and sell passes instantly.
                     </p>
                   </div>
@@ -788,7 +788,7 @@ export default function App() {
                   onSubmit={handleCreatePartyQuick}
                   className="w-full lg:w-auto flex-1 max-w-lg flex flex-col sm:flex-row items-stretch gap-2.5 relative z-10"
                 >
-                  <div className="relative flex-1 bg-white rounded-full border-2 border-toy-black px-5 py-3 flex items-center shadow-inner">
+                  <div className="relative flex-1 bg-white rounded-full border-2 border-toy-black px-4 sm:px-5 py-2.5 sm:py-3 flex items-center shadow-inner">
                     <input 
                       id="party-name-input"
                       type="text" 
@@ -799,7 +799,7 @@ export default function App() {
                   </div>
                   <button 
                     type="submit"
-                    className="px-7 py-3 rounded-full bg-sun-yellow hover:bg-[#ffe142] text-toy-black font-display font-black text-sm uppercase tracking-wide border-2 border-toy-black shadow-toy hover:-translate-y-0.5 active:translate-y-0.5 transition-all whitespace-nowrap flex items-center justify-center cursor-pointer"
+                    className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-sun-yellow hover:bg-[#ffe142] text-toy-black font-display font-black text-sm uppercase tracking-wide border-2 border-toy-black shadow-toy hover:-translate-y-0.5 active:translate-y-0.5 transition-all whitespace-nowrap flex items-center justify-center cursor-pointer"
                   >
                     <span>Create Event</span>
                   </button>
@@ -832,48 +832,48 @@ export default function App() {
             </div>
 
             {/* 4 Staggered Bubbly Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               
               {/* Tool 1: Interactive Seat Map */}
-              <div className="bg-white rounded-[28px] border-[3px] border-toy-black p-6 shadow-toy flex flex-col hover:shadow-pop-pink hover:-translate-y-1 transition-all duration-300">
+              <div className="min-w-0 w-full bg-white rounded-[28px] border-[3px] border-toy-black p-5 sm:p-6 shadow-toy flex flex-col hover:shadow-pop-pink hover:-translate-y-1 transition-all duration-300">
                 <div className="w-14 h-14 rounded-2xl bg-bubble-pink/20 border-2 border-toy-black flex items-center justify-center mb-4 shadow-[2px_2px_0px_#1E1B2E]">
                   <CinemaSeatSticker size={36} />
                 </div>
-                <h3 className="font-display font-black text-xl text-toy-black mt-1 mb-2">Live Canvas Seat Map</h3>
-                <p className="font-body font-semibold text-sm text-toy-black/70 leading-relaxed">
+                <h3 className="font-display font-black text-lg sm:text-xl text-toy-black mt-1 mb-2">Live Canvas Seat Map</h3>
+                <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/70 leading-relaxed">
                   Pick exact VIP front-row, orchestra center, or balcony seats in real-time with an automatic 10-minute cart lock.
                 </p>
               </div>
 
               {/* Tool 2: Cryptographic QR Gate Pass */}
-              <div className="bg-white rounded-[28px] border-[3px] border-toy-black p-6 shadow-toy flex flex-col hover:shadow-pop-purple hover:-translate-y-1 transition-all duration-300">
+              <div className="min-w-0 w-full bg-white rounded-[28px] border-[3px] border-toy-black p-5 sm:p-6 shadow-toy flex flex-col hover:shadow-pop-purple hover:-translate-y-1 transition-all duration-300">
                 <div className="w-14 h-14 rounded-2xl bg-candy-purple/20 border-2 border-toy-black flex items-center justify-center mb-4 shadow-[2px_2px_0px_#1E1B2E]">
                   <SecurityShieldSticker size={36} />
                 </div>
-                <h3 className="font-display font-black text-xl text-toy-black mt-1 mb-2">Cryptographic QR Passes</h3>
-                <p className="font-body font-semibold text-sm text-toy-black/70 leading-relaxed">
+                <h3 className="font-display font-black text-lg sm:text-xl text-toy-black mt-1 mb-2">Cryptographic QR Passes</h3>
+                <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/70 leading-relaxed">
                   Tamper-proof digital tickets with instant organizer gate scanner validation. Apple Wallet ready with zero duplicate entries.
                 </p>
               </div>
 
               {/* Tool 3: Instant UPI & Rupee Checkout */}
-              <div className="bg-white rounded-[28px] border-[3px] border-toy-black p-6 shadow-toy flex flex-col hover:shadow-pop-mint hover:-translate-y-1 transition-all duration-300">
+              <div className="min-w-0 w-full bg-white rounded-[28px] border-[3px] border-toy-black p-5 sm:p-6 shadow-toy flex flex-col hover:shadow-pop-mint hover:-translate-y-1 transition-all duration-300">
                 <div className="w-14 h-14 rounded-2xl bg-mint-pop/30 border-2 border-toy-black flex items-center justify-center mb-4 shadow-[2px_2px_0px_#1E1B2E]">
                   <PaymentCardSticker size={36} />
                 </div>
-                <h3 className="font-display font-black text-xl text-toy-black mt-1 mb-2">Instant UPI & Rupee Checkout</h3>
-                <p className="font-body font-semibold text-sm text-toy-black/70 leading-relaxed">
+                <h3 className="font-display font-black text-lg sm:text-xl text-toy-black mt-1 mb-2">Instant UPI & Rupee Checkout</h3>
+                <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/70 leading-relaxed">
                   Seamless domestic settlement in Indian Rupees (₹). Pay with UPI QR, Google Pay, PhonePe, Paytm, Net Banking, or RuPay with zero hidden fees.
                 </p>
               </div>
 
               {/* Tool 4: Waitlist Auto-Promotion */}
-              <div className="bg-white rounded-[28px] border-[3px] border-toy-black p-6 shadow-toy flex flex-col hover:shadow-pop-azure hover:-translate-y-1 transition-all duration-300" id="photo-booth">
+              <div className="min-w-0 w-full bg-white rounded-[28px] border-[3px] border-toy-black p-5 sm:p-6 shadow-toy flex flex-col hover:shadow-pop-azure hover:-translate-y-1 transition-all duration-300" id="photo-booth">
                 <div className="w-14 h-14 rounded-2xl bg-sky-azure/30 border-2 border-toy-black flex items-center justify-center mb-4 shadow-[2px_2px_0px_#1E1B2E]">
                   <HourglassWaitlistSticker size={36} />
                 </div>
-                <h3 className="font-display font-black text-xl text-toy-black mt-1 mb-2">Waitlist Auto-Promotion</h3>
-                <p className="font-body font-semibold text-sm text-toy-black/70 leading-relaxed">
+                <h3 className="font-display font-black text-lg sm:text-xl text-toy-black mt-1 mb-2">Waitlist Auto-Promotion</h3>
+                <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/70 leading-relaxed">
                   Sold-out shows? Join the automated waitlist queue. When an attendee cancels, waitlisted fans are automatically promoted into open seats!
                 </p>
               </div>
@@ -881,26 +881,26 @@ export default function App() {
             </div>
 
             {/* INTERACTIVE EVENT CROWD VIBE METER WIDGET */}
-            <div className="mt-10 bg-white rounded-blob border-[3px] border-toy-black p-6 sm:p-8 shadow-toy-lg flex flex-col lg:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-sun-yellow border-2 border-toy-black shadow-toy flex items-center justify-center shrink-0">
-                  <ThermometerVibeSticker size={38} />
+            <div className="mt-8 sm:mt-10 bg-white rounded-blob border-[3px] border-toy-black p-5 sm:p-8 shadow-toy-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 sm:gap-6">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-sun-yellow border-2 border-toy-black shadow-toy flex items-center justify-center shrink-0">
+                  <ThermometerVibeSticker size={34} />
                 </div>
                 <div>
                   <h4 className="font-display font-black text-xl sm:text-2xl text-toy-black">
                     Interactive Crowd Vibe Meter
                   </h4>
-                  <p className="font-body font-semibold text-sm text-toy-black/70">
+                  <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/70">
                     Dial the venue crowd energy from "Acoustic & Cozy" to "Intergalactic Arena Euphoria"!
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center justify-start sm:justify-start lg:justify-end gap-1.5 sm:gap-2 w-full lg:w-auto">
                 <button 
                   type="button"
                   onClick={() => handleSetVibe('chill', 'Low-Fi Acoustic & Unplugged', '#00D2FF')}
-                  className={`vibe-btn px-4 py-2 rounded-full border-2 border-toy-black font-display font-black text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
+                  className={`vibe-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border-2 border-toy-black font-display font-black text-[11px] sm:text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
                     vibeMode.id === 'chill' ? 'bg-sky-azure text-toy-black shadow-toy' : 'bg-buttercream'
                   }`}
                 >
@@ -910,7 +910,7 @@ export default function App() {
                 <button 
                   type="button"
                   onClick={() => handleSetVibe('dinner', 'Broadway Musical & Intimate Jazz', '#FF7E67')}
-                  className={`vibe-btn px-4 py-2 rounded-full border-2 border-toy-black font-display font-black text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
+                  className={`vibe-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border-2 border-toy-black font-display font-black text-[11px] sm:text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
                     vibeMode.id === 'dinner' ? 'bg-coral-peach text-white shadow-toy' : 'bg-buttercream'
                   }`}
                 >
@@ -920,7 +920,7 @@ export default function App() {
                 <button 
                   type="button"
                   onClick={() => handleSetVibe('disco', 'Retro Synth & Electric Disco', '#8B5CF6')}
-                  className={`vibe-btn px-4 py-2 rounded-full border-2 border-toy-black font-display font-black text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
+                  className={`vibe-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border-2 border-toy-black font-display font-black text-[11px] sm:text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
                     vibeMode.id === 'disco' ? 'bg-candy-purple text-white shadow-toy' : 'bg-buttercream'
                   }`}
                 >
@@ -930,7 +930,7 @@ export default function App() {
                 <button 
                   type="button"
                   onClick={() => handleSetVibe('feral', '140BPM Sold-Out Arena Rave!', '#FF4081')}
-                  className={`vibe-btn px-4 py-2 rounded-full border-2 border-toy-black font-display font-black text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
+                  className={`vibe-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border-2 border-toy-black font-display font-black text-[11px] sm:text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
                     vibeMode.id === 'feral' ? 'bg-bubble-pink text-white shadow-toy' : 'bg-buttercream'
                   }`}
                 >
@@ -1078,13 +1078,13 @@ export default function App() {
 
             {/* Event Cards in Playful Neo-Memphis Style */}
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {[1, 2, 3, 4].map((i) => (
                   <EventCardSkeleton key={i} />
                 ))}
               </div>
             ) : events.length === 0 ? (
-              <div className="bg-white border-[3px] border-toy-black rounded-[32px] p-10 text-center text-toy-black shadow-toy-lg">
+              <div className="bg-white border-[3px] border-toy-black rounded-[32px] p-6 sm:p-10 text-center text-toy-black shadow-toy-lg">
                 <div className="flex justify-center mb-3">
                   <TicketSticker size={52} />
                 </div>
@@ -1101,7 +1101,7 @@ export default function App() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="parties-container">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6" id="parties-container">
                 {events.map((event, idx) => (
                   <NeoMemphisPartyCard 
                     key={event.id}
@@ -1120,15 +1120,15 @@ export default function App() {
             {/* ══════════════════════════════════════════════════════════════
                 NEO-MEMPHIS LIVE CITY RADAR & LOCATION HUB
                 ══════════════════════════════════════════════════════════════ */}
-            <div className="mt-10 bg-lilac-wash rounded-3xl border-[3px] border-toy-black p-6 sm:p-8 shadow-toy flex flex-col gap-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div className="mt-8 sm:mt-10 bg-lilac-wash rounded-3xl border-[3px] border-toy-black p-4 sm:p-6 md:p-8 shadow-toy flex flex-col gap-5 sm:gap-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
                 {/* Left: Custom Design Asset & Context Heading */}
-                <div className="flex items-start sm:items-center gap-4">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-white border-[3px] border-toy-black shadow-toy flex items-center justify-center shrink-0 p-2 hover:rotate-3 transition-transform">
+                <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+                  <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border-[2.5px] sm:border-[3px] border-toy-black shadow-toy flex items-center justify-center shrink-0 p-1.5 sm:p-2 hover:rotate-3 transition-transform">
                     <CityLocationSticker size={64} className="w-full h-full" />
                   </div>
                   <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-mint-pop border-2 border-toy-black text-[10px] font-display font-black uppercase text-toy-black shadow-[2px_2px_0px_#1E1B2E]">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse border border-toy-black"></span>
                         PAN-INDIA RADAR ACTIVE
@@ -1152,7 +1152,7 @@ export default function App() {
                         </span>
                       )}
                     </div>
-                    <h4 className="font-display font-black text-xl sm:text-2xl text-toy-black tracking-tight">
+                    <h4 className="font-display font-black text-lg sm:text-2xl text-toy-black tracking-tight">
                       Looking for live shows in your city?
                     </h4>
                     <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/75 mt-0.5 max-w-2xl">
@@ -1171,7 +1171,7 @@ export default function App() {
                       handleSearchAndFilter(nextFilters);
                       showToast('Showing events across all Indian cities!', 'info');
                     }}
-                    className={`px-5 py-2.5 rounded-full font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black shadow-toy transition-all whitespace-nowrap cursor-pointer ${
+                    className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black shadow-toy transition-all whitespace-nowrap cursor-pointer ${
                       !filters.city 
                         ? 'bg-toy-black text-white hover:bg-toy-black/80' 
                         : 'bg-white hover:bg-buttercream text-toy-black hover:-translate-y-0.5 active:translate-y-0.5'
@@ -1183,8 +1183,8 @@ export default function App() {
               </div>
 
               {/* Quick City Hub Selector Pills */}
-              <div className="pt-2 border-t-2 border-toy-black/15 flex flex-wrap items-center gap-2">
-                <span className="text-[11px] font-display font-black uppercase text-toy-black/60 mr-1 tracking-wide">
+              <div className="pt-2 border-t-2 border-toy-black/15 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="text-[10px] sm:text-[11px] font-display font-black uppercase text-toy-black/60 mr-1 tracking-wide">
                   SELECT CITY:
                 </span>
                 {[
@@ -1212,7 +1212,7 @@ export default function App() {
                           'info'
                         );
                       }}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-display font-black uppercase tracking-wide border-2 border-toy-black transition-all cursor-pointer ${
+                      className={`px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-display font-black uppercase tracking-wide border-2 border-toy-black transition-all cursor-pointer ${
                         isSelected
                           ? 'bg-sun-yellow text-toy-black shadow-toy scale-105'
                           : 'bg-white text-toy-black hover:bg-buttercream hover:-translate-y-0.5 active:translate-y-0.5 shadow-[2px_2px_0px_#1E1B2E]'
@@ -1238,11 +1238,14 @@ export default function App() {
       {/* ══════════════════════════════════════════════════════════════
           FLOATING BOTTOM ACTION CAPSULE
           ══════════════════════════════════════════════════════════════ */}
-      <div className="fixed bottom-5 inset-x-0 z-40 flex justify-center px-4 pointer-events-none">
-        <div className="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border-[3px] border-toy-black px-4 py-2.5 shadow-toy-lg flex items-center gap-3 sm:gap-6 max-w-md w-full justify-between hover:scale-[1.02] transition-transform">
-          <div className="flex items-center gap-2 overflow-hidden">
-            <span className="w-3 h-3 rounded-full bg-mint-pop border border-toy-black animate-ping shrink-0"></span>
-            <span className="font-display font-black text-xs sm:text-sm text-toy-black truncate">Ready to reserve your seats?</span>
+      <div className="fixed bottom-4 sm:bottom-5 inset-x-0 z-40 flex justify-center px-3 sm:px-4 pointer-events-none">
+        <div className="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border-[3px] border-toy-black px-3.5 sm:px-5 py-2 sm:py-2.5 shadow-toy-lg flex items-center gap-2.5 sm:gap-6 max-w-md w-full justify-between hover:scale-[1.02] transition-transform">
+          <div className="flex items-center gap-2 overflow-hidden min-w-0">
+            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-mint-pop border border-toy-black animate-ping shrink-0"></span>
+            <span className="font-display font-black text-xs sm:text-sm text-toy-black truncate">
+              <span className="hidden xs:inline">Ready to reserve your seats?</span>
+              <span className="xs:hidden">Reserve seats?</span>
+            </span>
           </div>
           <button 
             type="button"
@@ -1251,10 +1254,11 @@ export default function App() {
               if (el) el.scrollIntoView({ behavior: 'smooth' });
               else handleNavigate('home');
             }}
-            className="px-5 py-2 rounded-full bg-bubble-pink text-white font-display font-black text-xs uppercase tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#ff2a73] active:translate-y-0.5 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-bubble-pink text-white font-display font-black text-xs uppercase tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#ff2a73] active:translate-y-0.5 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0"
           >
-            <Ticket size={14} />
-            <span>Find Tickets</span>
+            <Ticket size={13} />
+            <span className="hidden xs:inline">Find Tickets</span>
+            <span className="xs:hidden">Tickets</span>
           </button>
         </div>
       </div>
@@ -1276,7 +1280,7 @@ export default function App() {
           </div>
 
           {/* Links */}
-          <div className="flex flex-wrap items-center justify-center gap-5 font-display font-bold text-xs uppercase tracking-wider text-buttercream/80">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 font-display font-bold text-[11px] sm:text-xs uppercase tracking-wider text-buttercream/80 text-center">
             <a 
               href="#explore" 
               onClick={(e) => { e.preventDefault(); scrollToResults(); }}
@@ -1332,7 +1336,7 @@ export default function App() {
           </div>
 
           {/* Copyright Pill */}
-          <div className="text-xs font-body font-semibold text-buttercream/60 bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20">
+          <div className="text-[11px] sm:text-xs font-body font-semibold text-buttercream/60 bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20 text-center">
             © 2026 EventHub Inc. • Keep it joyful.
           </div>
         </div>
@@ -1445,7 +1449,7 @@ function NeoMemphisPartyCard({
   const showtimes = event.showtimes || (isCinema ? ['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM'] : null);
 
   return (
-    <div className={`party-card bg-white rounded-[26px] border-[3px] border-toy-black shadow-toy overflow-hidden flex flex-col justify-between ${theme.popShadow} hover:-translate-y-1 transition-all duration-300`}>
+    <div className={`party-card min-w-0 w-full bg-white rounded-[26px] border-[3px] border-toy-black shadow-toy overflow-hidden flex flex-col justify-between ${theme.popShadow} hover:-translate-y-1 transition-all duration-300`}>
       <div>
         {/* Top Image Box */}
         <div className="relative w-full h-48 bg-toy-black border-b-[2.5px] border-toy-black overflow-hidden">

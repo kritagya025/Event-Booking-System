@@ -1930,10 +1930,10 @@ export default function EventHubArcadeRunner() {
         {/* ─── RETRO ARCADE HUD OVERLAY ─── */}
         
         {/* Top-Left: Current Passes & Record Passes */}
-        <div className="absolute top-3 sm:top-4 left-4 sm:left-6 flex items-center gap-2 pointer-events-none">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sun-yellow border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
-            <Ticket className="w-3.5 h-3.5 text-toy-black" />
-            <span className="font-display font-black text-xs text-toy-black uppercase tracking-wider">
+        <div className="absolute top-2.5 sm:top-4 left-3 sm:left-6 flex items-center gap-1.5 sm:gap-2 pointer-events-none">
+          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-sun-yellow border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
+            <Ticket className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-toy-black" />
+            <span className="font-display font-black text-[10px] sm:text-xs text-toy-black uppercase tracking-wider">
               PASSES: {passesCollected}
             </span>
           </div>
@@ -1947,11 +1947,11 @@ export default function EventHubArcadeRunner() {
           </div>
 
           {/* Lives Counter (3 Hearts) */}
-          <div className="inline-flex items-center gap-0.5 px-2.5 py-1 rounded-full bg-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
+          <div className="inline-flex items-center gap-0.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
             {[1, 2, 3].map((heartIndex) => (
               <Heart 
                 key={heartIndex} 
-                className={`w-3.5 h-3.5 transition-colors ${
+                className={`w-3 sm:w-3.5 h-3 sm:h-3.5 transition-colors ${
                   heartIndex <= lives 
                     ? 'text-bubble-pink fill-bubble-pink' 
                     : 'text-toy-black/30'
@@ -1962,9 +1962,9 @@ export default function EventHubArcadeRunner() {
 
           {/* Combo Multiplier Badge */}
           {comboCount >= 2 && !isGameOver && (
-            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-bubble-pink text-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] animate-bounce">
-              <Flame className="w-3.5 h-3.5 text-sun-yellow fill-sun-yellow" />
-              <span className="font-display font-black text-[11px] uppercase tracking-wider">
+            <div className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-bubble-pink text-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] animate-bounce">
+              <Flame className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-sun-yellow fill-sun-yellow" />
+              <span className="font-display font-black text-[10px] sm:text-[11px] uppercase tracking-wider">
                 COMBO x{comboCount}!
               </span>
             </div>
@@ -1981,12 +1981,12 @@ export default function EventHubArcadeRunner() {
         </div>
 
         {/* Top-Right: Score Counter, Highest Score & Audio Toggle */}
-        <div className="absolute top-3 sm:top-4 right-4 sm:right-6 flex items-center gap-2">
+        <div className="absolute top-2.5 sm:top-4 right-3 sm:right-6 flex items-center gap-1.5 sm:gap-2">
           {/* Current Run Score */}
-          <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] pointer-events-none">
-            <Sparkles className="w-3.5 h-3.5 text-bubble-pink" />
-            <span className="font-display font-black text-xs text-toy-black uppercase tracking-wider">
-              SCORE: {score.toLocaleString()}
+          <div className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] pointer-events-none">
+            <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-bubble-pink" />
+            <span className="font-display font-black text-[10px] sm:text-xs text-toy-black uppercase tracking-wider">
+              <span className="hidden xs:inline">SCORE: </span>{score.toLocaleString()}
             </span>
           </div>
 
@@ -2005,22 +2005,22 @@ export default function EventHubArcadeRunner() {
               e.stopPropagation();
               setMuted(!muted);
             }}
-            className="w-8 h-8 rounded-full bg-lilac-wash border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E] flex items-center justify-center hover:bg-sun-yellow transition-colors cursor-pointer"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-lilac-wash border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E] flex items-center justify-center hover:bg-sun-yellow transition-colors cursor-pointer"
             title={muted ? 'Unmute 8-bit sound fx' : 'Mute sound fx'}
           >
-            {muted ? <VolumeX size={14} className="text-toy-black" /> : <Volume2 size={14} className="text-toy-black" />}
+            {muted ? <VolumeX size={12} className="text-toy-black" /> : <Volume2 size={12} className="text-toy-black" />}
           </button>
         </div>
 
         {/* Bottom-Right: Interactive Jump & Airborne Status (Using Bespoke Vector Stickers) */}
-        <div className="absolute bottom-2.5 sm:bottom-3 right-4 sm:right-6 pointer-events-none">
+        <div className="absolute bottom-2 sm:bottom-3 right-3 sm:right-6 pointer-events-none">
           {isGameOver ? (
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] bg-sun-yellow text-toy-black animate-pulse">
-              <RotateCcw size={16} />
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full font-display font-black text-[11px] sm:text-xs uppercase tracking-wider border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] bg-sun-yellow text-toy-black animate-pulse">
+              <RotateCcw size={14} />
               <span>PLAY AGAIN ↺</span>
             </div>
           ) : (
-            <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full font-display font-black text-[11px] sm:text-xs uppercase tracking-wider border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] transition-all text-toy-black ${
+            <div className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-display font-black text-[10px] sm:text-xs uppercase tracking-wider border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] transition-all text-toy-black ${
               isSpringBoosted
                 ? 'bg-sun-yellow scale-105 animate-bounce'
                 : isAirborne 
@@ -2029,18 +2029,19 @@ export default function EventHubArcadeRunner() {
             }`}>
               {isSpringBoosted ? (
                 <>
-                  <SpringJumpSticker size={18} />
+                  <SpringJumpSticker size={16} />
                   <span>SUPER SPRING JUMP!</span>
                 </>
               ) : isAirborne ? (
                 <>
-                  <AirborneBoosterSticker size={18} />
-                  <span>{canDoubleJump ? 'AIRBORNE! TAP TO DOUBLE JUMP' : 'MAX HEIGHT!'}</span>
+                  <AirborneBoosterSticker size={16} />
+                  <span>{canDoubleJump ? 'TAP TO DOUBLE JUMP' : 'MAX HEIGHT!'}</span>
                 </>
               ) : (
                 <>
-                  <ArcadeJoystickSticker size={18} />
-                  <span>CLICK OR SPACE TO JUMP!</span>
+                  <ArcadeJoystickSticker size={16} />
+                  <span className="hidden sm:inline">CLICK OR SPACE TO JUMP!</span>
+                  <span className="sm:hidden">TAP TO JUMP!</span>
                 </>
               )}
             </div>

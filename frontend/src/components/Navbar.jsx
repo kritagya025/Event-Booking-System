@@ -71,21 +71,21 @@ export default function Navbar({
       </div>
 
       {/* NAVIGATION HEADER: Chunky Neo-Memphis Floating Pill */}
-      <header className="sticky top-4 w-full z-50 px-4 sm:px-8">
-        <div className="max-w-6xl mx-auto bg-white/95 backdrop-blur-md border-[3px] border-toy-black rounded-full px-4 sm:px-5 py-2.5 sm:py-3 shadow-toy flex items-center justify-between transition-transform duration-200">
+      <header className="sticky top-4 w-full z-50 px-3 xs:px-4 sm:px-8">
+        <div className="max-w-6xl mx-auto bg-white/95 backdrop-blur-md border-[3px] border-toy-black rounded-full px-3 xs:px-4 sm:px-5 py-2 sm:py-3 shadow-toy flex items-center justify-between transition-transform duration-200">
           
           {/* Brand Logo */}
           <div 
             onClick={() => handleNavClick('home')} 
-            className="flex items-center gap-2 group cursor-pointer select-none"
+            className="flex items-center gap-1.5 xs:gap-2 group cursor-pointer select-none shrink-0"
           >
-            <div className="w-10 h-10 rounded-full bg-sun-yellow border-[2.5px] border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center justify-center group-hover:rotate-12 transition-transform">
-              <TicketSticker size={25} />
+            <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full bg-sun-yellow border-[2px] sm:border-[2.5px] border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center justify-center group-hover:rotate-12 transition-transform shrink-0">
+              <TicketSticker size={22} />
             </div>
-            <span className="font-display font-black text-2xl tracking-tight text-toy-black group-hover:text-bubble-pink transition-colors">
+            <span className="font-display font-black text-xl xs:text-2xl tracking-tight text-toy-black group-hover:text-bubble-pink transition-colors">
               EventHub
             </span>
-            <span className="bg-bubble-pink text-white text-[10px] font-display font-extrabold uppercase px-2 py-0.5 rounded-full border border-toy-black rotate-[-4deg]">
+            <span className="hidden xs:inline-block bg-bubble-pink text-white text-[9px] sm:text-[10px] font-display font-extrabold uppercase px-1.5 sm:px-2 py-0.5 rounded-full border border-toy-black rotate-[-4deg]">
               BOX OFFICE
             </span>
           </div>
@@ -299,9 +299,10 @@ export default function Navbar({
               <button 
                 type="button"
                 onClick={() => handleNavClick('create-event')}
-                className="px-4 sm:px-5 py-2 rounded-full bg-mint-pop text-toy-black font-display font-black text-xs sm:text-sm tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#34f5aa] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#1E1B2E] transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                className="px-3 xs:px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-mint-pop text-toy-black font-display font-black text-xs sm:text-sm tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#34f5aa] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#1E1B2E] transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
               >
-                <span>Create Event</span>
+                <span className="hidden xs:inline">Create Event</span>
+                <span className="xs:hidden">Create</span>
               </button>
             ) : (
               <button 
@@ -314,9 +315,10 @@ export default function Navbar({
                     handleNavClick('home');
                   }
                 }}
-                className="px-4 sm:px-5 py-2 rounded-full bg-mint-pop text-toy-black font-display font-black text-xs sm:text-sm tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#34f5aa] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#1E1B2E] transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                className="px-3 xs:px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-mint-pop text-toy-black font-display font-black text-xs sm:text-sm tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#34f5aa] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#1E1B2E] transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
               >
-                <span>Find Tickets</span>
+                <span className="hidden xs:inline">Find Tickets</span>
+                <span className="xs:hidden">Tickets</span>
               </button>
             )}
 
@@ -324,10 +326,10 @@ export default function Navbar({
             <button 
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-10 h-10 rounded-full bg-lilac-wash text-toy-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center justify-center cursor-pointer ml-1"
+              className="md:hidden w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full bg-lilac-wash text-toy-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center justify-center cursor-pointer ml-1 shrink-0"
               aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
