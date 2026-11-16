@@ -593,7 +593,7 @@ export default function App() {
               
               {/* Hero Text & Quick Action */}
               <div className="lg:col-span-7 flex flex-col items-start text-left min-w-0 w-full">
-                <h1 className="font-display font-black text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight text-toy-black mb-4 sm:mb-5">
+                <h1 className="font-display font-black text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight text-toy-black mb-6 sm:mb-7">
                   YOUR LIVE EVENT <br className="hidden sm:inline"/>
                   <span className="inline-block relative my-1 sm:my-0">
                     <span className="relative z-10 text-white drop-shadow-[2px_2px_0px_#1E1B2E] sm:drop-shadow-[4px_4px_0px_#1E1B2E] px-2 py-0.5 bg-candy-purple rounded-xl sm:rounded-2xl border-2 sm:border-[3px] border-toy-black rotate-[-2deg] inline-block mr-1.5 sm:mr-2 whitespace-nowrap">PASS JUST</span>
@@ -1046,37 +1046,6 @@ export default function App() {
                   )}
                 </div>
               </form>
-
-              {/* Category Pills Strip (Smooth Swipe Track without native scrollbars) */}
-              <div className="mt-3 pt-3 border-t-2 border-dashed border-toy-black/20 flex items-center gap-2 text-xs overflow-x-auto no-scrollbar scrollbar-none pb-1 -mx-1 px-1 touch-pan-x min-w-0">
-                {categories.map((cat) => {
-                  const isActive = (filters.category || '') === cat.id;
-                  const count = categoryCounts[cat.key] ?? 0;
-                  return (
-                    <button
-                      key={cat.key}
-                      type="button"
-                      onClick={() => {
-                        const nextFilters = { ...filters, category: cat.id };
-                        setFilters(nextFilters);
-                        handleSearchAndFilter(nextFilters);
-                      }}
-                      className={`px-3 sm:px-3.5 py-1.5 rounded-full font-display font-bold text-xs border-2 border-toy-black transition-all shrink-0 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                        isActive 
-                          ? 'bg-candy-purple text-white shadow-toy' 
-                          : 'bg-buttercream hover:bg-white text-toy-black hover:-translate-y-0.5 active:translate-y-0.5'
-                      }`}
-                    >
-                      <span>{cat.label}</span>
-                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full border border-toy-black font-black ${
-                        isActive ? 'bg-sun-yellow text-toy-black' : 'bg-white text-toy-black'
-                      }`}>
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
             </div>
 
             {/* Event Cards in Playful Neo-Memphis Style */}
@@ -1123,32 +1092,32 @@ export default function App() {
             {/* ══════════════════════════════════════════════════════════════
                 NEO-MEMPHIS LIVE CITY RADAR & LOCATION HUB
                 ══════════════════════════════════════════════════════════════ */}
-            <div className="mt-8 sm:mt-10 bg-lilac-wash rounded-3xl border-[3px] border-toy-black p-4 sm:p-6 md:p-8 shadow-toy flex flex-col gap-5 sm:gap-6 min-w-0">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 min-w-0">
+            <div className="mt-8 sm:mt-10 bg-lilac-wash rounded-3xl border-[3px] border-toy-black p-4 sm:p-6 md:p-7 shadow-toy flex flex-col gap-4 sm:gap-5 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 min-w-0">
                 {/* Left: Custom Design Asset & Context Heading */}
-                <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
-                  <div className="w-12 h-12 sm:w-16 md:w-20 sm:h-16 md:h-20 rounded-2xl sm:rounded-3xl bg-white border-[2px] sm:border-[3px] border-toy-black shadow-toy flex items-center justify-center shrink-0 p-1.5 sm:p-2 hover:rotate-3 transition-transform">
-                    <CityLocationSticker size={56} className="w-full h-full" />
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-white border-2 sm:border-[2.5px] border-toy-black shadow-toy flex items-center justify-center shrink-0 p-1.5 hover:rotate-3 transition-transform">
+                    <CityLocationSticker size={48} className="w-full h-full" />
                   </div>
                   <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-mint-pop border-2 border-toy-black text-[10px] font-display font-black uppercase text-toy-black shadow-[2px_2px_0px_#1E1B2E]">
+                    <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-mint-pop border border-toy-black text-[10px] font-display font-black uppercase text-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse border border-toy-black"></span>
                         PAN-INDIA RADAR ACTIVE
                       </span>
                       {filters.city && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sun-yellow border-2 border-toy-black text-[10px] font-display font-black uppercase text-toy-black shadow-[2px_2px_0px_#1E1B2E]">
-                          FILTER: {filters.city}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sun-yellow border border-toy-black text-[10px] font-display font-black uppercase text-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E]">
+                          CITY: {filters.city}
                           <button
                             type="button"
                             onClick={() => {
                               const nextFilters = { ...filters, city: '' };
                               setFilters(nextFilters);
                               handleSearchAndFilter(nextFilters);
-                              showToast('Cleared city filter — showing all cities!', 'info');
+                              showToast('Showing all cities across India!', 'info');
                             }}
                             className="ml-1 hover:text-bubble-pink cursor-pointer font-black"
-                            title="Clear city"
+                            title="Clear city filter"
                           >
                             ✕
                           </button>
@@ -1158,14 +1127,11 @@ export default function App() {
                     <h4 className="font-display font-black text-lg sm:text-2xl text-toy-black tracking-tight leading-snug">
                       Looking for live shows in your city?
                     </h4>
-                    <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/75 mt-0.5 max-w-2xl leading-relaxed">
-                      From intimate indie concerts to IMAX midnight premieres across India (Mumbai, Bengaluru, Delhi NCR, Hyderabad, Goa & more). Tap your hub to filter instantly:
-                    </p>
                   </div>
                 </div>
 
-                {/* Right: Browse All Cities Action */}
-                <div className="shrink-0 self-start md:self-center">
+                {/* Right: Reset Action (compact) */}
+                {filters.city && (
                   <button 
                     type="button"
                     onClick={() => {
@@ -1174,20 +1140,20 @@ export default function App() {
                       handleSearchAndFilter(nextFilters);
                       showToast('Showing events across all Indian cities!', 'info');
                     }}
-                    className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black shadow-toy transition-all whitespace-nowrap cursor-pointer ${
-                      !filters.city 
-                        ? 'bg-toy-black text-white hover:bg-toy-black/80' 
-                        : 'bg-white hover:bg-buttercream text-toy-black hover:-translate-y-0.5 active:translate-y-0.5'
-                    }`}
+                    className="self-start sm:self-center px-3.5 py-1.5 rounded-full font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black bg-white hover:bg-buttercream text-toy-black shadow-toy transition-all whitespace-nowrap cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5"
                   >
-                    View All Shows ➔
+                    View All Cities ➔
                   </button>
-                </div>
+                )}
               </div>
 
-              {/* Quick City Hub Selector Pills (Silky smooth horizontal swipe without native scrollbars) */}
-              <div className="pt-2 border-t-2 border-toy-black/15 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-1 -mx-1 px-1 touch-pan-x min-w-0">
-                <span className="text-[10px] sm:text-[11px] font-display font-black uppercase text-toy-black/60 mr-1 tracking-wide shrink-0">
+              <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/75 -mt-1 max-w-2xl leading-relaxed">
+                From intimate indie concerts to IMAX midnight premieres across India. Tap your city hub to filter instantly:
+              </p>
+
+              {/* Quick City Hub Selector: Clean wrap pills with full names visible */}
+              <div className="pt-3 border-t-2 border-toy-black/15 flex flex-wrap items-center gap-2">
+                <span className="text-[10px] sm:text-[11px] font-display font-black uppercase text-toy-black/60 mr-0.5 tracking-wider">
                   SELECT CITY:
                 </span>
                 {[
@@ -1215,7 +1181,7 @@ export default function App() {
                           'info'
                         );
                       }}
-                      className={`px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-display font-black uppercase tracking-wide border-2 border-toy-black transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+                      className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-display font-black uppercase tracking-wide border-2 border-toy-black transition-all cursor-pointer ${
                         isSelected
                           ? 'bg-sun-yellow text-toy-black shadow-toy scale-105'
                           : 'bg-white text-toy-black hover:bg-buttercream hover:-translate-y-0.5 active:translate-y-0.5 shadow-[2px_2px_0px_#1E1B2E]'
@@ -1239,15 +1205,14 @@ export default function App() {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          FLOATING BOTTOM ACTION CAPSULE
+          FLOATING BOTTOM ACTION CAPSULE (DESKTOP ONLY — HIDDEN ON MOBILE TO PREVENT COLLISION WITH HOST EMBARKO BADGE)
           ══════════════════════════════════════════════════════════════ */}
-      <div className="fixed bottom-3 sm:bottom-5 inset-x-0 z-40 flex justify-center px-3 sm:px-4 pointer-events-none pb-[env(safe-area-inset-bottom)]">
-        <div className="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border-[2.5px] sm:border-[3px] border-toy-black px-3 sm:px-5 py-1.5 sm:py-2.5 shadow-toy sm:shadow-toy-lg flex items-center gap-2 sm:gap-6 max-w-md w-full justify-between hover:scale-[1.01] transition-all">
-          <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden min-w-0">
-            <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-mint-pop border border-toy-black animate-ping shrink-0"></span>
-            <span className="font-display font-black text-xs sm:text-sm text-toy-black truncate">
-              <span className="hidden xs:inline">Ready to reserve your seats?</span>
-              <span className="xs:hidden">Reserve seats?</span>
+      <div className="hidden sm:flex fixed bottom-5 inset-x-0 z-40 justify-center px-4 pointer-events-none">
+        <div className="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border-[3px] border-toy-black px-5 py-2.5 shadow-toy-lg flex items-center gap-6 max-w-md w-full justify-between hover:scale-[1.01] transition-all">
+          <div className="flex items-center gap-2 overflow-hidden min-w-0">
+            <span className="w-3 h-3 rounded-full bg-mint-pop border border-toy-black animate-ping shrink-0"></span>
+            <span className="font-display font-black text-sm text-toy-black truncate">
+              Ready to reserve your seats?
             </span>
           </div>
           <button 
@@ -1257,11 +1222,10 @@ export default function App() {
               if (el) el.scrollIntoView({ behavior: 'smooth' });
               else handleNavigate('home');
             }}
-            className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full bg-bubble-pink text-white font-display font-black text-[11px] sm:text-xs uppercase tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#ff2a73] active:translate-y-0.5 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0"
+            className="px-5 py-2 rounded-full bg-bubble-pink text-white font-display font-black text-xs uppercase tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#ff2a73] active:translate-y-0.5 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0"
           >
-            <Ticket size={12} className="shrink-0" />
-            <span className="hidden xs:inline">Find Tickets</span>
-            <span className="xs:hidden">Tickets</span>
+            <Ticket size={13} className="shrink-0" />
+            <span>Find Tickets</span>
           </button>
         </div>
       </div>
@@ -1542,8 +1506,8 @@ function NeoMemphisPartyCard({
 
       {/* Card Footer */}
       <div className="p-4 pt-0 flex items-center justify-between border-t border-dashed border-toy-black/20 pt-3 mt-1">
-        <span className="text-xs font-display font-extrabold text-toy-black truncate max-w-[120px]">
-          {event.venueName ? event.venueName.slice(0, 14) : 'EventHub Box Office'}
+        <span className="text-xs font-display font-extrabold text-toy-black truncate max-w-[140px] xs:max-w-[170px]" title={event.venueName || event.venueAddress || 'EventHub Box Office'}>
+          {event.venueName || event.venueAddress || 'EventHub Box Office'}
         </span>
         
         {isSoldOut ? (
