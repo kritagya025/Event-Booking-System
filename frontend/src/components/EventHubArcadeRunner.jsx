@@ -1927,89 +1927,90 @@ export default function EventHubArcadeRunner() {
           className="w-full h-full block" 
         />
 
-        {/* ─── RETRO ARCADE HUD OVERLAY ─── */}
-        
-        {/* Top-Left: Current Passes & Record Passes */}
-        <div className="absolute top-2.5 sm:top-4 left-3 sm:left-6 flex items-center gap-1.5 sm:gap-2 pointer-events-none">
-          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-sun-yellow border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
-            <Ticket className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-toy-black" />
-            <span className="font-display font-black text-[10px] sm:text-xs text-toy-black uppercase tracking-wider">
-              PASSES: {passesCollected}
-            </span>
-          </div>
-
-          {/* Highest Passes Ever Badge */}
-          <div className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-lilac-wash text-toy-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
-            <Trophy className="w-3 h-3 text-toy-black" />
-            <span className="font-display font-black text-[11px] uppercase tracking-wider">
-              BEST: {highPasses}
-            </span>
-          </div>
-
-          {/* Lives Counter (3 Hearts) */}
-          <div className="inline-flex items-center gap-0.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
-            {[1, 2, 3].map((heartIndex) => (
-              <Heart 
-                key={heartIndex} 
-                className={`w-3 sm:w-3.5 h-3 sm:h-3.5 transition-colors ${
-                  heartIndex <= lives 
-                    ? 'text-bubble-pink fill-bubble-pink' 
-                    : 'text-toy-black/30'
-                }`} 
-              />
-            ))}
-          </div>
-
-          {/* Combo Multiplier Badge */}
-          {comboCount >= 2 && !isGameOver && (
-            <div className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-bubble-pink text-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] animate-bounce">
-              <Flame className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-sun-yellow fill-sun-yellow" />
-              <span className="font-display font-black text-[10px] sm:text-[11px] uppercase tracking-wider">
-                COMBO x{comboCount}!
+        {/* ─── RETRO ARCADE HUD OVERLAY (RESPONSIVE FLEX BAR) ─── */}
+        <div className="absolute top-2 sm:top-3.5 inset-x-2 sm:inset-x-5 flex items-center justify-between gap-1 z-10 pointer-events-none">
+          {/* Left HUD: Current Passes & Lives */}
+          <div className="flex items-center gap-1 sm:gap-1.5 min-w-0 pointer-events-auto">
+            <div className="inline-flex items-center gap-1 px-1.5 xs:px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-sun-yellow border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E] shrink-0">
+              <Ticket className="w-2.5 xs:w-3 sm:w-3.5 h-2.5 xs:h-3 sm:h-3.5 text-toy-black" />
+              <span className="font-display font-black text-[9px] xs:text-[10px] sm:text-xs text-toy-black uppercase tracking-wider">
+                <span className="hidden xs:inline">PASSES: </span>{passesCollected}
               </span>
             </div>
-          )}
 
-          {isFeverMode && !isGameOver && (
-            <div className="hidden md:inline-flex items-center gap-1 px-3 py-1 rounded-full bg-mint-pop text-toy-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] animate-pulse">
-              <Sparkles className="w-3.5 h-3.5 text-toy-black" />
+            {/* Highest Passes Ever Badge */}
+            <div className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-lilac-wash text-toy-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
+              <Trophy className="w-3 h-3 text-toy-black" />
               <span className="font-display font-black text-[11px] uppercase tracking-wider">
-                VIP FRENZY (2X PTS)
+                BEST: {highPasses}
               </span>
             </div>
-          )}
-        </div>
 
-        {/* Top-Right: Score Counter, Highest Score & Audio Toggle */}
-        <div className="absolute top-2.5 sm:top-4 right-3 sm:right-6 flex items-center gap-1.5 sm:gap-2">
-          {/* Current Run Score */}
-          <div className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] pointer-events-none">
-            <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-bubble-pink" />
-            <span className="font-display font-black text-[10px] sm:text-xs text-toy-black uppercase tracking-wider">
-              <span className="hidden xs:inline">SCORE: </span>{score.toLocaleString()}
-            </span>
+            {/* Lives Counter (3 Hearts) */}
+            <div className="inline-flex items-center gap-0.5 px-1.5 xs:px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-white border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E] shrink-0">
+              {[1, 2, 3].map((heartIndex) => (
+                <Heart 
+                  key={heartIndex} 
+                  className={`w-2.5 xs:w-3 sm:w-3.5 h-2.5 xs:h-3 sm:h-3.5 transition-colors ${
+                    heartIndex <= lives 
+                      ? 'text-bubble-pink fill-bubble-pink' 
+                      : 'text-toy-black/30'
+                  }`} 
+                />
+              ))}
+            </div>
+
+            {/* Combo Multiplier Badge */}
+            {comboCount >= 2 && !isGameOver && (
+              <div className="hidden xs:inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-bubble-pink text-white border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E] animate-bounce shrink-0">
+                <Flame className="w-2.5 sm:w-3.5 h-2.5 sm:h-3.5 text-sun-yellow fill-sun-yellow" />
+                <span className="font-display font-black text-[9px] sm:text-[11px] uppercase tracking-wider">
+                  x{comboCount}!
+                </span>
+              </div>
+            )}
+
+            {isFeverMode && !isGameOver && (
+              <div className="hidden md:inline-flex items-center gap-1 px-3 py-1 rounded-full bg-mint-pop text-toy-black border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] animate-pulse">
+                <Sparkles className="w-3.5 h-3.5 text-toy-black" />
+                <span className="font-display font-black text-[11px] uppercase tracking-wider">
+                  VIP FRENZY (2X PTS)
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* All-Time Highest Score Badge */}
-          <div className="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-full bg-sun-yellow border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] pointer-events-none">
-            <Trophy className="w-3.5 h-3.5 text-toy-black" />
-            <span className="font-display font-black text-xs text-toy-black uppercase tracking-wider">
-              HI-SCORE: {highScore.toLocaleString()}
-            </span>
-          </div>
+          {/* Right HUD: Current Score & Audio Toggle */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0 pointer-events-auto">
+            {/* Current Run Score */}
+            <div className="inline-flex items-center gap-1 px-1.5 xs:px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E] pointer-events-none">
+              <Sparkles className="w-2.5 xs:w-3 sm:w-3.5 h-2.5 xs:h-3 sm:h-3.5 text-bubble-pink" />
+              <span className="font-display font-black text-[9px] xs:text-[10px] sm:text-xs text-toy-black uppercase tracking-wider">
+                <span className="hidden xs:inline">SCORE: </span>{score.toLocaleString()}
+              </span>
+            </div>
 
-          {/* Sound Toggle Button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMuted(!muted);
-            }}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-lilac-wash border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E] flex items-center justify-center hover:bg-sun-yellow transition-colors cursor-pointer"
-            title={muted ? 'Unmute 8-bit sound fx' : 'Mute sound fx'}
-          >
-            {muted ? <VolumeX size={12} className="text-toy-black" /> : <Volume2 size={12} className="text-toy-black" />}
-          </button>
+            {/* All-Time Highest Score Badge */}
+            <div className="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-full bg-sun-yellow border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] pointer-events-none">
+              <Trophy className="w-3.5 h-3.5 text-toy-black" />
+              <span className="font-display font-black text-xs text-toy-black uppercase tracking-wider">
+                HI-SCORE: {highScore.toLocaleString()}
+              </span>
+            </div>
+
+            {/* Sound Toggle Button */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMuted(!muted);
+              }}
+              className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 rounded-full bg-lilac-wash border-2 border-toy-black shadow-[1.5px_1.5px_0px_#1E1B2E] flex items-center justify-center hover:bg-sun-yellow transition-colors cursor-pointer shrink-0"
+              title={muted ? 'Unmute 8-bit sound fx' : 'Mute sound fx'}
+            >
+              {muted ? <VolumeX size={11} className="text-toy-black" /> : <Volume2 size={11} className="text-toy-black" />}
+            </button>
+          </div>
         </div>
 
         {/* Bottom-Right: Interactive Jump & Airborne Status (Using Bespoke Vector Stickers) */}

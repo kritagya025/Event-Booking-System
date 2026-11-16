@@ -554,12 +554,12 @@ export default function App() {
       ) : activeTab === 'wishlist' ? (
         <Wishlist currentUser={currentUser} onSelectEvent={openBookingModal} showToast={showToast} />
       ) : (
-        <main className="w-full relative z-10 pt-6 pb-20">
+        <main className="w-full relative z-10 pt-4 sm:pt-6 pb-32 sm:pb-36 min-w-0">
           
           {/* ══════════════════════════════════════════════════════════════
               HERO SECTION: Candy-Dopamine Neo-Memphis Playground
               ══════════════════════════════════════════════════════════════ */}
-          <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-4 pb-12">
+          <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-2 sm:pt-4 pb-8 sm:pb-12 min-w-0">
             
             {/* Real-time Ticket Counter Dopamine Badge (Hidden from user until instructed to show) */}
             {SHOW_REALTIME_TICKET_COUNTER && (
@@ -589,19 +589,19 @@ export default function App() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-w-0">
               
               {/* Hero Text & Quick Action */}
-              <div className="lg:col-span-7 flex flex-col items-start text-left">
-                <h1 className="font-display font-black text-3xl xs:text-4xl sm:text-6xl md:text-7xl leading-[1.05] tracking-tight text-toy-black mb-5">
+              <div className="lg:col-span-7 flex flex-col items-start text-left min-w-0 w-full">
+                <h1 className="font-display font-black text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight text-toy-black mb-4 sm:mb-5">
                   YOUR LIVE EVENT <br className="hidden sm:inline"/>
-                  <span className="inline-block relative">
-                    <span className="relative z-10 text-white drop-shadow-[4px_4px_0px_#1E1B2E] px-2 py-0.5 bg-candy-purple rounded-2xl border-[3px] border-toy-black rotate-[-2deg] inline-block mr-2">PASS JUST</span>
+                  <span className="inline-block relative my-1 sm:my-0">
+                    <span className="relative z-10 text-white drop-shadow-[2px_2px_0px_#1E1B2E] sm:drop-shadow-[4px_4px_0px_#1E1B2E] px-2 py-0.5 bg-candy-purple rounded-xl sm:rounded-2xl border-2 sm:border-[3px] border-toy-black rotate-[-2deg] inline-block mr-1.5 sm:mr-2 whitespace-nowrap">PASS JUST</span>
                   </span>
-                  <span className="text-bubble-pink underline decoration-wavy decoration-sun-yellow decoration-[6px]">LEVELED UP!</span>
+                  <span className="text-bubble-pink underline decoration-wavy decoration-sun-yellow decoration-[4px] sm:decoration-[6px] whitespace-nowrap">LEVELED UP!</span>
                 </h1>
 
-                <p className="font-body font-semibold text-base sm:text-xl text-toy-black/80 max-w-xl mb-7 leading-relaxed bg-white/70 backdrop-blur-sm p-4 rounded-2xl border-2 border-toy-black/20 shadow-sm">
+                <p className="font-body font-semibold text-sm sm:text-xl text-toy-black/80 max-w-xl mb-5 sm:mb-7 leading-relaxed bg-white/70 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border-2 border-toy-black/20 shadow-sm">
                   The joyful real-time live event & cinema ticketing playground! Reserve favorite seats on interactive auditorium maps, claim instant cryptographic QR passes, and enjoy seamless instant UPI & Rupee checkout.
                 </p>
 
@@ -652,63 +652,64 @@ export default function App() {
               </div>
 
               {/* Hero Right Column: Squishy 3D Neo-Memphis Featured Event Card */}
-              <div className="lg:col-span-5 relative w-full flex justify-center">
-                {/* Backing pastel shadow block */}
-                <div className="absolute inset-0 bg-sky-azure rounded-[36px] border-[3.5px] border-toy-black transform rotate-3 translate-x-2 translate-y-3 pointer-events-none"></div>
-                
-                {/* Main Card Container */}
-                <div className="relative w-full max-w-sm sm:max-w-md bg-white rounded-[32px] border-[3.5px] border-toy-black p-4 sm:p-5 shadow-toy-xl flex flex-col gap-4">
+              <div className="lg:col-span-5 relative w-full flex justify-center min-w-0">
+                <div className="relative w-full max-w-sm sm:max-w-md">
+                  {/* Backing pastel shadow block strictly matching card width */}
+                  <div className="absolute inset-0 bg-sky-azure rounded-[28px] sm:rounded-[36px] border-[3px] sm:border-[3.5px] border-toy-black transform rotate-1.5 sm:rotate-3 translate-x-1 sm:translate-x-2 translate-y-1.5 sm:translate-y-3 pointer-events-none"></div>
                   
-                  {/* Event Visual Container with Sticker Pins */}
-                  <div className="relative w-full h-56 rounded-2xl border-[2.5px] border-toy-black overflow-hidden bg-candy-purple/10">
-                    <img 
-                      src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80" 
-                      alt="Cyberpunk 2099 IMAX Premiere" 
-                      className="w-full h-full object-cover" 
-                    />
+                  {/* Main Card Container */}
+                  <div className="relative w-full bg-white rounded-[28px] sm:rounded-[32px] border-[3px] sm:border-[3.5px] border-toy-black p-3.5 sm:p-5 shadow-toy-xl flex flex-col gap-3.5 sm:gap-4">
                     
-                    {/* Floating Pill Tags */}
-                    <div className="absolute top-3 left-3 flex gap-1.5">
-                      <span className="bg-sun-yellow text-toy-black text-xs font-display font-black px-2.5 py-1 rounded-full border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center gap-1.5">
-                        <Film size={12} className="text-toy-black" />
-                        <span>IMAX 3D PREMIERE</span>
-                      </span>
-                    </div>
-
-                    {/* Bespoke Custom Popcorn Bucket Sticker */}
-                    <div className="absolute -bottom-2.5 right-3 w-12 h-12 bg-white rounded-full border-2 border-toy-black shadow-toy flex items-center justify-center rotate-6 select-none p-1">
-                      <PopcornBucketSticker size={30} />
-                    </div>
-                  </div>
-
-                  {/* Card Headline & Details */}
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between">
-                      <div className="inline-flex items-center gap-1.5 bg-lilac-wash px-2.5 py-1 rounded-full border border-toy-black">
-                        <MapPin size={12} className="text-candy-purple shrink-0" />
-                        <span className="font-display font-extrabold text-xs text-toy-black truncate max-w-[160px]">
-                          PVR INOX Laser IMAX Dome
+                    {/* Event Visual Container with Sticker Pins */}
+                    <div className="relative w-full h-48 sm:h-56 rounded-2xl border-[2.5px] border-toy-black overflow-hidden bg-candy-purple/10">
+                      <img 
+                        src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80" 
+                        alt="Cyberpunk 2099 IMAX Premiere" 
+                        className="w-full h-full object-cover" 
+                      />
+                      
+                      {/* Floating Pill Tags */}
+                      <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 flex gap-1.5">
+                        <span className="bg-sun-yellow text-toy-black text-[10px] sm:text-xs font-display font-black px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center gap-1.5">
+                          <Film size={12} className="text-toy-black" />
+                          <span>IMAX 3D PREMIERE</span>
                         </span>
                       </div>
-                      <span className="font-display font-black text-xs text-candy-purple uppercase tracking-wider">Mumbai, MH</span>
+
+                      {/* Bespoke Custom Popcorn Bucket Sticker (Inside Image frame: Zero text overlap) */}
+                      <div className="absolute top-2.5 sm:top-3 right-2.5 sm:right-3 w-10 h-10 sm:w-12 sm:h-12 bg-white/95 backdrop-blur-xs rounded-2xl border-2 border-toy-black shadow-toy flex items-center justify-center rotate-6 select-none p-1 hover:scale-110 transition-transform">
+                        <PopcornBucketSticker size={26} />
+                      </div>
                     </div>
 
-                    <h2 className="font-display font-black text-xl leading-snug text-toy-black mt-1">
-                      Cyberpunk 2099: Midnight IMAX 3D Premiere
-                    </h2>
+                    {/* Card Headline & Details */}
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="inline-flex items-center gap-1.5 bg-lilac-wash px-2.5 py-1 rounded-full border border-toy-black min-w-0">
+                          <MapPin size={12} className="text-candy-purple shrink-0" />
+                          <span className="font-display font-extrabold text-xs text-toy-black truncate max-w-[130px] sm:max-w-[180px]">
+                            PVR INOX Laser IMAX Dome
+                          </span>
+                        </div>
+                        <span className="font-display font-black text-xs text-candy-purple uppercase tracking-wider shrink-0">Mumbai, MH</span>
+                      </div>
 
-                    <div className="flex items-center gap-2 text-toy-black/70 font-body font-bold text-xs">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={12} className="text-toy-black/60 shrink-0" /> Friday, Oct 24
-                      </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={12} className="text-toy-black/60 shrink-0" /> 9:00 PM IST
-                      </span>
-                      <span>•</span>
-                      <span className="text-bubble-pink font-extrabold">162 min</span>
+                      <h2 className="font-display font-black text-lg sm:text-xl leading-snug text-toy-black mt-1">
+                        Cyberpunk 2099: Midnight IMAX 3D Premiere
+                      </h2>
+
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-toy-black/70 font-body font-bold text-xs">
+                        <span className="flex items-center gap-1 shrink-0">
+                          <Calendar size={12} className="text-toy-black/60 shrink-0" /> Friday, Oct 24
+                        </span>
+                        <span className="text-toy-black/40 hidden xs:inline">•</span>
+                        <span className="flex items-center gap-1 shrink-0">
+                          <Clock size={12} className="text-toy-black/60 shrink-0" /> 9:00 PM IST
+                        </span>
+                        <span className="text-toy-black/40 hidden xs:inline">•</span>
+                        <span className="text-bubble-pink font-extrabold shrink-0">162 min</span>
+                      </div>
                     </div>
-                  </div>
 
                   {/* Interactive Showtime Selection Pills */}
                   <div className="bg-buttercream p-2.5 rounded-2xl border-2 border-toy-black">
@@ -742,9 +743,10 @@ export default function App() {
 
                 </div>
               </div>
-
             </div>
-          </section>
+
+          </div>
+        </section>
 
           {/* ══════════════════════════════════════════════════════════════
               WAVY NEO-MEMPHIS SECTION DIVIDER 1
@@ -988,6 +990,7 @@ export default function App() {
                   </label>
                   <select 
                     id="search-category"
+                    style={{ WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}
                     value={filters.category}
                     onChange={(e) => {
                       const cat = e.target.value;
@@ -995,7 +998,7 @@ export default function App() {
                       setFilters(nextFilters);
                       handleSearchAndFilter(nextFilters);
                     }}
-                    className="bg-transparent text-sm font-bold text-toy-black focus:outline-none w-full cursor-pointer appearance-none border-none p-0 pr-6"
+                    className="no-native-chevron bg-transparent text-sm font-bold text-toy-black focus:outline-none w-full cursor-pointer appearance-none border-none p-0 pr-6"
                   >
                     <option value="" className="bg-white text-toy-black">ALL EVENTS & SHOWS</option>
                     <option value="CINEMA" className="bg-white text-toy-black">CINEMA & IMAX SCREENINGS</option>
@@ -1044,8 +1047,8 @@ export default function App() {
                 </div>
               </form>
 
-              {/* Category Pills Strip */}
-              <div className="mt-3 pt-3 border-t-2 border-dashed border-toy-black/20 flex flex-wrap items-center gap-2 text-xs">
+              {/* Category Pills Strip (Smooth Swipe Track without native scrollbars) */}
+              <div className="mt-3 pt-3 border-t-2 border-dashed border-toy-black/20 flex items-center gap-2 text-xs overflow-x-auto no-scrollbar scrollbar-none pb-1 -mx-1 px-1 touch-pan-x min-w-0">
                 {categories.map((cat) => {
                   const isActive = (filters.category || '') === cat.id;
                   const count = categoryCounts[cat.key] ?? 0;
@@ -1058,10 +1061,10 @@ export default function App() {
                         setFilters(nextFilters);
                         handleSearchAndFilter(nextFilters);
                       }}
-                      className={`px-3.5 py-1.5 rounded-full font-display font-bold text-xs border-2 border-toy-black transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                      className={`px-3 sm:px-3.5 py-1.5 rounded-full font-display font-bold text-xs border-2 border-toy-black transition-all shrink-0 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                         isActive 
                           ? 'bg-candy-purple text-white shadow-toy' 
-                          : 'bg-buttercream hover:bg-white text-toy-black'
+                          : 'bg-buttercream hover:bg-white text-toy-black hover:-translate-y-0.5 active:translate-y-0.5'
                       }`}
                     >
                       <span>{cat.label}</span>
@@ -1120,14 +1123,14 @@ export default function App() {
             {/* ══════════════════════════════════════════════════════════════
                 NEO-MEMPHIS LIVE CITY RADAR & LOCATION HUB
                 ══════════════════════════════════════════════════════════════ */}
-            <div className="mt-8 sm:mt-10 bg-lilac-wash rounded-3xl border-[3px] border-toy-black p-4 sm:p-6 md:p-8 shadow-toy flex flex-col gap-5 sm:gap-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
+            <div className="mt-8 sm:mt-10 bg-lilac-wash rounded-3xl border-[3px] border-toy-black p-4 sm:p-6 md:p-8 shadow-toy flex flex-col gap-5 sm:gap-6 min-w-0">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 min-w-0">
                 {/* Left: Custom Design Asset & Context Heading */}
-                <div className="flex items-start sm:items-center gap-3 sm:gap-4">
-                  <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border-[2.5px] sm:border-[3px] border-toy-black shadow-toy flex items-center justify-center shrink-0 p-1.5 sm:p-2 hover:rotate-3 transition-transform">
-                    <CityLocationSticker size={64} className="w-full h-full" />
+                <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
+                  <div className="w-12 h-12 sm:w-16 md:w-20 sm:h-16 md:h-20 rounded-2xl sm:rounded-3xl bg-white border-[2px] sm:border-[3px] border-toy-black shadow-toy flex items-center justify-center shrink-0 p-1.5 sm:p-2 hover:rotate-3 transition-transform">
+                    <CityLocationSticker size={56} className="w-full h-full" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-mint-pop border-2 border-toy-black text-[10px] font-display font-black uppercase text-toy-black shadow-[2px_2px_0px_#1E1B2E]">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse border border-toy-black"></span>
@@ -1152,10 +1155,10 @@ export default function App() {
                         </span>
                       )}
                     </div>
-                    <h4 className="font-display font-black text-lg sm:text-2xl text-toy-black tracking-tight">
+                    <h4 className="font-display font-black text-lg sm:text-2xl text-toy-black tracking-tight leading-snug">
                       Looking for live shows in your city?
                     </h4>
-                    <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/75 mt-0.5 max-w-2xl">
+                    <p className="font-body font-semibold text-xs sm:text-sm text-toy-black/75 mt-0.5 max-w-2xl leading-relaxed">
                       From intimate indie concerts to IMAX midnight premieres across India (Mumbai, Bengaluru, Delhi NCR, Hyderabad, Goa & more). Tap your hub to filter instantly:
                     </p>
                   </div>
@@ -1182,9 +1185,9 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Quick City Hub Selector Pills */}
-              <div className="pt-2 border-t-2 border-toy-black/15 flex flex-wrap items-center gap-1.5 sm:gap-2">
-                <span className="text-[10px] sm:text-[11px] font-display font-black uppercase text-toy-black/60 mr-1 tracking-wide">
+              {/* Quick City Hub Selector Pills (Silky smooth horizontal swipe without native scrollbars) */}
+              <div className="pt-2 border-t-2 border-toy-black/15 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-1 -mx-1 px-1 touch-pan-x min-w-0">
+                <span className="text-[10px] sm:text-[11px] font-display font-black uppercase text-toy-black/60 mr-1 tracking-wide shrink-0">
                   SELECT CITY:
                 </span>
                 {[
@@ -1212,7 +1215,7 @@ export default function App() {
                           'info'
                         );
                       }}
-                      className={`px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-display font-black uppercase tracking-wide border-2 border-toy-black transition-all cursor-pointer ${
+                      className={`px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-display font-black uppercase tracking-wide border-2 border-toy-black transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                         isSelected
                           ? 'bg-sun-yellow text-toy-black shadow-toy scale-105'
                           : 'bg-white text-toy-black hover:bg-buttercream hover:-translate-y-0.5 active:translate-y-0.5 shadow-[2px_2px_0px_#1E1B2E]'
@@ -1238,10 +1241,10 @@ export default function App() {
       {/* ══════════════════════════════════════════════════════════════
           FLOATING BOTTOM ACTION CAPSULE
           ══════════════════════════════════════════════════════════════ */}
-      <div className="fixed bottom-4 sm:bottom-5 inset-x-0 z-40 flex justify-center px-3 sm:px-4 pointer-events-none">
-        <div className="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border-[3px] border-toy-black px-3.5 sm:px-5 py-2 sm:py-2.5 shadow-toy-lg flex items-center gap-2.5 sm:gap-6 max-w-md w-full justify-between hover:scale-[1.02] transition-transform">
-          <div className="flex items-center gap-2 overflow-hidden min-w-0">
-            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-mint-pop border border-toy-black animate-ping shrink-0"></span>
+      <div className="fixed bottom-3 sm:bottom-5 inset-x-0 z-40 flex justify-center px-3 sm:px-4 pointer-events-none pb-[env(safe-area-inset-bottom)]">
+        <div className="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border-[2.5px] sm:border-[3px] border-toy-black px-3 sm:px-5 py-1.5 sm:py-2.5 shadow-toy sm:shadow-toy-lg flex items-center gap-2 sm:gap-6 max-w-md w-full justify-between hover:scale-[1.01] transition-all">
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden min-w-0">
+            <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-mint-pop border border-toy-black animate-ping shrink-0"></span>
             <span className="font-display font-black text-xs sm:text-sm text-toy-black truncate">
               <span className="hidden xs:inline">Ready to reserve your seats?</span>
               <span className="xs:hidden">Reserve seats?</span>
@@ -1254,9 +1257,9 @@ export default function App() {
               if (el) el.scrollIntoView({ behavior: 'smooth' });
               else handleNavigate('home');
             }}
-            className="px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-bubble-pink text-white font-display font-black text-xs uppercase tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#ff2a73] active:translate-y-0.5 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0"
+            className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full bg-bubble-pink text-white font-display font-black text-[11px] sm:text-xs uppercase tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#ff2a73] active:translate-y-0.5 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0"
           >
-            <Ticket size={13} />
+            <Ticket size={12} className="shrink-0" />
             <span className="hidden xs:inline">Find Tickets</span>
             <span className="xs:hidden">Tickets</span>
           </button>
@@ -1266,7 +1269,7 @@ export default function App() {
       {/* ══════════════════════════════════════════════════════════════
           NEO-MEMPHIS FOOTER
           ══════════════════════════════════════════════════════════════ */}
-      <footer className="w-full bg-toy-black text-buttercream border-t-[3.5px] border-toy-black pt-12 pb-16 relative z-10">
+      <footer className="w-full bg-toy-black text-buttercream border-t-[3.5px] border-toy-black pt-10 sm:pt-12 pb-28 sm:pb-20 relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Brand & Tagline */}
           <div className="flex items-center gap-3">
@@ -1487,15 +1490,18 @@ function NeoMemphisPartyCard({
             )}
           </div>
 
-          {/* Bottom Left Category / Format Pill */}
-          <div className="absolute bottom-2.5 left-2.5 bg-white text-toy-black font-display font-black text-xs px-2.5 py-0.5 rounded-full border-2 border-toy-black shadow-sm flex items-center gap-1">
-            <span>{event.movieFormat || event.category || 'EVENT'}</span>
-          </div>
+          {/* Bottom Format & Seats Flex Bar (Collision-free layout) */}
+          <div className="absolute bottom-2 inset-x-2 flex items-center justify-between gap-1 pointer-events-none">
+            {/* Format Pill (Truncated if long) */}
+            <div className="bg-white text-toy-black font-display font-black text-[10px] xs:text-xs px-2 xs:px-2.5 py-0.5 rounded-full border-2 border-toy-black shadow-sm truncate max-w-[130px] xs:max-w-[160px]" title={event.movieFormat || event.category || 'EVENT'}>
+              <span className="truncate">{event.movieFormat || event.category || 'EVENT'}</span>
+            </div>
 
-          {/* Bottom Right Available Seats */}
-          <div className="absolute bottom-2.5 right-2.5 bg-toy-black text-white font-display font-black text-xs px-2.5 py-0.5 rounded-full border border-white/50 shadow-sm flex items-center gap-1">
-            {!isSoldOut && <span className="w-2 h-2 rounded-full bg-mint-pop animate-pulse"></span>}
-            <span>{isSoldOut ? 'SOLD OUT' : `${event.availableSeats ?? 90} LEFT`}</span>
+            {/* Available Seats Pill */}
+            <div className="bg-toy-black text-white font-display font-black text-[10px] xs:text-xs px-2 xs:px-2.5 py-0.5 rounded-full border border-white/50 shadow-sm flex items-center gap-1 shrink-0">
+              {!isSoldOut && <span className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-mint-pop animate-pulse shrink-0"></span>}
+              <span className="whitespace-nowrap">{isSoldOut ? 'SOLD OUT' : `${event.availableSeats ?? 90} LEFT`}</span>
+            </div>
           </div>
         </div>
 

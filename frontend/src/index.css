@@ -340,7 +340,7 @@ button, a, input, select, textarea {
   font-variant-numeric: tabular-nums;
 }
 
-/* ─── Hide Scrollbars ─── */
+/* ─── Hide Scrollbars & Touch Scrolling ─── */
 .scrollbar-none::-webkit-scrollbar,
 .no-scrollbar::-webkit-scrollbar {
   display: none !important;
@@ -352,4 +352,13 @@ button, a, input, select, textarea {
 .no-scrollbar {
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch !important;
 }
+
+/* Custom form reset for iOS WebKit & Android Chrome select dropdowns */
+select.no-native-chevron {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
