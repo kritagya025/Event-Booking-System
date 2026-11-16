@@ -282,10 +282,12 @@ export function BentoSpotlightPass({
   currentUser,
   onBook,
   onWishlist,
-  onWaitlist
+  onWaitlist,
+  onDelete
 }) {
   if (!event) return null;
   const isSoldOut = event.availableSeats === 0;
+  const canDelete = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'ORGANIZER');
   const isCinema = event.category === 'CINEMA' || event.category === 'MOVIE' || /imax|cinema|movie|film|screening/i.test(event.name || '');
   const dateObj = formatEventDate(event.eventDate);
   const showtimes = event.showtimes || (isCinema ? ['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM'] : null);
@@ -313,8 +315,18 @@ export function BentoSpotlightPass({
           </span>
         </div>
 
-        {/* Wishlist Button */}
-        <div className="absolute top-4 right-4">
+        {/* Action Controls: Wishlist & Admin Delete */}
+        <div className="absolute top-4 right-4 flex items-center gap-2">
+          {canDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="w-9 h-9 rounded-full bg-coral-peach text-white border-2 border-toy-black flex items-center justify-center font-black text-xs hover:scale-110 active:scale-95 transition-transform cursor-pointer shadow-[2px_2px_0px_#1E1B2E]"
+              title="Remove Event"
+            >
+              ✕
+            </button>
+          )}
           <button
             type="button"
             onClick={onWishlist}
@@ -388,13 +400,23 @@ export function BentoSpotlightPass({
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onBook()}
-            className="px-8 py-3.5 rounded-full bg-bubble-pink hover:bg-[#ff1475] text-white font-display font-black text-sm uppercase tracking-wider border-2 border-white shadow-[3px_3px_0px_#FFE142] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer text-center"
-          >
-            {isCinema ? 'RESERVE CINEMA TICKETS ➔' : 'CLAIM PASSES NOW ➔'}
-          </button>
+          {isSoldOut ? (
+            <button
+              type="button"
+              onClick={onWaitlist}
+              className="px-8 py-3.5 rounded-full bg-sun-yellow hover:bg-[#ffe142] text-toy-black font-display font-black text-sm uppercase tracking-wider border-2 border-white shadow-[3px_3px_0px_#FFE142] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer text-center"
+            >
+              JOIN WAITLIST ➔
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onBook()}
+              className="px-8 py-3.5 rounded-full bg-bubble-pink hover:bg-[#ff1475] text-white font-display font-black text-sm uppercase tracking-wider border-2 border-white shadow-[3px_3px_0px_#FFE142] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer text-center"
+            >
+              {isCinema ? 'RESERVE CINEMA TICKETS ➔' : 'CLAIM PASSES NOW ➔'}
+            </button>
+          )}
         </div>
       </div>
 
