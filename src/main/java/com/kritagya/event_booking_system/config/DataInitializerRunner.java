@@ -149,7 +149,7 @@ public class DataInitializerRunner implements CommandLineRunner {
                     120,
                     venue1
             );
-            e1.setBannerImageUrl("/images/concert.png");
+            e1.setBannerImageUrl("/images/events/neon-horizon-music.jpg");
             eventRepository.save(e1);
         }
 
@@ -166,7 +166,7 @@ public class DataInitializerRunner implements CommandLineRunner {
                     45,
                     venue2
             );
-            e2.setBannerImageUrl("/images/tech.png");
+            e2.setBannerImageUrl("/images/events/ai-tech-summit.jpg");
             eventRepository.save(e2);
         }
 
@@ -183,7 +183,7 @@ public class DataInitializerRunner implements CommandLineRunner {
                     0,
                     venue3
             );
-            e3.setBannerImageUrl("https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80");
+            e3.setBannerImageUrl("/images/events/phantom-opera.jpg");
             eventRepository.save(e3);
         }
 
@@ -200,7 +200,7 @@ public class DataInitializerRunner implements CommandLineRunner {
                     300,
                     venue4
             );
-            e4.setBannerImageUrl("https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80");
+            e4.setBannerImageUrl("/images/events/esports-championship.jpg");
             eventRepository.save(e4);
         }
 
@@ -217,7 +217,7 @@ public class DataInitializerRunner implements CommandLineRunner {
                     90,
                     venueCinema
             );
-            e5.setBannerImageUrl("https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80");
+            e5.setBannerImageUrl("/images/events/cyberpunk-imax.jpg");
             eventRepository.save(e5);
         }
 
@@ -234,11 +234,11 @@ public class DataInitializerRunner implements CommandLineRunner {
                     90,
                     venueCinema
             );
-            e6.setBannerImageUrl("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80");
+            e6.setBannerImageUrl("/images/events/interstellar-70mm.jpg");
             eventRepository.save(e6);
         }
 
-        // 4. Ensure all active events are configured for India (INR currency)
+        // 4. Ensure all active events are configured with authentic real-world photography and INR currency
         for (Event e : eventRepository.findAll()) {
             boolean modified = false;
             if (!"INR".equalsIgnoreCase(e.getCurrency())) {
@@ -250,6 +250,31 @@ public class DataInitializerRunner implements CommandLineRunner {
                 e.setTicketPrice(e.getTicketPrice().multiply(new BigDecimal("84.5")).setScale(0, java.math.RoundingMode.HALF_UP));
                 modified = true;
             }
+
+            // Ensure authentic photography URL
+            String nameLower = (e.getName() != null) ? e.getName().toLowerCase() : "";
+            String currentImg = e.getBannerImageUrl();
+            String authenticImg = null;
+
+            if (nameLower.contains("cyberpunk")) {
+                authenticImg = "/images/events/cyberpunk-imax.jpg";
+            } else if (nameLower.contains("interstellar")) {
+                authenticImg = "/images/events/interstellar-70mm.jpg";
+            } else if (nameLower.contains("phantom") || nameLower.contains("opera")) {
+                authenticImg = "/images/events/phantom-opera.jpg";
+            } else if (nameLower.contains("esports") || nameLower.contains("grand prix")) {
+                authenticImg = "/images/events/esports-championship.jpg";
+            } else if (nameLower.contains("neon horizon") || nameLower.contains("music")) {
+                authenticImg = "/images/events/neon-horizon-music.jpg";
+            } else if (nameLower.contains("ai") || nameLower.contains("tech")) {
+                authenticImg = "/images/events/ai-tech-summit.jpg";
+            }
+
+            if (authenticImg != null && !authenticImg.equals(currentImg)) {
+                e.setBannerImageUrl(authenticImg);
+                modified = true;
+            }
+
             if (modified) {
                 eventRepository.save(e);
             }

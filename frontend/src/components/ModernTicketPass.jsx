@@ -2,21 +2,63 @@ import React from 'react';
 import { Heart, MapPin, Calendar, Clock, Film, Music, Sparkles, ChevronRight, Check } from 'lucide-react';
 import { formatPrice } from '../services/currency';
 
-// Helper for event image fallback
+// Helper for event image fallback with authentic real-world photography
 export const getImageForEvent = (ev, isCinema) => {
-  if (ev.bannerImageUrl) return ev.bannerImageUrl;
-  if (ev.category === 'CINEMA' || isCinema) {
-    return 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80';
+  if (!ev) return '/images/events/neon-horizon-music.jpg';
+
+  const title = (ev.name || '').toLowerCase();
+  const banner = ev.bannerImageUrl || '';
+
+  // Filter out known fake / mismatched legacy image URLs
+  const isFakeOrOutdated = 
+    banner.includes('1578632767115') || // Fake anime figure
+    banner.includes('1507676184212') || // Generic microphone for theater
+    banner.includes('1511512578047') || // Old arcade machines for eSports
+    banner === '/images/concert.jpg' ||
+    banner === '/images/tech.jpg';
+
+  if (banner && !isFakeOrOutdated) {
+    return banner;
   }
-  if (ev.category === 'MUSIC') return '/images/concert.jpg';
-  if (ev.category === 'TECH') return '/images/tech.jpg';
+
+  // 1. High-precision event title matching with real-world photography
+  if (/cyberpunk/i.test(title)) {
+    return '/images/events/cyberpunk-imax.jpg';
+  }
+  if (/interstellar/i.test(title)) {
+    return '/images/events/interstellar-70mm.jpg';
+  }
+  if (/phantom|opera/i.test(title)) {
+    return '/images/events/phantom-opera.jpg';
+  }
+  if (/esports|grand prix|gaming/i.test(title)) {
+    return '/images/events/esports-championship.jpg';
+  }
+  if (/neon horizon|music festival/i.test(title)) {
+    return '/images/events/neon-horizon-music.jpg';
+  }
+  if (/ai.*summit|autonomous.*summit|tech summit/i.test(title)) {
+    return '/images/events/ai-tech-summit.jpg';
+  }
+
+  // 2. High-definition category defaults with real photography
+  if (ev.category === 'CINEMA' || isCinema) {
+    return '/images/events/cyberpunk-imax.jpg';
+  }
+  if (ev.category === 'MUSIC') {
+    return '/images/events/neon-horizon-music.jpg';
+  }
+  if (ev.category === 'TECH') {
+    return '/images/events/ai-tech-summit.jpg';
+  }
   if (ev.category === 'THEATER') {
-    return 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80';
+    return '/images/events/phantom-opera.jpg';
   }
   if (ev.category === 'SPORTS') {
-    return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80';
+    return '/images/events/esports-championship.jpg';
   }
-  return '/images/concert.jpg';
+
+  return '/images/events/neon-horizon-music.jpg';
 };
 
 // Helper for formatted date
@@ -73,6 +115,55 @@ export function TicketBarcodeSVG({ className = "w-full h-7" }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// REALISTIC DIE-CUT TICKET NOTCH SVGs
+// Authentic paper ticket notches that seamlessly punch through the card border
+// with NO flat line at the mouth of the circle.
+// ─────────────────────────────────────────────────────────────────────────────
+export function TicketNotchTopSVG({ className = "absolute -top-[3px] -left-[14px] w-7 h-4 z-20 pointer-events-none overflow-visible" }) {
+  return (
+    <svg className={className} width="28" height="16" viewBox="0 0 28 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
+      {/* Mask fill that covers the card interior and erases the top 3px black border */}
+      <path d="M -1 -6 L -1 0 A 14 14 0 0 0 29 0 L 29 -6 Z" fill="#FFF8E7" />
+      {/* Crisp 3px black border tracing the curved ticket notch indentation */}
+      <path d="M 0 0 A 14 14 0 0 0 28 0" stroke="#1E1B2E" strokeWidth="3" strokeLinecap="butt" fill="none" />
+    </svg>
+  );
+}
+
+export function TicketNotchBottomSVG({ className = "absolute -bottom-[3px] -left-[14px] w-7 h-4 z-20 pointer-events-none overflow-visible" }) {
+  return (
+    <svg className={className} width="28" height="16" viewBox="0 0 28 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
+      {/* Mask fill that punches out the card interior, the 3px bottom border, AND the 4px bottom drop shadow */}
+      <path d="M -1 26 L -1 16 A 14 14 0 0 1 29 16 L 29 26 Z" fill="#FFF8E7" />
+      {/* Crisp 3px black border tracing the curved ticket notch indentation */}
+      <path d="M 0 16 A 14 14 0 0 1 28 16" stroke="#1E1B2E" strokeWidth="3" strokeLinecap="butt" fill="none" />
+    </svg>
+  );
+}
+
+export function TicketNotchLeftSVG({ className = "absolute -left-[3px] -top-[14px] w-4 h-7 z-20 pointer-events-none overflow-visible" }) {
+  return (
+    <svg className={className} width="16" height="28" viewBox="0 0 16 28" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
+      {/* Mask fill that covers the card interior and erases the left 3px black border */}
+      <path d="M -6 -1 L 0 -1 A 14 14 0 0 1 0 29 L -6 29 Z" fill="#FFF8E7" />
+      {/* Crisp 3px black border tracing the curved ticket notch indentation */}
+      <path d="M 0 0 A 14 14 0 0 1 0 28" stroke="#1E1B2E" strokeWidth="3" strokeLinecap="butt" fill="none" />
+    </svg>
+  );
+}
+
+export function TicketNotchRightSVG({ className = "absolute -right-[3px] -top-[14px] w-4 h-7 z-20 pointer-events-none overflow-visible" }) {
+  return (
+    <svg className={className} width="16" height="28" viewBox="0 0 16 28" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
+      {/* Mask fill that covers card interior, 3px right border, and 4px right drop shadow */}
+      <path d="M 26 -1 L 16 -1 A 14 14 0 0 0 16 29 L 26 29 Z" fill="#FFF8E7" />
+      {/* Crisp 3px black border tracing the curved ticket notch indentation */}
+      <path d="M 16 0 A 14 14 0 0 0 16 28" stroke="#1E1B2E" strokeWidth="3" strokeLinecap="butt" fill="none" />
+    </svg>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 1. MODERN TICKET PASS (LANDSCAPE) — The Core Reimagined Card
 // Artwork on the left, rich info in the center, tear-off stub on the right.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -100,15 +191,15 @@ export function ModernLandscapeTicketPass({
   const showtimes = event.showtimes || (isCinema ? ['11:30 AM', '02:45 PM', '06:15 PM'] : null);
 
   return (
-    <div className={`group relative bg-white rounded-3xl border-[3px] border-toy-black shadow-toy ${theme.popShadow} hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row min-w-0 overflow-hidden`}>
+    <div className={`group relative bg-white rounded-3xl border-[3px] border-toy-black shadow-toy ${theme.popShadow} hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row min-w-0`}>
       
       {/* ─── LEFT: ARTWORK ANCHOR ─── */}
-      <div className="relative w-full md:w-44 lg:w-48 h-48 md:h-auto shrink-0 bg-toy-black overflow-hidden border-b-[3px] md:border-b-0 md:border-r-[3px] border-toy-black">
+      <div className="relative w-full md:w-44 lg:w-48 h-48 md:h-auto shrink-0 bg-toy-black overflow-hidden rounded-t-[21px] md:rounded-tr-none md:rounded-l-[21px] border-b-[3px] md:border-b-0 md:border-r-[3px] border-toy-black">
         <img
           src={getImageForEvent(event, isCinema)}
           alt={event.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
+          loading="eager"
         />
         {/* Subtle Dark Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-toy-black/80 via-toy-black/20 to-transparent pointer-events-none" />
@@ -219,18 +310,18 @@ export function ModernLandscapeTicketPass({
 
       {/* ─── PERFORATION NOTCHES & VERTICAL DASHES (DESKTOP) ─── */}
       <div className="hidden md:block relative w-0 shrink-0 border-l-2 border-dashed border-toy-black/30">
-        <div className="absolute -top-3.5 -left-3.5 w-7 h-7 rounded-full bg-buttercream border-2 border-toy-black z-20 pointer-events-none"></div>
-        <div className="absolute -bottom-3.5 -left-3.5 w-7 h-7 rounded-full bg-buttercream border-2 border-toy-black z-20 pointer-events-none"></div>
+        <TicketNotchTopSVG />
+        <TicketNotchBottomSVG />
       </div>
 
       {/* ─── PERFORATION NOTCHES & HORIZONTAL DASHES (MOBILE) ─── */}
       <div className="md:hidden relative h-0 shrink-0 border-t-2 border-dashed border-toy-black/30">
-        <div className="absolute -left-3.5 -top-3.5 w-7 h-7 rounded-full bg-buttercream border-2 border-toy-black z-20 pointer-events-none"></div>
-        <div className="absolute -right-3.5 -top-3.5 w-7 h-7 rounded-full bg-buttercream border-2 border-toy-black z-20 pointer-events-none"></div>
+        <TicketNotchLeftSVG />
+        <TicketNotchRightSVG />
       </div>
 
       {/* ─── RIGHT: TEAR-OFF BOOKING STUB ─── */}
-      <div className={`w-full md:w-36 lg:w-40 p-3 sm:p-4 ${theme.stubBg} flex flex-row md:flex-col items-center justify-between md:justify-center gap-2.5 shrink-0 text-center border-t-[2.5px] md:border-t-0 border-toy-black/10`}>
+      <div className={`w-full md:w-36 lg:w-40 p-3 sm:p-4 ${theme.stubBg} rounded-b-[21px] md:rounded-bl-none md:rounded-r-[21px] flex flex-row md:flex-col items-center justify-between md:justify-center gap-2.5 shrink-0 text-center border-t-[2.5px] md:border-t-0 border-toy-black/10`}>
         {/* Stub Decorative Barcode */}
         <div className="hidden md:block w-full text-toy-black/35 mb-0.5">
           <TicketBarcodeSVG className="w-full h-5" />
@@ -293,35 +384,35 @@ export function BentoSpotlightPass({
   const showtimes = event.showtimes || (isCinema ? ['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM'] : null);
 
   return (
-    <div className="relative bg-toy-black text-white rounded-3xl border-[3px] border-toy-black shadow-toy-lg overflow-hidden flex flex-col lg:flex-row min-w-0">
+    <div className="relative bg-toy-black text-white rounded-3xl border-[3px] border-toy-black shadow-toy-lg overflow-hidden flex flex-col md:flex-row md:h-64 lg:h-68 min-w-0">
       
       {/* Visual Widescreen Backdrop */}
-      <div className="relative w-full lg:w-7/12 h-64 sm:h-80 lg:h-auto shrink-0 overflow-hidden">
+      <div className="relative w-full md:w-5/12 lg:w-5/12 h-44 sm:h-48 md:h-full shrink-0 overflow-hidden">
         <img
           src={getImageForEvent(event, isCinema)}
           alt={event.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-toy-black via-toy-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-toy-black via-toy-black/30 to-transparent" />
 
         {/* Headliner Spotlight Tag */}
-        <div className="absolute top-4 left-4 flex items-center gap-2">
-          <span className="px-3 py-1 rounded-full bg-sun-yellow text-toy-black font-display font-black text-xs uppercase tracking-wider border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center gap-1.5">
-            <Sparkles size={13} className="text-bubble-pink fill-bubble-pink" />
+        <div className="absolute top-3 left-3 flex items-center gap-1.5">
+          <span className="px-2.5 py-0.5 rounded-full bg-sun-yellow text-toy-black font-display font-black text-[10px] sm:text-xs uppercase tracking-wider border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center gap-1">
+            <Sparkles size={11} className="text-bubble-pink fill-bubble-pink" />
             ★ HEADLINER SPOTLIGHT
           </span>
-          <span className="px-2.5 py-1 rounded-full bg-mint-pop text-toy-black font-display font-black text-xs uppercase border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
+          <span className="px-2 py-0.5 rounded-full bg-mint-pop text-toy-black font-display font-black text-[10px] uppercase border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
             {event.category || 'FEATURED'}
           </span>
         </div>
 
         {/* Action Controls: Wishlist & Admin Delete */}
-        <div className="absolute top-4 right-4 flex items-center gap-2">
+        <div className="absolute top-3 right-3 flex items-center gap-1.5">
           {canDelete && (
             <button
               type="button"
               onClick={onDelete}
-              className="w-9 h-9 rounded-full bg-coral-peach text-white border-2 border-toy-black flex items-center justify-center font-black text-xs hover:scale-110 active:scale-95 transition-transform cursor-pointer shadow-[2px_2px_0px_#1E1B2E]"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-coral-peach text-white border-2 border-toy-black flex items-center justify-center font-black text-xs hover:scale-110 active:scale-95 transition-transform cursor-pointer shadow-[2px_2px_0px_#1E1B2E]"
               title="Remove Event"
             >
               ✕
@@ -330,58 +421,58 @@ export function BentoSpotlightPass({
           <button
             type="button"
             onClick={onWishlist}
-            className="w-9 h-9 rounded-full bg-white text-toy-black border-2 border-toy-black flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-[2px_2px_0px_#1E1B2E] cursor-pointer"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-toy-black border-2 border-toy-black flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-[2px_2px_0px_#1E1B2E] cursor-pointer"
             title="Save to Wishlist"
           >
-            <Heart size={16} className="text-bubble-pink fill-bubble-pink/25" />
+            <Heart size={13} className="text-bubble-pink fill-bubble-pink/25" />
           </button>
         </div>
 
         {/* Floating Format Pill */}
-        <div className="absolute bottom-4 left-4 flex items-center gap-2">
-          <span className="px-3 py-1 rounded-full bg-white/90 text-toy-black font-display font-black text-xs uppercase border border-toy-black">
+        <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
+          <span className="px-2.5 py-0.5 rounded-full bg-white/90 text-toy-black font-display font-black text-[10px] uppercase border border-toy-black">
             {event.movieFormat || 'VIP ACCESS'}
           </span>
-          <span className="px-3 py-1 rounded-full bg-bubble-pink text-white font-display font-black text-xs border border-white/50">
-            {isSoldOut ? 'SOLD OUT' : `${event.availableSeats ?? 90} SEATS REMAINING`}
+          <span className="px-2.5 py-0.5 rounded-full bg-bubble-pink text-white font-display font-black text-[10px] border border-white/50">
+            {isSoldOut ? 'SOLD OUT' : `${event.availableSeats ?? 90} REMAINING`}
           </span>
         </div>
       </div>
 
       {/* Spotlight Content & Direct Booking Area */}
-      <div className="flex-1 p-6 sm:p-8 flex flex-col justify-between bg-toy-black text-white">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-sun-yellow text-sm font-display font-black tracking-wider uppercase">
-            <Calendar size={15} />
+      <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between bg-toy-black text-white min-w-0 h-full">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-1.5 text-sun-yellow text-xs font-display font-black tracking-wider uppercase">
+            <Calendar size={13} />
             <span>{dateObj.full}</span>
           </div>
 
-          <h2 className="font-display font-black text-2xl sm:text-3xl lg:text-4xl leading-tight text-white tracking-tight">
+          <h2 className="font-display font-black text-xl sm:text-2xl text-white tracking-tight leading-snug line-clamp-2">
             {event.name}
           </h2>
 
-          <div className="flex items-center gap-2 text-white/70 text-sm font-body font-semibold">
-            <MapPin size={16} className="text-sky-azure shrink-0" />
-            <span>{event.venueAddress || event.venueName || 'Main Arena'}</span>
+          <div className="flex items-center gap-1.5 text-white/70 text-xs font-body font-semibold">
+            <MapPin size={13} className="text-sky-azure shrink-0" />
+            <span className="truncate">{event.venueAddress || event.venueName || 'Main Arena'}</span>
           </div>
 
-          <p className="text-white/80 font-body text-xs sm:text-sm line-clamp-3 leading-relaxed mt-1">
+          <p className="text-white/75 font-body text-xs line-clamp-2 leading-relaxed">
             Experience the ultimate live spectacle in high fidelity with interactive auditorium seating, crystal-clear acoustics, and instant cryptographic QR passes.
           </p>
 
           {/* Quick Showtimes if Cinema */}
           {showtimes && (
-            <div className="mt-2 pt-3 border-t border-white/15">
-              <span className="block text-[11px] font-display font-black uppercase text-white/60 mb-2">
+            <div className="mt-1 pt-1.5 border-t border-white/10">
+              <span className="block text-[10px] font-display font-black uppercase text-white/60 mb-1">
                 FAST PASS SHOWTIMES:
               </span>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {showtimes.map((st) => (
                   <button
                     key={st}
                     type="button"
                     onClick={() => onBook(st)}
-                    className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-sun-yellow hover:text-toy-black border border-white/30 hover:border-toy-black text-xs font-display font-black transition-all cursor-pointer"
+                    className="px-2 py-0.5 rounded-lg bg-white/10 hover:bg-sun-yellow hover:text-toy-black border border-white/30 hover:border-toy-black text-[10px] font-display font-black transition-all cursor-pointer"
                   >
                     {st}
                   </button>
@@ -392,10 +483,10 @@ export function BentoSpotlightPass({
         </div>
 
         {/* Spotlight Footer Bar */}
-        <div className="mt-6 pt-5 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mt-2.5 pt-2.5 border-t border-white/15 flex flex-row items-center justify-between gap-3">
           <div>
-            <span className="block text-xs font-display font-bold uppercase text-white/60">PASSES STARTING FROM</span>
-            <span className="font-display font-black text-3xl text-sun-yellow leading-none">
+            <span className="block text-[9px] font-display font-bold uppercase text-white/60 leading-none">PASSES FROM</span>
+            <span className="font-display font-black text-xl sm:text-2xl text-sun-yellow leading-none">
               {isSoldOut ? 'SOLD OUT' : formatPrice(event.ticketPrice, event.currency)}
             </span>
           </div>
@@ -404,7 +495,7 @@ export function BentoSpotlightPass({
             <button
               type="button"
               onClick={onWaitlist}
-              className="px-8 py-3.5 rounded-full bg-sun-yellow hover:bg-[#ffe142] text-toy-black font-display font-black text-sm uppercase tracking-wider border-2 border-white shadow-[3px_3px_0px_#FFE142] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer text-center"
+              className="px-5 py-2 rounded-full bg-sun-yellow hover:bg-[#ffe142] text-toy-black font-display font-black text-xs uppercase tracking-wider border-2 border-white shadow-[2px_2px_0px_#FFE142] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer text-center"
             >
               JOIN WAITLIST ➔
             </button>
@@ -412,9 +503,9 @@ export function BentoSpotlightPass({
             <button
               type="button"
               onClick={() => onBook()}
-              className="px-8 py-3.5 rounded-full bg-bubble-pink hover:bg-[#ff1475] text-white font-display font-black text-sm uppercase tracking-wider border-2 border-white shadow-[3px_3px_0px_#FFE142] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer text-center"
+              className="px-5 py-2 rounded-full bg-bubble-pink hover:bg-[#ff1475] text-white font-display font-black text-xs sm:text-sm uppercase tracking-wider border-2 border-white shadow-[2px_2px_0px_#FFE142] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer text-center"
             >
-              {isCinema ? 'RESERVE CINEMA TICKETS ➔' : 'CLAIM PASSES NOW ➔'}
+              {isCinema ? 'RESERVE SEATS ➔' : 'CLAIM PASSES ➔'}
             </button>
           )}
         </div>

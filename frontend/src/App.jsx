@@ -17,11 +17,13 @@ import DatabaseConsoleModal from './components/DatabaseConsoleModal';
 import CookiesModal from './components/CookiesModal';
 import ApiDocsModal from './components/ApiDocsModal';
 import EventHubArcadeRunner from './components/EventHubArcadeRunner';
+import WelcomeDiscoveryPortal from './components/WelcomeDiscoveryPortal';
 
 import EventCardSkeleton from './components/EventCardSkeleton';
 import { 
   ModernLandscapeTicketPass, 
-  BentoSpotlightPass 
+  BentoSpotlightPass,
+  getImageForEvent
 } from './components/ModernTicketPass';
 import { 
   DiscoBallSticker, 
@@ -59,6 +61,11 @@ export default function App() {
   };
 
   const [activeTab, setActiveTabState] = useState(getInitialTab);
+  const [showWelcomePortal, setShowWelcomePortal] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash && hash !== 'home' && hash !== 'explore' && hash !== 'intro') return false;
+    return true;
+  });
 
   const setActiveTab = (tab) => {
     const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
@@ -71,9 +78,14 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
-      if (hash && validTabs.includes(hash)) {
-        setActiveTabState(hash);
+      if (hash === 'intro') {
+        setActiveTabState('home');
+        setShowWelcomePortal(true);
+      } else {
+        const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
+        if (hash && validTabs.includes(hash)) {
+          setActiveTabState(hash);
+        }
       }
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -145,12 +157,12 @@ export default function App() {
   }, [allMasterEvents]);
 
   const categories = useMemo(() => [
-    { id: '', key: 'ALL', label: 'ALL PARTIES', icon: Layers },
-    { id: 'MUSIC', key: 'MUSIC', label: 'NIGHTLIFE & CONCERTS', icon: Music },
-    { id: 'CINEMA', key: 'CINEMA', label: 'CINEMA & LOFTS', icon: Film },
-    { id: 'THEATER', key: 'THEATER', label: 'SUPPER CLUBS', icon: Theater },
-    { id: 'TECH', key: 'TECH', label: 'TECH & SYNTH', icon: Laptop },
-    { id: 'SPORTS', key: 'SPORTS', label: 'SUNSET SKATES', icon: Trophy },
+    { id: '', key: 'ALL', label: 'All Shows', icon: Sparkles },
+    { id: 'CINEMA', key: 'CINEMA', label: 'Cinema & IMAX', icon: Film },
+    { id: 'MUSIC', key: 'MUSIC', label: 'Concerts & Music', icon: Music },
+    { id: 'THEATER', key: 'THEATER', label: 'Theater & Stage', icon: Theater },
+    { id: 'TECH', key: 'TECH', label: 'Tech & Summits', icon: Laptop },
+    { id: 'SPORTS', key: 'SPORTS', label: 'Sports & eSports', icon: Trophy },
   ], []);
 
   const scrollToResults = () => {
@@ -528,14 +540,31 @@ export default function App() {
   }
 
   return (
-    <div className="bg-buttercream text-toy-black antialiased relative selection:bg-bubble-pink selection:text-white min-h-screen overflow-x-hidden font-body">
+    <div className="bg-buttercream text-toy-black antialiased relative selection:bg-bubble-pink selection:text-white min-h-screen overflow-x-hidden font-body animate-app-enter">
       
+      {/* ─── WELCOME INTRO DISCOVERY PORTAL (Fixed Full-Screen Cross-Dissolve Overlay) ─── */}
+      {showWelcomePortal && (activeTab === 'home' || activeTab === 'explore') && (
+        <WelcomeDiscoveryPortal
+          onDiscover={() => {
+            setShowWelcomePortal(false);
+            setActiveTab('home');
+            window.location.hash = 'home';
+          }}
+        />
+      )}
+
       {/* ─── NAVIGATION HEADER ─── */}
       <Navbar 
         currentUser={currentUser}
         onNavigate={handleNavigate}
         activeTab={activeTab}
         onLogout={handleLogout}
+        isIntroActive={showWelcomePortal}
+        onOpenIntro={() => {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+          setShowWelcomePortal(true);
+          window.location.hash = 'intro';
+        }}
         searchKeyword={filters.keyword}
         onSearchChange={(kw) => {
           const nextFilters = { ...filtersRef.current, keyword: kw };
@@ -641,19 +670,6 @@ export default function App() {
                     <span>Find Tickets</span>
                   </button>
                 </form>
-
-                {/* Micro Counters */}
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <div className="inline-flex items-center px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white border-2 border-toy-black text-[11px] sm:text-xs font-display font-extrabold shadow-toy">
-                    <span>50,000+ Verified Passes</span>
-                  </div>
-                  <div className="inline-flex items-center px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-sky-azure/30 border-2 border-toy-black text-[11px] sm:text-xs font-display font-extrabold shadow-toy">
-                    <span>10-Min Live Seat Hold</span>
-                  </div>
-                  <div className="inline-flex items-center px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-mint-pop/40 border-2 border-toy-black text-[11px] sm:text-xs font-display font-extrabold shadow-toy">
-                    <span>Zero Duplicate Bookings</span>
-                  </div>
-                </div>
               </div>
 
               {/* Hero Right Column: Squishy 3D Neo-Memphis Featured Event Card */}
@@ -668,7 +684,7 @@ export default function App() {
                     {/* Event Visual Container with Sticker Pins */}
                     <div className="relative w-full h-48 sm:h-56 rounded-2xl border-[2.5px] border-toy-black overflow-hidden bg-candy-purple/10">
                       <img 
-                        src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80" 
+                        src="/images/events/cyberpunk-imax.jpg" 
                         alt="Cyberpunk 2099 IMAX Premiere" 
                         className="w-full h-full object-cover" 
                       />
@@ -1051,6 +1067,42 @@ export default function App() {
                   )}
                 </div>
               </form>
+
+              {/* Instant Category Filter Pills Strip */}
+              <div className="mt-3.5 pt-3.5 border-t-2 border-dashed border-toy-black/15 flex flex-wrap items-center gap-2">
+                <span className="text-[10px] uppercase font-display font-black text-toy-black/60 tracking-wider mr-1">
+                  CATEGORIES:
+                </span>
+                {categories.map((cat) => {
+                  const isActive = (filters.category || '') === cat.id;
+                  const count = categoryCounts[cat.key] ?? 0;
+                  const Icon = cat.icon;
+                  return (
+                    <button
+                      key={cat.key}
+                      type="button"
+                      onClick={() => {
+                        const nextFilters = { ...filters, category: cat.id };
+                        setFilters(nextFilters);
+                        handleSearchAndFilter(nextFilters);
+                      }}
+                      className={`px-3 py-1.5 rounded-full font-display font-black text-xs border-2 border-toy-black transition-all cursor-pointer flex items-center gap-1.5 ${
+                        isActive
+                          ? 'bg-candy-purple text-white shadow-toy scale-105'
+                          : 'bg-buttercream hover:bg-white text-toy-black hover:-translate-y-0.5 active:translate-y-0.5 shadow-[1.5px_1.5px_0px_#1E1B2E]'
+                      }`}
+                    >
+                      {Icon && <Icon size={13} className={isActive ? 'text-sun-yellow' : 'text-candy-purple'} />}
+                      <span>{cat.label}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full border border-toy-black font-black ${
+                        isActive ? 'bg-sun-yellow text-toy-black' : 'bg-white text-toy-black'
+                      }`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* ══════════════════════════════════════════════════════════════
@@ -1225,39 +1277,15 @@ export default function App() {
               ══════════════════════════════════════════════════════════════ */}
           <EventHubArcadeRunner />
 
+
+
         </main>
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          FLOATING BOTTOM ACTION CAPSULE (DESKTOP ONLY — HIDDEN ON MOBILE TO PREVENT COLLISION WITH HOST EMBARKO BADGE)
-          ══════════════════════════════════════════════════════════════ */}
-      <div className="hidden sm:flex fixed bottom-5 inset-x-0 z-40 justify-center px-4 pointer-events-none">
-        <div className="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border-[3px] border-toy-black px-5 py-2.5 shadow-toy-lg flex items-center gap-6 max-w-md w-full justify-between hover:scale-[1.01] transition-all">
-          <div className="flex items-center gap-2 overflow-hidden min-w-0">
-            <span className="w-3 h-3 rounded-full bg-mint-pop border border-toy-black animate-ping shrink-0"></span>
-            <span className="font-display font-black text-sm text-toy-black truncate">
-              Ready to reserve your seats?
-            </span>
-          </div>
-          <button 
-            type="button"
-            onClick={() => {
-              const el = document.getElementById('explore');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-              else handleNavigate('home');
-            }}
-            className="px-5 py-2 rounded-full bg-bubble-pink text-white font-display font-black text-xs uppercase tracking-wide border-2 border-toy-black shadow-toy hover:bg-[#ff2a73] active:translate-y-0.5 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0"
-          >
-            <Ticket size={13} className="shrink-0" />
-            <span>Find Tickets</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════
           NEO-MEMPHIS FOOTER
           ══════════════════════════════════════════════════════════════ */}
-      <footer className="w-full bg-toy-black text-buttercream border-t-[3.5px] border-toy-black pt-10 sm:pt-12 pb-28 sm:pb-20 relative z-10">
+      <footer className="w-full bg-toy-black text-buttercream border-t-[3.5px] border-toy-black pt-10 sm:pt-12 pb-12 sm:pb-16 relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Brand & Tagline */}
           <div className="flex items-center gap-3">
@@ -1272,6 +1300,7 @@ export default function App() {
 
           {/* Links */}
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 font-display font-bold text-[11px] sm:text-xs uppercase tracking-wider text-buttercream/80 text-center">
+
             <a 
               href="#explore" 
               onClick={(e) => { e.preventDefault(); scrollToResults(); }}
@@ -1414,16 +1443,6 @@ function NeoMemphisPartyCard({
   ];
   const theme = colorThemes[index % colorThemes.length];
 
-  const getImageForEvent = (ev) => {
-    if (ev.bannerImageUrl) return ev.bannerImageUrl;
-    if (ev.category === 'CINEMA' || isCinema) return 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80';
-    if (ev.category === 'MUSIC') return '/images/concert.jpg';
-    if (ev.category === 'TECH') return '/images/tech.jpg';
-    if (ev.category === 'THEATER') return 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80';
-    if (ev.category === 'SPORTS') return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80';
-    return '/images/concert.jpg';
-  };
-
   const formatEventDate = (dateStr) => {
     if (!dateStr) return 'Fri, Oct 24 • 8:00 PM';
     try {
@@ -1445,7 +1464,7 @@ function NeoMemphisPartyCard({
         {/* Top Image Box */}
         <div className="relative w-full h-48 bg-toy-black border-b-[2.5px] border-toy-black overflow-hidden">
           <img 
-            src={getImageForEvent(event)} 
+            src={getImageForEvent(event, isCinema)} 
             alt={event.name} 
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
             loading="lazy"
@@ -1569,7 +1588,7 @@ const mockEvents = [
     eventDate: '2026-09-15',
     venueName: 'Jio World Garden, BKC',
     venueAddress: 'Bandra Kurla Complex, Mumbai, Maharashtra',
-    bannerImageUrl: '/images/concert.jpg'
+    bannerImageUrl: '/images/events/neon-horizon-music.jpg'
   },
   {
     id: 2,
@@ -1585,7 +1604,7 @@ const mockEvents = [
     eventDate: '2026-10-15',
     venueName: 'PVR INOX Laser IMAX, Phoenix Palladium',
     venueAddress: 'Lower Parel, Mumbai, Maharashtra',
-    bannerImageUrl: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
+    bannerImageUrl: '/images/events/cyberpunk-imax.jpg',
     showtimes: ['11:30 AM', '02:45 PM', '06:15 PM', '09:45 PM', '11:59 PM']
   },
   {
@@ -1602,7 +1621,7 @@ const mockEvents = [
     eventDate: '2026-11-05',
     venueName: 'PVR INOX IMAX, Forum South City Mall',
     venueAddress: 'Koramangala, Bengaluru, Karnataka',
-    bannerImageUrl: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80',
+    bannerImageUrl: '/images/events/interstellar-70mm.jpg',
     showtimes: ['12:00 PM', '03:30 PM', '07:00 PM', '10:30 PM']
   },
   {
@@ -1616,7 +1635,7 @@ const mockEvents = [
     eventDate: '2026-10-02',
     venueName: 'Bangalore International Exhibition Centre (BIEC)',
     venueAddress: 'Tumkur Road, Bengaluru, Karnataka',
-    bannerImageUrl: '/images/tech.jpg'
+    bannerImageUrl: '/images/events/ai-tech-summit.jpg'
   },
   {
     id: 5,
@@ -1629,7 +1648,7 @@ const mockEvents = [
     eventDate: '2026-11-20',
     venueName: 'Nita Mukesh Ambani Cultural Centre (NMACC)',
     venueAddress: 'BKC, Mumbai, Maharashtra',
-    bannerImageUrl: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80'
+    bannerImageUrl: '/images/events/phantom-opera.jpg'
   },
   {
     id: 6,
@@ -1642,6 +1661,6 @@ const mockEvents = [
     eventDate: '2026-12-05',
     venueName: 'Hyderabad International Convention Centre (HICC)',
     venueAddress: 'Hitec City, Hyderabad, Telangana',
-    bannerImageUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80'
+    bannerImageUrl: '/images/events/esports-championship.jpg'
   }
 ];

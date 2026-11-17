@@ -87,7 +87,154 @@ button, a, input, select, textarea {
 
 @keyframes floating {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(3deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.float-alt {
+  animation: floating-alt 4.2s ease-in-out infinite;
+}
+
+@keyframes floating-alt {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(-2.5deg); }
+}
+
+.float-fast {
+  animation: floating-fast 2.8s ease-in-out infinite;
+}
+
+@keyframes floating-fast {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+/* ─── Neo-Memphis Confetti Sticker Floats ─── */
+.float-balloon {
+  animation: floatBalloon 4.2s ease-in-out infinite;
+}
+@keyframes floatBalloon {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50% { transform: translateY(-16px) rotate(3deg); }
+}
+
+.float-sparkle {
+  animation: floatSparkle 3.2s ease-in-out infinite;
+}
+@keyframes floatSparkle {
+  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+  50% { transform: translateY(-12px) rotate(14deg) scale(1.08); }
+}
+
+.float-disco {
+  animation: floatDisco 3.8s ease-in-out infinite;
+  transform-origin: top center;
+}
+@keyframes floatDisco {
+  0%, 100% { transform: rotate(-7deg) translateY(0px); }
+  50% { transform: rotate(7deg) translateY(-8px); }
+}
+
+/* ─── Luma-Style Keyframes & Modern Polish ─── */
+@keyframes luma-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(var(--tw-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-8px) rotate(var(--tw-rotate, 0deg));
+  }
+}
+
+@keyframes luma-float-alt {
+  0%, 100% {
+    transform: translateY(0px) rotate(var(--tw-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-11px) rotate(var(--tw-rotate, 0deg));
+  }
+}
+
+.animate-luma-float {
+  animation: luma-float 6s ease-in-out infinite;
+}
+
+.animate-luma-float-delayed {
+  animation: luma-float-alt 7s ease-in-out 1.5s infinite;
+}
+
+.luma-card-shadow {
+  box-shadow: 0 16px 36px -12px rgba(30, 27, 46, 0.08), 0 0 0 1px rgba(30, 27, 46, 0.06);
+}
+
+.luma-card-shadow-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luma-card-shadow-hover:hover {
+  box-shadow: 0 24px 48px -12px rgba(30, 27, 46, 0.14), 0 0 0 1px rgba(30, 27, 46, 0.1);
+}
+
+/* ─── Portal Exit & Entrance Motion System ─── */
+@keyframes portal-shockwave {
+  0% {
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.8);
+    opacity: 0;
+  }
+}
+
+.animate-portal-shockwave {
+  animation: portal-shockwave 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes stamp-pop {
+  0% {
+    transform: translate(-50%, -50%) scale(0.6) rotate(-3deg);
+    opacity: 0;
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.06) rotate(1deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-stamp-pop {
+  animation: stamp-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+@keyframes app-enter {
+  0% {
+    opacity: 0.92;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-app-enter {
+  animation: app-enter 0.35s ease-out;
 }
 
 .bg-confetti-pattern {

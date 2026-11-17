@@ -9,7 +9,9 @@ export default function Navbar({
   currentUser, 
   onNavigate, 
   activeTab, 
-  onLogout 
+  onLogout,
+  onOpenIntro,
+  isIntroActive = false
 }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -60,18 +62,18 @@ export default function Navbar({
   return (
     <>
       {/* Floating Confetti Decorative Custom Stickers */}
-      <div className="fixed top-36 left-6 lg:left-12 z-0 pointer-events-none float-slow hidden md:block select-none">
+      <div className={`fixed top-36 left-4 sm:left-6 lg:left-10 z-20 pointer-events-none float-balloon hidden md:block select-none transition-opacity duration-500 ${isIntroActive ? 'opacity-0' : 'opacity-100'}`}>
         <BalloonSticker size={64} />
       </div>
-      <div className="fixed top-48 right-6 lg:right-12 z-0 pointer-events-none float-slow hidden md:block select-none" style={{ animationDelay: '1.2s' }}>
+      <div className={`fixed top-48 right-4 sm:right-6 lg:right-10 z-20 pointer-events-none float-sparkle hidden md:block select-none transition-opacity duration-500 ${isIntroActive ? 'opacity-0' : 'opacity-100'}`} style={{ animationDelay: '0.9s' }}>
         <SparklesSticker size={66} />
       </div>
-      <div className="fixed bottom-24 left-6 lg:left-12 z-0 pointer-events-none float-slow hidden md:block select-none" style={{ animationDelay: '0.7s' }}>
-        <DiscoBallSticker size={62} />
+      <div className={`fixed bottom-24 left-4 sm:left-6 lg:left-10 z-20 pointer-events-none float-disco hidden md:block select-none transition-opacity duration-500 ${isIntroActive ? 'opacity-0' : 'opacity-100'}`} style={{ animationDelay: '0.4s' }}>
+        <DiscoBallSticker size={64} />
       </div>
 
       {/* NAVIGATION HEADER: Chunky Neo-Memphis Floating Pill */}
-      <header className="sticky top-4 w-full z-50 px-3 xs:px-4 sm:px-8">
+      <header className={`sticky top-4 w-full z-50 px-3 xs:px-4 sm:px-8 transition-opacity duration-500 ${isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="max-w-6xl mx-auto bg-white/95 backdrop-blur-md border-[3px] border-toy-black rounded-full px-3 xs:px-4 sm:px-5 py-2 sm:py-3 shadow-toy flex items-center justify-between transition-transform duration-200">
           
           {/* Brand Logo */}
@@ -85,9 +87,7 @@ export default function Navbar({
             <span className="font-display font-black text-xl xs:text-2xl tracking-tight text-toy-black group-hover:text-bubble-pink transition-colors">
               EventHub
             </span>
-            <span className="hidden xs:inline-block bg-bubble-pink text-white text-[9px] sm:text-[10px] font-display font-extrabold uppercase px-1.5 sm:px-2 py-0.5 rounded-full border border-toy-black rotate-[-4deg]">
-              BOX OFFICE
-            </span>
+
           </div>
 
           {/* Center Nav Pills */}
