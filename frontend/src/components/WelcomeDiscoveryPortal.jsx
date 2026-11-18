@@ -111,8 +111,7 @@ const CONSTELLATION_CARDS = [
 
 export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
   const [isExiting, setIsExiting] = useState(false);
-  const [morphTransform, setMorphTransform] = useState(null);
-  const cardMorphRef = useRef(null);
+  const [gateStage, setGateStage] = useState('idle'); // 'idle' | 'closing' | 'sealed' | 'opening' | 'done'
 
   useEffect(() => {
     const prevBodyOverflow = document.body.style.overflow;
@@ -126,61 +125,42 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
   }, []);
 
   const handleDiscoverClick = () => {
-    if (isExiting) return;
+    if (gateStage !== 'idle' || isExiting) return;
 
-    if (onExiting) onExiting();
-
-    // Dynamically calculate exact morph coordinates to the hero card image on desktop
-    try {
-      const heroImg = document.querySelector("img[alt='Cyberpunk 2099 IMAX Premiere']");
-      if (heroImg && cardMorphRef.current && window.innerWidth >= 1024) {
-        const heroRect = heroImg.getBoundingClientRect();
-        const cardRect = cardMorphRef.current.getBoundingClientRect();
-
-        const heroCenterX = heroRect.left + heroRect.width / 2;
-        const heroCenterY = heroRect.top + heroRect.height / 2;
-        const cardCenterX = cardRect.left + cardRect.width / 2;
-        const cardCenterY = cardRect.top + cardRect.height / 2;
-
-        const dx = heroCenterX - cardCenterX;
-        const dy = heroCenterY - cardCenterY;
-        const scale = heroRect.width / cardRect.width;
-
-        setMorphTransform({
-          transform: `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0px) scale(${scale.toFixed(3)})`,
-          transition: 'transform 1200ms cubic-bezier(0.16, 1, 0.3, 1)',
-        });
-      }
-    } catch (e) {
-      console.warn('Morph calculation error:', e);
-    }
-
+    // 1. Gates close in from the sides with high energy
+    setGateStage('closing');
     setIsExiting(true);
+
+    // 2. Gates meet in center, seal the VIP ticket pass, and swap the scene
     setTimeout(() => {
+      setGateStage('sealed');
+      if (onExiting) onExiting();
+    }, 320);
+
+    // 3. Gates fling wide open like festival stage curtains
+    setTimeout(() => {
+      setGateStage('opening');
+    }, 450);
+
+    // 4. Transition complete, unmount portal
+    setTimeout(() => {
+      setGateStage('done');
       onDiscover();
-    }, 1250);
+    }, 920);
   };
 
   return (
     <div
       className="fixed inset-0 z-[100] w-full h-full max-h-screen bg-buttercream text-toy-black font-sans overflow-y-auto lg:overflow-hidden select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden selection:bg-bubble-pink selection:text-white"
       style={{
-        opacity: isExiting ? 0 : 1,
-        transition: 'opacity 1200ms cubic-bezier(0.16, 1, 0.3, 1)',
-        willChange: 'opacity',
+        opacity: gateStage === 'opening' || gateStage === 'done' ? 0 : 1,
+        transition: gateStage === 'opening' ? 'opacity 300ms ease-out' : undefined,
         pointerEvents: isExiting ? 'none' : 'auto',
       }}
     >
       
-      {/* ─── AMBIENT ATMOSPHERIC LIGHTING & PERSPECTIVE WARP ─── */}
-      <div 
-        className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0"
-        style={{
-          transform: isExiting ? 'scale(1.25)' : 'scale(1)',
-          opacity: isExiting ? 0 : 1,
-          transition: 'transform 1200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 1000ms ease-out',
-        }}
-      >
+      {/* ─── AMBIENT ATMOSPHERIC LIGHTING ─── */}
+      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[920px] h-[660px] bg-gradient-to-tr from-bubble-pink/10 via-candy-purple/10 to-sun-yellow/15 blur-[130px] rounded-full opacity-70" />
         <div className="absolute top-10 left-10 w-96 h-96 bg-sun-yellow/15 blur-[110px] rounded-full" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-bubble-pink/12 blur-[110px] rounded-full" />
@@ -214,11 +194,9 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
                 };
               } else {
                 cardExitStyle = {
-                  transform: `translate3d(${card.exitX}, ${card.exitY}, 0px) rotate(${card.exitRotate}) scale(1.15)`,
+                  transform: `translate3d(${card.exitX}, ${card.exitY}, 0px) rotate(${card.exitRotate})`,
                   opacity: 0,
-                  filter: 'blur(3px)',
-                  transition: 'transform 1150ms cubic-bezier(0.16, 1, 0.3, 1), opacity 950ms ease-out, filter 950ms ease-out',
-                  willChange: 'transform, opacity, filter',
+                  transition: 'transform 300ms ease-out, opacity 300ms ease-out',
                   pointerEvents: 'none',
                 };
               }
@@ -274,15 +252,12 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
           })}
         </div>
 
-        {/* ── CENTER HERO CONTENT (Dolly Zoom Forward into Camera) ── */}
+        {/* ── CENTER HERO CONTENT ── */}
         <div
           className="relative z-30 max-w-xl sm:max-w-2xl mx-auto text-center flex flex-col items-center px-4"
           style={{
-            transform: isExiting ? 'translate3d(0, -32px, 0) scale(1.12)' : 'translate3d(0, 0, 0) scale(1)',
             opacity: isExiting ? 0 : 1,
-            filter: isExiting ? 'blur(6px)' : 'blur(0px)',
-            transition: 'transform 1100ms cubic-bezier(0.16, 1, 0.3, 1), opacity 850ms ease-out, filter 850ms ease-out',
-            willChange: 'transform, opacity, filter',
+            transition: 'opacity 250ms ease-out',
             pointerEvents: isExiting ? 'none' : 'auto',
           }}
         >
@@ -313,10 +288,10 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
               type="button"
               onClick={handleDiscoverClick}
               className={`px-10 sm:px-12 py-3.5 sm:py-4 rounded-full font-display font-black text-base sm:text-lg border-[3px] border-toy-black shadow-toy-lg cursor-pointer flex items-center justify-center gap-2.5 select-none relative z-20 bg-sun-yellow hover:bg-[#FFE043] text-toy-black hover:shadow-pop-pink hover:scale-105 active:scale-95 transition-all duration-300 ${
-                isExiting ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100'
+                isExiting ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100'
               }`}
               style={{
-                transition: isExiting ? 'opacity 250ms ease-out, transform 250ms ease-out' : undefined,
+                transition: isExiting ? 'opacity 200ms ease-out, transform 200ms ease-out' : undefined,
               }}
             >
               <span>Discover</span>
@@ -340,10 +315,8 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
                 onClick={handleDiscoverClick}
                 className="shrink-0 w-32 h-36 rounded-2xl overflow-hidden border-2 border-toy-black shadow-toy cursor-pointer relative bg-toy-black"
                 style={{
-                  transform: isExiting ? 'translate3d(0, -24px, 0) scale(0.85)' : 'translate3d(0, 0, 0) scale(1)',
                   opacity: isExiting ? 0 : 1,
-                  transition: 'transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 850ms ease-out',
-                  willChange: 'transform, opacity',
+                  transition: 'opacity 250ms ease-out',
                 }}
               >
                 <img 
@@ -366,6 +339,108 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
         </div>
 
       </main>
+
+      {/* ══════════════════════════════════════════════════════════════
+          NEO-MEMPHIS THEME TRANSITION: FESTIVAL VIP ADMISSION GATES
+          ══════════════════════════════════════════════════════════════ */}
+      {gateStage !== 'idle' && (
+        <div className="fixed inset-0 z-[200] pointer-events-none select-none overflow-hidden">
+          {/* Left Curtain Gate Panel: Sun Yellow with Retro Dots & Toy-Black Border */}
+          <div
+            className="fixed inset-y-0 left-0 w-1/2 bg-sun-yellow border-r-[4px] border-toy-black flex items-center justify-end overflow-hidden"
+            style={{
+              transform:
+                gateStage === 'closing' || gateStage === 'sealed'
+                  ? 'translate3d(0%, 0, 0)'
+                  : 'translate3d(-102%, 0, 0)',
+              transition:
+                gateStage === 'closing'
+                  ? 'transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1)'
+                  : 'transform 470ms cubic-bezier(0.16, 1, 0.3, 1)',
+              boxShadow: '10px 0px 0px rgba(30, 27, 46, 0.18)',
+            }}
+          >
+            {/* Pop Halftone Dot Texture */}
+            <div
+              className="absolute inset-0 opacity-15 pointer-events-none"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 2px 2px, #1E1B2E 1.5px, transparent 0)',
+                backgroundSize: '24px 24px',
+              }}
+            />
+            {/* Decorative angled festival ribbon */}
+            <div className="absolute -left-8 top-24 -rotate-12 bg-white px-8 py-2.5 rounded-xl border-[2.5px] border-toy-black shadow-toy text-toy-black font-display font-black text-xs uppercase tracking-widest hidden sm:block">
+              ✦ LIVE STAGE ✦
+            </div>
+          </div>
+
+          {/* Right Curtain Gate Panel: Bubble Pink with Playful Dots & Toy-Black Border */}
+          <div
+            className="fixed inset-y-0 right-0 w-1/2 bg-bubble-pink border-l-[4px] border-toy-black flex items-center justify-start overflow-hidden"
+            style={{
+              transform:
+                gateStage === 'closing' || gateStage === 'sealed'
+                  ? 'translate3d(0%, 0, 0)'
+                  : 'translate3d(102%, 0, 0)',
+              transition:
+                gateStage === 'closing'
+                  ? 'transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1)'
+                  : 'transform 470ms cubic-bezier(0.16, 1, 0.3, 1)',
+              boxShadow: '-10px 0px 0px rgba(30, 27, 46, 0.18)',
+            }}
+          >
+            {/* Pop Diagonal Grid Texture */}
+            <div
+              className="absolute inset-0 opacity-15 pointer-events-none"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 2px 2px, #ffffff 1.5px, transparent 0)',
+                backgroundSize: '24px 24px',
+              }}
+            />
+            {/* Decorative angled festival ribbon */}
+            <div className="absolute -right-8 bottom-28 rotate-12 bg-sun-yellow px-8 py-2.5 rounded-xl border-[2.5px] border-toy-black shadow-toy text-toy-black font-display font-black text-xs uppercase tracking-widest hidden sm:block">
+              ✦ BOX OFFICE ✦
+            </div>
+          </div>
+
+          {/* Center VIP Ticket Clasp Badge */}
+          <div
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[210] pointer-events-none select-none"
+            style={{
+              transform:
+                gateStage === 'opening'
+                  ? 'translate3d(-50%, -50%, 0) scale(1.18)'
+                  : gateStage === 'sealed'
+                  ? 'translate3d(-50%, -50%, 0) scale(1.05)'
+                  : 'translate3d(-50%, -50%, 0) scale(0.85)',
+              opacity: gateStage === 'opening' ? 0 : 1,
+              transition:
+                gateStage === 'opening'
+                  ? 'transform 360ms cubic-bezier(0.16, 1, 0.3, 1), opacity 240ms ease-out'
+                  : 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            <div className="flex items-center gap-2.5 sm:gap-3.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-3xl bg-white border-[3.5px] border-toy-black shadow-toy-xl">
+              <div className="w-10 h-10 rounded-2xl bg-sun-yellow border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] flex items-center justify-center text-xl shrink-0">
+                🎟️
+              </div>
+              <div className="flex flex-col text-left">
+                <div className="flex items-center gap-2">
+                  <span className="font-display font-black text-sm sm:text-base text-toy-black tracking-wider uppercase">
+                    ADMIT ONE
+                  </span>
+                  <span className="bg-bubble-pink text-white text-[10px] font-black px-2 py-0.5 rounded-full border border-toy-black uppercase tracking-wider">
+                    VIP PASS
+                  </span>
+                </div>
+                <span className="font-display font-extrabold text-[11px] sm:text-xs text-candy-purple uppercase tracking-widest">
+                  ✦ EVENTHUB LIVE PREMIERE ✦
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

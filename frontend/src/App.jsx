@@ -556,17 +556,12 @@ export default function App() {
         />
       )}
 
-      {/* ─── MAIN APPLICATION SHELL (3D Camera Zoom-Through & Focus Pull into Playground) ─── */}
+      {/* ─── MAIN APPLICATION SHELL (Pristine, 100% sharp and rock-solid) ─── */}
       <div 
         className="w-full min-h-screen flex flex-col flex-1"
-        style={showWelcomePortal ? {
-          opacity: isPortalExiting ? 1 : 0,
-          transform: isPortalExiting ? 'scale(1)' : 'scale(0.96)',
-          filter: isPortalExiting ? 'blur(0px)' : 'blur(5px)',
-          transition: isPortalExiting ? 'opacity 1200ms cubic-bezier(0.16, 1, 0.3, 1), transform 1200ms cubic-bezier(0.16, 1, 0.3, 1), filter 1100ms ease-out' : undefined,
-          willChange: isPortalExiting ? 'opacity, transform, filter' : undefined,
-          pointerEvents: isPortalExiting ? 'auto' : 'none',
-          transformOrigin: '50% 25%',
+        style={showWelcomePortal && !isPortalExiting ? {
+          opacity: 0,
+          pointerEvents: 'none',
         } : undefined}
       >
         {/* Navigation Header: Undisturbed natural placement, 100% sticky and fixed intact */}
