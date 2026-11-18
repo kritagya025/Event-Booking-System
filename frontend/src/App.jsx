@@ -541,7 +541,7 @@ export default function App() {
   }
 
   return (
-    <div className="bg-buttercream text-toy-black antialiased relative selection:bg-bubble-pink selection:text-white min-h-screen overflow-x-hidden font-body">
+    <div className="bg-buttercream text-toy-black antialiased relative selection:bg-bubble-pink selection:text-white min-h-screen overflow-x-clip font-body">
       
       {/* ─── WELCOME INTRO DISCOVERY PORTAL (Fixed Full-Screen Cross-Dissolve Overlay) ─── */}
       {showWelcomePortal && (activeTab === 'home' || activeTab === 'explore') && (
