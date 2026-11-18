@@ -2,164 +2,131 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 const CONSTELLATION_CARDS = [
+  // ── TOP PERIMETER ROW ──
   {
     id: 1,
     title: 'Skyline Cocktail Gala',
     image: '/images/events/cocktail-hour.jpg',
-    className: 'left-[5%] top-[8%] w-32 h-32 xl:w-36 xl:h-36 animate-luma-float',
+    className: 'left-[4%] top-[3%] w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 animate-luma-float',
     delay: '0s',
     rotate: '-rotate-2',
-    exitX: '-220px', exitY: '-160px', exitRotate: '-15deg',
+    exitX: '-240px', exitY: '-180px', exitRotate: '-15deg',
     shadowHover: 'hover:shadow-pop-pink',
   },
   {
     id: 2,
     title: 'Global AI Hackathon',
     image: '/images/events/hackathon-dev.jpg',
-    className: 'left-[18%] top-[11%] w-36 h-36 xl:w-40 xl:h-40 animate-luma-float-delayed',
+    className: 'left-[23%] top-[1%] w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 animate-luma-float-delayed',
     delay: '1.2s',
     rotate: 'rotate-2',
-    exitX: '-160px', exitY: '-220px', exitRotate: '12deg',
+    exitX: '-100px', exitY: '-260px', exitRotate: '10deg',
     shadowHover: 'hover:shadow-pop-azure',
   },
   {
     id: 3,
-    title: 'Tomorrowland Winter',
-    image: '/images/events/neon-horizon-music.jpg',
-    className: 'left-[32%] top-[1%] w-36 h-36 xl:w-40 xl:h-40 animate-luma-float',
-    delay: '0.6s',
-    rotate: '-rotate-1',
-    exitX: '0px', exitY: '-250px', exitRotate: '-8deg',
-    shadowHover: 'hover:shadow-pop-purple',
-  },
-  {
-    id: 4,
     title: 'Comedy Cellar Live',
     image: '/images/events/standup-comedy.jpg',
-    className: 'left-[63%] top-[1%] w-36 h-36 xl:w-40 xl:h-40 animate-luma-float-delayed',
-    delay: '1.8s',
-    rotate: 'rotate-3',
-    exitX: '140px', exitY: '-250px', exitRotate: '12deg',
+    className: 'right-[23%] top-[1%] w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 animate-luma-float',
+    delay: '0.6s',
+    rotate: '-rotate-1',
+    exitX: '100px', exitY: '-260px', exitRotate: '-10deg',
     shadowHover: 'hover:shadow-toy-lg',
   },
   {
-    id: 5,
+    id: 4,
     title: 'Tuscany Food & Wine',
     image: '/images/events/artisan-food-fest.jpg',
-    className: 'left-[74%] top-[7%] w-32 h-32 xl:w-36 xl:h-36 animate-luma-float',
+    className: 'right-[4%] top-[3%] w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 animate-luma-float-delayed',
+    delay: '1.8s',
+    rotate: 'rotate-3',
+    exitX: '240px', exitY: '-180px', exitRotate: '15deg',
+    shadowHover: 'hover:shadow-pop-mint',
+  },
+
+  // ── LEFT PERIMETER COLUMN ──
+  {
+    id: 5,
+    title: 'London City Marathon',
+    image: '/images/events/marathon-run-club.jpg',
+    className: 'left-[3%] top-[29%] w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 animate-luma-float',
     delay: '0.4s',
-    rotate: '-rotate-2',
-    exitX: '220px', exitY: '-160px', exitRotate: '16deg',
+    rotate: 'rotate-2',
+    exitX: '-260px', exitY: '-40px', exitRotate: '-18deg',
     shadowHover: 'hover:shadow-pop-mint',
   },
   {
     id: 6,
-    title: 'London City Marathon',
-    image: '/images/events/marathon-run-club.jpg',
-    className: 'left-[4%] top-[30%] w-32 h-32 xl:w-36 xl:h-36 animate-luma-float-delayed',
-    delay: '2.1s',
-    rotate: 'rotate-2',
-    exitX: '-250px', exitY: '-60px', exitRotate: '-18deg',
-    shadowHover: 'hover:shadow-pop-mint',
-  },
-  {
-    id: 7,
     title: 'Phantom of the Opera',
     image: '/images/events/phantom-opera.jpg',
-    className: 'left-[9%] top-[49%] w-36 h-42 xl:w-42 xl:h-48 animate-luma-float',
-    delay: '0.8s',
+    className: 'left-[4%] top-[53%] w-28 h-32 lg:w-32 lg:h-38 xl:w-36 xl:h-44 animate-luma-float-delayed',
+    delay: '2.1s',
     rotate: '-rotate-3',
-    exitX: '-250px', exitY: '120px', exitRotate: '-14deg',
+    exitX: '-260px', exitY: '140px', exitRotate: '-14deg',
     shadowHover: 'hover:shadow-pop-pink',
   },
+
+  // ── RIGHT PERIMETER COLUMN ──
   {
-    id: 8,
+    id: 7,
     title: 'Cyberpunk 2099 IMAX',
     image: '/images/events/cyberpunk-imax.jpg',
-    className: 'right-[5%] top-[22%] w-32 h-38 xl:w-36 xl:h-44 animate-luma-float',
+    className: 'right-[4%] top-[25%] w-28 h-34 lg:w-32 lg:h-40 xl:w-36 xl:h-44 animate-luma-float',
     delay: '1.4s',
     rotate: 'rotate-2',
     isMorph: true,
     shadowHover: 'hover:shadow-pop-azure',
   },
   {
-    id: 9,
+    id: 8,
     title: 'Sunburn Goa Festival',
     image: '/images/events/beach-party.jpg',
-    className: 'right-[10%] top-[46%] w-36 h-42 xl:w-42 xl:h-48 animate-luma-float-delayed',
-    delay: '2.5s',
+    className: 'right-[3%] top-[51%] w-28 h-32 lg:w-32 lg:h-38 xl:w-36 xl:h-44 animate-luma-float-delayed',
+    delay: '0.8s',
     rotate: '-rotate-2',
-    exitX: '250px', exitY: '90px', exitRotate: '-14deg',
+    exitX: '260px', exitY: '120px', exitRotate: '-14deg',
+    shadowHover: 'hover:shadow-pop-purple',
+  },
+
+  // ── BOTTOM PERIMETER ROW ──
+  {
+    id: 9,
+    title: 'Art Basel Modern Gala',
+    image: '/images/events/modern-art-gala.jpg',
+    className: 'left-[3%] bottom-[3%] w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 animate-luma-float',
+    delay: '1.6s',
+    rotate: 'rotate-2',
+    exitX: '-240px', exitY: '240px', exitRotate: '16deg',
     shadowHover: 'hover:shadow-pop-purple',
   },
   {
     id: 10,
-    title: '90s Rewind Festival',
-    image: '/images/events/retro-party-90s.jpg',
-    className: 'right-[2%] top-[53%] w-28 h-28 xl:w-32 xl:h-32 animate-luma-float',
-    delay: '0.9s',
-    rotate: 'rotate-3',
-    exitX: '220px', exitY: '140px', exitRotate: '18deg',
-    shadowHover: 'hover:shadow-pop-pink',
+    title: 'Interstellar in 70mm',
+    image: '/images/events/interstellar-70mm.jpg',
+    className: 'left-[21%] bottom-[2%] w-28 h-32 lg:w-32 lg:h-36 xl:w-36 xl:h-40 animate-luma-float-delayed',
+    delay: '0.7s',
+    rotate: '-rotate-2',
+    exitX: '-100px', exitY: '260px', exitRotate: '-10deg',
+    shadowHover: 'hover:shadow-toy-lg',
   },
   {
     id: 11,
     title: 'Blue Note Jazz Club',
     image: '/images/events/jazz-blues-night.jpg',
-    className: 'right-[12%] bottom-[5%] w-32 h-36 xl:w-36 xl:h-40 animate-luma-float-delayed',
+    className: 'right-[21%] bottom-[2%] w-28 h-32 lg:w-32 lg:h-36 xl:w-36 xl:h-40 animate-luma-float',
     delay: '2.4s',
-    rotate: '-rotate-3',
-    exitX: '160px', exitY: '230px', exitRotate: '-16deg',
+    rotate: 'rotate-2',
+    exitX: '100px', exitY: '260px', exitRotate: '10deg',
     shadowHover: 'hover:shadow-pop-azure',
   },
   {
     id: 12,
-    title: 'Art Basel Modern Gala',
-    image: '/images/events/modern-art-gala.jpg',
-    className: 'left-[3%] bottom-[5%] w-32 h-32 xl:w-36 xl:h-36 animate-luma-float',
-    delay: '1.6s',
-    rotate: 'rotate-2',
-    exitX: '-220px', exitY: '220px', exitRotate: '18deg',
-    shadowHover: 'hover:shadow-pop-purple',
-  },
-  {
-    id: 13,
-    title: 'F1 eSports World Cup',
-    image: '/images/events/esports-championship.jpg',
-    className: 'left-[13%] bottom-[3%] w-36 h-36 xl:w-40 xl:h-40 animate-luma-float-delayed',
-    delay: '2.8s',
-    rotate: '-rotate-2',
-    exitX: '-140px', exitY: '250px', exitRotate: '-12deg',
-    shadowHover: 'hover:shadow-pop-mint',
-  },
-  {
-    id: 14,
-    title: 'Interstellar in 70mm',
-    image: '/images/events/interstellar-70mm.jpg',
-    className: 'left-[25%] bottom-[4%] w-32 h-38 xl:w-36 xl:h-44 animate-luma-float',
-    delay: '0.7s',
-    rotate: 'rotate-1',
-    exitX: '-70px', exitY: '250px', exitRotate: '10deg',
-    shadowHover: 'hover:shadow-toy-lg',
-  },
-  {
-    id: 15,
-    title: 'Bali Sound Immersion',
-    image: '/images/events/yoga-wellness.jpg',
-    className: 'left-[35%] bottom-[1%] w-32 h-32 xl:w-36 xl:h-36 animate-luma-float-delayed',
-    delay: '1.9s',
-    rotate: '-rotate-3',
-    exitX: '0px', exitY: '270px', exitRotate: '-12deg',
-    shadowHover: 'hover:shadow-pop-mint',
-  },
-  {
-    id: 16,
     title: 'Coachella Sunset Live',
     image: '/images/events/indie-acoustic.jpg',
-    className: 'left-[63%] bottom-[1%] w-36 h-36 xl:w-40 xl:h-40 animate-luma-float',
+    className: 'right-[3%] bottom-[3%] w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 animate-luma-float-delayed',
     delay: '1.1s',
-    rotate: 'rotate-2',
-    exitX: '140px', exitY: '250px', exitRotate: '14deg',
+    rotate: '-rotate-2',
+    exitX: '240px', exitY: '240px', exitRotate: '-16deg',
     shadowHover: 'hover:shadow-pop-pink',
   },
 ];
@@ -167,7 +134,7 @@ const CONSTELLATION_CARDS = [
 export default function WelcomeDiscoveryPortal({ onDiscover }) {
   const [isExiting, setIsExiting] = useState(false);
   const [morphTransform, setMorphTransform] = useState(null);
-  const card8Ref = useRef(null);
+  const cardMorphRef = useRef(null);
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
@@ -183,9 +150,9 @@ export default function WelcomeDiscoveryPortal({ onDiscover }) {
     // Dynamically calculate exact morph coordinates to the hero card image on desktop
     try {
       const heroImg = document.querySelector("img[alt='Cyberpunk 2099 IMAX Premiere']");
-      if (heroImg && card8Ref.current && window.innerWidth >= 1024) {
+      if (heroImg && cardMorphRef.current && window.innerWidth >= 1024) {
         const heroRect = heroImg.getBoundingClientRect();
-        const cardRect = card8Ref.current.getBoundingClientRect();
+        const cardRect = cardMorphRef.current.getBoundingClientRect();
 
         const heroCenterX = heroRect.left + heroRect.width / 2;
         const heroCenterY = heroRect.top + heroRect.height / 2;
@@ -240,7 +207,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover }) {
       {/* ─── MAIN HERO AREA ─── */}
       <main className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-4 py-12 overflow-hidden">
         
-        {/* ── SCATTERED FLOATING POSTER CARDS (Desktop) ── */}
+        {/* ── SCATTERED FLOATING POSTER CARDS (Desktop Constellation) ── */}
         <div className="absolute inset-0 pointer-events-none select-none hidden lg:block overflow-hidden">
           {CONSTELLATION_CARDS.map((card) => {
             const isLgMorph = card.isMorph;
@@ -276,7 +243,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover }) {
             return (
               <div
                 key={card.id}
-                ref={isLgMorph ? card8Ref : undefined}
+                ref={isLgMorph ? cardMorphRef : undefined}
                 className={`absolute ${card.className} pointer-events-auto hover:z-50 group`}
                 style={{ animationDelay: card.delay }}
               >
@@ -306,7 +273,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover }) {
                     style={{ opacity: isExiting ? 0 : 1 }}
                   >
                     <div className="max-w-full bg-white/95 px-2 sm:px-2.5 py-1 rounded-full border-[1.5px] border-toy-black shadow-[2px_2px_0px_#1E1B2E]">
-                      <h3 className="font-display font-black text-[9.5px] xl:text-[10.5px] text-toy-black tracking-tight leading-none truncate whitespace-nowrap">
+                      <h3 className="font-display font-black text-[9px] xl:text-[10px] text-toy-black tracking-tight leading-none truncate whitespace-nowrap">
                         {card.title}
                       </h3>
                     </div>
@@ -350,7 +317,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover }) {
             Discover concerts, festivals, comedy, and cinema. Pick your exact seats in seconds and breeze through the gates.
           </p>
 
-          {/* Primary Action Button — vanishes instantly on click without flashing */}
+          {/* Primary Action Button */}
           <div className="mt-7 flex flex-col items-center w-full relative">
             <button
               type="button"
