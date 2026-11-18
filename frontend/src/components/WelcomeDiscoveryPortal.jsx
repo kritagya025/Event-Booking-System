@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const CONSTELLATION_CARDS = [
   // ── TOP PERIMETER ROW ──
@@ -204,28 +204,6 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
             backgroundSize: '24px 24px'
           }}
         />
-
-        {/* Playful Floating Neo-Memphis Micro-Decors in Negative Space */}
-        <div className="hidden lg:block absolute left-[15%] top-[34%] pointer-events-none animate-pulse-slow">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFD200">
-            <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" stroke="#1E1B2E" strokeWidth="2" />
-          </svg>
-        </div>
-        <div className="hidden lg:block absolute right-[15%] top-[36%] pointer-events-none animate-pulse-slow" style={{ animationDelay: '1.2s' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#FF4081">
-            <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" stroke="#1E1B2E" strokeWidth="2" />
-          </svg>
-        </div>
-        <div className="hidden lg:block absolute left-[35%] bottom-[16%] pointer-events-none opacity-80 rotate-12">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="#7928CA">
-            <polygon points="10,0 12.5,7.5 20,10 12.5,12.5 10,20 7.5,12.5 0,10 7.5,7.5" stroke="#1E1B2E" strokeWidth="2" />
-          </svg>
-        </div>
-        <div className="hidden lg:block absolute right-[35%] bottom-[16%] pointer-events-none opacity-80 -rotate-12">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="#2EE59D">
-            <polygon points="10,0 12.5,7.5 20,10 12.5,12.5 10,20 7.5,12.5 0,10 7.5,7.5" stroke="#1E1B2E" strokeWidth="2" />
-          </svg>
-        </div>
       </div>
 
       {/* ─── MAIN HERO AREA ─── */}
@@ -321,45 +299,19 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
         >
           
           {/* Logo Minimalist Wordmark: eventhub */}
-          <div className="inline-flex items-center gap-1 mb-2 select-none">
+          <div className="inline-flex items-center gap-1 mb-3 select-none">
             <span className="font-display font-black text-2xl sm:text-3xl tracking-tight text-toy-black">
               eventhub
             </span>
           </div>
 
-          {/* Social Proof Live Badge */}
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 rounded-full bg-lilac-wash border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] mb-3 select-none hover:scale-105 transition-transform">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-mint-pop opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-mint-pop border border-toy-black"></span>
+          <h1 className="font-display font-black text-5xl xs:text-6xl sm:text-7xl md:text-8xl text-toy-black tracking-tight leading-[1.04] text-center">
+            Unforgettable <br />
+            live moments <br />
+            <span className="bg-gradient-to-r from-candy-purple via-bubble-pink to-sun-yellow bg-clip-text text-transparent">
+              start here
             </span>
-            <span className="font-display font-black text-[10px] sm:text-xs text-toy-black uppercase tracking-wider">
-              50,000+ Verified Passes Booked
-            </span>
-          </div>
-
-          {/* Headline with Floating Decorative Stickers */}
-          <div className="relative">
-            {/* Left floating sticker */}
-            <div className="hidden xl:flex absolute -left-20 top-8 items-center gap-1.5 px-3 py-1 rounded-2xl bg-sun-yellow border-2 border-toy-black shadow-toy rotate-[-7deg] pointer-events-none select-none float-balloon">
-              <span className="text-xs">⚡</span>
-              <span className="font-display font-black text-[10px] text-toy-black uppercase tracking-wide whitespace-nowrap">10-Min Hold</span>
-            </div>
-
-            {/* Right floating sticker */}
-            <div className="hidden xl:flex absolute -right-20 top-10 items-center gap-1.5 px-3 py-1 rounded-2xl bg-bubble-pink text-white border-2 border-toy-black shadow-toy rotate-[6deg] pointer-events-none select-none float-sparkle">
-              <span className="text-xs">🎟️</span>
-              <span className="font-display font-black text-[10px] uppercase tracking-wide whitespace-nowrap">Instant QR</span>
-            </div>
-
-            <h1 className="font-display font-black text-5xl xs:text-6xl sm:text-7xl md:text-8xl text-toy-black tracking-tight leading-[1.04] text-center">
-              Unforgettable <br />
-              live moments <br />
-              <span className="bg-gradient-to-r from-candy-purple via-bubble-pink to-sun-yellow bg-clip-text text-transparent">
-                start here
-              </span>
-            </h1>
-          </div>
+          </h1>
 
           {/* Subtitle */}
           <p className="mt-5 text-sm sm:text-base md:text-lg font-body font-semibold text-toy-black/80 max-w-md sm:max-w-lg mx-auto leading-relaxed">
