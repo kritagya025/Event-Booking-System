@@ -167,7 +167,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
 
         setMorphTransform({
           transform: `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0px) scale(${scale.toFixed(3)})`,
-          transition: 'transform 920ms cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'transform 1200ms cubic-bezier(0.16, 1, 0.3, 1)',
         });
       }
     } catch (e) {
@@ -178,7 +178,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
     document.body.style.overflow = '';
     setTimeout(() => {
       onDiscover();
-    }, 920);
+    }, 1250);
   };
 
   return (
@@ -186,7 +186,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
       className="fixed inset-0 z-[100] w-full min-h-screen bg-buttercream text-toy-black font-sans overflow-y-auto overflow-x-hidden selection:bg-bubble-pink selection:text-white"
       style={{
         opacity: isExiting ? 0 : 1,
-        transition: 'opacity 900ms cubic-bezier(0.16, 1, 0.3, 1)',
+        transition: 'opacity 1200ms cubic-bezier(0.16, 1, 0.3, 1)',
         willChange: 'opacity',
         pointerEvents: isExiting ? 'none' : 'auto',
       }}
@@ -221,7 +221,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
                   transform: morphTransform ? morphTransform.transform : 'translate3d(-460px, -140px, 0px) scale(2.7)',
                   opacity: 1,
                   zIndex: 50,
-                  transition: morphTransform ? morphTransform.transition : 'transform 920ms cubic-bezier(0.16, 1, 0.3, 1)',
+                  transition: morphTransform ? morphTransform.transition : 'transform 1200ms cubic-bezier(0.16, 1, 0.3, 1)',
                   willChange: 'transform',
                   pointerEvents: 'none',
                 };
@@ -229,7 +229,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
                 cardExitStyle = {
                   transform: `translate3d(${card.exitX}, ${card.exitY}, 0px) rotate(${card.exitRotate}) scale(0.85)`,
                   opacity: 0,
-                  transition: 'transform 850ms cubic-bezier(0.16, 1, 0.3, 1), opacity 650ms ease-out',
+                  transition: 'transform 1100ms cubic-bezier(0.16, 1, 0.3, 1), opacity 950ms ease-out',
                   willChange: 'transform, opacity',
                   pointerEvents: 'none',
                 };
@@ -290,9 +290,9 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
         <div
           className="relative z-30 max-w-xl sm:max-w-2xl mx-auto text-center flex flex-col items-center px-4"
           style={{
-            transform: isExiting ? 'translate3d(0, -32px, 0) scale(1.02)' : 'translate3d(0, 0, 0) scale(1)',
+            transform: isExiting ? 'translate3d(0, -24px, 0) scale(1.01)' : 'translate3d(0, 0, 0) scale(1)',
             opacity: isExiting ? 0 : 1,
-            transition: 'transform 750ms cubic-bezier(0.16, 1, 0.3, 1), opacity 550ms ease-out',
+            transition: 'transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 850ms ease-out',
             willChange: 'transform, opacity',
             pointerEvents: isExiting ? 'none' : 'auto',
           }}
@@ -323,11 +323,11 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
             <button
               type="button"
               onClick={handleDiscoverClick}
-              className={`px-10 sm:px-12 py-3.5 sm:py-4 rounded-full font-display font-black text-base sm:text-lg border-[3px] border-toy-black shadow-toy-lg cursor-pointer flex items-center justify-center gap-2.5 select-none relative z-20 bg-sun-yellow hover:bg-[#FFE043] text-toy-black hover:shadow-pop-pink hover:scale-105 active:scale-95 transition-transform duration-200 ${
+              className={`px-10 sm:px-12 py-3.5 sm:py-4 rounded-full font-display font-black text-base sm:text-lg border-[3px] border-toy-black shadow-toy-lg cursor-pointer flex items-center justify-center gap-2.5 select-none relative z-20 bg-sun-yellow hover:bg-[#FFE043] text-toy-black hover:shadow-pop-pink hover:scale-105 active:scale-95 transition-all duration-300 ${
                 isExiting ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100'
               }`}
               style={{
-                transition: isExiting ? 'opacity 60ms ease-out, transform 60ms ease-out' : undefined,
+                transition: isExiting ? 'opacity 300ms ease-out, transform 300ms ease-out' : undefined,
               }}
             >
               <span>Discover</span>
@@ -353,7 +353,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
                 style={{
                   transform: isExiting ? 'translate3d(0, -24px, 0) scale(0.85)' : 'translate3d(0, 0, 0) scale(1)',
                   opacity: isExiting ? 0 : 1,
-                  transition: 'transform 550ms cubic-bezier(0.16, 1, 0.3, 1), opacity 450ms ease-out',
+                  transition: 'transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 850ms ease-out',
                   willChange: 'transform, opacity',
                 }}
               >

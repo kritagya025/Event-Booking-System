@@ -559,39 +559,31 @@ export default function App() {
       {/* ─── MAIN APPLICATION SHELL (Synchronously cross-dissolves with intro portal) ─── */}
       <div 
         className="w-full min-h-screen flex flex-col flex-1"
-        style={{
-          opacity: showWelcomePortal && !isPortalExiting ? 0 : 1,
-          transition: isPortalExiting ? 'opacity 900ms cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
+        style={showWelcomePortal ? {
+          opacity: isPortalExiting ? 1 : 0,
+          transition: isPortalExiting ? 'opacity 1200ms cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
           willChange: isPortalExiting ? 'opacity' : undefined,
-          pointerEvents: showWelcomePortal && !isPortalExiting ? 'none' : 'auto',
-        }}
+          pointerEvents: isPortalExiting ? 'auto' : 'none',
+        } : undefined}
       >
-        {/* Navigation Header with gentle slide-down entry */}
-        <div
-          style={{
-            transform: showWelcomePortal && !isPortalExiting ? 'translateY(-28px)' : 'translateY(0)',
-            transition: isPortalExiting ? 'transform 900ms cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
-            willChange: isPortalExiting ? 'transform' : undefined,
+        {/* Navigation Header: Undisturbed natural placement, 100% sticky and fixed intact */}
+        <Navbar 
+          currentUser={currentUser}
+          onNavigate={handleNavigate}
+          activeTab={activeTab}
+          onLogout={handleLogout}
+          onOpenIntro={() => {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            setShowWelcomePortal(true);
+            window.location.hash = 'intro';
           }}
-        >
-          <Navbar 
-            currentUser={currentUser}
-            onNavigate={handleNavigate}
-            activeTab={activeTab}
-            onLogout={handleLogout}
-            onOpenIntro={() => {
-              window.scrollTo({ top: 0, behavior: 'instant' });
-              setShowWelcomePortal(true);
-              window.location.hash = 'intro';
-            }}
-            searchKeyword={filters.keyword}
-            onSearchChange={(kw) => {
-              const nextFilters = { ...filtersRef.current, keyword: kw };
-              setFilters(nextFilters);
-              applyLiveFilter(nextFilters);
-            }}
-          />
-        </div>
+          searchKeyword={filters.keyword}
+          onSearchChange={(kw) => {
+            const nextFilters = { ...filtersRef.current, keyword: kw };
+            setFilters(nextFilters);
+            applyLiveFilter(nextFilters);
+          }}
+        />
 
       {activeTab === 'admin' ? (
         <AdminDashboard showToast={showToast} />
@@ -648,11 +640,11 @@ export default function App() {
               {/* Hero Text & Quick Action (Slides up smoothly on entry) */}
               <div 
                 className="lg:col-span-7 flex flex-col items-start text-left min-w-0 w-full"
-                style={{
-                  transform: showWelcomePortal && !isPortalExiting ? 'translateY(36px)' : 'translateY(0)',
-                  transition: isPortalExiting ? 'transform 920ms cubic-bezier(0.16, 1, 0.3, 1), opacity 900ms ease-out' : undefined,
-                  willChange: isPortalExiting ? 'transform, opacity' : undefined,
-                }}
+                style={showWelcomePortal ? {
+                  transform: isPortalExiting ? 'translateY(0)' : 'translateY(24px)',
+                  transition: isPortalExiting ? 'transform 1200ms cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
+                  willChange: isPortalExiting ? 'transform' : undefined,
+                } : undefined}
               >
                 <h1 className="font-display font-black text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight text-toy-black mb-6 sm:mb-7">
                   YOUR LIVE EVENT <br className="hidden sm:inline"/>
@@ -699,15 +691,8 @@ export default function App() {
                 </form>
               </div>
 
-              {/* Hero Right Column: Squishy 3D Neo-Memphis Featured Event Card (Expands & rises to catch incoming morph card) */}
-              <div 
-                className="lg:col-span-5 relative w-full flex justify-center min-w-0"
-                style={{
-                  transform: showWelcomePortal && !isPortalExiting ? 'scale(0.92) translateY(28px)' : 'scale(1) translateY(0)',
-                  transition: isPortalExiting ? 'transform 920ms cubic-bezier(0.16, 1, 0.3, 1), opacity 900ms ease-out' : undefined,
-                  willChange: isPortalExiting ? 'transform, opacity' : undefined,
-                }}
-              >
+              {/* Hero Right Column: Squishy 3D Neo-Memphis Featured Event Card (Exact morph destination) */}
+              <div className="lg:col-span-5 relative w-full flex justify-center min-w-0">
                 <div className="relative w-full max-w-sm sm:max-w-md">
                   {/* Backing pastel shadow block strictly matching card width */}
                   <div className="absolute inset-0 bg-sky-azure rounded-[28px] sm:rounded-[36px] border-[3px] sm:border-[3.5px] border-toy-black transform rotate-1.5 sm:rotate-3 translate-x-1 sm:translate-x-2 translate-y-1.5 sm:translate-y-3 pointer-events-none"></div>
