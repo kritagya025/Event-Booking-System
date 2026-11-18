@@ -172,8 +172,15 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
       }}
     >
       
-      {/* ─── AMBIENT ATMOSPHERIC LIGHTING ─── */}
-      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
+      {/* ─── AMBIENT ATMOSPHERIC LIGHTING & PERSPECTIVE WARP ─── */}
+      <div 
+        className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0"
+        style={{
+          transform: isExiting ? 'scale(1.25)' : 'scale(1)',
+          opacity: isExiting ? 0 : 1,
+          transition: 'transform 1200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 1000ms ease-out',
+        }}
+      >
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[920px] h-[660px] bg-gradient-to-tr from-bubble-pink/10 via-candy-purple/10 to-sun-yellow/15 blur-[130px] rounded-full opacity-70" />
         <div className="absolute top-10 left-10 w-96 h-96 bg-sun-yellow/15 blur-[110px] rounded-full" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-bubble-pink/12 blur-[110px] rounded-full" />
@@ -207,10 +214,11 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
                 };
               } else {
                 cardExitStyle = {
-                  transform: `translate3d(${card.exitX}, ${card.exitY}, 0px) rotate(${card.exitRotate}) scale(0.85)`,
+                  transform: `translate3d(${card.exitX}, ${card.exitY}, 0px) rotate(${card.exitRotate}) scale(1.15)`,
                   opacity: 0,
-                  transition: 'transform 1100ms cubic-bezier(0.16, 1, 0.3, 1), opacity 950ms ease-out',
-                  willChange: 'transform, opacity',
+                  filter: 'blur(3px)',
+                  transition: 'transform 1150ms cubic-bezier(0.16, 1, 0.3, 1), opacity 950ms ease-out, filter 950ms ease-out',
+                  willChange: 'transform, opacity, filter',
                   pointerEvents: 'none',
                 };
               }
@@ -266,14 +274,15 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
           })}
         </div>
 
-        {/* ── CENTER HERO CONTENT ── */}
+        {/* ── CENTER HERO CONTENT (Dolly Zoom Forward into Camera) ── */}
         <div
           className="relative z-30 max-w-xl sm:max-w-2xl mx-auto text-center flex flex-col items-center px-4"
           style={{
-            transform: isExiting ? 'translate3d(0, -24px, 0) scale(1.01)' : 'translate3d(0, 0, 0) scale(1)',
+            transform: isExiting ? 'translate3d(0, -32px, 0) scale(1.12)' : 'translate3d(0, 0, 0) scale(1)',
             opacity: isExiting ? 0 : 1,
-            transition: 'transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 850ms ease-out',
-            willChange: 'transform, opacity',
+            filter: isExiting ? 'blur(6px)' : 'blur(0px)',
+            transition: 'transform 1100ms cubic-bezier(0.16, 1, 0.3, 1), opacity 850ms ease-out, filter 850ms ease-out',
+            willChange: 'transform, opacity, filter',
             pointerEvents: isExiting ? 'none' : 'auto',
           }}
         >
@@ -304,10 +313,10 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
               type="button"
               onClick={handleDiscoverClick}
               className={`px-10 sm:px-12 py-3.5 sm:py-4 rounded-full font-display font-black text-base sm:text-lg border-[3px] border-toy-black shadow-toy-lg cursor-pointer flex items-center justify-center gap-2.5 select-none relative z-20 bg-sun-yellow hover:bg-[#FFE043] text-toy-black hover:shadow-pop-pink hover:scale-105 active:scale-95 transition-all duration-300 ${
-                isExiting ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100'
+                isExiting ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100'
               }`}
               style={{
-                transition: isExiting ? 'opacity 300ms ease-out, transform 300ms ease-out' : undefined,
+                transition: isExiting ? 'opacity 250ms ease-out, transform 250ms ease-out' : undefined,
               }}
             >
               <span>Discover</span>
