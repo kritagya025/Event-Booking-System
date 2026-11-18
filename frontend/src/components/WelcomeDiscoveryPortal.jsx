@@ -62,7 +62,7 @@ const CONSTELLATION_CARDS = [
     className: 'right-[2.5%] top-[40%] w-32 h-36 md:w-36 md:h-40 lg:w-40 lg:h-44 xl:w-44 xl:h-48 animate-luma-float',
     delay: '1.4s',
     rotate: 'rotate-2',
-    isMorph: true,
+    exitX: '280px', exitY: '0px', exitRotate: '14deg',
     shadowHover: 'hover:shadow-pop-azure',
   },
 
@@ -179,27 +179,14 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
         {/* ── SCATTERED FLOATING POSTER CARDS (Desktop Constellation) ── */}
         <div className="absolute inset-0 pointer-events-none select-none hidden lg:block overflow-hidden">
           {CONSTELLATION_CARDS.map((card) => {
-            const isLgMorph = card.isMorph;
-
             let cardExitStyle = {};
             if (isExiting) {
-              if (isLgMorph) {
-                cardExitStyle = {
-                  transform: morphTransform ? morphTransform.transform : 'translate3d(-460px, -140px, 0px) scale(2.7)',
-                  opacity: 1,
-                  zIndex: 50,
-                  transition: morphTransform ? morphTransform.transition : 'transform 1200ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  willChange: 'transform',
-                  pointerEvents: 'none',
-                };
-              } else {
-                cardExitStyle = {
-                  transform: `translate3d(${card.exitX}, ${card.exitY}, 0px) rotate(${card.exitRotate})`,
-                  opacity: 0,
-                  transition: 'transform 300ms ease-out, opacity 300ms ease-out',
-                  pointerEvents: 'none',
-                };
-              }
+              cardExitStyle = {
+                transform: `translate3d(${card.exitX}, ${card.exitY}, 0px) rotate(${card.exitRotate})`,
+                opacity: 0,
+                transition: 'transform 300ms ease-out, opacity 300ms ease-out',
+                pointerEvents: 'none',
+              };
             } else {
               cardExitStyle = {
                 transform: 'translate3d(0, 0, 0) scale(1)',
@@ -211,7 +198,6 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
             return (
               <div
                 key={card.id}
-                ref={isLgMorph ? cardMorphRef : undefined}
                 className={`absolute ${card.className} pointer-events-auto hover:z-50 group`}
                 style={{ animationDelay: card.delay }}
               >
