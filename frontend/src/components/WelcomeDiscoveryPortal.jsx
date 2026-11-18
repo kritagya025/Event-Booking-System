@@ -131,7 +131,7 @@ const CONSTELLATION_CARDS = [
   },
 ];
 
-export default function WelcomeDiscoveryPortal({ onDiscover }) {
+export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
   const [isExiting, setIsExiting] = useState(false);
   const [morphTransform, setMorphTransform] = useState(null);
   const cardMorphRef = useRef(null);
@@ -146,6 +146,8 @@ export default function WelcomeDiscoveryPortal({ onDiscover }) {
 
   const handleDiscoverClick = () => {
     if (isExiting) return;
+
+    if (onExiting) onExiting();
 
     // Dynamically calculate exact morph coordinates to the hero card image on desktop
     try {

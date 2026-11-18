@@ -66,6 +66,7 @@ export default function App() {
     if (hash && hash !== 'home' && hash !== 'explore' && hash !== 'intro') return false;
     return true;
   });
+  const [isPortalExiting, setIsPortalExiting] = useState(false);
 
   const setActiveTab = (tab) => {
     const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
@@ -540,12 +541,14 @@ export default function App() {
   }
 
   return (
-    <div className="bg-buttercream text-toy-black antialiased relative selection:bg-bubble-pink selection:text-white min-h-screen overflow-x-hidden font-body animate-app-enter">
+    <div className="bg-buttercream text-toy-black antialiased relative selection:bg-bubble-pink selection:text-white min-h-screen overflow-x-hidden font-body">
       
       {/* ─── WELCOME INTRO DISCOVERY PORTAL (Fixed Full-Screen Cross-Dissolve Overlay) ─── */}
       {showWelcomePortal && (activeTab === 'home' || activeTab === 'explore') && (
         <WelcomeDiscoveryPortal
+          onExiting={() => setIsPortalExiting(true)}
           onDiscover={() => {
+            setIsPortalExiting(false);
             setShowWelcomePortal(false);
             setActiveTab('home');
             window.location.hash = 'home';
@@ -553,25 +556,33 @@ export default function App() {
         />
       )}
 
-      {/* ─── NAVIGATION HEADER ─── */}
-      <Navbar 
-        currentUser={currentUser}
-        onNavigate={handleNavigate}
-        activeTab={activeTab}
-        onLogout={handleLogout}
-        isIntroActive={showWelcomePortal}
-        onOpenIntro={() => {
-          window.scrollTo({ top: 0, behavior: 'instant' });
-          setShowWelcomePortal(true);
-          window.location.hash = 'intro';
+      {/* ─── MAIN APPLICATION SHELL (Synchronously cross-dissolves with intro portal) ─── */}
+      <div 
+        className="w-full min-h-screen flex flex-col flex-1"
+        style={{
+          opacity: showWelcomePortal && !isPortalExiting ? 0 : 1,
+          transition: isPortalExiting ? 'opacity 600ms cubic-bezier(0.22, 1, 0.36, 1)' : undefined,
+          willChange: isPortalExiting ? 'opacity' : undefined,
+          pointerEvents: showWelcomePortal && !isPortalExiting ? 'none' : 'auto',
         }}
-        searchKeyword={filters.keyword}
-        onSearchChange={(kw) => {
-          const nextFilters = { ...filtersRef.current, keyword: kw };
-          setFilters(nextFilters);
-          applyLiveFilter(nextFilters);
-        }}
-      />
+      >
+        <Navbar 
+          currentUser={currentUser}
+          onNavigate={handleNavigate}
+          activeTab={activeTab}
+          onLogout={handleLogout}
+          onOpenIntro={() => {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            setShowWelcomePortal(true);
+            window.location.hash = 'intro';
+          }}
+          searchKeyword={filters.keyword}
+          onSearchChange={(kw) => {
+            const nextFilters = { ...filtersRef.current, keyword: kw };
+            setFilters(nextFilters);
+            applyLiveFilter(nextFilters);
+          }}
+        />
 
       {activeTab === 'admin' ? (
         <AdminDashboard showToast={showToast} />
@@ -1361,6 +1372,7 @@ export default function App() {
           </div>
         </div>
       </footer>
+      </div>
 
       {/* ─── MODALS ─── */}
       <SeatMapModal 

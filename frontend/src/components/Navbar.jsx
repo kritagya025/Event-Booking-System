@@ -10,8 +10,7 @@ export default function Navbar({
   onNavigate, 
   activeTab, 
   onLogout,
-  onOpenIntro,
-  isIntroActive = false
+  onOpenIntro
 }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -62,18 +61,18 @@ export default function Navbar({
   return (
     <>
       {/* Floating Confetti Decorative Custom Stickers */}
-      <div className={`fixed top-36 left-4 sm:left-6 lg:left-10 z-20 pointer-events-none float-balloon hidden md:block select-none transition-opacity duration-500 ${isIntroActive ? 'opacity-0' : 'opacity-100'}`}>
+      <div className="fixed top-36 left-4 sm:left-6 lg:left-10 z-20 pointer-events-none float-balloon hidden md:block select-none">
         <BalloonSticker size={64} />
       </div>
-      <div className={`fixed top-48 right-4 sm:right-6 lg:right-10 z-20 pointer-events-none float-sparkle hidden md:block select-none transition-opacity duration-500 ${isIntroActive ? 'opacity-0' : 'opacity-100'}`} style={{ animationDelay: '0.9s' }}>
+      <div className="fixed top-48 right-4 sm:right-6 lg:right-10 z-20 pointer-events-none float-sparkle hidden md:block select-none" style={{ animationDelay: '0.9s' }}>
         <SparklesSticker size={66} />
       </div>
-      <div className={`fixed bottom-24 left-4 sm:left-6 lg:left-10 z-20 pointer-events-none float-disco hidden md:block select-none transition-opacity duration-500 ${isIntroActive ? 'opacity-0' : 'opacity-100'}`} style={{ animationDelay: '0.4s' }}>
+      <div className="fixed bottom-24 left-4 sm:left-6 lg:left-10 z-20 pointer-events-none float-disco hidden md:block select-none" style={{ animationDelay: '0.4s' }}>
         <DiscoBallSticker size={64} />
       </div>
 
       {/* NAVIGATION HEADER: Chunky Neo-Memphis Floating Pill */}
-      <header className={`sticky top-4 w-full z-50 px-3 xs:px-4 sm:px-8 transition-opacity duration-500 ${isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <header className="sticky top-4 w-full z-50 px-3 xs:px-4 sm:px-8">
         <div className="max-w-6xl mx-auto bg-white/95 backdrop-blur-md border-[3px] border-toy-black rounded-full px-3 xs:px-4 sm:px-5 py-2 sm:py-3 shadow-toy flex items-center justify-between transition-transform duration-200">
           
           {/* Brand Logo */}
