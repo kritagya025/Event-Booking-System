@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 const CONSTELLATION_CARDS = [
-  // ── TOP PERIMETER ROW ──
+  // ── TOP PERIMETER ROW (4 cards across top) ──
   {
     id: 1,
     title: 'Skyline Cocktail Gala',
     image: '/images/events/cocktail-hour.jpg',
-    className: 'left-[3%] top-[3%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float',
+    className: 'left-[3%] top-[4%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float',
     delay: '0s',
     rotate: '-rotate-2',
     exitX: '-280px', exitY: '-200px', exitRotate: '-15deg',
@@ -17,7 +17,7 @@ const CONSTELLATION_CARDS = [
     id: 2,
     title: 'Global AI Hackathon',
     image: '/images/events/hackathon-dev.jpg',
-    className: 'left-[23%] top-[1%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float-delayed',
+    className: 'left-[22%] top-[3%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float-delayed',
     delay: '1.2s',
     rotate: 'rotate-2',
     exitX: '-120px', exitY: '-280px', exitRotate: '10deg',
@@ -27,7 +27,7 @@ const CONSTELLATION_CARDS = [
     id: 3,
     title: 'Comedy Cellar Live',
     image: '/images/events/standup-comedy.jpg',
-    className: 'right-[23%] top-[1%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float',
+    className: 'right-[22%] top-[3%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float',
     delay: '0.6s',
     rotate: '-rotate-1',
     exitX: '120px', exitY: '-280px', exitRotate: '-10deg',
@@ -37,93 +37,71 @@ const CONSTELLATION_CARDS = [
     id: 4,
     title: 'Tuscany Food & Wine',
     image: '/images/events/artisan-food-fest.jpg',
-    className: 'right-[3%] top-[3%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float-delayed',
+    className: 'right-[3%] top-[4%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float-delayed',
     delay: '1.8s',
     rotate: 'rotate-3',
     exitX: '280px', exitY: '-200px', exitRotate: '15deg',
     shadowHover: 'hover:shadow-pop-mint',
   },
 
-  // ── LEFT PERIMETER COLUMN ──
+  // ── SIDES (MID-SCREEN) ──
   {
     id: 5,
-    title: 'London City Marathon',
-    image: '/images/events/marathon-run-club.jpg',
-    className: 'left-[2%] top-[28%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float',
-    delay: '0.4s',
-    rotate: 'rotate-2',
-    exitX: '-280px', exitY: '-40px', exitRotate: '-18deg',
-    shadowHover: 'hover:shadow-pop-mint',
+    title: 'Phantom of the Opera',
+    image: '/images/events/phantom-opera.jpg',
+    className: 'left-[2.5%] top-[40%] w-32 h-36 md:w-36 md:h-40 lg:w-40 lg:h-44 xl:w-44 xl:h-48 animate-luma-float',
+    delay: '2.1s',
+    rotate: '-rotate-2',
+    exitX: '-280px', exitY: '0px', exitRotate: '-14deg',
+    shadowHover: 'hover:shadow-pop-pink',
   },
   {
     id: 6,
-    title: 'Phantom of the Opera',
-    image: '/images/events/phantom-opera.jpg',
-    className: 'left-[3%] top-[52%] w-32 h-36 md:w-36 md:h-40 lg:w-40 lg:h-46 xl:w-44 xl:h-50 animate-luma-float-delayed',
-    delay: '2.1s',
-    rotate: '-rotate-3',
-    exitX: '-280px', exitY: '160px', exitRotate: '-14deg',
-    shadowHover: 'hover:shadow-pop-pink',
-  },
-
-  // ── RIGHT PERIMETER COLUMN ──
-  {
-    id: 7,
     title: 'Cyberpunk 2099 IMAX',
     image: '/images/events/cyberpunk-imax.jpg',
-    className: 'right-[3%] top-[24%] w-32 h-38 md:w-36 md:h-42 lg:w-40 lg:h-48 xl:w-44 xl:h-52 animate-luma-float',
+    className: 'right-[2.5%] top-[40%] w-32 h-36 md:w-36 md:h-40 lg:w-40 lg:h-44 xl:w-44 xl:h-48 animate-luma-float',
     delay: '1.4s',
     rotate: 'rotate-2',
     isMorph: true,
     shadowHover: 'hover:shadow-pop-azure',
   },
-  {
-    id: 8,
-    title: 'Sunburn Goa Festival',
-    image: '/images/events/beach-party.jpg',
-    className: 'right-[2%] top-[50%] w-32 h-36 md:w-36 md:h-40 lg:w-40 lg:h-46 xl:w-44 xl:h-50 animate-luma-float-delayed',
-    delay: '0.8s',
-    rotate: '-rotate-2',
-    exitX: '280px', exitY: '140px', exitRotate: '-14deg',
-    shadowHover: 'hover:shadow-pop-purple',
-  },
 
-  // ── BOTTOM PERIMETER ROW ──
+  // ── BOTTOM PERIMETER ROW (4 cards across bottom) ──
   {
-    id: 9,
+    id: 7,
     title: 'Art Basel Modern Gala',
     image: '/images/events/modern-art-gala.jpg',
-    className: 'left-[2.5%] bottom-[3%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float',
+    className: 'left-[3%] bottom-[4%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float-delayed',
     delay: '1.6s',
     rotate: 'rotate-2',
     exitX: '-260px', exitY: '260px', exitRotate: '16deg',
     shadowHover: 'hover:shadow-pop-purple',
   },
   {
-    id: 10,
+    id: 8,
     title: 'Interstellar in 70mm',
     image: '/images/events/interstellar-70mm.jpg',
-    className: 'left-[21%] bottom-[2%] w-32 h-36 md:w-36 md:h-40 lg:w-40 lg:h-44 xl:w-44 xl:h-48 animate-luma-float-delayed',
+    className: 'left-[22%] bottom-[3%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float',
     delay: '0.7s',
     rotate: '-rotate-2',
     exitX: '-120px', exitY: '280px', exitRotate: '-10deg',
     shadowHover: 'hover:shadow-toy-lg',
   },
   {
-    id: 11,
+    id: 9,
     title: 'Blue Note Jazz Club',
     image: '/images/events/jazz-blues-night.jpg',
-    className: 'right-[21%] bottom-[2%] w-32 h-36 md:w-36 md:h-40 lg:w-40 lg:h-44 xl:w-44 xl:h-48 animate-luma-float',
+    className: 'right-[22%] bottom-[3%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float-delayed',
     delay: '2.4s',
     rotate: 'rotate-2',
     exitX: '120px', exitY: '280px', exitRotate: '10deg',
     shadowHover: 'hover:shadow-pop-azure',
   },
   {
-    id: 12,
+    id: 10,
     title: 'Coachella Sunset Live',
     image: '/images/events/indie-acoustic.jpg',
-    className: 'right-[2.5%] bottom-[3%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float-delayed',
+    className: 'right-[3%] bottom-[4%] w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 animate-luma-float',
     delay: '1.1s',
     rotate: '-rotate-2',
     exitX: '260px', exitY: '260px', exitRotate: '-16deg',
@@ -137,10 +115,13 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
   const cardMorphRef = useRef(null);
 
   useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = originalOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
     };
   }, []);
 
@@ -175,7 +156,6 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
     }
 
     setIsExiting(true);
-    document.body.style.overflow = '';
     setTimeout(() => {
       onDiscover();
     }, 1250);
@@ -183,7 +163,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] w-full min-h-screen bg-buttercream text-toy-black font-sans overflow-y-auto overflow-x-hidden selection:bg-bubble-pink selection:text-white"
+      className="fixed inset-0 z-[100] w-full h-full max-h-screen bg-buttercream text-toy-black font-sans overflow-y-auto lg:overflow-hidden select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden selection:bg-bubble-pink selection:text-white"
       style={{
         opacity: isExiting ? 0 : 1,
         transition: 'opacity 1200ms cubic-bezier(0.16, 1, 0.3, 1)',
@@ -207,7 +187,7 @@ export default function WelcomeDiscoveryPortal({ onDiscover, onExiting }) {
       </div>
 
       {/* ─── MAIN HERO AREA ─── */}
-      <main className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-4 py-12 overflow-hidden">
+      <main className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 overflow-hidden">
         
         {/* ── SCATTERED FLOATING POSTER CARDS (Desktop Constellation) ── */}
         <div className="absolute inset-0 pointer-events-none select-none hidden lg:block overflow-hidden">
