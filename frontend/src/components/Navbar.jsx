@@ -111,6 +111,27 @@ export default function Navbar({
               Cinema & IMAX
             </button>
 
+            <button 
+              type="button"
+              onClick={() => handleNavClick('studio')}
+              className="px-3.5 py-1.5 rounded-full text-toy-black font-display font-bold text-sm transition-colors flex items-center gap-1.5 hover:text-cyan-600 bg-cyan-100/60 border border-cyan-400/50"
+              title="Fast Design Studio (3D WebGL Agency Site)"
+            >
+              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+              <span>3D Studio</span>
+            </button>
+
+            <a 
+              href="http://localhost:5173/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-1.5 rounded-full text-toy-black font-display font-bold text-sm transition-colors flex items-center gap-1.5 hover:text-candy-purple bg-lilac-wash border border-candy-purple/40"
+              title="EventHub VIP Portal Pass (Scroll-Driven Pinned 3D Pass Experience)"
+            >
+              <span className="w-2 h-2 rounded-full bg-bubble-pink animate-pulse"></span>
+              <span>VIP Portal ↗</span>
+            </a>
+
             {currentUser && currentUser.role === 'CUSTOMER' && (
               <>
                 <button 
@@ -353,6 +374,18 @@ export default function Navbar({
               >
                 <Film size={18} className="text-toy-black" />
                 <span>Cinema & IMAX Screenings</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavClick('studio')}
+                className="flex items-center justify-between p-3 rounded-2xl bg-cyan-100 border-2 border-toy-black shadow-[2px_2px_0px_#1E1B2E] text-left font-display font-black"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
+                  <span>⚡ 3D Fast Studio</span>
+                </div>
+                <span className="text-[10px] bg-cyan-500 text-black px-2 py-0.5 rounded-full font-mono">Three.js</span>
               </button>
 
               {currentUser && currentUser.role === 'CUSTOMER' && (

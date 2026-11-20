@@ -18,6 +18,7 @@ import CookiesModal from './components/CookiesModal';
 import ApiDocsModal from './components/ApiDocsModal';
 import EventHubArcadeRunner from './components/EventHubArcadeRunner';
 import WelcomeDiscoveryPortal from './components/WelcomeDiscoveryPortal';
+import FastDesignStudio from './components/FastDesignStudio';
 
 import EventCardSkeleton from './components/EventCardSkeleton';
 import { 
@@ -53,7 +54,7 @@ export default function App() {
   
   const getInitialTab = () => {
     const hash = window.location.hash.replace('#', '');
-    const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
+    const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register', 'studio', 'agency'];
     if (hash && validTabs.includes(hash)) return hash;
     const saved = localStorage.getItem('active_nav_tab');
     if (saved && validTabs.includes(saved)) return saved;
@@ -69,7 +70,7 @@ export default function App() {
   const [isPortalExiting, setIsPortalExiting] = useState(false);
 
   const setActiveTab = (tab) => {
-    const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
+    const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register', 'studio', 'agency'];
     const target = validTabs.includes(tab) ? tab : 'home';
     setActiveTabState(target);
     localStorage.setItem('active_nav_tab', target);
@@ -83,7 +84,7 @@ export default function App() {
         setActiveTabState('home');
         setShowWelcomePortal(true);
       } else {
-        const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register'];
+        const validTabs = ['home', 'explore', 'admin', 'my-bookings', 'wishlist', 'profile', 'login', 'register', 'studio', 'agency'];
         if (hash && validTabs.includes(hash)) {
           setActiveTabState(hash);
         }
@@ -489,6 +490,10 @@ export default function App() {
     setFilters(nextFilters);
     applyLiveFilter(nextFilters);
   };
+
+  if (activeTab === 'studio' || activeTab === 'agency') {
+    return <FastDesignStudio onBackToEventHub={() => setActiveTab('home')} />;
+  }
 
   if (activeTab === 'login') {
     return (
